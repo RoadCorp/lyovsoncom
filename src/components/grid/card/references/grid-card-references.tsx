@@ -5,6 +5,7 @@ import {
   ExternalLink,
   Film,
   Gamepad2,
+  GraduationCap,
   Link as LinkIcon,
   Mic,
   Music,
@@ -40,6 +41,7 @@ const referenceTypeIcons: Partial<Record<Reference["type"], typeof Book>> = {
   repository: LinkIcon,
   tool: LinkIcon,
   social: LinkIcon,
+  course: GraduationCap,
   other: LinkIcon,
 };
 
@@ -59,6 +61,7 @@ const referenceTypeLabels: Partial<Record<Reference["type"], string>> = {
   repository: "Repository",
   tool: "Tool",
   social: "Social",
+  course: "Course",
   other: "Other",
 };
 

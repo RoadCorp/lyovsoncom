@@ -5,6 +5,7 @@ import {
   Calendar,
   Film,
   Gamepad2,
+  GraduationCap,
   Link as LinkIcon,
   Mic,
   Music,
@@ -37,6 +38,7 @@ const activityTypeLabels: Record<Activity["activityType"], string> = {
   listen: "Listened",
   play: "Played",
   visit: "Visited",
+  learn: "Learned",
 };
 
 const referenceTypeIcons: Partial<Record<Reference["type"], LucideIcon>> = {
@@ -51,6 +53,7 @@ const referenceTypeIcons: Partial<Record<Reference["type"], LucideIcon>> = {
   company: Building2,
   video: Video,
   match: Trophy,
+  course: GraduationCap,
 };
 
 interface ParticipantLinkData {
