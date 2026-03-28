@@ -46,7 +46,7 @@ export const Activities: CollectionConfig = {
     group: "Content",
     defaultColumns: ["reference", "activityType", "startedAt", "updatedAt"],
     description:
-      "Log reading, watching, listening, playing, and visiting activities",
+      "Log reading, watching, listening, playing, visiting, and learning activities",
   },
   fields: [
     {
@@ -68,6 +68,7 @@ export const Activities: CollectionConfig = {
         { label: "Listen", value: "listen" },
         { label: "Play", value: "play" },
         { label: "Visit", value: "visit" },
+        { label: "Learn", value: "learn" },
       ],
       required: true,
       admin: {

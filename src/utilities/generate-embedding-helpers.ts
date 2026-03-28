@@ -265,6 +265,7 @@ const ACTIVITY_TYPE_LABELS: Record<string, string> = {
   listen: "Listened",
   play: "Played",
   visit: "Visited",
+  learn: "Learned",
 };
 
 const REFERENCE_TYPE_LABELS: Record<string, string> = {
@@ -279,6 +280,7 @@ const REFERENCE_TYPE_LABELS: Record<string, string> = {
   company: "Company",
   video: "Video",
   match: "Match",
+  course: "Course",
 };
 
 export function buildActivityEmbeddingText(activity: Activity): string {

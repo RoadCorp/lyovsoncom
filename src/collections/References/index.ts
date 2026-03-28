@@ -55,6 +55,7 @@ export const References: CollectionConfig = {
         { label: "Repository", value: "repository" },
         { label: "Tool", value: "tool" },
         { label: "Social", value: "social" },
+        { label: "Course", value: "course" },
         { label: "Match", value: "match" },
         { label: "Other", value: "other" },
       ],
@@ -476,6 +477,65 @@ export const References: CollectionConfig = {
               admin: {
                 description: "Video ID",
                 condition: (data) => data?.type === "video",
+              },
+            },
+            // Course-specific fields
+            {
+              name: "instructor",
+              type: "text",
+              admin: {
+                description: "Instructor or creator name",
+                condition: (data) => data?.type === "course",
+              },
+            },
+            {
+              name: "coursePlatform",
+              type: "select",
+              options: [
+                { label: "Udemy", value: "udemy" },
+                { label: "Coursera", value: "coursera" },
+                { label: "Frontend Masters", value: "frontendMasters" },
+                { label: "MasterClass", value: "masterclass" },
+                { label: "Pluralsight", value: "pluralsight" },
+                { label: "edX", value: "edx" },
+                { label: "Skillshare", value: "skillshare" },
+                { label: "LinkedIn Learning", value: "linkedinLearning" },
+                { label: "Egghead", value: "egghead" },
+                { label: "YouTube", value: "youtube" },
+                { label: "Other", value: "other" },
+              ],
+              admin: {
+                description: "Platform offering the course",
+                condition: (data) => data?.type === "course",
+              },
+            },
+            {
+              name: "courseDuration",
+              type: "text",
+              admin: {
+                description: "Total duration (e.g. '12h 30m', '8 weeks')",
+                condition: (data) => data?.type === "course",
+              },
+            },
+            {
+              name: "courseLevel",
+              type: "select",
+              options: [
+                { label: "Beginner", value: "beginner" },
+                { label: "Intermediate", value: "intermediate" },
+                { label: "Advanced", value: "advanced" },
+              ],
+              admin: {
+                description: "Difficulty level",
+                condition: (data) => data?.type === "course",
+              },
+            },
+            {
+              name: "courseUrl",
+              type: "text",
+              admin: {
+                description: "URL to the course",
+                condition: (data) => data?.type === "course",
               },
             },
           ],

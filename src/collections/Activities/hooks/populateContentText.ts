@@ -16,6 +16,7 @@ const ACTIVITY_TYPE_LABELS: Record<string, string> = {
   watch: "Watched",
   listen: "Listened",
   play: "Played",
+  learn: "Learned",
 };
 
 async function getReferenceTitle(

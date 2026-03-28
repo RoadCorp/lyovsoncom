@@ -114,6 +114,9 @@ export interface Config {
   globals: {};
   globalsSelect: {};
   locale: null;
+  widgets: {
+    collections: CollectionsWidget;
+  };
   user: Lyovson;
   jobs: {
     tasks: {
@@ -388,6 +391,7 @@ export interface Reference {
     | 'repository'
     | 'tool'
     | 'social'
+    | 'course'
     | 'match'
     | 'other';
   /**
@@ -546,6 +550,40 @@ export interface Reference {
    * Video ID
    */
   videoId?: string | null;
+  /**
+   * Instructor or creator name
+   */
+  instructor?: string | null;
+  /**
+   * Platform offering the course
+   */
+  coursePlatform?:
+    | (
+        | 'udemy'
+        | 'coursera'
+        | 'frontendMasters'
+        | 'masterclass'
+        | 'pluralsight'
+        | 'edx'
+        | 'skillshare'
+        | 'linkedinLearning'
+        | 'egghead'
+        | 'youtube'
+        | 'other'
+      )
+    | null;
+  /**
+   * Total duration (e.g. '12h 30m', '8 weeks')
+   */
+  courseDuration?: string | null;
+  /**
+   * Difficulty level
+   */
+  courseLevel?: ('beginner' | 'intermediate' | 'advanced') | null;
+  /**
+   * URL to the course
+   */
+  courseUrl?: string | null;
   /**
    * Additional links (purchase, streaming, etc.)
    */
@@ -880,7 +918,7 @@ export interface Lyovson {
   collection: 'lyovsons';
 }
 /**
- * Log reading, watching, listening, playing, and visiting activities
+ * Log reading, watching, listening, playing, visiting, and learning activities
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "activities".
@@ -894,7 +932,7 @@ export interface Activity {
   /**
    * Type of activity
    */
-  activityType: 'read' | 'watch' | 'listen' | 'play' | 'visit';
+  activityType: 'read' | 'watch' | 'listen' | 'play' | 'visit' | 'learn';
   /**
    * Who participated in this activity?
    */
@@ -1684,6 +1722,11 @@ export interface ReferencesSelect<T extends boolean = true> {
   publishedAt?: T;
   platform?: T;
   videoId?: T;
+  instructor?: T;
+  coursePlatform?: T;
+  courseDuration?: T;
+  courseLevel?: T;
+  courseUrl?: T;
   links?:
     | T
     | {
@@ -2039,6 +2082,16 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collections_widget".
+ */
+export interface CollectionsWidget {
+  data?: {
+    [k: string]: unknown;
+  };
+  width: 'full';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
