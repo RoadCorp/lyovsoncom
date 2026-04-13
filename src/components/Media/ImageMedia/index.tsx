@@ -4,7 +4,6 @@ import type { StaticImageData } from "next/image";
 import NextImage from "next/image";
 import type React from "react";
 import { cn } from "@/lib/utils";
-import { getClientSideURL } from "@/utilities/getURL";
 import type { Props as MediaProps } from "../types";
 
 // A base64 encoded image to use as a placeholder while the image is loading
@@ -44,7 +43,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
     height = fullHeight || 0;
     alt = altFromResource || "";
 
-    src = `${getClientSideURL()}${url}`;
+    src = url || "";
   }
 
   // Use eager loading for priority images (e.g., hero images) to improve LCP

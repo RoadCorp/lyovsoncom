@@ -1,8 +1,8 @@
-import configPromise from "@payload-config";
 import { cacheLife, cacheTag } from "next/cache";
 import type { PaginatedDocs } from "payload";
-import { getPayload } from "payload";
 import type { Post } from "@/payload-types";
+import { publishedPostsWhere } from "@/utilities/content-queries";
+import { getPayloadClient } from "@/utilities/payload-client";
 
 export async function getPost(slug: string): Promise<Post | null> {
   "use cache";
@@ -10,10 +10,11 @@ export async function getPost(slug: string): Promise<Post | null> {
   cacheTag(`post-${slug}`);
   cacheLife("posts");
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
   const response = await payload.find({
     collection: "posts",
     where: {
+      ...publishedPostsWhere(),
       slug: {
         equals: slug,
       },
@@ -35,12 +36,13 @@ export async function getPostByProjectAndSlug(
   cacheTag(`project-${projectSlug}`);
   cacheLife("posts");
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
   const response = await payload.find({
     collection: "posts",
     depth: 2,
     where: {
       AND: [
+        publishedPostsWhere(),
         {
           slug: {
             equals: slug,
@@ -64,17 +66,13 @@ export async function getLatestPosts(limit = 12): Promise<PaginatedDocs<Post>> {
   cacheTag("homepage");
   cacheLife("posts");
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "posts",
     depth: 2,
     limit,
     sort: "-publishedAt",
-    where: {
-      _status: {
-        equals: "published",
-      },
-    },
+    where: publishedPostsWhere(),
   });
 
   return {
@@ -92,18 +90,14 @@ export async function getPaginatedPosts(
   cacheTag(`posts-page-${pageNumber}`);
   cacheLife("posts");
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "posts",
     depth: 2,
     limit,
     page: pageNumber,
     sort: "-publishedAt",
-    where: {
-      _status: {
-        equals: "published",
-      },
-    },
+    where: publishedPostsWhere(),
   });
 
   return {
@@ -118,13 +112,9 @@ export async function getPostCount() {
   cacheTag("post-count");
   cacheLife("posts");
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
   return await payload.count({
     collection: "posts",
-    where: {
-      _status: {
-        equals: "published",
-      },
-    },
+    where: publishedPostsWhere(),
   });
 }

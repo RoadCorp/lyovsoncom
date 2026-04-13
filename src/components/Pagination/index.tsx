@@ -1,72 +1,28 @@
-"use client";
-
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { type ReactNode, useMemo } from "react";
-
+import type { ReactNode } from "react";
+import { AppLink } from "@/components/AppLink";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { cn } from "@/lib/utils";
+import { transitionTypes } from "@/utilities/routes";
 
 interface PaginationProps {
-  basePath?: string;
   className?: string;
-  firstPagePath?: string;
+  getPageHref: (pageNumber: number) => string;
   page: number;
   totalPages: number;
 }
 
+interface GridCell {
+  ariaLabel?: string;
+  disabled: boolean;
+  isCurrent: boolean;
+  key: string;
+  label: number | null | ReactNode;
+  target: number;
+}
+
 const MAX_WINDOW_SIZE = 7;
 const WINDOW_RADIUS = Math.floor(MAX_WINDOW_SIZE / 2);
-
-const buildWindow = (page: number, totalPages: number): (number | null)[] => {
-  if (totalPages <= 0) {
-    return new Array(MAX_WINDOW_SIZE).fill(null);
-  }
-
-  if (totalPages <= MAX_WINDOW_SIZE) {
-    const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
-    return [...pages, ...new Array(MAX_WINDOW_SIZE - pages.length).fill(null)];
-  }
-
-  let start = page - WINDOW_RADIUS;
-  if (start < 1) {
-    start = 1;
-  }
-
-  let end = start + (MAX_WINDOW_SIZE - 1);
-
-  if (end > totalPages) {
-    end = totalPages;
-    start = Math.max(1, end - (MAX_WINDOW_SIZE - 1));
-  }
-
-  const pages: number[] = [];
-  for (let current = start; current <= end; current += 1) {
-    pages.push(current);
-  }
-
-  return pages;
-};
-
-const buildHref = (
-  page: number,
-  basePath?: string,
-  firstPagePath?: string
-): string => {
-  if (page <= 1) {
-    return firstPagePath ?? basePath ?? "/posts";
-  }
-
-  if (basePath) {
-    // If basePath is exactly "/page" or ends with "/page", use it directly
-    if (basePath === "/page" || basePath.endsWith("/page")) {
-      return `${basePath}/${page}`;
-    }
-    return `${basePath}/page/${page}`;
-  }
-
-  return `/posts/page/${page}`;
-};
 
 const cellPositions = [
   "col-start-1 col-end-2 row-start-1 row-end-2",
@@ -80,44 +36,58 @@ const cellPositions = [
   "col-start-3 col-end-4 row-start-3 row-end-4",
 ];
 
-export const Pagination = ({
+function buildWindow(page: number, totalPages: number): Array<number | null> {
+  if (totalPages <= 0) {
+    return new Array(MAX_WINDOW_SIZE).fill(null);
+  }
+
+  if (totalPages <= MAX_WINDOW_SIZE) {
+    const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
+    return [...pages, ...new Array(MAX_WINDOW_SIZE - pages.length).fill(null)];
+  }
+
+  let start = Math.max(1, page - WINDOW_RADIUS);
+  let end = start + MAX_WINDOW_SIZE - 1;
+
+  if (end > totalPages) {
+    end = totalPages;
+    start = Math.max(1, end - (MAX_WINDOW_SIZE - 1));
+  }
+
+  const pages: number[] = [];
+  for (let current = start; current <= end; current += 1) {
+    pages.push(current);
+  }
+
+  return pages;
+}
+
+function renderDisabledCell(cell: GridCell) {
+  if (typeof cell.label === "number") {
+    return (
+      <span aria-current={cell.isCurrent ? "page" : undefined}>
+        {cell.label}
+      </span>
+    );
+  }
+
+  return cell.label;
+}
+
+export function Pagination({
   className,
+  getPageHref,
   page,
   totalPages,
-  basePath,
-  firstPagePath,
-}: PaginationProps) => {
-  const router = useRouter();
+}: PaginationProps) {
+  const windowCells = [...buildWindow(page, totalPages)];
 
-  const windowPages = useMemo(
-    () => buildWindow(page, totalPages),
-    [page, totalPages]
-  );
-
-  const hasPrev = page > 1;
-  const hasNext = page < totalPages;
-
-  const navigateTo = (target: number) => {
-    if (target < 1 || target > totalPages || target === page) {
-      return;
-    }
-
-    router.push(buildHref(target, basePath, firstPagePath));
-  };
-
-  const windowCells = [...windowPages];
   while (windowCells.length < MAX_WINDOW_SIZE) {
     windowCells.push(null);
   }
 
-  interface GridCell {
-    ariaLabel?: string;
-    disabled: boolean;
-    isCurrent: boolean;
-    key: string;
-    label: number | null | ReactNode;
-    target: number;
-  }
+  const hasPrev = page > 1;
+  const hasNext = page < totalPages;
 
   const gridCells: GridCell[] = [
     {
@@ -125,18 +95,17 @@ export const Pagination = ({
       label: <ChevronsLeft aria-hidden="true" className="h-5 w-5" />,
       ariaLabel: "Go to first page",
       disabled: !hasPrev,
-      target: 1,
       isCurrent: false,
+      target: 1,
     },
     ...windowCells.map((value, index) => {
       if (value == null) {
         return {
           key: `empty-${index}`,
           label: null,
-          ariaLabel: undefined,
           disabled: true,
-          target: page,
           isCurrent: false,
+          target: page,
         };
       }
 
@@ -145,8 +114,8 @@ export const Pagination = ({
         label: value,
         ariaLabel: `Go to page ${value}`,
         disabled: value === page,
-        target: value,
         isCurrent: value === page,
+        target: value,
       };
     }),
     {
@@ -154,8 +123,8 @@ export const Pagination = ({
       label: <ChevronsRight aria-hidden="true" className="h-5 w-5" />,
       ariaLabel: "Go to next page",
       disabled: !hasNext,
-      target: page + 1,
       isCurrent: false,
+      target: page + 1,
     },
   ];
 
@@ -163,9 +132,8 @@ export const Pagination = ({
     <div className={cn("mx-auto flex justify-center", className)}>
       <GridCard interactive={false}>
         {gridCells.map((cell, index) => {
-          const positionClass = cellPositions[index];
-          const isDisabled = Boolean(cell.disabled);
           const isNumeric = typeof cell.label === "number";
+          const positionClass = cellPositions[index];
 
           if (!cell.label) {
             return (
@@ -181,25 +149,38 @@ export const Pagination = ({
 
           return (
             <GridCardSection
-              aria-current={cell.isCurrent ? "page" : undefined}
-              aria-label={cell.ariaLabel}
               className={cn(
                 positionClass,
                 "flex h-full w-full items-center justify-center text-lg",
                 isNumeric && "font-semibold",
                 cell.isCurrent && "glass-premium",
-                isDisabled && !cell.isCurrent && "opacity-45"
+                cell.disabled && !cell.isCurrent && "opacity-45"
               )}
-              disabled={isDisabled}
               key={cell.key}
-              mode="button"
-              onClick={isDisabled ? undefined : () => navigateTo(cell.target)}
             >
-              {isNumeric ? <span>{cell.label}</span> : cell.label}
+              {cell.disabled ? (
+                renderDisabledCell(cell)
+              ) : (
+                <AppLink
+                  aria-label={cell.ariaLabel}
+                  className="relative flex h-full w-full items-center justify-center"
+                  href={getPageHref(cell.target)}
+                  pendingHintClassName="absolute right-2 top-2"
+                  prefetch={null}
+                  showPendingHint
+                  transitionTypes={[
+                    cell.target < page
+                      ? transitionTypes.paginationPrev
+                      : transitionTypes.paginationNext,
+                  ]}
+                >
+                  {cell.label}
+                </AppLink>
+              )}
             </GridCardSection>
           );
         })}
       </GridCard>
     </div>
   );
-};
+}

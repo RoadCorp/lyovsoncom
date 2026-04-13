@@ -1,12 +1,10 @@
-export const LYOVSON_ITEMS_PER_PAGE = 25;
-export const MAX_INDEXED_PAGE = 3;
+import { parsePageNumber } from "@/utilities/archive";
 
-export function getValidPageNumber(pageNumber: string): number | null {
-  const parsedPage = Number(pageNumber);
+export {
+  LYOVSON_ITEMS_PER_PAGE,
+  MAX_INDEXED_PAGE,
+} from "@/utilities/archive";
 
-  if (!Number.isInteger(parsedPage) || parsedPage < 1) {
-    return null;
-  }
-
-  return parsedPage;
+export function getValidPageNumber(pageNumber: string) {
+  return parsePageNumber(pageNumber);
 }

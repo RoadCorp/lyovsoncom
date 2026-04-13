@@ -1,7 +1,7 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
-
+import { AppLink } from "@/components/AppLink";
 import { cn } from "@/lib/utils";
+import { transitionTypes } from "@/utilities/routes";
 
 import { GridCardSection } from "../section";
 
@@ -38,12 +38,16 @@ export const GridCardNavItem = ({
   if (props.variant === "link") {
     return (
       <GridCardSection className={cn("group", className)}>
-        <Link
+        <AppLink
           className="glass-text flex h-full w-full flex-col items-center justify-center gap-2 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]"
           href={props.href}
+          pendingHintClassName="absolute top-2 right-2"
+          prefetch={null}
+          showPendingHint={true}
+          transitionTypes={[transitionTypes.drillIn]}
         >
           {children}
-        </Link>
+        </AppLink>
       </GridCardSection>
     );
   }

@@ -116,14 +116,8 @@ function getReviews(activity: Activity) {
 }
 
 export default async function ActivityPage({ params: paramsPromise }: Args) {
-  "use cache";
-
   const { date, slug } = await paramsPromise;
   const fullPath = `${date}/${slug}`;
-
-  cacheTag("activities");
-  cacheTag(`activity-${fullPath}`);
-  cacheLife("activities");
 
   const activity = await getActivityByDateAndSlug(date, slug);
   if (!activity) {
@@ -314,14 +308,8 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params: paramsPromise,
 }: Args): Promise<Metadata> {
-  "use cache";
-
   const { date, slug } = await paramsPromise;
   const fullPath = `${date}/${slug}`;
-
-  cacheTag("activities");
-  cacheTag(`activity-${fullPath}`);
-  cacheLife("activities");
 
   const activity = await getActivityByDateAndSlug(date, slug);
   if (!activity) {

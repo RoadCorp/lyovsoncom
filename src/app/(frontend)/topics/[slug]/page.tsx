@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
-
 import { CollectionArchive } from "@/components/CollectionArchive";
-import { SkeletonGrid } from "@/components/grid/skeleton";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
 import { ensureStaticParams } from "@/utilities/ensureStaticParams";
@@ -15,6 +12,13 @@ import {
 import { getAllTopics, getTopic } from "@/utilities/get-topic";
 import { getTopicPosts } from "@/utilities/get-topic-posts";
 import { getServerSideURL } from "@/utilities/getURL";
+import {
+  absoluteUrl,
+  homeRoute,
+  postUrl,
+  topicPageRoute,
+  topicRoute,
+} from "@/utilities/routes";
 
 interface PageProps {
   params: Promise<{
@@ -24,19 +28,14 @@ interface PageProps {
 
 export async function generateStaticParams() {
   "use cache";
+
   cacheTag("topics");
-  cacheLife("static"); // Build-time data doesn't change often
+  cacheLife("static");
 
   const topicsResponse = await getAllTopics();
 
-  if (!topicsResponse) {
-    return ensureStaticParams([], { slug: "__placeholder__" });
-  }
-
-  const { docs } = topicsResponse;
-
   return ensureStaticParams(
-    docs.map(({ slug }) => ({
+    topicsResponse.docs.map(({ slug }) => ({
       slug,
     })),
     { slug: "__placeholder__" }
@@ -44,47 +43,34 @@ export async function generateStaticParams() {
 }
 
 export default async function Page({ params: paramsPromise }: PageProps) {
-  "use cache";
-
   const { slug } = await paramsPromise;
 
-  // Add cache tags for this specific topic
-  cacheTag("posts");
-  cacheTag("topics");
-  cacheTag(`topic-${slug}`);
-  cacheLife("posts");
-
-  // Get topic for metadata
   const topic = await getTopic(slug);
-
   if (!topic) {
     return notFound();
   }
 
-  const topicName = topic.name || slug;
-
   const response = await getTopicPosts(slug);
-
   if (!response) {
     return notFound();
   }
 
-  const { docs: posts, totalPages, page } = response;
+  const topicName = topic.name || slug;
+  const { docs: posts, page, totalDocs, totalPages } = response;
+
   const collectionPageSchema = generateCollectionPageSchema({
     name: topicName,
     description: topic.description || `Posts about ${topicName}`,
-    url: `${getServerSideURL()}/topics/${slug}`,
-    itemCount: response.totalDocs,
+    url: absoluteUrl(topicRoute(slug)),
+    itemCount: totalDocs,
     items: posts
       .filter((post) => post.slug)
-      .map((post) => ({
-        url: `${getServerSideURL()}/posts/${post.slug}`,
-      })),
+      .map((post) => ({ url: postUrl(post.slug as string) })),
   });
 
   const breadcrumbSchema = generateBreadcrumbSchema([
-    { name: "Home", url: getServerSideURL() },
-    { name: topicName },
+    { name: "Home", url: absoluteUrl(homeRoute()) },
+    { name: topicName, url: absoluteUrl(topicRoute(slug)) },
   ]);
 
   return (
@@ -92,18 +78,14 @@ export default async function Page({ params: paramsPromise }: PageProps) {
       <h1 className="sr-only">{topicName}</h1>
       <JsonLd data={collectionPageSchema} />
       <JsonLd data={breadcrumbSchema} />
-
-      <Suspense fallback={<SkeletonGrid />}>
-        <CollectionArchive posts={posts} />
-      </Suspense>
-      {totalPages > 1 && page && (
+      <CollectionArchive posts={posts} />
+      {totalPages > 1 && page ? (
         <Pagination
-          basePath={`/topics/${slug}/page`}
-          firstPagePath={`/topics/${slug}`}
+          getPageHref={(pageNumber) => topicPageRoute(slug, pageNumber)}
           page={page}
           totalPages={totalPages}
         />
-      )}
+      ) : null}
     </>
   );
 }
@@ -111,14 +93,7 @@ export default async function Page({ params: paramsPromise }: PageProps) {
 export async function generateMetadata({
   params: paramsPromise,
 }: PageProps): Promise<Metadata> {
-  "use cache";
-
   const { slug } = await paramsPromise;
-
-  // Add cache tags for metadata
-  cacheTag("topics");
-  cacheTag(`topic-${slug}`);
-  cacheLife("topics");
 
   const topic = await getTopic(slug);
 
@@ -131,21 +106,21 @@ export async function generateMetadata({
   }
 
   const topicName = topic.name || slug;
-  const topicDescription = topic.description || `Posts about ${topicName}`;
+  const description = topic.description || `Posts about ${topicName}`;
 
   return {
     metadataBase: new URL(getServerSideURL()),
     title: `${topicName} | Lyóvson.com`,
-    description: topicDescription,
+    description,
     alternates: {
-      canonical: `/topics/${slug}`,
+      canonical: topicRoute(slug),
     },
     openGraph: {
       siteName: "Lyóvson.com",
       title: `${topicName} | Lyóvson.com`,
-      description: topicDescription,
+      description,
       type: "website",
-      url: `/topics/${slug}`,
+      url: topicRoute(slug),
       images: [
         {
           url: "/og-image.png",
@@ -158,7 +133,7 @@ export async function generateMetadata({
     twitter: {
       card: "summary_large_image",
       title: `${topicName} | Lyóvson.com`,
-      description: topicDescription,
+      description,
       creator: "@lyovson",
       site: "@lyovson",
       images: [

@@ -17,6 +17,7 @@ import type { Post } from "@/payload-types";
 import { beforeSyncWithSearch } from "@/search/beforeSync";
 import { searchFields } from "@/search/fieldOverrides";
 import { getServerSideURL } from "@/utilities/getURL";
+import { postUrl } from "@/utilities/routes";
 
 const generateTitle: GenerateTitle<Post> = ({ doc }) => {
   return doc?.title && typeof doc?.project === "object"
@@ -27,7 +28,7 @@ const generateTitle: GenerateTitle<Post> = ({ doc }) => {
 const generateURL: GenerateURL<Post> = ({ doc }) => {
   const url = getServerSideURL();
 
-  return doc?.slug ? `${url}/${doc.slug}` : url;
+  return doc?.slug ? postUrl(doc.slug) : url;
 };
 
 export const plugins: Plugin[] = [

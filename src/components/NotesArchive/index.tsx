@@ -1,5 +1,5 @@
 import type React from "react";
-import { GridCardNoteFull } from "@/components/grid";
+import { ArchiveItems } from "@/components/ArchiveItems";
 import type { Note } from "@/payload-types";
 
 export interface Props {
@@ -10,22 +10,12 @@ export const NotesArchive: React.FC<Props> = (props) => {
   const { notes } = props;
 
   return (
-    <>
-      {notes?.map((note, index) => {
-        if (typeof note === "object" && note !== null) {
-          return (
-            <GridCardNoteFull
-              key={note.slug}
-              note={note}
-              {...(index === 0 && {
-                priority: true,
-              })}
-            />
-          );
-        }
-
-        return null;
-      })}
-    </>
+    <ArchiveItems
+      items={notes.flatMap((note) =>
+        typeof note === "object" && note !== null
+          ? [{ type: "note" as const, data: note }]
+          : []
+      )}
+    />
   );
 };

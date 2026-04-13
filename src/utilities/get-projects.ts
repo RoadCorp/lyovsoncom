@@ -1,14 +1,13 @@
-import configPromise from "@payload-config";
 import { cacheLife, cacheTag } from "next/cache";
-import { getPayload } from "payload";
 import type { Project } from "@/payload-types";
+import { getPayloadClient } from "@/utilities/payload-client";
 
 export async function getProjects(): Promise<Project[] | null> {
   "use cache";
   cacheTag("projects");
   cacheLife("projects");
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
 
   const projects = await payload.find({
     collection: "projects",

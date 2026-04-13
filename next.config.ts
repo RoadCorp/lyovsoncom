@@ -1,6 +1,5 @@
 import { withPayload } from "@payloadcms/next/withPayload";
 import type { NextConfig } from "next";
-// import withSerwistInit from '@serwist/next'
 
 import redirects from "./redirects.js";
 
@@ -42,6 +41,7 @@ const NEXT_PUBLIC_SERVER_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
+  typedRoutes: true,
   images: {
     remotePatterns: [
       ...[NEXT_PUBLIC_SERVER_URL].map((item) => {
@@ -239,12 +239,15 @@ const nextConfig: NextConfig = {
     browserToTerminal: true,
   },
   experimental: {
+    appNewScrollHandler: true,
+    cachedNavigations: true,
     // Needed when using multiple root layouts so unmatched routes don't fall back
     // to the default framework 404 metadata pipeline.
     globalNotFound: true,
 
     // Enable Turbopack file system caching for faster builds (stores compiler artifacts between runs)
     turbopackFileSystemCacheForDev: true,
+    viewTransition: true,
   },
   // Turbopack is now the default bundler for both dev and prod in Next.js 16
   turbopack: {

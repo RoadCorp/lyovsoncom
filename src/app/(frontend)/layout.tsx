@@ -1,6 +1,6 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Mono, IBM_Plex_Sans, IBM_Plex_Serif } from "next/font/google";
+import localFont from "next/font/local";
 import { draftMode } from "next/headers";
 import Script from "next/script";
 import type React from "react";
@@ -10,13 +10,29 @@ import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import { Providers } from "@/providers";
 import { getServerSideURL } from "@/utilities/getURL";
+import { LEGACY_BROWSER_CLEANUP_SCRIPT } from "@/utilities/legacy-browser-cleanup";
 import { mergeOpenGraph } from "@/utilities/mergeOpenGraph";
 import "./globals.css";
 
-const fontMono = IBM_Plex_Mono({
-  subsets: ["latin"],
+const fontMono = localFont({
+  src: [
+    {
+      path: "./fonts/ibm-plex-mono-400-latin.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./fonts/ibm-plex-mono-500-latin.woff2",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "./fonts/ibm-plex-mono-600-latin.woff2",
+      weight: "600",
+      style: "normal",
+    },
+  ],
   variable: "--font-mono",
-  weight: ["400", "500", "600"],
   display: "swap",
   fallback: [
     "ui-monospace",
@@ -28,13 +44,27 @@ const fontMono = IBM_Plex_Mono({
     "monospace",
   ],
   preload: true,
-  adjustFontFallback: true,
 });
 
-const fontSerif = IBM_Plex_Serif({
-  subsets: ["latin"],
+const fontSerif = localFont({
+  src: [
+    {
+      path: "./fonts/ibm-plex-serif-400-latin.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./fonts/ibm-plex-serif-500-latin.woff2",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "./fonts/ibm-plex-serif-600-latin.woff2",
+      weight: "600",
+      style: "normal",
+    },
+  ],
   variable: "--font-serif",
-  weight: ["400", "500", "600"],
   display: "swap",
   fallback: [
     "ui-serif",
@@ -45,13 +75,27 @@ const fontSerif = IBM_Plex_Serif({
     "serif",
   ],
   preload: true,
-  adjustFontFallback: true,
 });
 
-const fontSans = IBM_Plex_Sans({
-  subsets: ["latin"],
+const fontSans = localFont({
+  src: [
+    {
+      path: "./fonts/ibm-plex-sans-400-latin.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./fonts/ibm-plex-sans-500-latin.woff2",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "./fonts/ibm-plex-sans-600-latin.woff2",
+      weight: "600",
+      style: "normal",
+    },
+  ],
   variable: "--font-sans",
-  weight: ["400", "500", "600"],
   display: "swap",
   fallback: [
     "ui-sans-serif",
@@ -65,7 +109,6 @@ const fontSans = IBM_Plex_Sans({
     "sans-serif",
   ],
   preload: true,
-  adjustFontFallback: true,
 });
 
 export default async function RootLayout({
@@ -84,6 +127,12 @@ export default async function RootLayout({
     >
       <head>
         {/* Icon and manifest links are now managed by the metadata object below */}
+        <script
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: Controlled inline recovery script for legacy localhost service-worker/cache state
+          dangerouslySetInnerHTML={{
+            __html: LEGACY_BROWSER_CLEANUP_SCRIPT,
+          }}
+        />
         {/* Site-wide Organization Schema */}
         <script
           // biome-ignore lint/security/noDangerouslySetInnerHtml: Safe - JSON.stringify on controlled structured data for SEO
@@ -132,12 +181,6 @@ export default async function RootLayout({
           type="application/ld+json"
         />
         {/* Performance hints */}
-        <link href="https://fonts.googleapis.com" rel="preconnect" />
-        <link
-          crossOrigin=""
-          href="https://fonts.gstatic.com"
-          rel="preconnect"
-        />
         <link href="//vercel.live" rel="dns-prefetch" />
         <link href="//vitals.vercel-insights.com" rel="dns-prefetch" />
       </head>

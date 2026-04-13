@@ -1,8 +1,8 @@
-import configPromise from "@payload-config";
 import { cacheLife, cacheTag } from "next/cache";
 import type { PaginatedDocs } from "payload";
-import { getPayload } from "payload";
 import type { Note } from "@/payload-types";
+import { publicNotesWhere } from "@/utilities/content-queries";
+import { getPayloadClient } from "@/utilities/payload-client";
 
 export async function getNote(slug: string): Promise<Note | null> {
   "use cache";
@@ -10,10 +10,11 @@ export async function getNote(slug: string): Promise<Note | null> {
   cacheTag(`note-${slug}`);
   cacheLife("notes");
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
   const response = await payload.find({
     collection: "notes",
     where: {
+      ...publicNotesWhere(),
       slug: {
         equals: slug,
       },
@@ -31,13 +32,14 @@ export async function getLatestNotes(limit = 12): Promise<PaginatedDocs<Note>> {
   cacheTag("homepage");
   cacheLife("notes");
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "notes",
     depth: 2,
     limit,
     overrideAccess: false,
     sort: "-publishedAt",
+    where: publicNotesWhere(),
   });
 
   return {
@@ -55,7 +57,7 @@ export async function getPaginatedNotes(
   cacheTag(`notes-page-${pageNumber}`);
   cacheLife("notes");
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "notes",
     depth: 2,
@@ -63,6 +65,7 @@ export async function getPaginatedNotes(
     page: pageNumber,
     overrideAccess: false,
     sort: "-publishedAt",
+    where: publicNotesWhere(),
   });
 
   return {
@@ -77,9 +80,10 @@ export async function getNoteCount() {
   cacheTag("note-count");
   cacheLife("notes");
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
   return await payload.count({
     collection: "notes",
     overrideAccess: false,
+    where: publicNotesWhere(),
   });
 }

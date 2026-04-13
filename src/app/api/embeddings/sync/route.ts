@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import type { PayloadRequest } from "payload";
 import { getPayload } from "payload";
+import { logApiTelemetry } from "@/utilities/api-telemetry";
 import { authorizeEmbeddingMutation } from "@/utilities/embedding-auth";
 import {
   EMBEDDING_MODEL,
@@ -102,6 +103,7 @@ function buildCollectionSummary(): CollectionSummary {
 
 /* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Batch sync endpoint orchestrates auth, filtering, and per-collection processing */
 export async function POST(request: NextRequest) {
+  const startedAt = Date.now();
   try {
     const payload = await getPayload({ config: configPromise });
     const authResult = await authorizeEmbeddingMutation(request, payload);
@@ -198,21 +200,42 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    return NextResponse.json(
-      {
-        success: true,
-        mode: force ? "force" : "stale-only",
-        model: EMBEDDING_MODEL,
-        dimensions: EMBEDDING_VECTOR_DIMENSIONS,
-        limitPerCollection,
-        collections,
-        summary,
-        totals,
-        timestamp: new Date().toISOString(),
+    const responseBody = {
+      success: true,
+      mode: force ? "force" : "stale-only",
+      model: EMBEDDING_MODEL,
+      dimensions: EMBEDDING_VECTOR_DIMENSIONS,
+      limitPerCollection,
+      collections,
+      summary,
+      totals,
+      timestamp: new Date().toISOString(),
+    };
+
+    logApiTelemetry({
+      route: "api.embeddings.sync.completed",
+      startedAt,
+      summary: {
+        collections: collections.join(","),
+        generated: totals.generated,
+        mode: responseBody.mode,
+        processed: totals.processed,
+        status: 200,
       },
-      { status: 200 }
-    );
+    });
+
+    return NextResponse.json(responseBody, { status: 200 });
   } catch (error) {
+    logApiTelemetry({
+      route: "api.embeddings.sync.failed",
+      startedAt,
+      level: "error",
+      summary: {
+        status: 500,
+        error: error instanceof Error ? error.message : "Unknown error",
+      },
+    });
+
     return NextResponse.json(
       {
         success: false,

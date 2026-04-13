@@ -1,7 +1,8 @@
-import Link from "next/link";
 import type React from "react";
+import { AppLink } from "@/components/AppLink";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { postReferenceRoute } from "@/utilities/routes";
 
 type LinkReferenceValue =
   | number
@@ -27,58 +28,79 @@ interface CMSLinkType {
   url?: string | null;
 }
 
-export const CMSLink: React.FC<CMSLinkType> = (props) => {
-  const {
-    type,
-    appearance = "inline",
-    children,
-    className,
-    label,
-    newTab,
-    reference,
-    size: sizeFromProps,
-    url,
-  } = props;
+function getReferenceSlug(
+  value: LinkReferenceValue | null | undefined
+): string | null {
+  if (!(value && typeof value === "object" && "slug" in value)) {
+    return null;
+  }
 
-  const referenceValue = reference?.value;
-  const referenceSlug =
-    referenceValue &&
-    typeof referenceValue === "object" &&
-    "slug" in referenceValue &&
-    typeof referenceValue.slug === "string"
-      ? referenceValue.slug
+  return typeof value.slug === "string" ? value.slug : null;
+}
+
+export const CMSLink: React.FC<CMSLinkType> = ({
+  type,
+  appearance = "inline",
+  children,
+  className,
+  label,
+  newTab,
+  reference,
+  size: sizeFromProps,
+  url,
+}) => {
+  const referenceHref =
+    type === "reference" && reference
+      ? postReferenceRoute(
+          reference.relationTo,
+          getReferenceSlug(reference.value) || ""
+        )
       : null;
 
-  const href =
-    type === "reference" && reference && referenceSlug
-      ? `/${reference.relationTo}/${referenceSlug}`
-      : url;
-
+  const href = referenceHref || url;
   if (!href) {
     return null;
   }
 
+  const isInternalHref = href.startsWith("/");
   const size = appearance === "link" ? null : sizeFromProps;
   const newTabProps = newTab
-    ? { rel: "noopener noreferrer", target: "_blank" }
+    ? { rel: "noopener noreferrer", target: "_blank" as const }
     : {};
+  const content = (
+    <>
+      {label || null}
+      {children || null}
+    </>
+  );
 
-  /* Ensure we don't break any styles set by richText */
   if (appearance === "inline") {
+    if (referenceHref || isInternalHref) {
+      return (
+        <AppLink className={cn(className)} href={href} {...newTabProps}>
+          {content}
+        </AppLink>
+      );
+    }
+
     return (
-      <Link className={cn(className)} href={href || url || ""} {...newTabProps}>
-        {label && label}
-        {children && children}
-      </Link>
+      <a className={cn(className)} href={href} {...newTabProps}>
+        {content}
+      </a>
     );
   }
 
   return (
     <Button asChild className={className} size={size} variant={appearance}>
-      <Link className={cn(className)} href={href || url || ""} {...newTabProps}>
-        {label && label}
-        {children && children}
-      </Link>
+      {referenceHref || isInternalHref ? (
+        <AppLink className={cn(className)} href={href} {...newTabProps}>
+          {content}
+        </AppLink>
+      ) : (
+        <a className={cn(className)} href={href} {...newTabProps}>
+          {content}
+        </a>
+      )}
     </Button>
   );
 };

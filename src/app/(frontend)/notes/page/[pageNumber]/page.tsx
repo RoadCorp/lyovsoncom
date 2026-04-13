@@ -1,18 +1,25 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next/types";
-import { Suspense } from "react";
-import { SkeletonGrid } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import { NotesArchive } from "@/components/NotesArchive";
 import { Pagination } from "@/components/Pagination";
+import {
+  getPaginatedStaticParams,
+  MAX_INDEXED_PAGE,
+  NOTES_PER_PAGE,
+  parsePageNumber,
+} from "@/utilities/archive";
 import { ensureStaticParams } from "@/utilities/ensureStaticParams";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getNoteCount, getPaginatedNotes } from "@/utilities/get-note";
 import { getServerSideURL } from "@/utilities/getURL";
-
-const NOTES_PER_PAGE = 25;
-const MAX_INDEXED_PAGE = 3;
+import {
+  absoluteUrl,
+  notesPageRoute,
+  notesRoute,
+  noteUrl,
+} from "@/utilities/routes";
 
 interface Args {
   params: Promise<{
@@ -22,35 +29,30 @@ interface Args {
 
 export async function generateStaticParams() {
   "use cache";
+
   cacheTag("notes");
   cacheLife("static");
 
   const { totalDocs } = await getNoteCount();
-  const totalPages = Math.ceil(totalDocs / NOTES_PER_PAGE);
-  const pages: { pageNumber: string }[] = [];
 
-  for (let pageNumber = 2; pageNumber <= totalPages; pageNumber++) {
-    pages.push({ pageNumber: String(pageNumber) });
-  }
-
-  return ensureStaticParams(pages, { pageNumber: "1" });
+  return ensureStaticParams(
+    getPaginatedStaticParams(totalDocs, NOTES_PER_PAGE).map((pageNumber) => ({
+      pageNumber,
+    })),
+    { pageNumber: "__placeholder__" }
+  );
 }
 
 export default async function Page({ params: paramsPromise }: Args) {
-  "use cache";
-
   const { pageNumber } = await paramsPromise;
-  const sanitizedPageNumber = Number(pageNumber);
+  const sanitizedPageNumber = parsePageNumber(pageNumber);
 
-  cacheTag("notes");
-  cacheTag(`notes-page-${pageNumber}`);
-  cacheLife("notes");
-
-  if (!Number.isInteger(sanitizedPageNumber) || sanitizedPageNumber < 1) {
+  if (sanitizedPageNumber == null) {
     notFound();
   }
+
   if (sanitizedPageNumber === 1) {
-    redirect("/notes");
+    redirect(notesRoute());
   }
 
   const response = await getPaginatedNotes(sanitizedPageNumber, NOTES_PER_PAGE);
@@ -59,35 +61,29 @@ export default async function Page({ params: paramsPromise }: Args) {
     return notFound();
   }
 
-  const { docs, totalPages, page } = response;
+  const { docs, page, totalDocs, totalPages } = response;
+
   const collectionPageSchema = generateCollectionPageSchema({
     name: `Notes - Page ${sanitizedPageNumber}`,
     description: `Archive of notes and reflections on page ${sanitizedPageNumber}.`,
-    url: `${getServerSideURL()}/notes/page/${sanitizedPageNumber}`,
-    itemCount: response.totalDocs,
+    url: absoluteUrl(notesPageRoute(sanitizedPageNumber)),
+    itemCount: totalDocs,
     items: docs
       .filter((note) => note.slug)
-      .map((note) => ({
-        url: `${getServerSideURL()}/notes/${note.slug}`,
-      })),
+      .map((note) => ({ url: noteUrl(note.slug as string) })),
   });
 
   return (
     <>
       <JsonLd data={collectionPageSchema} />
-
-      <Suspense fallback={<SkeletonGrid />}>
-        <NotesArchive notes={docs} />
-      </Suspense>
-
-      {totalPages > 1 && page && (
+      <NotesArchive notes={docs} />
+      {totalPages > 1 && page ? (
         <Pagination
-          basePath="/notes/page"
-          firstPagePath="/notes"
+          getPageHref={(pageNumberValue) => notesPageRoute(pageNumberValue)}
           page={page}
           totalPages={totalPages}
         />
-      )}
+      ) : null}
     </>
   );
 }
@@ -95,42 +91,36 @@ export default async function Page({ params: paramsPromise }: Args) {
 export async function generateMetadata({
   params: paramsPromise,
 }: Args): Promise<Metadata> {
-  "use cache";
-
   const { pageNumber } = await paramsPromise;
-  const sanitizedPageNumber = Number(pageNumber);
+  const sanitizedPageNumber = parsePageNumber(pageNumber);
 
-  if (!Number.isInteger(sanitizedPageNumber) || sanitizedPageNumber < 2) {
+  if (sanitizedPageNumber == null || sanitizedPageNumber < 2) {
     return {
-      metadataBase: new URL(getServerSideURL()),
       title: "Not Found | Lyovson.com",
       description: "The requested page could not be found",
     };
   }
 
+  const title = `Notes & Thoughts - Page ${sanitizedPageNumber} | Lyóvson.com`;
+  const description = `Browse quotes, thoughts, and reflections - Page ${sanitizedPageNumber}`;
+
   return {
     metadataBase: new URL(getServerSideURL()),
-    title: `Notes & Thoughts - Page ${sanitizedPageNumber} | Lyóvson.com`,
-    description: `Browse quotes, thoughts, and reflections - Page ${sanitizedPageNumber}`,
+    title,
+    description,
     alternates: {
-      canonical: `/notes/page/${sanitizedPageNumber}`,
-      ...(sanitizedPageNumber > 1 && {
-        prev:
-          sanitizedPageNumber === 2
-            ? "/notes"
-            : `/notes/page/${sanitizedPageNumber - 1}`,
-      }),
+      canonical: notesPageRoute(sanitizedPageNumber),
     },
     openGraph: {
-      title: `Notes & Thoughts - Page ${sanitizedPageNumber} | Lyóvson.com`,
-      description: `Browse quotes, thoughts, and reflections - Page ${sanitizedPageNumber}`,
+      title,
+      description,
       type: "website",
-      url: `/notes/page/${sanitizedPageNumber}`,
+      url: notesPageRoute(sanitizedPageNumber),
     },
     twitter: {
       card: "summary",
-      title: `Notes & Thoughts - Page ${sanitizedPageNumber} | Lyóvson.com`,
-      description: `Browse quotes, thoughts, and reflections - Page ${sanitizedPageNumber}`,
+      title,
+      description,
       site: "@lyovson",
     },
     robots: {

@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import { getPayload } from "payload";
 import type { Activity, Note, Post, Project, Topic } from "@/payload-types";
 import { getActivityPath } from "@/utilities/activity-path";
+import { logApiTelemetry } from "@/utilities/api-telemetry";
 import { authorizeEmbeddingMutation } from "@/utilities/embedding-auth";
 import {
   EMBEDDING_VECTOR_DIMENSIONS,
@@ -22,6 +23,7 @@ const PUBLIC_QUERY_EMBEDDINGS_ENABLED =
 
 /* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Legacy endpoint supports query, item, and bulk embedding modes */
 export async function GET(request: NextRequest) {
+  const startedAt = Date.now();
   const { searchParams } = new URL(request.url);
   const type = searchParams.get("type") || "all"; // 'posts', 'projects', 'all' - defaults to 'all'
   const id = searchParams.get("id"); // specific item ID
@@ -58,6 +60,16 @@ export async function GET(request: NextRequest) {
       }
 
       const { vector, model, dimensions } = await generateEmbedding(query);
+      logApiTelemetry({
+        route: "api.embeddings.query.completed",
+        startedAt,
+        summary: {
+          dimensions,
+          queryLength: query.length,
+          status: 200,
+        },
+      });
+
       return new Response(
         JSON.stringify({
           query,
@@ -262,6 +274,17 @@ export async function GET(request: NextRequest) {
         model,
         timestamp: new Date().toISOString(),
       };
+
+      logApiTelemetry({
+        route: "api.embeddings.item.completed",
+        startedAt,
+        summary: {
+          id: item.id,
+          itemType: type,
+          precomputed: Boolean(item.embedding_vector),
+          status: 200,
+        },
+      });
 
       return new Response(JSON.stringify(result), {
         status: 200,
@@ -540,6 +563,19 @@ export async function GET(request: NextRequest) {
       },
     };
 
+    logApiTelemetry({
+      route: "api.embeddings.bulk.completed",
+      startedAt,
+      summary: {
+        count: response.count,
+        includeContent,
+        includeVector,
+        limit,
+        status: 200,
+        type,
+      },
+    });
+
     return new Response(JSON.stringify(response), {
       status: 200,
       headers: {
@@ -552,7 +588,19 @@ export async function GET(request: NextRequest) {
         "X-Total-Items-With-Embeddings": embeddings.length.toString(),
       },
     });
-  } catch (_error) {
+  } catch (error) {
+    logApiTelemetry({
+      route: "api.embeddings.failed",
+      startedAt,
+      level: "error",
+      summary: {
+        error: error instanceof Error ? error.message : "Unknown error",
+        queryMode: Boolean(query),
+        status: 500,
+        type,
+      },
+    });
+
     return new Response(
       JSON.stringify({
         error: "Failed to generate embeddings",

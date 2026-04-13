@@ -1,17 +1,14 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next/types";
-import { Suspense } from "react";
-import {
-  GridCardActivityFull,
-  GridCardNoteFull,
-  GridCardPostFull,
-  SkeletonGrid,
-} from "@/components/grid";
+import { ArchiveItems } from "@/components/ArchiveItems";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
-import type { Activity, Note, Post } from "@/payload-types";
-import { getActivityPath } from "@/utilities/activity-path";
+import {
+  getPaginatedStaticParams,
+  MAX_INDEXED_PAGE,
+  parsePageNumber,
+} from "@/utilities/archive";
 import { ensureStaticParams } from "@/utilities/ensureStaticParams";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import {
@@ -21,35 +18,17 @@ import {
 import { getLatestNotes, getNoteCount } from "@/utilities/get-note";
 import { getLatestPosts, getPostCount } from "@/utilities/get-post";
 import { getServerSideURL } from "@/utilities/getURL";
+import {
+  getMixedFeedItemUrl,
+  mapActivitiesToMixedFeedItems,
+  mapNotesToMixedFeedItems,
+  mapPostsToMixedFeedItems,
+  sortMixedFeedItems,
+} from "@/utilities/mixed-feed";
+import { absoluteUrl, homepageRoute, homeRoute } from "@/utilities/routes";
 
 const HOMEPAGE_ITEMS_LIMIT = 25;
 const HOMEPAGE_FETCH_BUFFER = 5;
-
-type MixedFeedItem =
-  | { type: "post"; data: Post; timestamp: number }
-  | { type: "note"; data: Note; timestamp: number }
-  | { type: "activity"; data: Activity; timestamp: number };
-
-function getFeedTimestamp(item: {
-  type: "post" | "note" | "activity";
-  data: Post | Note | Activity;
-}): number {
-  let dateValue = "";
-
-  if (item.type === "activity") {
-    const activity = item.data as Activity;
-    dateValue =
-      activity.finishedAt || activity.startedAt || activity.publishedAt || "";
-  } else if (item.type === "note") {
-    const note = item.data as Note;
-    dateValue = note.publishedAt || note.createdAt || "";
-  } else {
-    const post = item.data as Post;
-    dateValue = post.publishedAt || post.createdAt || "";
-  }
-
-  return Date.parse(dateValue) || 0;
-}
 
 interface Args {
   params: Promise<{
@@ -59,6 +38,7 @@ interface Args {
 
 export async function generateStaticParams() {
   "use cache";
+
   cacheTag("homepage");
   cacheTag("posts");
   cacheTag("notes");
@@ -71,153 +51,78 @@ export async function generateStaticParams() {
     { totalDocs: activityCount },
   ] = await Promise.all([getPostCount(), getNoteCount(), getActivityCount()]);
 
-  const totalItems = postCount + noteCount + activityCount;
-  const totalPages = Math.ceil(totalItems / HOMEPAGE_ITEMS_LIMIT);
-  const pages: { pageNumber: string }[] = [];
-
-  for (let pageNumber = 2; pageNumber <= totalPages; pageNumber++) {
-    pages.push({ pageNumber: String(pageNumber) });
-  }
-
-  return ensureStaticParams(pages, { pageNumber: "1" });
+  return ensureStaticParams(
+    getPaginatedStaticParams(
+      postCount + noteCount + activityCount,
+      HOMEPAGE_ITEMS_LIMIT
+    ).map((pageNumber) => ({ pageNumber })),
+    { pageNumber: "__placeholder__" }
+  );
 }
 
 export default async function Page({ params: paramsPromise }: Args) {
-  "use cache";
-
   const { pageNumber } = await paramsPromise;
-  const sanitizedPageNumber = Number(pageNumber);
+  const sanitizedPageNumber = parsePageNumber(pageNumber);
 
-  cacheTag("homepage");
-  cacheTag(`homepage-page-${pageNumber}`);
-  cacheTag("posts");
-  cacheTag("notes");
-  cacheTag("activities");
-  cacheLife("homepage");
-
-  if (!Number.isInteger(sanitizedPageNumber) || sanitizedPageNumber < 1) {
+  if (sanitizedPageNumber == null) {
     notFound();
   }
+
   if (sanitizedPageNumber === 1) {
-    redirect("/");
+    redirect(homeRoute());
   }
 
-  const feedWindowSize = sanitizedPageNumber * HOMEPAGE_ITEMS_LIMIT;
-  const mixedFeedFetchLimit = feedWindowSize + HOMEPAGE_FETCH_BUFFER;
+  const mixedFeedFetchLimit =
+    sanitizedPageNumber * HOMEPAGE_ITEMS_LIMIT + HOMEPAGE_FETCH_BUFFER;
 
-  // Fetch enough items from each collection to build a sorted mixed feed
   const [posts, notes, activities] = await Promise.all([
     getLatestPosts(mixedFeedFetchLimit),
     getLatestNotes(mixedFeedFetchLimit),
     getLatestActivities(mixedFeedFetchLimit),
   ]);
 
-  // Merge and sort by date
-  const mixedItems: MixedFeedItem[] = [
-    ...posts.docs.map((post) => ({
-      type: "post" as const,
-      data: post,
-      timestamp: getFeedTimestamp({ type: "post", data: post }),
-    })),
-    ...notes.docs.map((note) => ({
-      type: "note" as const,
-      data: note,
-      timestamp: getFeedTimestamp({ type: "note", data: note }),
-    })),
-    ...activities.docs.map((activity) => ({
-      type: "activity" as const,
-      data: activity,
-      timestamp: getFeedTimestamp({ type: "activity", data: activity }),
-    })),
-  ];
-
-  mixedItems.sort((a, b) => b.timestamp - a.timestamp);
-
-  // Calculate pagination for the mixed feed
   const totalItems = posts.totalDocs + notes.totalDocs + activities.totalDocs;
   const totalPages = Math.ceil(totalItems / HOMEPAGE_ITEMS_LIMIT);
-  const startIndex = (sanitizedPageNumber - 1) * HOMEPAGE_ITEMS_LIMIT;
-  const endIndex = startIndex + HOMEPAGE_ITEMS_LIMIT;
 
-  // If requested page is beyond available pages, 404
-  if (sanitizedPageNumber > totalPages || sanitizedPageNumber < 1) {
+  if (sanitizedPageNumber > totalPages) {
     notFound();
   }
 
-  // Get the items for this page
-  const pageItems = mixedItems.slice(startIndex, endIndex);
+  const pageItems = sortMixedFeedItems([
+    ...mapPostsToMixedFeedItems(posts.docs),
+    ...mapNotesToMixedFeedItems(notes.docs),
+    ...mapActivitiesToMixedFeedItems(activities.docs),
+  ]).slice(
+    (sanitizedPageNumber - 1) * HOMEPAGE_ITEMS_LIMIT,
+    sanitizedPageNumber * HOMEPAGE_ITEMS_LIMIT
+  );
+
   const collectionPageSchema = generateCollectionPageSchema({
     name: `Latest Posts, Notes, and Activities - Page ${sanitizedPageNumber}`,
     description: `Chronological mixed-content archive page ${sanitizedPageNumber}.`,
-    url: `${getServerSideURL()}/page/${sanitizedPageNumber}`,
+    url: absoluteUrl(homepageRoute(sanitizedPageNumber)),
     itemCount: totalItems,
     items: pageItems
       .map((item) => {
-        if (item.type === "post" && item.data.slug) {
-          return { url: `${getServerSideURL()}/posts/${item.data.slug}` };
-        }
-        if (item.type === "note" && item.data.slug) {
-          return { url: `${getServerSideURL()}/notes/${item.data.slug}` };
-        }
-        if (item.type === "activity") {
-          const path = getActivityPath(item.data);
-          if (path) {
-            return { url: `${getServerSideURL()}${path}` };
-          }
-        }
-        return null;
+        const url = getMixedFeedItemUrl(item);
+        return url ? { url } : null;
       })
-      .filter((item): item is { url: string } => Boolean(item)),
+      .filter((item): item is { url: string } => item !== null),
   });
 
   return (
     <>
       <h1 className="sr-only">
-        Lyóvson.com - Latest Posts, Notes & Activities - Page {pageNumber}
+        Lyóvson.com - Latest Posts, Notes & Activities - Page{" "}
+        {sanitizedPageNumber}
       </h1>
       <JsonLd data={collectionPageSchema} />
-
-      <Suspense fallback={<SkeletonGrid />}>
-        {pageItems.map((item, index) => {
-          if (item.type === "post") {
-            return (
-              <GridCardPostFull
-                key={`post-${item.data.slug}`}
-                post={item.data}
-                {...(index === 0 && { priority: true })}
-              />
-            );
-          }
-          if (item.type === "note") {
-            return (
-              <GridCardNoteFull
-                key={`note-${item.data.slug}`}
-                note={item.data}
-                {...(index === 0 && { priority: true })}
-              />
-            );
-          }
-          if (item.type === "activity") {
-            return (
-              <GridCardActivityFull
-                activity={item.data}
-                key={`activity-${item.data.id}`}
-                {...(index === 0 && { priority: true })}
-              />
-            );
-          }
-          return null;
-        })}
-      </Suspense>
-
-      {totalPages > 1 && (
-        <Pagination
-          basePath="/page"
-          firstPagePath="/"
-          page={sanitizedPageNumber}
-          totalPages={totalPages}
-        />
-      )}
+      <ArchiveItems items={pageItems} />
+      <Pagination
+        getPageHref={(pageNumberValue) => homepageRoute(pageNumberValue)}
+        page={sanitizedPageNumber}
+        totalPages={totalPages}
+      />
     </>
   );
 }
@@ -225,18 +130,17 @@ export default async function Page({ params: paramsPromise }: Args) {
 export async function generateMetadata({
   params: paramsPromise,
 }: Args): Promise<Metadata> {
-  "use cache";
-
   const { pageNumber } = await paramsPromise;
-  const pageNum = Number(pageNumber);
+  const sanitizedPageNumber = parsePageNumber(pageNumber);
 
-  cacheTag("homepage");
-  cacheLife("static");
+  if (sanitizedPageNumber == null || sanitizedPageNumber < 2) {
+    return {
+      title: "Not Found | Lyovson.com",
+      description: "The requested page could not be found",
+    };
+  }
 
-  const isFirstPage = pageNum === 1;
-  const title = isFirstPage
-    ? "Lyóvson.com"
-    : `Lyóvson.com - Page ${pageNumber}`;
+  const title = `Lyóvson.com - Page ${sanitizedPageNumber}`;
 
   return {
     metadataBase: new URL(getServerSideURL()),
@@ -255,17 +159,14 @@ export async function generateMetadata({
       "blog",
     ],
     alternates: {
-      canonical: isFirstPage ? "/" : `/page/${pageNumber}`,
-      ...(pageNum > 1 && {
-        prev: pageNum === 2 ? "/" : `/page/${pageNum - 1}`,
-      }),
+      canonical: homepageRoute(sanitizedPageNumber),
     },
     openGraph: {
       siteName: "Lyóvson.com",
       title,
       description: "Official website of Rafa and Jess Lyóvson",
       type: "website",
-      url: isFirstPage ? "/" : `/page/${pageNumber}`,
+      url: homepageRoute(sanitizedPageNumber),
       images: [
         {
           url: "/og-image.png",
@@ -289,6 +190,11 @@ export async function generateMetadata({
           height: 630,
         },
       ],
+    },
+    robots: {
+      index: sanitizedPageNumber <= MAX_INDEXED_PAGE,
+      follow: true,
+      noarchive: sanitizedPageNumber > 1,
     },
   };
 }

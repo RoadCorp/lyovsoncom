@@ -1,46 +1,29 @@
-"use client";
-
 import clsx from "clsx";
 import Image from "next/image";
-import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
 
 interface Props {
   className?: string;
 }
 
-export const Logo = (props: Props) => {
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  let src =
-    "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-
-  if (mounted) {
-    switch (resolvedTheme) {
-      case "light":
-        src = "/crest-dark-simple.webp";
-        break;
-      case "dark":
-        src = "/crest-light-simple.webp";
-        break;
-      default:
-        src = "/crest-dark-simple.webp";
-        break;
-    }
-  }
-
+export const Logo = ({ className }: Props) => {
   return (
-    <Image
-      alt="Lyovson.com Logo"
-      className={clsx("", props.className)}
-      height={150}
-      src={src}
-      width={150}
-    />
+    <span className={clsx("relative block h-[150px] w-[150px]", className)}>
+      <Image
+        alt="Lyovson.com crest"
+        className="object-contain dark:hidden"
+        fill={true}
+        priority={true}
+        sizes="150px"
+        src="/crest-dark-simple.webp"
+      />
+      <Image
+        alt="Lyovson.com crest"
+        className="hidden object-contain dark:block"
+        fill={true}
+        priority={true}
+        sizes="150px"
+        src="/crest-light-simple.webp"
+      />
+    </span>
   );
 };

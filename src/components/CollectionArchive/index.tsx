@@ -1,5 +1,5 @@
 import type React from "react";
-import { GridCardPostFull } from "@/components/grid";
+import { ArchiveItems } from "@/components/ArchiveItems";
 import type { Post } from "@/payload-types";
 
 export interface Props {
@@ -10,22 +10,12 @@ export const CollectionArchive: React.FC<Props> = (props) => {
   const { posts } = props;
 
   return (
-    <>
-      {posts?.map((result, index) => {
-        if (typeof result === "object" && result !== null) {
-          return (
-            <GridCardPostFull
-              key={result.slug}
-              post={result}
-              {...(index === 0 && {
-                priority: true,
-              })}
-            />
-          );
-        }
-
-        return null;
-      })}
-    </>
+    <ArchiveItems
+      items={posts.flatMap((post) =>
+        typeof post === "object" && post !== null
+          ? [{ type: "post" as const, data: post }]
+          : []
+      )}
+    />
   );
 };

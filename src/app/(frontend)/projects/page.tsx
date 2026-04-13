@@ -1,14 +1,12 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
-import { Suspense } from "react";
-
 import { GridCardProject } from "@/components/grid/card/project";
-import { SkeletonGrid } from "@/components/grid/skeleton";
 import { JsonLd } from "@/components/JsonLd";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getProjects } from "@/utilities/get-projects";
 import { getServerSideURL } from "@/utilities/getURL";
+import { absoluteUrl, projectsRoute, projectUrl } from "@/utilities/routes";
 
 export default async function Page() {
   "use cache";
@@ -22,29 +20,24 @@ export default async function Page() {
     return notFound();
   }
 
-  // Generate CollectionPage schema
   const collectionPageSchema = generateCollectionPageSchema({
     name: "Projects & Research",
     description:
       "Explore projects and research covering technology, programming, design, and creative endeavors.",
-    url: `${getServerSideURL()}/projects`,
+    url: absoluteUrl(projectsRoute()),
     itemCount: response.length,
-    items: response.map((project) => ({
-      url: `${getServerSideURL()}/projects/${project.slug}`,
-    })),
+    items: response
+      .filter((project) => project.slug)
+      .map((project) => ({ url: projectUrl(project.slug as string) })),
   });
 
   return (
     <>
       <h1 className="sr-only">Projects & Research</h1>
-
       <JsonLd data={collectionPageSchema} />
-
-      <Suspense fallback={<SkeletonGrid />}>
-        {response.map((project) => (
-          <GridCardProject key={project.id} project={project} />
-        ))}
-      </Suspense>
+      {response.map((project) => (
+        <GridCardProject key={project.id} project={project} />
+      ))}
     </>
   );
 }
@@ -65,7 +58,7 @@ export const metadata: Metadata = {
     "Jess Lyóvson",
   ],
   alternates: {
-    canonical: "/projects",
+    canonical: projectsRoute(),
   },
   openGraph: {
     siteName: "Lyóvson.com",
@@ -73,7 +66,7 @@ export const metadata: Metadata = {
     description:
       "Explore projects and research covering technology, programming, design, and creative endeavors.",
     type: "website",
-    url: "/projects",
+    url: projectsRoute(),
     images: [
       {
         url: "/og-image.png",

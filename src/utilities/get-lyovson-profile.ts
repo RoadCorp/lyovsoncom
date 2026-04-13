@@ -1,7 +1,6 @@
-import configPromise from "@payload-config";
 import { cacheLife, cacheTag } from "next/cache";
-import { getPayload } from "payload";
 import type { Lyovson } from "@/payload-types";
+import { getPayloadClient } from "@/utilities/payload-client";
 
 export async function getLyovsonProfile(
   username: string
@@ -11,7 +10,7 @@ export async function getLyovsonProfile(
   cacheTag(`lyovson-${username}`);
   cacheLife("authors");
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
 
   const result = await payload.find({
     collection: "lyovsons",

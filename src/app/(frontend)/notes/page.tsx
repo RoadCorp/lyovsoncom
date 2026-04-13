@@ -1,16 +1,19 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
-import { Suspense } from "react";
-import { SkeletonGrid } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import { NotesArchive } from "@/components/NotesArchive";
 import { Pagination } from "@/components/Pagination";
+import { NOTES_PER_PAGE } from "@/utilities/archive";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getLatestNotes } from "@/utilities/get-note";
 import { getServerSideURL } from "@/utilities/getURL";
-
-const NOTES_PER_PAGE = 25;
+import {
+  absoluteUrl,
+  notesPageRoute,
+  notesRoute,
+  noteUrl,
+} from "@/utilities/routes";
 
 export default async function Page() {
   "use cache";
@@ -25,37 +28,31 @@ export default async function Page() {
     return notFound();
   }
 
-  const { docs, totalPages, page, totalDocs } = response;
+  const { docs, page, totalDocs, totalPages } = response;
 
   const collectionPageSchema = generateCollectionPageSchema({
     name: "Notes & Thoughts",
     description:
       "Browse quotes, thoughts, and reflections on books, movies, ideas, and life.",
-    url: `${getServerSideURL()}/notes`,
+    url: absoluteUrl(notesRoute()),
     itemCount: totalDocs,
-    items: docs.map((note) => ({
-      url: `${getServerSideURL()}/notes/${note.slug}`,
-    })),
+    items: docs
+      .filter((note) => note.slug)
+      .map((note) => ({ url: noteUrl(note.slug as string) })),
   });
 
   return (
     <>
       <h1 className="sr-only">All Notes & Thoughts</h1>
-
       <JsonLd data={collectionPageSchema} />
-
-      <Suspense fallback={<SkeletonGrid />}>
-        <NotesArchive notes={docs} />
-      </Suspense>
-
-      {totalPages > 1 && page && (
+      <NotesArchive notes={docs} />
+      {totalPages > 1 && page ? (
         <Pagination
-          basePath="/notes/page"
-          firstPagePath="/notes"
+          getPageHref={(pageNumber) => notesPageRoute(pageNumber)}
           page={page}
           totalPages={totalPages}
         />
-      )}
+      ) : null}
     </>
   );
 }
@@ -66,13 +63,13 @@ export const metadata: Metadata = {
   description:
     "Browse quotes, thoughts, and reflections on books, movies, ideas, and life.",
   alternates: {
-    canonical: "/notes",
+    canonical: notesRoute(),
   },
   openGraph: {
     title: "All Notes & Thoughts | Lyóvson.com",
     description:
       "Browse quotes, thoughts, and reflections on books, movies, ideas, and life.",
-    url: "/notes",
+    url: notesRoute(),
     siteName: "Lyóvson.com",
     type: "website",
   },

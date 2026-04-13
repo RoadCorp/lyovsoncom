@@ -1,15 +1,16 @@
-import { cacheLife, cacheTag } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next/types";
-import { Suspense } from "react";
-import { GridCardEmptyState, SkeletonGrid } from "@/components/grid";
+import { GridCardEmptyState } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
-import { getActivityPath } from "@/utilities/activity-path";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
-import type { LyovsonMixedFeedItem } from "@/utilities/get-lyovson-feed";
 import { getLyovsonFeed } from "@/utilities/get-lyovson-feed";
-import { getServerSideURL } from "@/utilities/getURL";
+import { getMixedFeedItemUrl } from "@/utilities/mixed-feed";
+import {
+  absoluteUrl,
+  lyovsonPageRoute,
+  lyovsonRoute,
+} from "@/utilities/routes";
 import { LyovsonFeedItems } from "../../_components/lyovson-feed-items";
 import {
   getValidPageNumber,
@@ -33,45 +34,16 @@ export async function generateStaticParams() {
   return getLyovsonPaginatedStaticParams("all");
 }
 
-function getLyovsonFeedItemUrl(item: LyovsonMixedFeedItem): string | null {
-  if (item.type === "post" && item.data.slug) {
-    return `${getServerSideURL()}/posts/${item.data.slug}`;
-  }
-
-  if (item.type === "note" && item.data.slug) {
-    return `${getServerSideURL()}/notes/${item.data.slug}`;
-  }
-
-  if (item.type === "activity") {
-    const activityPath = getActivityPath(item.data);
-    if (activityPath) {
-      return `${getServerSideURL()}${activityPath}`;
-    }
-  }
-
-  return null;
-}
-
 export default async function Page({ params: paramsPromise }: Args) {
-  "use cache";
-
   const { lyovson: username, pageNumber } = await paramsPromise;
   const sanitizedPageNumber = getValidPageNumber(pageNumber);
 
-  cacheTag("posts");
-  cacheTag("notes");
-  cacheTag("activities");
-  cacheTag("lyovsons");
-  cacheTag(`lyovson-${username}`);
-  cacheTag(`lyovson-${username}-all-page-${pageNumber}`);
-  cacheLife("feed");
-
-  if (!sanitizedPageNumber) {
+  if (sanitizedPageNumber == null) {
     notFound();
   }
 
   if (sanitizedPageNumber === 1) {
-    redirect(`/${username}`);
+    redirect(lyovsonRoute(username));
   }
 
   const response = await getLyovsonFeed({
@@ -81,27 +53,23 @@ export default async function Page({ params: paramsPromise }: Args) {
     limit: LYOVSON_ITEMS_PER_PAGE,
   });
 
-  if (!response) {
+  if (!response || sanitizedPageNumber > response.totalPages) {
     return notFound();
   }
 
-  if (sanitizedPageNumber > response.totalPages) {
-    return notFound();
-  }
-
-  const { user, items, totalItems, totalPages } = response;
+  const { items, totalItems, totalPages, user } = response;
 
   const collectionPageSchema = generateCollectionPageSchema({
     name: `${user.name} - Feed Page ${sanitizedPageNumber}`,
     description: `Chronological feed page ${sanitizedPageNumber} for ${user.name}.`,
-    url: `${getServerSideURL()}/${username}/page/${sanitizedPageNumber}`,
+    url: absoluteUrl(lyovsonPageRoute(username, sanitizedPageNumber)),
     itemCount: totalItems,
     items: items
       .map((item) => {
-        const itemUrl = getLyovsonFeedItemUrl(item);
-        return itemUrl ? { url: itemUrl } : null;
+        const url = getMixedFeedItemUrl(item);
+        return url ? { url } : null;
       })
-      .filter((item): item is { url: string } => Boolean(item)),
+      .filter((item): item is { url: string } => item !== null),
   });
 
   return (
@@ -109,28 +77,22 @@ export default async function Page({ params: paramsPromise }: Args) {
       <h1 className="sr-only">
         {user.name} feed page {sanitizedPageNumber}
       </h1>
-
       <JsonLd data={collectionPageSchema} />
-
-      <Suspense fallback={<SkeletonGrid />}>
-        {items.length > 0 ? (
-          <LyovsonFeedItems items={items} />
-        ) : (
-          <GridCardEmptyState
-            description={`No items found on page ${sanitizedPageNumber} for ${user.name}.`}
-            title="No Results"
-          />
-        )}
-      </Suspense>
-
-      {totalPages > 1 && (
-        <Pagination
-          basePath={`/${username}/page`}
-          firstPagePath={`/${username}`}
-          page={sanitizedPageNumber}
-          totalPages={totalPages}
+      {items.length > 0 ? (
+        <LyovsonFeedItems items={items} />
+      ) : (
+        <GridCardEmptyState
+          description={`No items found on page ${sanitizedPageNumber} for ${user.name}.`}
+          title="No Results"
         />
       )}
+      <Pagination
+        getPageHref={(pageNumberValue) =>
+          lyovsonPageRoute(username, pageNumberValue)
+        }
+        page={sanitizedPageNumber}
+        totalPages={totalPages}
+      />
     </>
   );
 }
@@ -138,12 +100,10 @@ export default async function Page({ params: paramsPromise }: Args) {
 export async function generateMetadata({
   params: paramsPromise,
 }: Args): Promise<Metadata> {
-  "use cache";
-
   const { lyovson: username, pageNumber } = await paramsPromise;
   const sanitizedPageNumber = getValidPageNumber(pageNumber);
 
-  if (!sanitizedPageNumber || sanitizedPageNumber < 2) {
+  if (sanitizedPageNumber == null || sanitizedPageNumber < 2) {
     return buildLyovsonNotFoundMetadata();
   }
 
@@ -159,27 +119,23 @@ export async function generateMetadata({
   }
 
   const name = response.user.name || username;
-  const title = `${name} Feed - Page ${sanitizedPageNumber}`;
-  const description = `Feed page ${sanitizedPageNumber} for ${name}.`;
-  const prevPath =
-    sanitizedPageNumber === 2
-      ? `/${username}`
-      : `/${username}/page/${sanitizedPageNumber - 1}`;
-  const nextPath =
-    sanitizedPageNumber < response.totalPages
-      ? `/${username}/page/${sanitizedPageNumber + 1}`
-      : undefined;
 
   return buildLyovsonMetadata({
-    title,
-    description,
-    canonicalPath: `/${username}/page/${sanitizedPageNumber}`,
-    prevPath,
-    nextPath,
+    title: `${name} Feed - Page ${sanitizedPageNumber}`,
+    description: `Feed page ${sanitizedPageNumber} for ${name}.`,
+    canonicalPath: lyovsonPageRoute(username, sanitizedPageNumber),
+    prevPath:
+      sanitizedPageNumber === 2
+        ? lyovsonRoute(username)
+        : lyovsonPageRoute(username, sanitizedPageNumber - 1),
+    nextPath:
+      sanitizedPageNumber < response.totalPages
+        ? lyovsonPageRoute(username, sanitizedPageNumber + 1)
+        : undefined,
     robots: {
       index: sanitizedPageNumber <= MAX_INDEXED_PAGE,
       follow: true,
-      noarchive: sanitizedPageNumber > 1,
+      noarchive: true,
     },
   });
 }

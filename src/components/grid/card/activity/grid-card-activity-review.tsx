@@ -1,9 +1,9 @@
 import { Quote, Star, User } from "lucide-react";
-import Link from "next/link";
-
+import { AppLink } from "@/components/AppLink";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { cn } from "@/lib/utils";
 import type { Lyovson } from "@/payload-types";
+import { lyovsonRoute } from "@/utilities/routes";
 
 interface ActivityReview {
   lyovson: number | Lyovson;
@@ -152,9 +152,10 @@ export function GridCardActivityReview({
         }
       >
         {username ? (
-          <Link
+          <AppLink
             className="group block flex flex-col items-center gap-1"
-            href={`/${username}`}
+            href={lyovsonRoute(username)}
+            prefetch={false}
           >
             <User
               aria-hidden="true"
@@ -163,7 +164,7 @@ export function GridCardActivityReview({
             <span className="glass-text-secondary text-xs capitalize transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
               {name.replace(" Lyovson", "")}
             </span>
-          </Link>
+          </AppLink>
         ) : (
           <div className="flex flex-col items-center gap-1">
             <User aria-hidden="true" className="glass-text h-5 w-5" />

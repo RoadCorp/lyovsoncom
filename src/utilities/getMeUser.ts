@@ -1,7 +1,7 @@
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import type { Lyovson } from "@/payload-types";
-import { getClientSideURL } from "./getURL";
+import { getPayloadClient } from "@/utilities/payload-client";
 
 export const getMeUser = async (
   args: { nullUserRedirect?: string; validUserRedirect?: string } = {}
@@ -13,33 +13,34 @@ export const getMeUser = async (
   const cookieStore = await cookies();
   const token = cookieStore.get("payload-token")?.value;
 
-  const meUserReq = await fetch(`${getClientSideURL()}/api/lyovsons/me`, {
-    headers: {
-      Authorization: `JWT ${token}`,
-    },
-  });
-
-  const {
-    user,
-  }: {
-    user: Lyovson;
-  } = await meUserReq.json();
-
-  if (validUserRedirect && meUserReq.ok && user) {
-    redirect(validUserRedirect);
-  }
-
-  if (nullUserRedirect && !(meUserReq.ok && user)) {
-    redirect(nullUserRedirect);
-  }
-
-  // Validate token exists (should be guaranteed by redirects above, but be explicit)
   if (!token) {
+    if (nullUserRedirect) {
+      redirect(nullUserRedirect as never);
+    }
+
     throw new Error("Authentication token not found");
+  }
+
+  const nextHeaders = new Headers(await headers());
+  nextHeaders.set("authorization", `JWT ${token}`);
+
+  const payload = await getPayloadClient();
+  const { user } = await payload.auth({ headers: nextHeaders });
+
+  if (validUserRedirect && user) {
+    redirect(validUserRedirect as never);
+  }
+
+  if (nullUserRedirect && !user) {
+    redirect(nullUserRedirect as never);
+  }
+
+  if (!user) {
+    throw new Error("Authenticated user not found");
   }
 
   return {
     token,
-    user,
+    user: user as Lyovson,
   };
 };

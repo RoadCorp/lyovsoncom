@@ -8,6 +8,15 @@ import {
 } from "lucide-react";
 import { GridCard } from "@/components/grid";
 import { cn } from "@/lib/utils";
+import {
+  lyovsonActivitiesRoute,
+  lyovsonBioRoute,
+  lyovsonContactRoute,
+  lyovsonNotesRoute,
+  lyovsonPortfolioRoute,
+  lyovsonPostsRoute,
+  lyovsonRoute,
+} from "@/utilities/routes";
 import { GridCardNavItem } from "../nav";
 
 interface GridCardLyovsonSectionsProps {
@@ -19,8 +28,6 @@ export function GridCardLyovsonSections({
   username,
   className,
 }: GridCardLyovsonSectionsProps) {
-  const basePath = `/${username}`;
-
   return (
     <GridCard
       className={cn(
@@ -31,7 +38,7 @@ export function GridCardLyovsonSections({
     >
       <GridCardNavItem
         className="col-start-1 col-end-2 row-start-1 row-end-2"
-        href={basePath}
+        href={lyovsonRoute(username)}
         variant="link"
       >
         <LayoutGrid className="h-6 w-6" />
@@ -40,7 +47,7 @@ export function GridCardLyovsonSections({
 
       <GridCardNavItem
         className="col-start-2 col-end-3 row-start-1 row-end-2"
-        href={`${basePath}/posts`}
+        href={lyovsonPostsRoute(username)}
         variant="link"
       >
         <FileText className="h-6 w-6" />
@@ -49,7 +56,7 @@ export function GridCardLyovsonSections({
 
       <GridCardNavItem
         className="col-start-3 col-end-4 row-start-1 row-end-2"
-        href={`${basePath}/notes`}
+        href={lyovsonNotesRoute(username)}
         variant="link"
       >
         <FileText className="h-6 w-6" />
@@ -58,7 +65,7 @@ export function GridCardLyovsonSections({
 
       <GridCardNavItem
         className="col-start-1 col-end-2 row-start-2 row-end-3"
-        href={`${basePath}/activities`}
+        href={lyovsonActivitiesRoute(username)}
         variant="link"
       >
         <Play className="h-6 w-6" />
@@ -67,7 +74,7 @@ export function GridCardLyovsonSections({
 
       <GridCardNavItem
         className="col-start-2 col-end-3 row-start-2 row-end-3"
-        href={`${basePath}/bio`}
+        href={lyovsonBioRoute(username)}
         variant="link"
       >
         <UserRound className="h-6 w-6" />
@@ -76,7 +83,7 @@ export function GridCardLyovsonSections({
 
       <GridCardNavItem
         className="col-start-3 col-end-4 row-start-2 row-end-3"
-        href={`${basePath}/portfolio`}
+        href={lyovsonPortfolioRoute(username)}
         variant="link"
       >
         <BriefcaseBusiness className="h-6 w-6" />
@@ -85,7 +92,7 @@ export function GridCardLyovsonSections({
 
       <GridCardNavItem
         className="col-start-1 col-end-2 row-start-3 row-end-4"
-        href={`${basePath}/contact`}
+        href={lyovsonContactRoute(username)}
         variant="link"
       >
         <Mail className="h-6 w-6" />

@@ -1,13 +1,16 @@
-import { cacheLife, cacheTag } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next/types";
-import { Suspense } from "react";
-import { GridCardEmptyState, SkeletonGrid } from "@/components/grid";
+import { GridCardEmptyState } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getLyovsonFeed } from "@/utilities/get-lyovson-feed";
-import { getServerSideURL } from "@/utilities/getURL";
+import {
+  absoluteUrl,
+  lyovsonNotesPageRoute,
+  lyovsonNotesRoute,
+  noteUrl,
+} from "@/utilities/routes";
 import { LyovsonFeedItems } from "../../../_components/lyovson-feed-items";
 import {
   getValidPageNumber,
@@ -32,23 +35,15 @@ export async function generateStaticParams() {
 }
 
 export default async function Page({ params: paramsPromise }: Args) {
-  "use cache";
-
   const { lyovson: username, pageNumber } = await paramsPromise;
   const sanitizedPageNumber = getValidPageNumber(pageNumber);
 
-  cacheTag("notes");
-  cacheTag("lyovsons");
-  cacheTag(`lyovson-${username}`);
-  cacheTag(`lyovson-${username}-notes-page-${pageNumber}`);
-  cacheLife("notes");
-
-  if (!sanitizedPageNumber) {
+  if (sanitizedPageNumber == null) {
     notFound();
   }
 
   if (sanitizedPageNumber === 1) {
-    redirect(`/${username}/notes`);
+    redirect(lyovsonNotesRoute(username));
   }
 
   const response = await getLyovsonFeed({
@@ -62,21 +57,20 @@ export default async function Page({ params: paramsPromise }: Args) {
     return notFound();
   }
 
-  const { user, items, totalItems, totalPages } = response;
+  const { items, totalItems, totalPages, user } = response;
 
   const collectionPageSchema = generateCollectionPageSchema({
     name: `${user.name} - Notes Page ${sanitizedPageNumber}`,
     description: `Public notes by ${user.name} on page ${sanitizedPageNumber}.`,
-    url: `${getServerSideURL()}/${username}/notes/page/${sanitizedPageNumber}`,
+    url: absoluteUrl(lyovsonNotesPageRoute(username, sanitizedPageNumber)),
     itemCount: totalItems,
     items: items
-      .map((item) => {
-        if (item.type === "note" && item.data.slug) {
-          return { url: `${getServerSideURL()}/notes/${item.data.slug}` };
-        }
-        return null;
-      })
-      .filter((item): item is { url: string } => Boolean(item)),
+      .map((item) =>
+        item.type === "note" && item.data.slug
+          ? { url: noteUrl(item.data.slug) }
+          : null
+      )
+      .filter((item): item is { url: string } => item !== null),
   });
 
   return (
@@ -85,26 +79,21 @@ export default async function Page({ params: paramsPromise }: Args) {
         {user.name} notes page {sanitizedPageNumber}
       </h1>
       <JsonLd data={collectionPageSchema} />
-
-      <Suspense fallback={<SkeletonGrid />}>
-        {items.length > 0 ? (
-          <LyovsonFeedItems items={items} />
-        ) : (
-          <GridCardEmptyState
-            description={`No notes found on page ${sanitizedPageNumber} for ${user.name}.`}
-            title="No Results"
-          />
-        )}
-      </Suspense>
-
-      {totalPages > 1 && (
-        <Pagination
-          basePath={`/${username}/notes/page`}
-          firstPagePath={`/${username}/notes`}
-          page={sanitizedPageNumber}
-          totalPages={totalPages}
+      {items.length > 0 ? (
+        <LyovsonFeedItems items={items} />
+      ) : (
+        <GridCardEmptyState
+          description={`No notes found on page ${sanitizedPageNumber} for ${user.name}.`}
+          title="No Results"
         />
       )}
+      <Pagination
+        getPageHref={(pageNumberValue) =>
+          lyovsonNotesPageRoute(username, pageNumberValue)
+        }
+        page={sanitizedPageNumber}
+        totalPages={totalPages}
+      />
     </>
   );
 }
@@ -115,7 +104,7 @@ export async function generateMetadata({
   const { lyovson: username, pageNumber } = await paramsPromise;
   const sanitizedPageNumber = getValidPageNumber(pageNumber);
 
-  if (!sanitizedPageNumber || sanitizedPageNumber < 2) {
+  if (sanitizedPageNumber == null || sanitizedPageNumber < 2) {
     return buildLyovsonNotFoundMetadata();
   }
 
@@ -131,27 +120,23 @@ export async function generateMetadata({
   }
 
   const name = response.user.name || username;
-  const title = `${name} Notes - Page ${sanitizedPageNumber}`;
-  const description = `Public notes by ${name} on page ${sanitizedPageNumber}.`;
-  const prevPath =
-    sanitizedPageNumber === 2
-      ? `/${username}/notes`
-      : `/${username}/notes/page/${sanitizedPageNumber - 1}`;
-  const nextPath =
-    sanitizedPageNumber < response.totalPages
-      ? `/${username}/notes/page/${sanitizedPageNumber + 1}`
-      : undefined;
 
   return buildLyovsonMetadata({
-    title,
-    description,
-    canonicalPath: `/${username}/notes/page/${sanitizedPageNumber}`,
-    prevPath,
-    nextPath,
+    title: `${name} Notes - Page ${sanitizedPageNumber}`,
+    description: `Public notes by ${name} on page ${sanitizedPageNumber}.`,
+    canonicalPath: lyovsonNotesPageRoute(username, sanitizedPageNumber),
+    prevPath:
+      sanitizedPageNumber === 2
+        ? lyovsonNotesRoute(username)
+        : lyovsonNotesPageRoute(username, sanitizedPageNumber - 1),
+    nextPath:
+      sanitizedPageNumber < response.totalPages
+        ? lyovsonNotesPageRoute(username, sanitizedPageNumber + 1)
+        : undefined,
     robots: {
       index: sanitizedPageNumber <= MAX_INDEXED_PAGE,
       follow: true,
-      noarchive: sanitizedPageNumber > 1,
+      noarchive: true,
     },
   });
 }

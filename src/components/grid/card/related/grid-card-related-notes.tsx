@@ -1,9 +1,10 @@
 import { Brain, Quote } from "lucide-react";
-import Link from "next/link";
+import { AppLink } from "@/components/AppLink";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { cn } from "@/lib/utils";
 import type { Note } from "@/payload-types";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";
+import { noteRoute } from "@/utilities/routes";
 
 const RELATED_NOTE_EXCERPT_MAX = 80;
 const MAX_STAGGER_INDEX = 6;
@@ -39,15 +40,16 @@ export function GridCardRelatedNotes({
         const staggerClass = getStaggerClass(index);
 
         return (
-          <Link
+          <AppLink
             aria-label={`Read related note: ${note.title}`}
             className={cn(
               "group glass-interactive col-start-1 col-end-4",
               rowClass,
               staggerClass
             )}
-            href={`/notes/${note.slug}`}
+            href={noteRoute(note.slug || "unknown")}
             key={note.id}
+            prefetch={false}
           >
             <GridCardSection
               className={"grid h-full grid-cols-3 grid-rows-1 gap-2"}
@@ -79,7 +81,7 @@ export function GridCardRelatedNotes({
                 )}
               </div>
             </GridCardSection>
-          </Link>
+          </AppLink>
         );
       })}
     </GridCard>

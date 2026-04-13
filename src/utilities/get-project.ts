@@ -1,15 +1,14 @@
-import configPromise from "@payload-config";
 import { cacheLife, cacheTag } from "next/cache";
-import { getPayload } from "payload";
 import type { Project } from "@/payload-types";
+import { getPayloadClient } from "@/utilities/payload-client";
 
 export async function getProject(slug: string): Promise<Project | null> {
   "use cache";
   cacheTag("projects");
   cacheTag(`project-${slug}`);
-  cacheLife("static"); // Projects change less frequently
+  cacheLife("static");
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
   const response = await payload.find({
     collection: "projects",
     where: {
@@ -29,9 +28,9 @@ export async function getCachedProjectBySlug(
   "use cache";
   cacheTag("projects");
   cacheTag(`project-${slug}`);
-  cacheLife("static"); // Projects change less frequently
+  cacheLife("static");
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
   const response = await payload.find({
     collection: "projects",
     where: {

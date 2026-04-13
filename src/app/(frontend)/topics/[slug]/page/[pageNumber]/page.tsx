@@ -1,24 +1,33 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next/types";
-import { Suspense } from "react";
 import { CollectionArchive } from "@/components/CollectionArchive";
-import { SkeletonGrid } from "@/components/grid/skeleton";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
+import {
+  getPaginatedStaticParams,
+  MAX_INDEXED_PAGE,
+  parsePageNumber,
+  TOPIC_POSTS_PER_PAGE,
+} from "@/utilities/archive";
 import { ensureStaticParams } from "@/utilities/ensureStaticParams";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getAllTopics, getTopic } from "@/utilities/get-topic";
-import { getPaginatedTopicPosts } from "@/utilities/get-topic-posts";
-import { getServerSideURL } from "@/utilities/getURL";
-
-const POSTS_PER_PAGE = 25;
-const MAX_INDEXED_PAGE = 3;
+import {
+  getPaginatedTopicPosts,
+  getTopicPostCount,
+} from "@/utilities/get-topic-posts";
+import {
+  absoluteUrl,
+  postRoute,
+  topicPageRoute,
+  topicRoute,
+} from "@/utilities/routes";
 
 interface Args {
   params: Promise<{
-    slug: string;
     pageNumber: string;
+    slug: string;
   }>;
 }
 
@@ -28,7 +37,7 @@ export async function generateStaticParams() {
   cacheLife("static");
 
   const topicsResponse = await getAllTopics();
-  const paths: { slug: string; pageNumber: string }[] = [];
+  const paths: { pageNumber: string; slug: string }[] = [];
   let fallbackSlug: string | null = null;
 
   for (const { slug } of topicsResponse.docs) {
@@ -37,40 +46,35 @@ export async function generateStaticParams() {
     }
 
     fallbackSlug ??= slug;
-    const response = await getPaginatedTopicPosts(slug, 1, POSTS_PER_PAGE);
-    const totalPages = response?.totalPages || 0;
 
-    for (let pageNumber = 2; pageNumber <= totalPages; pageNumber++) {
+    const totalPosts = await getTopicPostCount(slug);
+    for (const pageNumber of getPaginatedStaticParams(
+      totalPosts ?? 0,
+      TOPIC_POSTS_PER_PAGE
+    )) {
       paths.push({
         slug,
-        pageNumber: String(pageNumber),
+        pageNumber,
       });
     }
   }
 
   return ensureStaticParams(paths, {
     slug: fallbackSlug || "__placeholder__",
-    pageNumber: fallbackSlug ? "1" : "__placeholder__",
+    pageNumber: "__placeholder__",
   });
 }
 
 export default async function Page({ params: paramsPromise }: Args) {
-  "use cache";
-
   const { slug, pageNumber } = await paramsPromise;
-  const sanitizedPageNumber = Number(pageNumber);
+  const sanitizedPageNumber = parsePageNumber(pageNumber);
 
-  cacheTag("posts");
-  cacheTag("topics");
-  cacheTag(`topic-${slug}`);
-  cacheTag(`topic-${slug}-page-${pageNumber}`);
-  cacheLife("posts");
-
-  if (!Number.isInteger(sanitizedPageNumber) || sanitizedPageNumber < 1) {
+  if (sanitizedPageNumber == null) {
     return notFound();
   }
+
   if (sanitizedPageNumber === 1) {
-    redirect(`/topics/${slug}`);
+    redirect(topicRoute(slug));
   }
 
   const topic = await getTopic(slug);
@@ -81,44 +85,43 @@ export default async function Page({ params: paramsPromise }: Args) {
   const response = await getPaginatedTopicPosts(
     slug,
     sanitizedPageNumber,
-    POSTS_PER_PAGE
+    TOPIC_POSTS_PER_PAGE
   );
 
   if (!response) {
     return notFound();
   }
 
-  const { docs: posts, totalPages, page } = response;
+  const { docs: posts, page, totalPages } = response;
   const topicName = topic.name || slug;
+
   const collectionPageSchema = generateCollectionPageSchema({
     name: `${topicName} - Page ${sanitizedPageNumber}`,
     description:
       topic.description ||
       `Archive of posts about ${topicName} on page ${sanitizedPageNumber}.`,
-    url: `${getServerSideURL()}/topics/${slug}/page/${sanitizedPageNumber}`,
+    url: absoluteUrl(topicPageRoute(slug, sanitizedPageNumber)),
     itemCount: response.totalDocs,
     items: posts
       .filter((post) => post.slug)
       .map((post) => ({
-        url: `${getServerSideURL()}/posts/${post.slug}`,
+        url: absoluteUrl(postRoute(post.slug as string)),
       })),
   });
 
   return (
     <>
       <JsonLd data={collectionPageSchema} />
-
-      <Suspense fallback={<SkeletonGrid />}>
-        <CollectionArchive posts={posts} />
-      </Suspense>
-      {totalPages > 1 && page && (
+      <CollectionArchive posts={posts} />
+      {totalPages > 1 && page ? (
         <Pagination
-          basePath={`/topics/${slug}/page`}
-          firstPagePath={`/topics/${slug}`}
+          getPageHref={(pageNumberValue) =>
+            topicPageRoute(slug, pageNumberValue)
+          }
           page={page}
           totalPages={totalPages}
         />
-      )}
+      ) : null}
     </>
   );
 }
@@ -126,19 +129,11 @@ export default async function Page({ params: paramsPromise }: Args) {
 export async function generateMetadata({
   params: paramsPromise,
 }: Args): Promise<Metadata> {
-  "use cache";
-
   const { slug, pageNumber } = await paramsPromise;
-  const sanitizedPageNumber = Number(pageNumber);
+  const sanitizedPageNumber = parsePageNumber(pageNumber);
 
-  cacheTag("topics");
-  cacheTag(`topic-${slug}`);
-  cacheTag(`topic-${slug}-page-${pageNumber}`);
-  cacheLife("topics");
-
-  if (!Number.isInteger(sanitizedPageNumber) || sanitizedPageNumber < 2) {
+  if (sanitizedPageNumber == null || sanitizedPageNumber < 2) {
     return {
-      metadataBase: new URL(getServerSideURL()),
       title: "Not Found | Lyovson.com",
       description: "The requested page could not be found",
     };
@@ -147,7 +142,6 @@ export async function generateMetadata({
   const topic = await getTopic(slug);
   if (!topic) {
     return {
-      metadataBase: new URL(getServerSideURL()),
       title: "Topic Not Found | Lyovson.com",
       description: "The requested topic could not be found",
     };
@@ -160,24 +154,17 @@ export async function generateMetadata({
   const title = `${topicName} - Page ${sanitizedPageNumber} | Lyóvson.com`;
 
   return {
-    metadataBase: new URL(getServerSideURL()),
     title,
     description,
     alternates: {
-      canonical: `/topics/${slug}/page/${sanitizedPageNumber}`,
-      ...(sanitizedPageNumber > 1 && {
-        prev:
-          sanitizedPageNumber === 2
-            ? `/topics/${slug}`
-            : `/topics/${slug}/page/${sanitizedPageNumber - 1}`,
-      }),
+      canonical: topicPageRoute(slug, sanitizedPageNumber),
     },
     openGraph: {
       siteName: "Lyóvson.com",
       title,
       description,
       type: "website",
-      url: `/topics/${slug}/page/${sanitizedPageNumber}`,
+      url: absoluteUrl(topicPageRoute(slug, sanitizedPageNumber)),
     },
     twitter: {
       card: "summary",

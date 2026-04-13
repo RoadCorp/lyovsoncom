@@ -7,6 +7,13 @@ import {
   Play,
   X,
 } from "lucide-react";
+import {
+  activitiesRoute,
+  lyovsonRoute,
+  notesRoute,
+  postsRoute,
+  projectsRoute,
+} from "@/utilities/routes";
 import { GridCardNavItem } from "./grid-card-nav-item";
 import type { MenuModeType } from "./types";
 
@@ -19,7 +26,7 @@ export const MenuMode = ({
     <>
       <GridCardNavItem
         className="col-start-1 col-end-2 row-start-1 row-end-2"
-        href="/posts"
+        href={postsRoute()}
         variant="link"
       >
         <Newspaper className="h-7 w-7" />
@@ -27,7 +34,7 @@ export const MenuMode = ({
       </GridCardNavItem>
       <GridCardNavItem
         className="col-start-2 col-end-3 row-start-1 row-end-2"
-        href="/notes"
+        href={notesRoute()}
         variant="link"
       >
         <FileText className="h-7 w-7" />
@@ -35,7 +42,7 @@ export const MenuMode = ({
       </GridCardNavItem>
       <GridCardNavItem
         className="col-start-3 col-end-4 row-start-1 row-end-2"
-        href="/activities"
+        href={activitiesRoute()}
         variant="link"
       >
         <Play className="h-7 w-7" />
@@ -43,7 +50,7 @@ export const MenuMode = ({
       </GridCardNavItem>
       <GridCardNavItem
         className="col-start-1 col-end-2 row-start-2 row-end-3"
-        href="/jess"
+        href={lyovsonRoute("jess")}
         variant="link"
       >
         <Flower className="h-7 w-7" />
@@ -51,7 +58,7 @@ export const MenuMode = ({
       </GridCardNavItem>
       <GridCardNavItem
         className="col-start-2 col-end-3 row-start-2 row-end-3"
-        href="/projects"
+        href={projectsRoute()}
         variant="link"
       >
         <BriefcaseBusiness className="h-7 w-7" />
@@ -59,7 +66,7 @@ export const MenuMode = ({
       </GridCardNavItem>
       <GridCardNavItem
         className="col-start-3 col-end-4 row-start-2 row-end-3"
-        href="/rafa"
+        href={lyovsonRoute("rafa")}
         variant="link"
       >
         <Atom className="h-7 w-7" />

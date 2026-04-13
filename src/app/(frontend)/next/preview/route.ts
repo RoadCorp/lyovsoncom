@@ -1,5 +1,6 @@
 import configPromise from "@payload-config";
 import jwt from "jsonwebtoken";
+import type { Route } from "next";
 import { draftMode } from "next/headers";
 import { redirect } from "next/navigation";
 import type { NextRequest } from "next/server";
@@ -95,5 +96,5 @@ export async function GET(req: NextRequest): Promise<Response> {
 
   draft.enable();
 
-  redirect(path);
+  redirect(path as Route);
 }

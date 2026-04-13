@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import type { PayloadRequest } from "payload";
 import { getPayload } from "payload";
+import { logApiTelemetry } from "@/utilities/api-telemetry";
 import {
   generateEmbeddingForActivity,
   generateEmbeddingForNote,
@@ -22,6 +23,7 @@ interface EmbeddingResult {
 
 /* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Endpoint handles validation + auth + multiple collection paths */
 export async function POST(request: NextRequest) {
+  const startedAt = Date.now();
   try {
     const payload = await getPayload({ config: configPromise });
 
@@ -171,26 +173,47 @@ export async function POST(request: NextRequest) {
       recommended_post_ids?: unknown;
     };
 
-    return NextResponse.json(
-      {
-        success: true,
-        message: "Embedding regenerated successfully",
-        model: updatedEmbedding.embedding_model || "unknown",
-        dimensions: updatedEmbedding.embedding_dimensions || 0,
-        recommendationsUpdated: !!(
-          collection === "posts" && updatedEmbedding.recommended_post_ids
-        ),
-      },
-      {
+    const responseBody = {
+      success: true,
+      message: "Embedding regenerated successfully",
+      model: updatedEmbedding.embedding_model || "unknown",
+      dimensions: updatedEmbedding.embedding_dimensions || 0,
+      recommendationsUpdated: !!(
+        collection === "posts" && updatedEmbedding.recommended_post_ids
+      ),
+    };
+
+    logApiTelemetry({
+      route: "api.embeddings.regenerate.completed",
+      startedAt,
+      summary: {
+        collection,
+        dimensions: responseBody.dimensions,
+        id: docId,
+        recommendationsUpdated: responseBody.recommendationsUpdated,
         status: 200,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+      },
+    });
+
+    return NextResponse.json(responseBody, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error";
+
+    logApiTelemetry({
+      route: "api.embeddings.regenerate.failed",
+      startedAt,
+      level: "error",
+      summary: {
+        status: 500,
+        error: errorMessage,
+      },
+    });
 
     return NextResponse.json(
       {

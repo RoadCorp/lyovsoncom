@@ -1,4 +1,5 @@
 import type { CollectionSlug } from "payload";
+import { noteRoute, postRoute } from "@/utilities/routes";
 
 const collectionPrefixMap: Partial<Record<CollectionSlug, string>> = {
   posts: "/posts",
@@ -6,21 +7,16 @@ const collectionPrefixMap: Partial<Record<CollectionSlug, string>> = {
 
 interface Props {
   collection: keyof typeof collectionPrefixMap;
-  project?: unknown;
   slug: string;
 }
 
-export const generatePreviewPath = ({ collection, slug, project }: Props) => {
+export const generatePreviewPath = ({ collection, slug }: Props) => {
   if (collection === "posts") {
-    if (
-      project &&
-      typeof project === "object" &&
-      "slug" in project &&
-      typeof project.slug === "string"
-    ) {
-      return `/${project.slug}/${slug}`;
-    }
-    return `/posts/${slug}`; // fallback if no project
+    return postRoute(slug);
+  }
+
+  if (collection === "notes") {
+    return noteRoute(slug);
   }
 
   return `/${collection}/${slug}`;

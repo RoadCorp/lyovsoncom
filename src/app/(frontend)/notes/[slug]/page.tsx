@@ -1,10 +1,7 @@
-import configPromise from "@payload-config";
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
-import { getPayload } from "payload";
-import { Suspense } from "react";
-
+import { Suspense, ViewTransition } from "react";
 import {
   GridCard,
   GridCardHeroNote,
@@ -13,6 +10,7 @@ import {
   GridCardSection,
 } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
+import { OptionalErrorBoundary } from "@/components/OptionalErrorBoundary";
 import RichText from "@/components/RichText";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
@@ -24,7 +22,12 @@ import {
   generateBreadcrumbSchema,
 } from "@/utilities/generate-json-ld";
 import { getNote } from "@/utilities/get-note";
-import { getServerSideURL } from "@/utilities/getURL";
+import { getPayloadClient } from "@/utilities/payload-client";
+import { absoluteUrl, noteRoute, notesRoute } from "@/utilities/routes";
+import {
+  frontendViewTransitionClasses,
+  getNoteContentTransitionName,
+} from "@/utilities/view-transitions";
 
 const NOTE_META_DESCRIPTION_MAX_LENGTH = 160;
 
@@ -35,13 +38,7 @@ interface Args {
 }
 
 export default async function NotePage({ params: paramsPromise }: Args) {
-  "use cache";
-
   const { slug } = await paramsPromise;
-
-  cacheTag("notes");
-  cacheTag(`note-${slug}`);
-  cacheLife("notes");
 
   const note = await getNote(slug);
   if (!note?.content) {
@@ -57,8 +54,8 @@ export default async function NotePage({ params: paramsPromise }: Args) {
   });
 
   const breadcrumbSchema = generateBreadcrumbSchema([
-    { name: "Home", url: getServerSideURL() },
-    { name: "Notes", url: `${getServerSideURL()}/notes` },
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Notes", url: absoluteUrl(notesRoute()) },
     { name: note.title },
   ]);
 
@@ -87,32 +84,37 @@ export default async function NotePage({ params: paramsPromise }: Args) {
         interactive={false}
       >
         <GridCardSection className="col-span-3 row-span-3 p-6">
-          {isQuoteNote ? (
-            <article className="glass-note-stage glass-stagger-3" dir="auto">
-              <span aria-hidden="true" className="glass-note-quote-mark">
-                &ldquo;
-              </span>
-              <RichText
-                className="glass-note-quote-prose"
-                {...noteRichTextProps}
-              />
-              {quoteAttribution && (
-                <footer className="glass-note-quote-attribution" dir="auto">
-                  <cite>— {quoteAttribution}</cite>
-                </footer>
-              )}
-            </article>
-          ) : (
-            <article
-              className="glass-note-thought-stage glass-stagger-3"
-              dir="auto"
-            >
-              <RichText
-                className="glass-note-thought-prose"
-                {...noteRichTextProps}
-              />
-            </article>
-          )}
+          <ViewTransition
+            name={getNoteContentTransitionName(slug)}
+            {...frontendViewTransitionClasses.sharedContent}
+          >
+            {isQuoteNote ? (
+              <article className="glass-note-stage glass-stagger-3" dir="auto">
+                <span aria-hidden="true" className="glass-note-quote-mark">
+                  &ldquo;
+                </span>
+                <RichText
+                  className="glass-note-quote-prose"
+                  {...noteRichTextProps}
+                />
+                {quoteAttribution ? (
+                  <footer className="glass-note-quote-attribution" dir="auto">
+                    <cite>— {quoteAttribution}</cite>
+                  </footer>
+                ) : null}
+              </article>
+            ) : (
+              <article
+                className="glass-note-thought-stage glass-stagger-3"
+                dir="auto"
+              >
+                <RichText
+                  className="glass-note-thought-prose"
+                  {...noteRichTextProps}
+                />
+              </article>
+            )}
+          </ViewTransition>
         </GridCardSection>
       </GridCard>
 
@@ -123,23 +125,27 @@ export default async function NotePage({ params: paramsPromise }: Args) {
           "g3:col-start-3 g3:col-end-4 g3:row-start-1 g3:row-end-3"
         )}
       >
-        {references.length > 0 && (
+        {references.length > 0 ? (
           <div>
             <GridCardReferences references={references} />
           </div>
-        )}
+        ) : null}
         <div>
-          <Suspense
-            fallback={
-              <div className="glass-section glass-loading h-[var(--grid-card-1x1)] w-[var(--grid-card-1x1)] animate-pulse rounded-xl">
-                <Skeleton className="glass-badge h-full w-full" />
-              </div>
-            }
-          >
-            <RelatedNotes
-              recommendedIds={note.recommended_note_ids as number[] | undefined}
-            />
-          </Suspense>
+          <OptionalErrorBoundary title="Unable to load related notes.">
+            <Suspense
+              fallback={
+                <div className="glass-section glass-loading h-[var(--grid-card-1x1)] w-[var(--grid-card-1x1)] animate-pulse rounded-xl">
+                  <Skeleton className="glass-badge h-full w-full" />
+                </div>
+              }
+            >
+              <RelatedNotes
+                recommendedIds={
+                  note.recommended_note_ids as number[] | undefined
+                }
+              />
+            </Suspense>
+          </OptionalErrorBoundary>
         </div>
       </aside>
     </>
@@ -147,27 +153,23 @@ export default async function NotePage({ params: paramsPromise }: Args) {
 }
 
 async function RelatedNotes({ recommendedIds }: { recommendedIds?: number[] }) {
-  // Early return if no recommendations stored
-  if (!recommendedIds || recommendedIds.length === 0) {
+  if (!(recommendedIds && recommendedIds.length > 0)) {
     return null;
   }
 
-  // Fetch the recommended notes by their stored IDs
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
   const notes = await payload.find({
     collection: "notes",
+    depth: 1,
+    limit: recommendedIds.length,
     where: {
       id: {
         in: recommendedIds,
       },
     },
-    depth: 1,
-    limit: recommendedIds.length,
   });
 
-  // defaultPopulate narrows the type, but find() returns full documents
-  const docs = notes.docs as unknown as Note[];
-
+  const docs = notes.docs as Note[];
   if (docs.length === 0) {
     return null;
   }
@@ -185,12 +187,11 @@ function getNoteReferences(note: Note): Reference[] {
     }
   }
 
-  const connections = note.connections;
-  if (!connections) {
+  if (!note.connections) {
     return refs;
   }
 
-  for (const connection of connections) {
+  for (const connection of note.connections) {
     if (
       typeof connection === "object" &&
       connection !== null &&
@@ -230,9 +231,10 @@ export async function generateStaticParams() {
   cacheTag("notes");
   cacheLife("static");
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
   const notes = await payload.find({
     collection: "notes",
+    limit: 1000,
     select: {
       slug: true,
     },
@@ -241,7 +243,6 @@ export async function generateStaticParams() {
         equals: "published",
       },
     },
-    limit: 1000,
   });
 
   return ensureStaticParams(
@@ -257,18 +258,11 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params: paramsPromise,
 }: Args): Promise<Metadata> {
-  "use cache";
-
   const { slug } = await paramsPromise;
-
-  cacheTag("notes");
-  cacheTag(`note-${slug}`);
-  cacheLife("notes");
 
   const note = await getNote(slug);
   if (!note) {
     return {
-      metadataBase: new URL(getServerSideURL()),
       title: "Not Found | Lyovson.com",
       description: "The requested note could not be found",
     };
@@ -284,16 +278,15 @@ export async function generateMetadata({
       : "A note or thought";
 
   return {
-    metadataBase: new URL(getServerSideURL()),
     title: `${title} | Lyóvson.com`,
     description,
     alternates: {
-      canonical: `/notes/${slug}`,
+      canonical: noteRoute(slug),
     },
     openGraph: {
       title: `${title} | Lyóvson.com`,
       description,
-      url: `${getServerSideURL()}/notes/${slug}`,
+      url: noteRoute(slug),
       siteName: "Lyóvson.com",
       type: "article",
       publishedTime: note.publishedAt || undefined,

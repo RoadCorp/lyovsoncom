@@ -1,13 +1,15 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next/types";
-import { Suspense } from "react";
-
 import { ActivitiesArchive } from "@/components/ActivitiesArchive";
-import { SkeletonGrid } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
-import { getActivityPath } from "@/utilities/activity-path";
+import {
+  ACTIVITIES_PER_PAGE,
+  getPaginatedStaticParams,
+  MAX_INDEXED_PAGE,
+  parsePageNumber,
+} from "@/utilities/archive";
 import { ensureStaticParams } from "@/utilities/ensureStaticParams";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import {
@@ -15,9 +17,12 @@ import {
   getPaginatedActivities,
 } from "@/utilities/get-activity";
 import { getServerSideURL } from "@/utilities/getURL";
-
-const ACTIVITIES_PER_PAGE = 25;
-const MAX_INDEXED_PAGE = 3;
+import {
+  absoluteUrl,
+  activitiesPageRoute,
+  activitiesRoute,
+  activityUrl,
+} from "@/utilities/routes";
 
 interface Args {
   params: Promise<{
@@ -27,35 +32,32 @@ interface Args {
 
 export async function generateStaticParams() {
   "use cache";
+
   cacheTag("activities");
   cacheLife("static");
 
   const { totalDocs } = await getActivityCount();
-  const totalPages = Math.ceil(totalDocs / ACTIVITIES_PER_PAGE);
-  const pages: { pageNumber: string }[] = [];
 
-  for (let pageNumber = 2; pageNumber <= totalPages; pageNumber++) {
-    pages.push({ pageNumber: String(pageNumber) });
-  }
-
-  return ensureStaticParams(pages, { pageNumber: "1" });
+  return ensureStaticParams(
+    getPaginatedStaticParams(totalDocs, ACTIVITIES_PER_PAGE).map(
+      (pageNumber) => ({
+        pageNumber,
+      })
+    ),
+    { pageNumber: "__placeholder__" }
+  );
 }
 
 export default async function Page({ params: paramsPromise }: Args) {
-  "use cache";
-
   const { pageNumber } = await paramsPromise;
-  const sanitizedPageNumber = Number(pageNumber);
+  const sanitizedPageNumber = parsePageNumber(pageNumber);
 
-  cacheTag("activities");
-  cacheTag(`activities-page-${pageNumber}`);
-  cacheLife("activities");
-
-  if (!Number.isInteger(sanitizedPageNumber) || sanitizedPageNumber < 1) {
+  if (sanitizedPageNumber == null) {
     notFound();
   }
+
   if (sanitizedPageNumber === 1) {
-    redirect("/activities");
+    redirect(activitiesRoute());
   }
 
   const response = await getPaginatedActivities(
@@ -67,39 +69,34 @@ export default async function Page({ params: paramsPromise }: Args) {
     return notFound();
   }
 
-  const { docs, totalPages, page } = response;
+  const { docs, page, totalDocs, totalPages } = response;
+
   const collectionPageSchema = generateCollectionPageSchema({
     name: `Activities - Page ${sanitizedPageNumber}`,
     description: `Archive of activities and media logs on page ${sanitizedPageNumber}.`,
-    url: `${getServerSideURL()}/activities/page/${sanitizedPageNumber}`,
-    itemCount: response.totalDocs,
+    url: absoluteUrl(activitiesPageRoute(sanitizedPageNumber)),
+    itemCount: totalDocs,
     items: docs
       .map((activity) => {
-        const activityPath = getActivityPath(activity);
-        if (!activityPath) {
-          return null;
-        }
-        return { url: `${getServerSideURL()}${activityPath}` };
+        const url = activityUrl(activity);
+        return url ? { url } : null;
       })
-      .filter((item): item is { url: string } => Boolean(item)),
+      .filter((item): item is { url: string } => item !== null),
   });
 
   return (
     <>
       <JsonLd data={collectionPageSchema} />
-
-      <Suspense fallback={<SkeletonGrid />}>
-        <ActivitiesArchive activities={docs} />
-      </Suspense>
-
-      {totalPages > 1 && page && (
+      <ActivitiesArchive activities={docs} />
+      {totalPages > 1 && page ? (
         <Pagination
-          basePath="/activities/page"
-          firstPagePath="/activities"
+          getPageHref={(pageNumberValue) =>
+            activitiesPageRoute(pageNumberValue)
+          }
           page={page}
           totalPages={totalPages}
         />
-      )}
+      ) : null}
     </>
   );
 }
@@ -107,42 +104,36 @@ export default async function Page({ params: paramsPromise }: Args) {
 export async function generateMetadata({
   params: paramsPromise,
 }: Args): Promise<Metadata> {
-  "use cache";
-
   const { pageNumber } = await paramsPromise;
-  const sanitizedPageNumber = Number(pageNumber);
+  const sanitizedPageNumber = parsePageNumber(pageNumber);
 
-  if (!Number.isInteger(sanitizedPageNumber) || sanitizedPageNumber < 2) {
+  if (sanitizedPageNumber == null || sanitizedPageNumber < 2) {
     return {
-      metadataBase: new URL(getServerSideURL()),
       title: "Not Found | Lyovson.com",
       description: "The requested page could not be found",
     };
   }
 
+  const title = `Activities & Consumption - Page ${sanitizedPageNumber} | Lyóvson.com`;
+  const description = `Browse activities - Page ${sanitizedPageNumber}`;
+
   return {
     metadataBase: new URL(getServerSideURL()),
-    title: `Activities & Consumption - Page ${sanitizedPageNumber} | Lyóvson.com`,
-    description: `Browse activities - Page ${sanitizedPageNumber}`,
+    title,
+    description,
     alternates: {
-      canonical: `/activities/page/${sanitizedPageNumber}`,
-      ...(sanitizedPageNumber > 1 && {
-        prev:
-          sanitizedPageNumber === 2
-            ? "/activities"
-            : `/activities/page/${sanitizedPageNumber - 1}`,
-      }),
+      canonical: activitiesPageRoute(sanitizedPageNumber),
     },
     openGraph: {
-      title: `Activities & Consumption - Page ${sanitizedPageNumber} | Lyóvson.com`,
-      description: `Browse activities - Page ${sanitizedPageNumber}`,
+      title,
+      description,
       type: "website",
-      url: `/activities/page/${sanitizedPageNumber}`,
+      url: activitiesPageRoute(sanitizedPageNumber),
     },
     twitter: {
       card: "summary",
-      title: `Activities & Consumption - Page ${sanitizedPageNumber} | Lyóvson.com`,
-      description: `Browse activities - Page ${sanitizedPageNumber}`,
+      title,
+      description,
       site: "@lyovson",
     },
     robots: {

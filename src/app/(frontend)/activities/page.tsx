@@ -1,18 +1,19 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
-import { Suspense } from "react";
-
 import { ActivitiesArchive } from "@/components/ActivitiesArchive";
-import { SkeletonGrid } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
-import { getActivityPath } from "@/utilities/activity-path";
+import { ACTIVITIES_PER_PAGE } from "@/utilities/archive";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getLatestActivities } from "@/utilities/get-activity";
 import { getServerSideURL } from "@/utilities/getURL";
-
-const ACTIVITIES_PER_PAGE = 25;
+import {
+  absoluteUrl,
+  activitiesPageRoute,
+  activitiesRoute,
+  activityUrl,
+} from "@/utilities/routes";
 
 export default async function Page() {
   "use cache";
@@ -27,46 +28,34 @@ export default async function Page() {
     return notFound();
   }
 
-  const { docs, totalPages, page, totalDocs } = response;
+  const { docs, page, totalDocs, totalPages } = response;
 
   const collectionPageSchema = generateCollectionPageSchema({
     name: "Activities & Consumption",
     description:
       "Browse reading, watching, listening, and playing activities logged by the Lyóvson family.",
-    url: `${getServerSideURL()}/activities`,
+    url: absoluteUrl(activitiesRoute()),
     itemCount: totalDocs,
     items: docs
       .map((activity) => {
-        const activityPath = getActivityPath(activity);
-        if (!activityPath) {
-          return null;
-        }
-
-        return {
-          url: `${getServerSideURL()}${activityPath}`,
-        };
+        const url = activityUrl(activity);
+        return url ? { url } : null;
       })
-      .filter((item): item is { url: string } => Boolean(item)),
+      .filter((item): item is { url: string } => item !== null),
   });
 
   return (
     <>
       <h1 className="sr-only">All Activities & Consumption</h1>
-
       <JsonLd data={collectionPageSchema} />
-
-      <Suspense fallback={<SkeletonGrid />}>
-        <ActivitiesArchive activities={docs} />
-      </Suspense>
-
-      {totalPages > 1 && page && (
+      <ActivitiesArchive activities={docs} />
+      {totalPages > 1 && page ? (
         <Pagination
-          basePath="/activities/page"
-          firstPagePath="/activities"
+          getPageHref={(pageNumber) => activitiesPageRoute(pageNumber)}
           page={page}
           totalPages={totalPages}
         />
-      )}
+      ) : null}
     </>
   );
 }
@@ -77,13 +66,13 @@ export const metadata: Metadata = {
   description:
     "Browse reading, watching, listening, and playing activities logged by the Lyóvson family.",
   alternates: {
-    canonical: "/activities",
+    canonical: activitiesRoute(),
   },
   openGraph: {
     title: "All Activities & Consumption | Lyóvson.com",
     description:
       "Browse reading, watching, listening, and playing activities logged by the Lyóvson family.",
-    url: "/activities",
+    url: activitiesRoute(),
     siteName: "Lyóvson.com",
     type: "website",
   },

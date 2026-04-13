@@ -1,16 +1,25 @@
-import configPromise from "@payload-config";
 import { cacheLife, cacheTag } from "next/cache";
 import type { PaginatedDocs } from "payload";
-import { getPayload } from "payload";
 import type { Activity, Lyovson, Note, Post, Project } from "@/payload-types";
+import {
+  getNoteAuthorByUsername,
+  lyovsonActivitiesWhere,
+  lyovsonNotesWhere,
+  lyovsonPostsWhere,
+} from "@/utilities/content-queries";
 import { getLyovsonProfile } from "@/utilities/get-lyovson-profile";
+import type { MixedFeedItem } from "@/utilities/mixed-feed";
+import {
+  mapActivitiesToMixedFeedItems,
+  mapNotesToMixedFeedItems,
+  mapPostsToMixedFeedItems,
+  sortMixedFeedItems,
+} from "@/utilities/mixed-feed";
+import { getPayloadClient } from "@/utilities/payload-client";
 
 export type LyovsonFilter = "all" | "posts" | "notes" | "activities";
 
-export type LyovsonMixedFeedItem =
-  | { type: "post"; data: Post; timestamp: number }
-  | { type: "note"; data: Note; timestamp: number }
-  | { type: "activity"; data: Activity; timestamp: number };
+export type LyovsonMixedFeedItem = MixedFeedItem;
 
 export interface LyovsonFeedResponse {
   items: LyovsonMixedFeedItem[];
@@ -36,10 +45,12 @@ const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = 25;
 const FETCH_BUFFER = 5;
 
-const NOTE_AUTHOR_BY_USERNAME = {
-  rafa: "rafa",
-  jess: "jess",
-} as const;
+export interface LyovsonFeedCounts {
+  activities: number;
+  all: number;
+  notes: number;
+  posts: number;
+}
 
 function getValidPage(page: number | undefined): number {
   if (!(page && Number.isInteger(page)) || page < 1) {
@@ -59,60 +70,6 @@ function getValidLimit(limit: number | undefined): number {
 
 function getTotalPages(totalItems: number, limit: number): number {
   return Math.max(1, Math.ceil(totalItems / limit));
-}
-
-function getFeedTimestamp(item: {
-  type: "post" | "note" | "activity";
-  data: Post | Note | Activity;
-}): number {
-  let dateValue = "";
-
-  if (item.type === "activity") {
-    const activity = item.data as Activity;
-    dateValue =
-      activity.finishedAt || activity.startedAt || activity.publishedAt || "";
-  } else if (item.type === "note") {
-    const note = item.data as Note;
-    dateValue = note.publishedAt || note.createdAt || "";
-  } else {
-    const post = item.data as Post;
-    dateValue = post.publishedAt || post.createdAt || "";
-  }
-
-  return Date.parse(dateValue) || 0;
-}
-
-function mapPostsToMixedItems(posts: Post[]): LyovsonMixedFeedItem[] {
-  return posts.map((post) => ({
-    type: "post",
-    data: post,
-    timestamp: getFeedTimestamp({ type: "post", data: post }),
-  }));
-}
-
-function mapNotesToMixedItems(notes: Note[]): LyovsonMixedFeedItem[] {
-  return notes.map((note) => ({
-    type: "note",
-    data: note,
-    timestamp: getFeedTimestamp({ type: "note", data: note }),
-  }));
-}
-
-function mapActivitiesToMixedItems(
-  activities: Activity[]
-): LyovsonMixedFeedItem[] {
-  return activities.map((activity) => ({
-    type: "activity",
-    data: activity,
-    timestamp: getFeedTimestamp({ type: "activity", data: activity }),
-  }));
-}
-
-function getNoteAuthorByUsername(username: string): Note["author"] | null {
-  return (
-    NOTE_AUTHOR_BY_USERNAME[username as keyof typeof NOTE_AUTHOR_BY_USERNAME] ||
-    null
-  );
 }
 
 function getEmptyPaginatedResponse<T>(
@@ -138,27 +95,14 @@ async function getLyovsonPostsPaginated(
   page: number,
   limit: number
 ): Promise<PaginatedDocs<Post>> {
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
 
   const result = await payload.find({
     collection: "posts",
     depth: 2,
     limit,
     page,
-    where: {
-      AND: [
-        {
-          authors: {
-            contains: lyovsonId,
-          },
-        },
-        {
-          _status: {
-            equals: "published",
-          },
-        },
-      ],
-    },
+    where: lyovsonPostsWhere(lyovsonId),
     sort: "-publishedAt",
     overrideAccess: true,
   });
@@ -173,26 +117,13 @@ async function getLyovsonPostsForMixedFeed(
   lyovsonId: number,
   limit: number
 ): Promise<PaginatedDocs<Post>> {
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
 
   const result = await payload.find({
     collection: "posts",
     depth: 2,
     limit,
-    where: {
-      AND: [
-        {
-          authors: {
-            contains: lyovsonId,
-          },
-        },
-        {
-          _status: {
-            equals: "published",
-          },
-        },
-      ],
-    },
+    where: lyovsonPostsWhere(lyovsonId),
     sort: "-publishedAt",
     overrideAccess: true,
   });
@@ -213,32 +144,14 @@ async function getLyovsonNotesPaginated(
     return getEmptyPaginatedResponse<Note>(page, limit);
   }
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
 
   const result = await payload.find({
     collection: "notes",
     depth: 2,
     limit,
     page,
-    where: {
-      AND: [
-        {
-          author: {
-            equals: noteAuthor,
-          },
-        },
-        {
-          _status: {
-            equals: "published",
-          },
-        },
-        {
-          visibility: {
-            equals: "public",
-          },
-        },
-      ],
-    },
+    where: lyovsonNotesWhere(username) ?? undefined,
     sort: "-publishedAt",
     overrideAccess: false,
   });
@@ -258,31 +171,13 @@ async function getLyovsonNotesForMixedFeed(
     return getEmptyPaginatedResponse<Note>(1, limit);
   }
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
 
   const result = await payload.find({
     collection: "notes",
     depth: 2,
     limit,
-    where: {
-      AND: [
-        {
-          author: {
-            equals: noteAuthor,
-          },
-        },
-        {
-          _status: {
-            equals: "published",
-          },
-        },
-        {
-          visibility: {
-            equals: "public",
-          },
-        },
-      ],
-    },
+    where: lyovsonNotesWhere(username) ?? undefined,
     sort: "-publishedAt",
     overrideAccess: false,
   });
@@ -298,41 +193,14 @@ async function getLyovsonActivitiesPaginated(
   page: number,
   limit: number
 ): Promise<PaginatedDocs<Activity>> {
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
 
   const result = await payload.find({
     collection: "activities",
     depth: 2,
     limit,
     page,
-    where: {
-      AND: [
-        {
-          _status: {
-            equals: "published",
-          },
-        },
-        {
-          visibility: {
-            equals: "public",
-          },
-        },
-        {
-          OR: [
-            {
-              participants: {
-                contains: lyovsonId,
-              },
-            },
-            {
-              "reviews.lyovson": {
-                equals: lyovsonId,
-              },
-            },
-          ],
-        },
-      ],
-    },
+    where: lyovsonActivitiesWhere(lyovsonId),
     sort: "-finishedAt",
     overrideAccess: true,
   });
@@ -347,40 +215,13 @@ async function getLyovsonActivitiesForMixedFeed(
   lyovsonId: number,
   limit: number
 ): Promise<PaginatedDocs<Activity>> {
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
 
   const result = await payload.find({
     collection: "activities",
     depth: 2,
     limit,
-    where: {
-      AND: [
-        {
-          _status: {
-            equals: "published",
-          },
-        },
-        {
-          visibility: {
-            equals: "public",
-          },
-        },
-        {
-          OR: [
-            {
-              participants: {
-                contains: lyovsonId,
-              },
-            },
-            {
-              "reviews.lyovson": {
-                equals: lyovsonId,
-              },
-            },
-          ],
-        },
-      ],
-    },
+    where: lyovsonActivitiesWhere(lyovsonId),
     sort: "-finishedAt",
     overrideAccess: true,
   });
@@ -426,7 +267,7 @@ export async function getLyovsonFeed({
 
     return {
       user,
-      items: mapPostsToMixedItems(postResults.docs as Post[]),
+      items: mapPostsToMixedFeedItems(postResults.docs as Post[]),
       page: safePage,
       totalItems: postResults.totalDocs,
       totalPages,
@@ -443,7 +284,7 @@ export async function getLyovsonFeed({
 
     return {
       user,
-      items: mapNotesToMixedItems(noteResults.docs as Note[]),
+      items: mapNotesToMixedFeedItems(noteResults.docs as Note[]),
       page: safePage,
       totalItems: noteResults.totalDocs,
       totalPages,
@@ -460,7 +301,7 @@ export async function getLyovsonFeed({
 
     return {
       user,
-      items: mapActivitiesToMixedItems(activityResults.docs as Activity[]),
+      items: mapActivitiesToMixedFeedItems(activityResults.docs as Activity[]),
       page: safePage,
       totalItems: activityResults.totalDocs,
       totalPages,
@@ -475,13 +316,11 @@ export async function getLyovsonFeed({
     getLyovsonActivitiesForMixedFeed(user.id, mixedFetchLimit),
   ]);
 
-  const mixedItems = [
-    ...mapPostsToMixedItems(posts.docs as Post[]),
-    ...mapNotesToMixedItems(notes.docs as Note[]),
-    ...mapActivitiesToMixedItems(activities.docs as Activity[]),
-  ];
-
-  mixedItems.sort((a, b) => b.timestamp - a.timestamp);
+  const mixedItems = sortMixedFeedItems([
+    ...mapPostsToMixedFeedItems(posts.docs as Post[]),
+    ...mapNotesToMixedFeedItems(notes.docs as Note[]),
+    ...mapActivitiesToMixedFeedItems(activities.docs as Activity[]),
+  ]);
 
   const totalItems = posts.totalDocs + notes.totalDocs + activities.totalDocs;
   const totalPages = getTotalPages(totalItems, safeLimit);
@@ -494,6 +333,51 @@ export async function getLyovsonFeed({
     page: safePage,
     totalItems,
     totalPages,
+  };
+}
+
+export async function getLyovsonFeedCounts(
+  username: string
+): Promise<LyovsonFeedCounts | null> {
+  "use cache";
+
+  cacheTag("posts");
+  cacheTag("notes");
+  cacheTag("activities");
+  cacheTag("lyovsons");
+  cacheTag(`lyovson-${username}`);
+  cacheTag(`lyovson-${username}-counts`);
+  cacheLife("static");
+
+  const user = await getLyovsonProfile(username);
+  if (!user) {
+    return null;
+  }
+
+  const payload = await getPayloadClient();
+  const [posts, notes, activities] = await Promise.all([
+    payload.count({
+      collection: "posts",
+      overrideAccess: true,
+      where: lyovsonPostsWhere(user.id),
+    }),
+    payload.count({
+      collection: "notes",
+      overrideAccess: false,
+      where: lyovsonNotesWhere(username) ?? undefined,
+    }),
+    payload.count({
+      collection: "activities",
+      overrideAccess: true,
+      where: lyovsonActivitiesWhere(user.id),
+    }),
+  ]);
+
+  return {
+    posts: posts.totalDocs,
+    notes: notes.totalDocs,
+    activities: activities.totalDocs,
+    all: posts.totalDocs + notes.totalDocs + activities.totalDocs,
   };
 }
 
@@ -514,7 +398,7 @@ export async function getLyovsonPortfolioProjects(
     return null;
   }
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
 
   const posts = await payload.find({
     collection: "posts",
@@ -522,16 +406,7 @@ export async function getLyovsonPortfolioProjects(
     limit: 500,
     where: {
       AND: [
-        {
-          authors: {
-            contains: user.id,
-          },
-        },
-        {
-          _status: {
-            equals: "published",
-          },
-        },
+        lyovsonPostsWhere(user.id),
         {
           project: {
             exists: true,

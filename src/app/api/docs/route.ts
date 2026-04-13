@@ -1,8 +1,10 @@
 import configPromise from "@payload-config";
 import type { NextRequest } from "next/server";
 import { getPayload } from "payload";
+import { logApiTelemetry } from "@/utilities/api-telemetry";
 
 export async function GET(_request: NextRequest) {
+  const startedAt = Date.now();
   // NOTE: "use cache" removed due to Next.js 16 canary bug
   // See: https://github.com/vercel/next.js/issues/76612
   // Route handlers with "use cache" throw: "Only plain objects can be passed to Client Components"
@@ -378,6 +380,17 @@ export async function GET(_request: NextRequest) {
       lastUpdated: new Date().toISOString(),
     };
 
+    logApiTelemetry({
+      route: "api.docs.completed",
+      startedAt,
+      summary: {
+        status: 200,
+        totalActivities: activities.totalDocs,
+        totalNotes: notes.totalDocs,
+        totalPosts: posts.totalDocs,
+      },
+    });
+
     return new Response(JSON.stringify(apiDocumentation, null, 2), {
       status: 200,
       headers: {
@@ -388,7 +401,17 @@ export async function GET(_request: NextRequest) {
         "Access-Control-Allow-Headers": "Content-Type",
       },
     });
-  } catch (_error) {
+  } catch (error) {
+    logApiTelemetry({
+      route: "api.docs.failed",
+      startedAt,
+      level: "error",
+      summary: {
+        status: 500,
+        error: error instanceof Error ? error.message : "Unknown error",
+      },
+    });
+
     return new Response(
       JSON.stringify({
         error: "API documentation temporarily unavailable",

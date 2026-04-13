@@ -1,22 +1,23 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
-import { Suspense } from "react";
-
 import { CollectionArchive } from "@/components/CollectionArchive";
-import { SkeletonGrid } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
+import { POSTS_PER_PAGE } from "@/utilities/archive";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getLatestPosts } from "@/utilities/get-post";
 import { getServerSideURL } from "@/utilities/getURL";
-
-const POSTS_PER_PAGE = 25;
+import {
+  absoluteUrl,
+  postsPageRoute,
+  postsRoute,
+  postUrl,
+} from "@/utilities/routes";
 
 export default async function Page() {
   "use cache";
 
-  // Add cache tags for posts page
   cacheTag("posts");
   cacheTag("posts-page");
   cacheLife("posts");
@@ -27,38 +28,31 @@ export default async function Page() {
     return notFound();
   }
 
-  const { docs, totalPages, page, totalDocs } = response;
+  const { docs, page, totalDocs, totalPages } = response;
 
-  // Generate CollectionPage schema
   const collectionPageSchema = generateCollectionPageSchema({
     name: "Posts & Articles",
     description:
       "Browse all posts and articles covering programming, design, philosophy, technology, and creative projects.",
-    url: `${getServerSideURL()}/posts`,
+    url: absoluteUrl(postsRoute()),
     itemCount: totalDocs,
-    items: docs.map((post) => ({
-      url: `${getServerSideURL()}/posts/${post.slug}`,
-    })),
+    items: docs
+      .filter((post) => post.slug)
+      .map((post) => ({ url: postUrl(post.slug as string) })),
   });
 
   return (
     <>
       <h1 className="sr-only">All Posts & Articles</h1>
-
       <JsonLd data={collectionPageSchema} />
-
-      <Suspense fallback={<SkeletonGrid />}>
-        <CollectionArchive posts={docs} />
-      </Suspense>
-
-      {totalPages > 1 && page && (
+      <CollectionArchive posts={docs} />
+      {totalPages > 1 && page ? (
         <Pagination
-          basePath="/posts/page"
-          firstPagePath="/posts"
+          getPageHref={(pageNumber) => postsPageRoute(pageNumber)}
           page={page}
           totalPages={totalPages}
         />
-      )}
+      ) : null}
     </>
   );
 }
@@ -79,7 +73,7 @@ export const metadata: Metadata = {
     "Jess Lyovson",
   ],
   alternates: {
-    canonical: "/posts",
+    canonical: postsRoute(),
   },
   openGraph: {
     siteName: "Lyóvson.com",
@@ -87,7 +81,7 @@ export const metadata: Metadata = {
     description:
       "Browse all posts and articles covering programming, design, philosophy, technology, and creative projects.",
     type: "website",
-    url: "/posts",
+    url: postsRoute(),
     images: [
       {
         url: "/og-image.png",

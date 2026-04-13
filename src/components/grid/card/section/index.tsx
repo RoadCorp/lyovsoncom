@@ -28,7 +28,7 @@ function getSectionClassName(
   flush: boolean
 ): string {
   return cn(
-    "glass-section transition-glass",
+    "glass-section",
     flush && "p-0",
     "focus-visible:outline-none",
     isInteractive && [

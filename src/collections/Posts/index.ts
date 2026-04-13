@@ -35,7 +35,6 @@ export const Posts: CollectionConfig<"posts"> = {
       const path = generatePreviewPath({
         slug: typeof data?.slug === "string" ? data.slug : "",
         collection: "posts",
-        project: data?.project,
       });
 
       return `${getServerSideURL()}${path}`;

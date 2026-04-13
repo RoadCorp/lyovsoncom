@@ -2,10 +2,7 @@
 
 import { SunMoon } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
-
 import { cn } from "@/lib/utils";
-
 import { GridCardNavItem } from "./grid-card-nav-item";
 
 interface ThemeSwitcherProps {
@@ -13,24 +10,12 @@ interface ThemeSwitcherProps {
 }
 
 export const ThemeSwitcher = ({ className }: ThemeSwitcherProps) => {
-  const [mounted, setMounted] = useState(false);
-  const { theme, setTheme } = useTheme();
-
-  // Prevent hydration mismatch
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const toggleTheme = () => {
-    if (mounted) {
-      setTheme(theme === "light" ? "dark" : "light");
-    }
-  };
+  const { resolvedTheme, setTheme } = useTheme();
 
   return (
     <GridCardNavItem
       className={cn("col-start-3 col-end-4 row-start-3 row-end-4", className)}
-      onClick={toggleTheme}
+      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
       variant="button"
     >
       <SunMoon className="h-7 w-7" />

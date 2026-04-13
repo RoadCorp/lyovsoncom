@@ -140,9 +140,9 @@
     0 3px 9px oklch(0.42 0.02 240 / 0.12);
   --glass-edge-highlight-refined: inset 0 1px 0 oklch(1 0 0 / 0.52);
   --glass-edge-shadow-refined: inset 0 -1px 0 oklch(0.44 0.02 236 / 0.2);
-  --glass-backdrop-soft: blur(8px) saturate(125%);
-  --glass-backdrop-medium: blur(11px) saturate(132%);
-  --glass-backdrop-strong: blur(14px) saturate(140%);
+  --glass-backdrop-soft: blur(6px) saturate(120%);
+  --glass-backdrop-medium: blur(8px) saturate(126%);
+  --glass-backdrop-strong: blur(10px) saturate(132%);
   --glass-text-refined: oklch(0.22 0.018 238);
   --glass-text-secondary-refined: oklch(0.22 0.016 238 / 0.72);
 
@@ -331,9 +331,9 @@
     inset 0 1px 0 oklch(1 0 0 / 0.09);
   --glass-edge-highlight-refined: inset 0 1px 0 oklch(1 0 0 / 0.16);
   --glass-edge-shadow-refined: inset 0 -1px 0 oklch(0 0 0 / 0.42);
-  --glass-backdrop-soft: blur(8px) saturate(125%) brightness(108%);
-  --glass-backdrop-medium: blur(11px) saturate(132%) brightness(112%);
-  --glass-backdrop-strong: blur(14px) saturate(140%) brightness(116%);
+  --glass-backdrop-soft: blur(6px) saturate(120%) brightness(106%);
+  --glass-backdrop-medium: blur(8px) saturate(126%) brightness(110%);
+  --glass-backdrop-strong: blur(10px) saturate(132%) brightness(114%);
   --glass-text-refined: oklch(0.94 0.007 224);
   --glass-text-secondary-refined: oklch(0.94 0.007 224 / 0.72);
 
@@ -580,22 +580,18 @@
     padding: var(--grid-section-padding);
     contain: layout paint style;
     overflow: clip;
-    background: var(--glass-bg);
-    background-image:
-      var(--glass-aurora),
-      radial-gradient(
-        120% 120% at 50% 0%,
-        color-mix(in oklch, var(--glass-text) 8%, transparent),
-        transparent
-      );
+    background: var(--glass-bg-hover);
+    background-image: radial-gradient(
+      120% 120% at 50% 0%,
+      color-mix(in oklch, var(--glass-text) 8%, transparent),
+      transparent
+    );
     background-clip: padding-box;
     border: 1px solid var(--glass-border);
     border-radius: calc(var(--radius) - 2px);
     box-shadow:
       var(--glass-shadow), var(--glass-edge-highlight), var(--glass-edge-shadow);
     isolation: isolate;
-    -webkit-backdrop-filter: var(--glass-backdrop-medium);
-    backdrop-filter: var(--glass-backdrop-medium);
     -webkit-mask-image: -webkit-radial-gradient(white, black);
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
@@ -608,7 +604,7 @@
 
   @media (hover: hover) {
     .glass-section:hover {
-      background: var(--glass-bg-hover);
+      background: var(--glass-bg-active);
       border-color: var(--glass-border-hover);
       box-shadow:
         var(--glass-shadow-hover), var(--glass-edge-highlight),
@@ -686,12 +682,10 @@
     font-weight: 500;
     color: var(--glass-text);
     letter-spacing: 0.025em;
-    background: var(--glass-bg);
+    background: var(--glass-bg-hover);
     border: 1px solid var(--glass-border);
     border-radius: calc(var(--radius) - 6px);
     box-shadow: var(--glass-edge-highlight), var(--glass-edge-shadow);
-    -webkit-backdrop-filter: var(--glass-backdrop-soft);
-    backdrop-filter: var(--glass-backdrop-soft);
     transition:
       transform var(--transition-medium) var(--ease-glass),
       box-shadow var(--transition-medium) var(--ease-glass),
@@ -1214,8 +1208,7 @@
       backdrop-filter: none !important;
     }
 
-    .glass-card,
-    .glass-section {
+    .glass-card {
       background-image: var(--glass-aurora) !important;
     }
 
@@ -1403,6 +1396,141 @@
       -webkit-backdrop-filter: none !important;
       backdrop-filter: none !important;
     }
+  }
+}
+
+::view-transition-group(.vt-default),
+::view-transition-old(.vt-default),
+::view-transition-new(.vt-default) {
+  animation-duration: 220ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+::view-transition-old(.vt-enter),
+::view-transition-old(.vt-exit) {
+  animation: none;
+}
+
+::view-transition-new(.vt-enter) {
+  animation-name: vt-fade-in;
+  animation-duration: 220ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+::view-transition-old(.vt-exit) {
+  animation-name: vt-fade-out;
+  animation-duration: 180ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+::view-transition-group(.vt-pagination-next),
+::view-transition-group(.vt-pagination-prev),
+::view-transition-old(.vt-pagination-next),
+::view-transition-old(.vt-pagination-prev),
+::view-transition-new(.vt-pagination-next),
+::view-transition-new(.vt-pagination-prev) {
+  animation-duration: 200ms;
+  animation-timing-function: cubic-bezier(0.24, 0.72, 0.24, 1);
+}
+
+::view-transition-group(.vt-share-media),
+::view-transition-old(.vt-share-media),
+::view-transition-new(.vt-share-media) {
+  animation-duration: 260ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+::view-transition-old(.vt-share-media) {
+  animation-name: vt-shared-out;
+}
+
+::view-transition-new(.vt-share-media) {
+  animation-name: vt-shared-in;
+}
+
+::view-transition-group(.vt-share-title),
+::view-transition-old(.vt-share-title),
+::view-transition-new(.vt-share-title),
+::view-transition-group(.vt-share-content),
+::view-transition-old(.vt-share-content),
+::view-transition-new(.vt-share-content) {
+  animation-duration: 240ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+::view-transition-old(.vt-share-title),
+::view-transition-old(.vt-share-content) {
+  animation-name: vt-fade-out;
+}
+
+::view-transition-new(.vt-share-title),
+::view-transition-new(.vt-share-content) {
+  animation-name: vt-fade-in;
+}
+
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes vt-fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes vt-shared-in {
+  from {
+    opacity: 0.84;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes vt-shared-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0.84;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(.vt-default),
+  ::view-transition-old(.vt-default),
+  ::view-transition-new(.vt-default),
+  ::view-transition-group(.vt-pagination-next),
+  ::view-transition-group(.vt-pagination-prev),
+  ::view-transition-old(.vt-pagination-next),
+  ::view-transition-old(.vt-pagination-prev),
+  ::view-transition-new(.vt-pagination-next),
+  ::view-transition-new(.vt-pagination-prev),
+  ::view-transition-group(.vt-share-media),
+  ::view-transition-old(.vt-share-media),
+  ::view-transition-new(.vt-share-media),
+  ::view-transition-group(.vt-share-title),
+  ::view-transition-old(.vt-share-title),
+  ::view-transition-new(.vt-share-title),
+  ::view-transition-group(.vt-share-content),
+  ::view-transition-old(.vt-share-content),
+  ::view-transition-new(.vt-share-content),
+  ::view-transition-old(.vt-enter),
+  ::view-transition-new(.vt-enter),
+  ::view-transition-old(.vt-exit) {
+    animation-duration: 1ms !important;
   }
 }
 

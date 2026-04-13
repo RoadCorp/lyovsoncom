@@ -1,8 +1,6 @@
-import configPromise from "@payload-config";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
-import { getPayload } from "payload";
 import { Suspense } from "react";
 import {
   GridCard,
@@ -12,56 +10,20 @@ import {
   GridCardSection,
 } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
+import { OptionalErrorBoundary } from "@/components/OptionalErrorBoundary";
 import RichText from "@/components/RichText";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import type { Media, Post } from "@/payload-types";
+import { publishedPostsWhere } from "@/utilities/content-queries";
 import { ensureStaticParams } from "@/utilities/ensureStaticParams";
 import {
   generateArticleSchema,
   generateBreadcrumbSchema,
 } from "@/utilities/generate-json-ld";
 import { getPost } from "@/utilities/get-post";
-import { getServerSideURL } from "@/utilities/getURL";
-
-// Lexical content node types
-type LexicalContentNode =
-  | string
-  | {
-      text?: string;
-      children?: LexicalContentNode[];
-      content?: LexicalContentNode;
-    }
-  | LexicalContentNode[];
-
-// Helper function to extract text from rich content
-function _extractTextFromContent(content: LexicalContentNode): string {
-  if (!content) {
-    return "";
-  }
-
-  if (typeof content === "string") {
-    return content;
-  }
-
-  if (Array.isArray(content)) {
-    return content.map(_extractTextFromContent).join(" ");
-  }
-
-  if (typeof content === "object") {
-    if (content.text) {
-      return content.text;
-    }
-    if (content.children) {
-      return _extractTextFromContent(content.children);
-    }
-    if (content.content) {
-      return _extractTextFromContent(content.content);
-    }
-  }
-
-  return "";
-}
+import { getPayloadClient } from "@/utilities/payload-client";
+import { absoluteUrl, postRoute, postsRoute } from "@/utilities/routes";
 
 interface Args {
   params: Promise<{
@@ -69,31 +31,89 @@ interface Args {
   }>;
 }
 
+type PostWithLegacyMeta = Post & {
+  meta?: { description?: string; image?: unknown };
+};
+
+function getPostKeywords(post: Post) {
+  return post.topics
+    ?.map((topic) => {
+      if (typeof topic === "object" && topic !== null) {
+        return topic.name || topic.slug || "";
+      }
+
+      return "";
+    })
+    .filter(Boolean);
+}
+
+function getPostMetaImage(post: PostWithLegacyMeta) {
+  const postImage = post.featuredImage || post.meta?.image;
+  return postImage && typeof postImage === "object"
+    ? (postImage as Media)
+    : null;
+}
+
+function getPostSectionSlug(post: Post) {
+  return post.project && typeof post.project === "object" && post.project.slug
+    ? post.project.slug
+    : null;
+}
+
+function getPostTwitterCreator(post: Post) {
+  return post.populatedAuthors?.[0]?.username
+    ? `@${post.populatedAuthors[0].username}`
+    : "@lyovson";
+}
+
+function getPostOtherMetadata(post: Post, keywords: string[] | undefined) {
+  const projectSlug = getPostSectionSlug(post);
+  const aiAuthors = post.populatedAuthors?.length
+    ? post.populatedAuthors
+        .map((author) => author.username || author.name)
+        .join(",")
+    : null;
+
+  return {
+    ...(process.env.FACEBOOK_APP_ID
+      ? { "fb:app_id": process.env.FACEBOOK_APP_ID }
+      : {}),
+    ...(post.populatedAuthors?.length
+      ? {
+          "article:author": post.populatedAuthors
+            .map((author) => author.name)
+            .join(", "),
+        }
+      : {}),
+    ...(post.publishedAt ? { "article:published_time": post.publishedAt } : {}),
+    ...(post.updatedAt ? { "article:modified_time": post.updatedAt } : {}),
+    ...(projectSlug ? { "article:section": projectSlug } : {}),
+    ...(keywords?.length ? { "article:tag": keywords.join(", ") } : {}),
+    "ai-content-type": "article",
+    "ai-content-license": "attribution-required",
+    "ai-content-language": "en",
+    "ai-api-url": absoluteUrl(`/api/posts/${post.id}`),
+    "ai-embedding-url": absoluteUrl(`/api/embeddings/posts/${post.id}`),
+    ...(projectSlug ? { "ai-project": projectSlug } : {}),
+    ...(keywords?.length ? { "ai-topics": keywords.join(",") } : {}),
+    ...(aiAuthors ? { "ai-authors": aiAuthors } : {}),
+  };
+}
+
 export default async function PostPage({ params: paramsPromise }: Args) {
-  "use cache";
-
   const { slug } = await paramsPromise;
-
-  // Add cache tags for this specific post
-  cacheTag("posts");
-  cacheTag(`post-${slug}`);
-  cacheLife("posts");
 
   const post = await getPost(slug);
   if (!post?.content) {
     return notFound();
   }
 
-  // Extract data for JSON-LD schemas
   const postImage =
     post.featuredImage && typeof post.featuredImage === "object"
       ? (post.featuredImage as Media)
       : null;
-  const imageUrl = postImage?.url
-    ? `${getServerSideURL()}${postImage.url}`
-    : undefined;
+  const imageUrl = postImage?.url ? absoluteUrl(postImage.url) : undefined;
 
-  // Generate Article schema
   const articleSchema = generateArticleSchema({
     title: post.title,
     description: post.description || undefined,
@@ -114,15 +134,15 @@ export default async function PostPage({ params: paramsPromise }: Args) {
         if (typeof topic === "object" && topic !== null) {
           return topic.name || topic.slug || "";
         }
+
         return "";
       })
       .filter(Boolean),
   });
 
-  // Generate Breadcrumb schema
   const breadcrumbSchema = generateBreadcrumbSchema([
-    { name: "Home", url: getServerSideURL() },
-    { name: "Posts", url: `${getServerSideURL()}/posts` },
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Posts", url: absoluteUrl(postsRoute()) },
     { name: post.title },
   ]);
 
@@ -131,7 +151,7 @@ export default async function PostPage({ params: paramsPromise }: Args) {
       <JsonLd data={articleSchema} />
       <JsonLd data={breadcrumbSchema} />
 
-      <GridCardHero className={""} post={post} />
+      <GridCardHero post={post} />
       <GridCard
         className={cn(
           "g2:col-start-2 g2:col-end-3 g2:row-auto g2:row-start-3",
@@ -156,7 +176,11 @@ export default async function PostPage({ params: paramsPromise }: Args) {
           "g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-5"
         )}
       >
-        {post.references && post.references.length > 0 && (
+        {post.references && post.references.length > 0 ? (
+          <GridCardReferences references={post.references} />
+        ) : null}
+
+        <OptionalErrorBoundary title="Unable to load recommended posts.">
           <Suspense
             fallback={
               <div className="glass-section glass-loading h-[var(--grid-card-1x1)] w-[var(--grid-card-1x1)] animate-pulse rounded-xl">
@@ -164,21 +188,11 @@ export default async function PostPage({ params: paramsPromise }: Args) {
               </div>
             }
           >
-            <GridCardReferences references={post.references} />
+            <RecommendedPosts
+              recommendedIds={post.recommended_post_ids as number[] | undefined}
+            />
           </Suspense>
-        )}
-
-        <Suspense
-          fallback={
-            <div className="glass-section glass-loading h-[var(--grid-card-1x1)] w-[var(--grid-card-1x1)] animate-pulse rounded-xl">
-              <Skeleton className="glass-badge h-full w-full" />
-            </div>
-          }
-        >
-          <RecommendedPosts
-            recommendedIds={post.recommended_post_ids as number[] | undefined}
-          />
-        </Suspense>
+        </OptionalErrorBoundary>
       </aside>
     </>
   );
@@ -189,28 +203,24 @@ async function RecommendedPosts({
 }: {
   recommendedIds?: number[];
 }) {
-  // Early return if no recommendations stored
-  if (!recommendedIds || recommendedIds.length === 0) {
+  if (!(recommendedIds && recommendedIds.length > 0)) {
     return null;
   }
 
-  // Fetch the recommended posts by their stored IDs
-  // No caching needed - these are pre-computed and stored in DB
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
   const posts = await payload.find({
     collection: "posts",
+    depth: 1,
+    limit: recommendedIds.length,
     where: {
+      ...publishedPostsWhere(),
       id: {
         in: recommendedIds,
       },
     },
-    depth: 1, // Include featuredImage, etc.
-    limit: recommendedIds.length,
   });
 
-  // Payload's type narrowing is overly conservative here; find() returns full documents
-  const docs = posts.docs as unknown as Post[];
-
+  const docs = posts.docs as Post[];
   if (docs.length === 0) {
     return null;
   }
@@ -221,20 +231,16 @@ async function RecommendedPosts({
 export async function generateStaticParams() {
   "use cache";
   cacheTag("posts");
-  cacheLife("static"); // Build-time data doesn't change often
+  cacheLife("static");
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
   const posts = await payload.find({
     collection: "posts",
+    limit: 1000,
     select: {
       slug: true,
     },
-    where: {
-      _status: {
-        equals: "published",
-      },
-    },
-    limit: 1000,
+    where: publishedPostsWhere(),
   });
 
   return ensureStaticParams(
@@ -247,75 +253,45 @@ export async function generateStaticParams() {
   );
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Metadata generation requires many conditional fields for SEO/social media
 export async function generateMetadata({
   params: paramsPromise,
 }: Args): Promise<Metadata> {
-  "use cache";
-
   const { slug } = await paramsPromise;
-
-  // Add cache tags for metadata
-  cacheTag("posts");
-  cacheTag(`post-${slug}`);
-  cacheLife("posts");
 
   const post = await getPost(slug);
   if (!post) {
     return {
-      metadataBase: new URL(getServerSideURL()),
       title: "Not Found | Lyovson.com",
       description: "The requested post could not be found",
     };
   }
 
-  // Use main fields with fallbacks to old meta fields during migration
-  type PostWithLegacyMeta = typeof post & {
-    meta?: { description?: string; image?: unknown };
-  };
-
+  const postWithLegacyMeta = post as PostWithLegacyMeta;
   const title = post.title;
   const description =
-    post.description || (post as PostWithLegacyMeta).meta?.description || "";
-  const postImage =
-    post.featuredImage || (post as PostWithLegacyMeta).meta?.image;
-  const metaImage: Media | null =
-    postImage && typeof postImage === "object" ? (postImage as Media) : null;
-
-  // Since metadataBase is set in layout, we can use the URL directly
+    post.description || postWithLegacyMeta.meta?.description || "";
+  const metaImage = getPostMetaImage(postWithLegacyMeta);
   const imageUrl = metaImage?.url || null;
-
   const ogImageAlt = metaImage?.alt || title;
-
-  // Fix the topic mapping
-  const keywords = post.topics
-    ?.map((topic) => {
-      if (typeof topic === "object" && topic !== null) {
-        return topic.name || topic.slug || "";
-      }
-      return "";
-    })
-    .filter(Boolean);
-
-  // Relative URL path - metadataBase will be prepended automatically
-  const canonicalUrl = `/posts/${slug}`;
+  const keywords = getPostKeywords(post);
+  const canonicalRoute = postRoute(slug);
 
   return {
     title: `${title} | Lyovson.com`,
     description,
     keywords: keywords?.join(", "),
     alternates: {
-      canonical: canonicalUrl,
+      canonical: canonicalRoute,
     },
     openGraph: {
       title,
       description,
-      url: canonicalUrl, // Let metadataBase handle the domain
+      url: canonicalRoute,
       siteName: "Lyovson.com",
       images: imageUrl
         ? [
             {
-              url: imageUrl, // Relative URL since metadataBase is set
+              url: imageUrl,
               width: 1200,
               height: 630,
               alt: ogImageAlt || "",
@@ -327,14 +303,12 @@ export async function generateMetadata({
       publishedTime: post.publishedAt || undefined,
       modifiedTime: post.updatedAt || undefined,
       authors:
-        post.populatedAuthors?.map((author) => `/${author.username}`) || [], // Make author URLs relative
+        post.populatedAuthors?.map((author) => `/${author.username}`) || [],
     },
     twitter: {
       card: "summary_large_image",
       site: "@lyovson",
-      creator: post.populatedAuthors?.[0]?.username
-        ? `@${post.populatedAuthors[0].username}`
-        : "@lyovson",
+      creator: getPostTwitterCreator(post),
       title,
       description,
       images: imageUrl
@@ -348,43 +322,6 @@ export async function generateMetadata({
           ]
         : undefined,
     },
-    other: {
-      // Only include defined values to satisfy TypeScript
-      ...(process.env.FACEBOOK_APP_ID
-        ? { "fb:app_id": process.env.FACEBOOK_APP_ID }
-        : {}),
-      ...(post.populatedAuthors?.length
-        ? {
-            "article:author": post.populatedAuthors
-              .map((author) => author.name)
-              .join(", "),
-          }
-        : {}),
-      ...(post.publishedAt
-        ? { "article:published_time": post.publishedAt }
-        : {}),
-      ...(post.updatedAt ? { "article:modified_time": post.updatedAt } : {}),
-      ...(post.project && typeof post.project === "object" && post.project.slug
-        ? { "article:section": post.project.slug }
-        : {}),
-      ...(keywords?.length ? { "article:tag": keywords.join(", ") } : {}),
-      // AI-specific meta tags for individual articles
-      "ai-content-type": "article",
-      "ai-content-license": "attribution-required",
-      "ai-content-language": "en",
-      "ai-api-url": `${getServerSideURL()}/api/posts/${post.id}`,
-      "ai-embedding-url": `${getServerSideURL()}/api/embeddings/posts/${post.id}`,
-      ...(post.project && typeof post.project === "object" && post.project.slug
-        ? { "ai-project": post.project.slug }
-        : {}),
-      ...(keywords?.length ? { "ai-topics": keywords.join(",") } : {}),
-      ...(post.populatedAuthors?.length
-        ? {
-            "ai-authors": post.populatedAuthors
-              .map((author) => author.username || author.name)
-              .join(","),
-          }
-        : {}),
-    },
+    other: getPostOtherMetadata(post, keywords),
   };
 }

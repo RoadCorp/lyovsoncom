@@ -1,9 +1,9 @@
-import configPromise from "@payload-config";
 import { cacheLife, cacheTag } from "next/cache";
 import type { PaginatedDocs } from "payload";
-import { getPayload } from "payload";
 import type { Activity } from "@/payload-types";
-import { getActivityDateSlug } from "@/utilities/activity-path";
+import { publicActivitiesWhere } from "@/utilities/content-queries";
+import { getPayloadClient } from "@/utilities/payload-client";
+import { getActivityDateSlug } from "@/utilities/routes";
 
 export async function getActivity(slug: string): Promise<Activity | null> {
   "use cache";
@@ -11,21 +11,16 @@ export async function getActivity(slug: string): Promise<Activity | null> {
   cacheTag(`activity-${slug}`);
   cacheLife("activities");
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
   const response = await payload.find({
     collection: "activities",
     // Keep participant relation data available for public activity cards.
     // Lyovson read access is private, so relation population needs overrideAccess.
     overrideAccess: true,
     where: {
+      ...publicActivitiesWhere(),
       slug: {
         equals: slug,
-      },
-      _status: {
-        equals: "published",
-      },
-      visibility: {
-        equals: "public",
       },
     },
     limit: 1,
@@ -51,21 +46,16 @@ export async function getActivityByDateAndSlug(
   cacheTag(`activity-${fullPath}`);
   cacheLife("activities");
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
   const response = await payload.find({
     collection: "activities",
     // Keep participant relation data available for public activity cards.
     // Lyovson read access is private, so relation population needs overrideAccess.
     overrideAccess: true,
     where: {
+      ...publicActivitiesWhere(),
       slug: {
         equals: slug,
-      },
-      _status: {
-        equals: "published",
-      },
-      visibility: {
-        equals: "public",
       },
     },
     limit: 50,
@@ -87,7 +77,7 @@ export async function getLatestActivities(
   cacheTag("homepage");
   cacheLife("activities");
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "activities",
     depth: 2,
@@ -96,14 +86,7 @@ export async function getLatestActivities(
     // Lyovson read access is private, so relation population needs overrideAccess.
     overrideAccess: true,
     sort: "-finishedAt",
-    where: {
-      _status: {
-        equals: "published",
-      },
-      visibility: {
-        equals: "public",
-      },
-    },
+    where: publicActivitiesWhere(),
   });
 
   return {
@@ -121,7 +104,7 @@ export async function getPaginatedActivities(
   cacheTag(`activities-page-${pageNumber}`);
   cacheLife("activities");
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "activities",
     depth: 2,
@@ -131,14 +114,7 @@ export async function getPaginatedActivities(
     // Lyovson read access is private, so relation population needs overrideAccess.
     overrideAccess: true,
     sort: "-finishedAt",
-    where: {
-      _status: {
-        equals: "published",
-      },
-      visibility: {
-        equals: "public",
-      },
-    },
+    where: publicActivitiesWhere(),
   });
 
   return {
@@ -153,17 +129,10 @@ export async function getActivityCount() {
   cacheTag("activity-count");
   cacheLife("activities");
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
   return await payload.count({
     collection: "activities",
     overrideAccess: false,
-    where: {
-      _status: {
-        equals: "published",
-      },
-      visibility: {
-        equals: "public",
-      },
-    },
+    where: publicActivitiesWhere(),
   });
 }

@@ -1,11 +1,13 @@
-import configPromise from "@payload-config";
-import { unstable_cache } from "next/cache";
-import { getPayload } from "payload";
+import { cacheLife, cacheTag } from "next/cache";
 import type { Redirect } from "@/payload-types";
+import { getPayloadClient } from "@/utilities/payload-client";
 
 export async function getRedirects(depth = 1): Promise<Redirect[]> {
-  const payload = await getPayload({ config: configPromise });
+  "use cache";
+  cacheTag("redirects");
+  cacheLife("static");
 
+  const payload = await getPayloadClient();
   const { docs: redirects } = await payload.find({
     collection: "redirects",
     depth,
@@ -15,13 +17,3 @@ export async function getRedirects(depth = 1): Promise<Redirect[]> {
 
   return redirects as Redirect[];
 }
-
-/**
- * Returns a unstable_cache function mapped with the cache tag for 'redirects'.
- *
- * Cache all redirects together to avoid multiple fetches.
- */
-export const getCachedRedirects = () =>
-  unstable_cache(async () => getRedirects(), ["redirects"], {
-    tags: ["redirects"],
-  });

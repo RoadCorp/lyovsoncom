@@ -18,6 +18,7 @@ import type {
   PersonSchema,
 } from "@/types/schema";
 import { getServerSideURL } from "./getURL";
+import { absoluteUrl, lyovsonRoute } from "./routes";
 
 const DEFAULT_IMAGE_HEIGHT = 630;
 const DEFAULT_IMAGE_WIDTH = 1200;
@@ -33,7 +34,7 @@ const organizationData: OrganizationSchema = {
   url: getServerSideURL(),
   logo: {
     "@type": "ImageObject",
-    url: `${getServerSideURL()}/logo-black.webp`,
+    url: absoluteUrl("/logo-black.webp"),
     width: 600,
     height: 60,
   },
@@ -88,8 +89,7 @@ interface ArticleDataParams {
  */
 export function generateArticleSchema(data: ArticleDataParams): ArticleSchema {
   const pathPrefix = data.pathPrefix || "/posts";
-  const articleUrl =
-    data.url || `${getServerSideURL()}${pathPrefix}/${data.slug}`;
+  const articleUrl = data.url || absoluteUrl(`${pathPrefix}/${data.slug}`);
 
   const imageObject = data.imageUrl
     ? {
@@ -106,7 +106,7 @@ export function generateArticleSchema(data: ArticleDataParams): ArticleSchema {
           "@context": "https://schema.org" as const,
           "@type": "Person" as const,
           name: author.name,
-          url: `${getServerSideURL()}/${author.username}`,
+          url: absoluteUrl(lyovsonRoute(author.username)),
         }))
       : [
           {
@@ -197,7 +197,7 @@ export function generatePersonSchema(data: PersonDataParams): PersonSchema {
     "@context": "https://schema.org",
     "@type": "Person",
     name: data.name,
-    url: `${getServerSideURL()}/${data.username}`,
+    url: absoluteUrl(lyovsonRoute(data.username)),
     image: data.avatarUrl,
     jobTitle: data.jobTitle,
     description: data.bio,

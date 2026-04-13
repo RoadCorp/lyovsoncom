@@ -1,28 +1,17 @@
 import type { MetadataRoute } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { getActivityPath } from "@/utilities/activity-path";
-import { getLyovsonFeed } from "@/utilities/get-lyovson-feed";
+import {
+  ACTIVITIES_PER_PAGE,
+  getIndexedPaginationPages,
+  LYOVSON_ITEMS_PER_PAGE,
+  NOTES_PER_PAGE,
+  POSTS_PER_PAGE,
+  PROJECT_POSTS_PER_PAGE,
+  TOPIC_POSTS_PER_PAGE,
+} from "@/utilities/archive";
+import { getLyovsonFeedCounts } from "@/utilities/get-lyovson-feed";
 import { getSitemapData } from "@/utilities/get-sitemap-data";
-
-const POSTS_PER_PAGE = 25;
-const NOTES_PER_PAGE = 25;
-const ACTIVITIES_PER_PAGE = 25;
-const PROJECT_POSTS_PER_PAGE = 25;
-const TOPIC_POSTS_PER_PAGE = 25;
-const LYOVSON_ITEMS_PER_PAGE = 25;
-const MAX_INDEXED_PAGE = 3;
-
-function getIndexedPaginationPages(totalItems: number, pageSize: number) {
-  const totalPages = Math.ceil(totalItems / pageSize);
-  const maxPage = Math.min(totalPages, MAX_INDEXED_PAGE);
-  const pages: number[] = [];
-
-  for (let pageNumber = 2; pageNumber <= maxPage; pageNumber++) {
-    pages.push(pageNumber);
-  }
-
-  return pages;
-}
 
 function getSlugFromRelation(
   relation: unknown,
@@ -125,31 +114,8 @@ async function getLyovsonRoutes({
     },
   ];
 
-  const [postsFeed, notesFeed, activitiesFeed] = await Promise.all([
-    getLyovsonFeed({
-      username,
-      filter: "posts",
-      page: 1,
-      limit: LYOVSON_ITEMS_PER_PAGE,
-    }),
-    getLyovsonFeed({
-      username,
-      filter: "notes",
-      page: 1,
-      limit: LYOVSON_ITEMS_PER_PAGE,
-    }),
-    getLyovsonFeed({
-      username,
-      filter: "activities",
-      page: 1,
-      limit: LYOVSON_ITEMS_PER_PAGE,
-    }),
-  ]);
-
-  const totalMixedItems =
-    (postsFeed?.totalItems || 0) +
-    (notesFeed?.totalItems || 0) +
-    (activitiesFeed?.totalItems || 0);
+  const counts = await getLyovsonFeedCounts(username);
+  const totalMixedItems = counts?.all || 0;
 
   addLyovsonPaginatedRoutes({
     routes,
@@ -162,39 +128,39 @@ async function getLyovsonRoutes({
     priority: 0.65,
   });
 
-  if (postsFeed) {
+  if (counts?.posts) {
     addLyovsonPaginatedRoutes({
       routes,
       siteUrl,
       username,
       basePath: "/posts",
-      totalItems: postsFeed.totalItems,
+      totalItems: counts.posts,
       pageSize: LYOVSON_ITEMS_PER_PAGE,
       lastModified,
       priority: 0.55,
     });
   }
 
-  if (notesFeed) {
+  if (counts?.notes) {
     addLyovsonPaginatedRoutes({
       routes,
       siteUrl,
       username,
       basePath: "/notes",
-      totalItems: notesFeed.totalItems,
+      totalItems: counts.notes,
       pageSize: LYOVSON_ITEMS_PER_PAGE,
       lastModified,
       priority: 0.55,
     });
   }
 
-  if (activitiesFeed) {
+  if (counts?.activities) {
     addLyovsonPaginatedRoutes({
       routes,
       siteUrl,
       username,
       basePath: "/activities",
-      totalItems: activitiesFeed.totalItems,
+      totalItems: counts.activities,
       pageSize: LYOVSON_ITEMS_PER_PAGE,
       lastModified,
       priority: 0.55,

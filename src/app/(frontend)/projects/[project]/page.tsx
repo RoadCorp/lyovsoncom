@@ -1,11 +1,8 @@
-import configPromise from "@payload-config";
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
-import { getPayload } from "payload";
-import { Suspense } from "react";
 import { CollectionArchive } from "@/components/CollectionArchive";
-import { SkeletonGrid } from "@/components/grid/skeleton";
+import { GridCardProjectHero } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
 import type { Project } from "@/payload-types";
@@ -16,7 +13,14 @@ import {
 } from "@/utilities/generate-json-ld";
 import { getProject } from "@/utilities/get-project";
 import { getProjectPosts } from "@/utilities/get-project-posts";
-import { getServerSideURL } from "@/utilities/getURL";
+import { getPayloadClient } from "@/utilities/payload-client";
+import {
+  absoluteUrl,
+  postRoute,
+  projectPageRoute,
+  projectRoute,
+  projectsRoute,
+} from "@/utilities/routes";
 
 interface PageProps {
   params: Promise<{
@@ -25,44 +29,34 @@ interface PageProps {
 }
 
 export default async function Page({ params: paramsPromise }: PageProps) {
-  "use cache";
-
   const { project: projectSlug } = await paramsPromise;
 
-  // Add cache tags for this project
-  cacheTag("posts");
-  cacheTag("projects");
-  cacheTag(`project-${projectSlug}`);
-  cacheLife("posts");
-
   const project = await getProject(projectSlug);
-
   if (!project) {
     return notFound();
   }
 
   const response = await getProjectPosts(projectSlug);
-
   if (!response) {
     return notFound();
   }
 
-  const { docs, totalPages, page } = response;
+  const { docs, page, totalPages } = response;
   const collectionPageSchema = generateCollectionPageSchema({
     name: project.name,
     description: project.description || `Posts from ${project.name}`,
-    url: `${getServerSideURL()}/projects/${projectSlug}`,
+    url: absoluteUrl(projectRoute(projectSlug)),
     itemCount: response.totalDocs,
     items: docs
       .filter((post) => post.slug)
       .map((post) => ({
-        url: `${getServerSideURL()}/posts/${post.slug}`,
+        url: absoluteUrl(postRoute(post.slug as string)),
       })),
   });
 
   const breadcrumbSchema = generateBreadcrumbSchema([
-    { name: "Home", url: getServerSideURL() },
-    { name: "Projects", url: `${getServerSideURL()}/projects` },
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Projects", url: absoluteUrl(projectsRoute()) },
     { name: project.name },
   ]);
 
@@ -71,18 +65,17 @@ export default async function Page({ params: paramsPromise }: PageProps) {
       <h1 className="sr-only">{project.name}</h1>
       <JsonLd data={collectionPageSchema} />
       <JsonLd data={breadcrumbSchema} />
-
-      <Suspense fallback={<SkeletonGrid />}>
-        <CollectionArchive posts={docs} />
-      </Suspense>
-      {totalPages > 1 && page && (
+      <GridCardProjectHero project={project} />
+      <CollectionArchive posts={docs} />
+      {totalPages > 1 && page ? (
         <Pagination
-          basePath={`/projects/${projectSlug}/page`}
-          firstPagePath={`/projects/${projectSlug}`}
+          getPageHref={(pageNumber) =>
+            projectPageRoute(projectSlug, pageNumber)
+          }
           page={page}
           totalPages={totalPages}
         />
-      )}
+      ) : null}
     </>
   );
 }
@@ -90,20 +83,11 @@ export default async function Page({ params: paramsPromise }: PageProps) {
 export async function generateMetadata({
   params: paramsPromise,
 }: PageProps): Promise<Metadata> {
-  "use cache";
-
   const { project: projectSlug } = await paramsPromise;
 
-  // Add cache tags for metadata
-  cacheTag("projects");
-  cacheTag(`project-${projectSlug}`);
-  cacheLife("static"); // Project metadata changes less frequently
-
   const project = await getProject(projectSlug);
-
   if (!project) {
     return {
-      metadataBase: new URL(getServerSideURL()),
       title: "Project Not Found | Lyóvson.com",
       description: "The requested project could not be found",
     };
@@ -113,7 +97,6 @@ export async function generateMetadata({
     project.description || `Posts and content from the ${project.name} project`;
 
   return {
-    metadataBase: new URL(getServerSideURL()),
     title: `${project.name} | Lyóvson.com`,
     description,
     keywords: [
@@ -125,14 +108,14 @@ export async function generateMetadata({
       "Lyóvson",
     ],
     alternates: {
-      canonical: `/projects/${projectSlug}`,
+      canonical: projectRoute(projectSlug),
     },
     openGraph: {
       siteName: "Lyóvson.com",
       title: `${project.name} | Lyóvson.com`,
       description,
       type: "website",
-      url: `/projects/${projectSlug}`,
+      url: projectRoute(projectSlug),
       images: [
         {
           url: "/og-image.png",
@@ -163,18 +146,16 @@ export async function generateMetadata({
 export async function generateStaticParams() {
   "use cache";
   cacheTag("projects");
-  cacheLife("static"); // Build-time data doesn't change often
+  cacheLife("static");
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
   const response = await payload.find({
     collection: "projects",
     limit: 1000,
   });
 
-  const { docs } = response;
-
   return ensureStaticParams(
-    docs
+    response.docs
       .filter(
         (doc): doc is Project =>
           typeof doc === "object" && "slug" in doc && !!doc.slug

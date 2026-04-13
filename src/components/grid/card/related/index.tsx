@@ -1,8 +1,9 @@
-import Link from "next/link";
+import { AppLink } from "@/components/AppLink";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { Media } from "@/components/Media";
 import { cn } from "@/lib/utils";
 import type { Post } from "@/payload-types";
+import { postRoute } from "@/utilities/routes";
 
 const MAX_STAGGER_INDEX = 6;
 
@@ -25,18 +26,22 @@ export const GridCardRelatedPosts = ({
         if (typeof post === "number") {
           return null;
         }
+        if (!post.slug) {
+          return null;
+        }
         const rowClass = `row-start-${index + 1} row-end-${index + 2}`;
         const staggerClass = getStaggerClass(index);
         return (
-          <Link
+          <AppLink
             aria-label={`Read related post: ${post.title}`}
             className={cn(
               "group glass-interactive col-start-1 col-end-4",
               rowClass,
               staggerClass
             )}
-            href={`/posts/${post.slug}`}
+            href={postRoute(post.slug)}
             key={post.id}
+            prefetch={false}
           >
             <GridCardSection
               className={"grid h-full grid-cols-3 grid-rows-1 gap-2"}
@@ -56,7 +61,7 @@ export const GridCardRelatedPosts = ({
                 </h2>
               </div>
             </GridCardSection>
-          </Link>
+          </AppLink>
         );
       })}
     </GridCard>

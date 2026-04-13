@@ -25,7 +25,7 @@ export const GridCard = <T extends ElementType = "div">({
   as,
   children,
   className,
-  interactive = true,
+  interactive = false,
   role,
   style,
   variant = "default",

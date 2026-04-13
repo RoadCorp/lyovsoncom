@@ -1,10 +1,20 @@
 import { Brain, Calendar, PenTool, Quote } from "lucide-react";
-import Link from "next/link";
+import { ViewTransition } from "react";
+import { AppLink } from "@/components/AppLink";
 import { GridCard } from "@/components/grid";
 import { Media } from "@/components/Media";
 import { TopicPill } from "@/components/TopicPill";
 import { cn } from "@/lib/utils";
 import type { Activity, Note, Post } from "@/payload-types";
+import { formatShortDate } from "@/utilities/date";
+import { getActivityDateSlug, topicRoute } from "@/utilities/routes";
+import {
+  frontendViewTransitionClasses,
+  getActivityMediaTransitionName,
+  getActivityTitleTransitionName,
+  getPostMediaTransitionName,
+  getPostTitleTransitionName,
+} from "@/utilities/view-transitions";
 import { GridCardSection } from "../section";
 
 export const GridCardHero = ({
@@ -14,7 +24,9 @@ export const GridCardHero = ({
   className?: string;
   post: Post;
 }) => {
-  const postHref = post.slug ? `/posts/${post.slug}` : "/posts";
+  if (!post.slug) {
+    return null;
+  }
 
   return (
     <GridCard
@@ -26,7 +38,7 @@ export const GridCardHero = ({
         className
       )}
     >
-      {post.featuredImage && typeof post.featuredImage !== "string" && (
+      {post.featuredImage && typeof post.featuredImage !== "string" ? (
         <GridCardSection
           className={cn(
             "col-start-1 col-end-4 row-start-1 row-end-4",
@@ -34,44 +46,39 @@ export const GridCardHero = ({
           )}
           flush={true}
         >
-          <Media
-            className="glass-media flex h-full items-center justify-center"
-            imgClassName="object-cover h-full"
-            pictureClassName="h-full"
-            priority={true}
-            resource={post.featuredImage}
-          />
+          <ViewTransition
+            name={getPostMediaTransitionName(post.slug)}
+            {...frontendViewTransitionClasses.sharedMedia}
+          >
+            <Media
+              className="glass-media flex h-full items-center justify-center"
+              imgClassName="h-full object-cover"
+              pictureClassName="h-full"
+              priority={true}
+              resource={post.featuredImage}
+            />
+          </ViewTransition>
         </GridCardSection>
-      )}
-      <GridCardSection
-        className={
-          "col-start-1 g3:col-start-4 col-end-4 g3:col-end-7 g3:row-start-1 row-start-4 g3:row-end-4 row-end-7"
-        }
-      >
-        <Link
-          aria-label={`Featured post: ${post.title}`}
-          className="group flex h-full flex-col items-center justify-center px-4 md:px-8"
-          href={postHref}
-        >
+      ) : null}
+
+      <GridCardSection className="col-start-1 g3:col-start-4 col-end-4 g3:col-end-7 g3:row-start-1 row-start-4 g3:row-end-4 row-end-7">
+        <div className="flex h-full flex-col items-center justify-center px-4 md:px-8">
           <div className="mx-auto w-full max-w-3xl space-y-4">
-            <h1
-              className={
-                "glass-text text-center font-bold text-2xl transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)] md:text-3xl lg:text-4xl"
-              }
+            <ViewTransition
+              name={getPostTitleTransitionName(post.slug)}
+              {...frontendViewTransitionClasses.sharedTitle}
             >
-              {post.title}
-            </h1>
-            {post.description && (
-              <p
-                className={
-                  "glass-text-secondary text-left text-base leading-relaxed"
-                }
-              >
+              <h1 className="glass-text text-center font-bold text-2xl transition-colors duration-300 md:text-3xl lg:text-4xl">
+                {post.title}
+              </h1>
+            </ViewTransition>
+            {post.description ? (
+              <p className="glass-text-secondary text-left text-base leading-relaxed">
                 {post.description}
               </p>
-            )}
+            ) : null}
           </div>
-        </Link>
+        </div>
       </GridCardSection>
     </GridCard>
   );
@@ -97,81 +104,66 @@ export const GridCardHeroNote = ({
         className
       )}
     >
-      {/* Top section (2 rows, 3 columns) - Note Title */}
-      <GridCardSection
-        className={
-          "col-start-1 col-end-4 row-start-1 row-end-3 flex h-full flex-col items-center justify-center px-6 py-6"
-        }
-      >
+      <GridCardSection className="col-start-1 col-end-4 row-start-1 row-end-3 flex h-full flex-col items-center justify-center px-6 py-6">
         <h1 className="glass-text text-center font-bold text-2xl transition-colors duration-300">
           {note.title}
         </h1>
       </GridCardSection>
 
-      {/* Bottom row - Type, Author+Date, Topics */}
-      <GridCardSection
-        className={
-          "col-start-1 col-end-2 row-start-3 row-end-4 flex flex-col items-center justify-end gap-2"
-        }
-      >
+      <GridCardSection className="col-start-1 col-end-2 row-start-3 row-end-4 flex h-full flex-col items-center justify-end gap-2">
         {note.topics
           ?.filter((topic, index, self) => {
             if (typeof topic !== "object" || !topic?.id) {
               return false;
             }
+
             return (
               index ===
-              self.findIndex((t) => typeof t === "object" && t?.id === topic.id)
+              self.findIndex((candidate) => {
+                return (
+                  typeof candidate === "object" && candidate?.id === topic.id
+                );
+              })
             );
           })
           .map((topic) => {
-            if (typeof topic !== "object" || !topic?.slug || !topic?.id) {
+            if (typeof topic !== "object" || !topic.slug || !topic.id) {
               return null;
             }
+
             return (
-              <Link
+              <AppLink
                 aria-label={`View notes about ${topic.name}`}
                 className="w-full"
-                href={{ pathname: `/topics/${topic.slug}` }}
+                href={topicRoute(topic.slug)}
                 key={topic.id}
+                prefetch={false}
               >
                 <TopicPill>{topic.name}</TopicPill>
-              </Link>
+              </AppLink>
             );
           })}
       </GridCardSection>
 
-      <GridCardSection
-        className={
-          "col-start-2 col-end-3 row-start-3 row-end-4 flex flex-col justify-evenly gap-2"
-        }
-      >
-        {note.author && (
+      <GridCardSection className="col-start-2 col-end-3 row-start-3 row-end-4 flex flex-col justify-evenly gap-2">
+        {note.author ? (
           <div className="glass-text-secondary flex items-center gap-2 text-xs capitalize">
             <PenTool aria-hidden="true" className="h-5 w-5" />
             <span className="font-medium">{note.author}</span>
           </div>
-        )}
+        ) : null}
 
-        {note.publishedAt && (
+        {note.publishedAt ? (
           <div className="glass-text-secondary flex items-center gap-2 text-xs">
             <Calendar aria-hidden="true" className="h-5 w-5" />
             <time dateTime={note.publishedAt}>
-              {new Date(note.publishedAt).toLocaleDateString("en-GB", {
-                year: "2-digit",
-                month: "short",
-                day: "2-digit",
-              })}
+              {formatShortDate(note.publishedAt)}
             </time>
           </div>
-        )}
+        ) : null}
       </GridCardSection>
 
-      <GridCardSection
-        className={
-          "col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1"
-        }
-      >
+      <GridCardSection className="col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
         {isQuoteType ? (
           <Quote
             aria-hidden="true"
@@ -210,6 +202,12 @@ export const GridCardHeroActivity = ({
       ? referenceObj.image
       : null;
 
+  if (!activity.slug) {
+    return null;
+  }
+
+  const dateSlug = getActivityDateSlug(activity);
+
   return (
     <GridCard
       className={cn(
@@ -220,7 +218,7 @@ export const GridCardHeroActivity = ({
         className
       )}
     >
-      {referenceImage && (
+      {referenceImage ? (
         <GridCardSection
           className={cn(
             "col-start-1 col-end-4 row-start-1 row-end-4",
@@ -228,29 +226,32 @@ export const GridCardHeroActivity = ({
           )}
           flush={true}
         >
-          <Media
-            className="glass-media flex h-full items-center justify-center"
-            imgClassName="object-cover h-full"
-            pictureClassName="h-full"
-            priority={true}
-            resource={referenceImage}
-          />
+          <ViewTransition
+            name={getActivityMediaTransitionName(dateSlug, activity.slug)}
+            {...frontendViewTransitionClasses.sharedMedia}
+          >
+            <Media
+              className="glass-media flex h-full items-center justify-center"
+              imgClassName="h-full object-cover"
+              pictureClassName="h-full"
+              priority={true}
+              resource={referenceImage}
+            />
+          </ViewTransition>
         </GridCardSection>
-      )}
-      <GridCardSection
-        className={
-          "col-start-1 g3:col-start-4 col-end-4 g3:col-end-7 g3:row-start-1 row-start-4 g3:row-end-4 row-end-7"
-        }
-      >
+      ) : null}
+
+      <GridCardSection className="col-start-1 g3:col-start-4 col-end-4 g3:col-end-7 g3:row-start-1 row-start-4 g3:row-end-4 row-end-7">
         <div className="flex h-full flex-col items-center justify-center px-4 md:px-8">
           <div className="mx-auto w-full max-w-3xl space-y-4">
-            <h1
-              className={
-                "glass-text text-center font-bold text-2xl transition-colors duration-300 md:text-3xl lg:text-4xl"
-              }
+            <ViewTransition
+              name={getActivityTitleTransitionName(dateSlug, activity.slug)}
+              {...frontendViewTransitionClasses.sharedTitle}
             >
-              {title}
-            </h1>
+              <h1 className="glass-text text-center font-bold text-2xl transition-colors duration-300 md:text-3xl lg:text-4xl">
+                {title}
+              </h1>
+            </ViewTransition>
           </div>
         </div>
       </GridCardSection>

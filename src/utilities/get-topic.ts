@@ -1,8 +1,7 @@
-import configPromise from "@payload-config";
 import { cacheLife, cacheTag } from "next/cache";
 import type { PaginatedDocs } from "payload";
-import { getPayload } from "payload";
 import type { Topic } from "@/payload-types";
+import { getPayloadClient } from "@/utilities/payload-client";
 
 export async function getTopic(slug: string): Promise<Topic | null> {
   "use cache";
@@ -10,7 +9,7 @@ export async function getTopic(slug: string): Promise<Topic | null> {
   cacheTag(`topic-${slug}`);
   cacheLife("topics");
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
   const response = await payload.find({
     collection: "topics",
     where: {
@@ -29,7 +28,7 @@ export async function getAllTopics(): Promise<PaginatedDocs<Topic>> {
   cacheTag("topics");
   cacheLife("topics");
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "topics",
     limit: 1000,

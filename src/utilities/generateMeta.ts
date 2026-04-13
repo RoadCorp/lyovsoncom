@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { Post } from "@/payload-types";
 import { getServerSideURL } from "./getURL";
 import { mergeOpenGraph } from "./mergeOpenGraph";
+import { postRoute } from "./routes";
 
 interface LegacyMeta {
   meta?: {
@@ -39,7 +40,7 @@ export const generateMeta = (args: { doc: Partial<Post> }): Metadata => {
           ]
         : undefined,
       title,
-      url: Array.isArray(doc?.slug) ? doc?.slug.join("/") : "/",
+      url: typeof doc?.slug === "string" ? postRoute(doc.slug) : "/",
     }),
     title,
   };

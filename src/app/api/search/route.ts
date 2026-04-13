@@ -1,162 +1,56 @@
-/**
- * Hybrid Search API Endpoint
- *
- * Combines semantic (pgvector), full-text (tsvector), and fuzzy (trigram) search
- * using Reciprocal Rank Fusion (RRF) for optimal ranking.
- *
- * GET /api/search?q=query&limit=10
- */
-
-import configPromise from "@payload-config";
-import { sql } from "@payloadcms/db-vercel-postgres/drizzle";
 import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
-import { getPayload } from "payload";
-import {
-  EMBEDDING_VECTOR_DIMENSIONS,
-  generateEmbedding,
-} from "@/utilities/generate-embedding";
-
-const MIN_SEARCH_LIMIT = 1;
-const MAX_SEARCH_LIMIT = 50;
-
-interface SearchResult {
-  collection: string;
-  combined_score: number;
-  created_at: string;
-  description: string | null;
-  featured_image_id: number | null;
-  fts_rank: number | null;
-  fuzzy_rank: number | null;
-  id: number;
-  semantic_rank: number | null;
-  slug: string;
-  title: string;
-  updated_at: string;
-}
-
-interface HybridSearchRow {
-  collection: string;
-  combined_score: string; // PostgreSQL numeric type comes as string
-  created_at: Date;
-  description: string | null;
-  featured_image_id: number | null;
-  fts_rank: bigint | null;
-  fuzzy_rank: bigint | null;
-  id: number;
-  semantic_rank: bigint | null;
-  slug: string;
-  title: string;
-  updated_at: Date;
-}
+import { after, NextResponse } from "next/server";
+import { runHybridSearch, SearchInputError } from "@/search/service";
+import { getPayloadClient } from "@/utilities/payload-client";
 
 export async function GET(request: NextRequest) {
+  const startedAt = Date.now();
+  const query = request.nextUrl.searchParams.get("q");
+
   try {
     const searchParams = request.nextUrl.searchParams;
-    const query = searchParams.get("q");
     const limit = Number.parseInt(searchParams.get("limit") || "10", 10);
+    const response = await runHybridSearch(query, limit);
 
-    // Validate query
-    if (!query || query.trim().length === 0) {
-      return NextResponse.json(
-        {
-          results: [],
-          query: "",
-          count: 0,
-          message: "No search query provided",
-        },
-        { status: 400 }
-      );
-    }
+    after(async () => {
+      const payload = await getPayloadClient();
+      payload.logger.info({
+        msg: "api.search.completed",
+        durationMs: Date.now() - startedAt,
+        queryLength: response.query.length,
+        resultCount: response.count,
+      });
+    });
 
-    const trimmedQuery = query.trim();
-
-    // Validate limit
-    if (limit < MIN_SEARCH_LIMIT || limit > MAX_SEARCH_LIMIT) {
-      return NextResponse.json(
-        {
-          results: [],
-          query: trimmedQuery,
-          count: 0,
-          message: "Limit must be between 1 and 50",
-        },
-        { status: 400 }
-      );
-    }
-
-    // Generate embedding for semantic search
-    const embeddingResult = await generateEmbedding(trimmedQuery);
-
-    if (
-      !embeddingResult?.vector ||
-      embeddingResult.vector.length !== EMBEDDING_VECTOR_DIMENSIONS
-    ) {
-      return NextResponse.json(
-        {
-          results: [],
-          query: trimmedQuery,
-          count: 0,
-          message: "Failed to generate search embedding",
-        },
-        { status: 500 }
-      );
-    }
-
-    const embedding = embeddingResult.vector;
-
-    // Get Payload instance to access database
-    const payload = await getPayload({ config: configPromise });
-
-    // Call hybrid search function via a parameterized Drizzle SQL template.
-    const vectorString = `[${embedding.join(",")}]`;
-    const result = await payload.db.drizzle.execute(
-      sql`SELECT * FROM hybrid_search_content(
-        ${trimmedQuery},
-        ${vectorString}::vector,
-        ${limit},
-        60
-      )`
-    );
-
-    const rows = result.rows as unknown as HybridSearchRow[];
-
-    // Transform results
-    const results: SearchResult[] = rows.map((row) => ({
-      collection: row.collection || "posts",
-      id: row.id,
-      title: row.title || "",
-      slug: row.slug || "",
-      description: row.description || null,
-      featured_image_id: row.featured_image_id || null,
-      created_at:
-        row.created_at instanceof Date
-          ? row.created_at.toISOString()
-          : new Date(row.created_at).toISOString(),
-      updated_at:
-        row.updated_at instanceof Date
-          ? row.updated_at.toISOString()
-          : new Date(row.updated_at).toISOString(),
-      semantic_rank: row.semantic_rank ? Number(row.semantic_rank) : null,
-      fts_rank: row.fts_rank ? Number(row.fts_rank) : null,
-      fuzzy_rank: row.fuzzy_rank ? Number(row.fuzzy_rank) : null,
-      combined_score: Number.parseFloat(row.combined_score),
-    }));
-
-    return NextResponse.json(
-      {
-        results,
-        query: trimmedQuery,
-        count: results.length,
+    return NextResponse.json(response, {
+      headers: {
+        "Cache-Control":
+          "public, max-age=300, s-maxage=600, stale-while-revalidate=1800", // Cache 5-10 min, stale up to 30 min
+        "Access-Control-Allow-Origin": "*",
       },
-      {
-        headers: {
-          "Cache-Control":
-            "public, max-age=300, s-maxage=600, stale-while-revalidate=1800", // Cache 5-10 min, stale up to 30 min
-          "Access-Control-Allow-Origin": "*",
-        },
-      }
-    );
+    });
   } catch (error) {
+    if (error instanceof SearchInputError) {
+      return NextResponse.json(
+        {
+          results: [],
+          query: query ?? "",
+          count: 0,
+          message: error.message,
+        },
+        { status: error.status }
+      );
+    }
+
+    after(async () => {
+      const payload = await getPayloadClient();
+      payload.logger.error({
+        msg: "api.search.failed",
+        durationMs: Date.now() - startedAt,
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    });
+
     return NextResponse.json(
       {
         results: [],
