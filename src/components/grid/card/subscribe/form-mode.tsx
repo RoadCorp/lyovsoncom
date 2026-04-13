@@ -7,6 +7,7 @@ interface FormModeProps {
   buttonText: string;
   description: string;
   formAction: (formData: FormData) => void;
+  isPending: boolean;
   title: string;
 }
 
@@ -15,6 +16,7 @@ export const FormMode = ({
   description,
   buttonText,
   formAction,
+  isPending,
 }: FormModeProps) => {
   return (
     <>
@@ -32,7 +34,11 @@ export const FormMode = ({
       </GridCardSection>
 
       <GridCardSection className="col-start-1 col-end-4 row-start-3 row-end-4">
-        <SubscribeForm action={formAction} buttonText={buttonText} />
+        <SubscribeForm
+          action={formAction}
+          buttonText={buttonText}
+          isPending={isPending}
+        />
       </GridCardSection>
     </>
   );

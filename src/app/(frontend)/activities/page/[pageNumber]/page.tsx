@@ -8,8 +8,12 @@ import { SkeletonGrid } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
 import { getActivityPath } from "@/utilities/activity-path";
+import { ensureStaticParams } from "@/utilities/ensureStaticParams";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
-import { getPaginatedActivities } from "@/utilities/get-activity";
+import {
+  getActivityCount,
+  getPaginatedActivities,
+} from "@/utilities/get-activity";
 import { getServerSideURL } from "@/utilities/getURL";
 
 const ACTIVITIES_PER_PAGE = 25;
@@ -19,6 +23,22 @@ interface Args {
   params: Promise<{
     pageNumber: string;
   }>;
+}
+
+export async function generateStaticParams() {
+  "use cache";
+  cacheTag("activities");
+  cacheLife("static");
+
+  const { totalDocs } = await getActivityCount();
+  const totalPages = Math.ceil(totalDocs / ACTIVITIES_PER_PAGE);
+  const pages: { pageNumber: string }[] = [];
+
+  for (let pageNumber = 2; pageNumber <= totalPages; pageNumber++) {
+    pages.push({ pageNumber: String(pageNumber) });
+  }
+
+  return ensureStaticParams(pages, { pageNumber: "1" });
 }
 
 export default async function Page({ params: paramsPromise }: Args) {

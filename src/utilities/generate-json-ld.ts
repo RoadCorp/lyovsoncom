@@ -293,8 +293,9 @@ export function generateCollectionPageSchema(
     description: data.description,
     url: data.url,
     mainEntity:
-      data.itemCount !== undefined
-        ? {
+      data.itemCount === undefined
+        ? undefined
+        : {
             "@type": "ItemList",
             numberOfItems: data.itemCount,
             itemListElement: data.items?.map((item, index) => ({
@@ -302,8 +303,7 @@ export function generateCollectionPageSchema(
               position: index + 1,
               url: item.url,
             })),
-          }
-        : undefined,
+          },
     inLanguage: "en-US",
   };
 }

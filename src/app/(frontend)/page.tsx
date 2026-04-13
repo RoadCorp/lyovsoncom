@@ -53,9 +53,7 @@ export default async function Page() {
   cacheTag("posts");
   cacheTag("notes");
   cacheTag("activities");
-  cacheLife("posts");
-  cacheLife("notes");
-  cacheLife("activities");
+  cacheLife("homepage");
 
   // Fetch a small buffer per collection to build the mixed homepage feed.
   const [posts, notes, activities] = await Promise.all([

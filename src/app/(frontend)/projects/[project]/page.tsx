@@ -9,6 +9,7 @@ import { SkeletonGrid } from "@/components/grid/skeleton";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
 import type { Project } from "@/payload-types";
+import { ensureStaticParams } from "@/utilities/ensureStaticParams";
 import {
   generateBreadcrumbSchema,
   generateCollectionPageSchema,
@@ -22,8 +23,6 @@ interface PageProps {
     project: string;
   }>;
 }
-
-export const dynamicParams = true;
 
 export default async function Page({ params: paramsPromise }: PageProps) {
   "use cache";
@@ -174,12 +173,15 @@ export async function generateStaticParams() {
 
   const { docs } = response;
 
-  return docs
-    .filter(
-      (doc): doc is Project =>
-        typeof doc === "object" && "slug" in doc && !!doc.slug
-    )
-    .map(({ slug }) => ({
-      project: slug as string,
-    }));
+  return ensureStaticParams(
+    docs
+      .filter(
+        (doc): doc is Project =>
+          typeof doc === "object" && "slug" in doc && !!doc.slug
+      )
+      .map(({ slug }) => ({
+        project: slug as string,
+      })),
+    { project: "__placeholder__" }
+  );
 }

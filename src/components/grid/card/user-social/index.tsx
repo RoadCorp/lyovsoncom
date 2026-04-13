@@ -8,9 +8,8 @@ import {
   SiX,
   SiYoutube,
 } from "@icons-pack/react-simple-icons";
-import { Linkedin } from "lucide-react";
-
 import { GridCard, GridCardNavItem } from "@/components/grid";
+import { LinkedInIcon } from "@/components/LinkedInIcon";
 import { cn } from "@/lib/utils";
 
 const MAX_STAGGER_INDEX = 6;
@@ -68,7 +67,7 @@ const socialLinks: SocialLink[] = [
   {
     name: "LinkedIn",
     url: "https://linkedin.com/in/lyovson",
-    icon: Linkedin,
+    icon: LinkedInIcon,
     useDefaultColor: false,
     iconType: "lucide",
   },

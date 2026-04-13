@@ -34,7 +34,7 @@ export const GridCardSubscribe = ({
   handleSubmit,
 }: GridCardSubscribeProps) => {
   const [mode, setMode] = useState<SubscribeMode>("form");
-  const [state, formAction] = useActionState(handleSubmit, {
+  const [state, formAction, isPending] = useActionState(handleSubmit, {
     success: false,
     message: "",
   });
@@ -65,6 +65,7 @@ export const GridCardSubscribe = ({
               buttonText={buttonText}
               description={description}
               formAction={formAction}
+              isPending={isPending}
               title={title}
             />
           ),

@@ -1,13 +1,10 @@
-import configPromise from "@payload-config";
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
-import { getPayload } from "payload";
 import { Suspense } from "react";
 import { GridCardEmptyState, SkeletonGrid } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
-import type { Lyovson } from "@/payload-types";
 import { getActivityPath } from "@/utilities/activity-path";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import type { LyovsonMixedFeedItem } from "@/utilities/get-lyovson-feed";
@@ -23,8 +20,6 @@ import {
 interface PageProps {
   params: Promise<{ lyovson: string }>;
 }
-
-export const dynamicParams = true;
 
 function getLyovsonFeedItemUrl(item: LyovsonMixedFeedItem): string | null {
   if (item.type === "post" && item.data.slug) {
@@ -55,9 +50,7 @@ export default async function Page({ params }: PageProps) {
   cacheTag("activities");
   cacheTag("lyovsons");
   cacheTag(`lyovson-${username}`);
-  cacheLife("posts");
-  cacheLife("notes");
-  cacheLife("activities");
+  cacheLife("feed");
 
   const response = await getLyovsonFeed({
     username,
@@ -145,28 +138,4 @@ export async function generateMetadata({
     description,
     canonicalPath: `/${username}`,
   });
-}
-
-export async function generateStaticParams() {
-  "use cache";
-  cacheTag("lyovsons");
-  cacheLife("static");
-
-  const payload = await getPayload({ config: configPromise });
-  const lyovsons = await payload.find({
-    collection: "lyovsons",
-    limit: 100,
-    overrideAccess: true,
-  });
-
-  return lyovsons.docs
-    .filter(
-      (lyovson): lyovson is Lyovson =>
-        typeof lyovson === "object" &&
-        "username" in lyovson &&
-        !!lyovson.username
-    )
-    .map((lyovson) => ({
-      lyovson: lyovson.username as string,
-    }));
 }

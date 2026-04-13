@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { GridCardLyovsonSections, GridCardUser } from "@/components/grid";
 import { getLyovsonProfile } from "@/utilities/get-lyovson-profile";
+import { getLyovsonStaticParams } from "./_utilities/staticParams";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -14,6 +15,10 @@ const fontMap: Record<string, FontClass> = {
   serif: "font-serif",
   mono: "font-mono",
 };
+
+export async function generateStaticParams() {
+  return getLyovsonStaticParams();
+}
 
 export default async function Layout({ children, params }: LayoutProps) {
   const { lyovson: username } = await params;

@@ -25,6 +25,7 @@ import RichText from "@/components/RichText";
 import { cn } from "@/lib/utils";
 import type { Activity } from "@/payload-types";
 import { getActivityDateSlug } from "@/utilities/activity-path";
+import { ensureStaticParams } from "@/utilities/ensureStaticParams";
 import {
   generateArticleSchema,
   generateBreadcrumbSchema,
@@ -38,8 +39,6 @@ interface Args {
     slug: string;
   }>;
 }
-
-export const dynamicParams = true;
 
 const activityTypeLabels: Record<string, string> = {
   read: "Read",
@@ -247,6 +246,11 @@ export default async function ActivityPage({ params: paramsPromise }: Args) {
         // On g3 (desktop): place side by side (2 per row) in columns 2-3
         // Column 2 for even indices (0, 2, 4...), Column 3 for odd indices (1, 3, 5...)
         const isEven = index % 2 === 0;
+        const reviewerId =
+          typeof review.lyovson === "object"
+            ? review.lyovson.id
+            : review.lyovson;
+        const reviewKey = `review-${reviewerId}-${review.rating ?? "no-rating"}-${review.note?.trim() || "no-note"}`;
 
         return (
           <GridCardActivityReview
@@ -257,7 +261,7 @@ export default async function ActivityPage({ params: paramsPromise }: Args) {
                 ? "g3:col-start-2 g3:col-end-3"
                 : "g3:col-start-3 g3:col-end-4"
             )}
-            key={`review-${typeof review.lyovson === "object" ? review.lyovson.id : review.lyovson}-${index}`}
+            key={reviewKey}
             review={review}
           />
         );
@@ -293,14 +297,18 @@ export async function generateStaticParams() {
     limit: 1000,
   });
 
-  return activities.docs
-    .filter((activity) => activity.slug)
-    .map((activity) => {
-      return {
+  return ensureStaticParams(
+    activities.docs
+      .filter((activity) => activity.slug)
+      .map((activity) => ({
         date: getActivityDateSlug(activity),
         slug: activity.slug,
-      };
-    });
+      })),
+    {
+      date: "__placeholder__",
+      slug: "__placeholder__",
+    }
+  );
 }
 
 export async function generateMetadata({

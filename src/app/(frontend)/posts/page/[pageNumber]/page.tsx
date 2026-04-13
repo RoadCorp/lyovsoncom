@@ -7,6 +7,7 @@ import { CollectionArchive } from "@/components/CollectionArchive";
 import { SkeletonGrid } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
+import { ensureStaticParams } from "@/utilities/ensureStaticParams";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getPaginatedPosts, getPostCount } from "@/utilities/get-post";
 import { getServerSideURL } from "@/utilities/getURL";
@@ -19,8 +20,6 @@ interface Args {
     pageNumber: string;
   }>;
 }
-
-export const dynamicParams = true;
 
 export default async function Page({ params: paramsPromise }: Args) {
   "use cache";
@@ -145,5 +144,5 @@ export async function generateStaticParams() {
     pages.push({ pageNumber: String(i) });
   }
 
-  return pages;
+  return ensureStaticParams(pages, { pageNumber: "1" });
 }

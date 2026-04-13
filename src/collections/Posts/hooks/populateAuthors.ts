@@ -1,5 +1,5 @@
 import type { CollectionAfterReadHook } from "payload";
-import type { Lyovson } from "src/payload-types";
+import type { Lyovson } from "@/payload-types";
 
 // The `lyovson` collection has access control locked so that lyovsons are not publicly accessible
 // This means that we need to populate the authors manually here to protect lyovson privacy

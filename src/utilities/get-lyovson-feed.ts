@@ -409,9 +409,7 @@ export async function getLyovsonFeed({
   cacheTag(`lyovson-${username}`);
   cacheTag(`lyovson-${username}-${filter}`);
   cacheTag(`lyovson-${username}-${filter}-page-${safePage}`);
-  cacheLife("posts");
-  cacheLife("notes");
-  cacheLife("activities");
+  cacheLife("feed");
 
   const user = await getLyovsonProfile(username);
   if (!user) {

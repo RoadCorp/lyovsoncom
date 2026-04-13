@@ -17,6 +17,7 @@ import RichText from "@/components/RichText";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import type { Note, Reference } from "@/payload-types";
+import { ensureStaticParams } from "@/utilities/ensureStaticParams";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";
 import {
   generateArticleSchema,
@@ -32,8 +33,6 @@ interface Args {
     slug: string;
   }>;
 }
-
-export const dynamicParams = true;
 
 export default async function NotePage({ params: paramsPromise }: Args) {
   "use cache";
@@ -245,11 +244,14 @@ export async function generateStaticParams() {
     limit: 1000,
   });
 
-  return notes.docs
-    .filter((note) => note.slug)
-    .map((note) => ({
-      slug: note.slug,
-    }));
+  return ensureStaticParams(
+    notes.docs
+      .filter((note) => note.slug)
+      .map((note) => ({
+        slug: note.slug,
+      })),
+    { slug: "__placeholder__" }
+  );
 }
 
 export async function generateMetadata({

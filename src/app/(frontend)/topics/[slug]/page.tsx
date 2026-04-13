@@ -7,6 +7,7 @@ import { CollectionArchive } from "@/components/CollectionArchive";
 import { SkeletonGrid } from "@/components/grid/skeleton";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
+import { ensureStaticParams } from "@/utilities/ensureStaticParams";
 import {
   generateBreadcrumbSchema,
   generateCollectionPageSchema,
@@ -21,8 +22,6 @@ interface PageProps {
   }>;
 }
 
-export const dynamicParams = true;
-
 export async function generateStaticParams() {
   "use cache";
   cacheTag("topics");
@@ -31,14 +30,17 @@ export async function generateStaticParams() {
   const topicsResponse = await getAllTopics();
 
   if (!topicsResponse) {
-    return [];
+    return ensureStaticParams([], { slug: "__placeholder__" });
   }
 
   const { docs } = topicsResponse;
 
-  return docs.map(({ slug }) => ({
-    slug,
-  }));
+  return ensureStaticParams(
+    docs.map(({ slug }) => ({
+      slug,
+    })),
+    { slug: "__placeholder__" }
+  );
 }
 
 export default async function Page({ params: paramsPromise }: PageProps) {

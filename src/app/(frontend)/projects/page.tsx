@@ -13,11 +13,8 @@ import { getServerSideURL } from "@/utilities/getURL";
 export default async function Page() {
   "use cache";
 
-  // Add cache tags for Jess's posts
-  cacheTag("posts");
-  cacheTag("users");
-  cacheTag("author-jess");
-  cacheLife("authors");
+  cacheTag("projects");
+  cacheLife("projects");
 
   const response = await getProjects();
 

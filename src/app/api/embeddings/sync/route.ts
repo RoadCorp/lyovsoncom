@@ -14,8 +14,6 @@ import {
   generateEmbeddingForPost,
 } from "@/utilities/generate-embedding-helpers";
 
-export const dynamic = "force-dynamic";
-
 const DEFAULT_LIMIT_PER_COLLECTION = 25;
 const MAX_LIMIT_PER_COLLECTION = 250;
 const EMBEDDABLE_COLLECTIONS = ["posts", "notes", "activities"] as const;

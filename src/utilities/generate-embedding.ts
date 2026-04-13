@@ -151,7 +151,7 @@ export async function generateEmbedding(text: string): Promise<{
   try {
     const { embedding } = await embed({
       model: openai.embedding(EMBEDDING_MODEL),
-      value: text.substring(0, EMBEDDING_TEXT_LIMIT),
+      value: text.slice(0, EMBEDDING_TEXT_LIMIT),
     });
 
     if (embedding.length !== EMBEDDING_VECTOR_DIMENSIONS) {

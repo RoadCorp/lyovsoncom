@@ -1,14 +1,26 @@
 import type { Metadata } from "next";
+import { cacheLife } from "next/cache";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { getServerSideURL } from "@/utilities/getURL";
-
-export const dynamic = "force-static";
 
 const DOCS_CARD_CLASS_NAME =
   "aspect-auto h-auto g2:col-start-2 g2:col-end-3 g3:col-start-2 g3:col-end-4 g3:w-[var(--grid-card-2x1)]";
 
 const DOCS_SECTION_CLASS_NAME =
   "glass-longform col-span-3 row-span-3 p-6 md:p-8";
+
+const LAST_UPDATED_FORMATTER = new Intl.DateTimeFormat("en-US", {
+  month: "long",
+  day: "numeric",
+  year: "numeric",
+});
+
+async function getLastUpdatedLabel() {
+  "use cache";
+  cacheLife("static");
+
+  return LAST_UPDATED_FORMATTER.format(new Date());
+}
 
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
@@ -98,13 +110,9 @@ function ExternalLink({
   );
 }
 
-export default function AIDocsPage() {
+export default async function AIDocsPage() {
   const SITE_URL = getServerSideURL();
-  const lastUpdated = new Intl.DateTimeFormat("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date());
+  const lastUpdated = await getLastUpdatedLabel();
 
   return (
     <>

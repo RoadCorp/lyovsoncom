@@ -6,6 +6,7 @@ import { CollectionArchive } from "@/components/CollectionArchive";
 import { SkeletonGrid } from "@/components/grid/skeleton";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
+import { ensureStaticParams } from "@/utilities/ensureStaticParams";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getProject } from "@/utilities/get-project";
 import { getPaginatedProjectPosts } from "@/utilities/get-project-posts";
@@ -21,8 +22,6 @@ interface Args {
     pageNumber: string;
   }>;
 }
-
-export const dynamicParams = true;
 
 export default async function Page({ params: paramsPromise }: Args) {
   "use cache";
@@ -174,9 +173,11 @@ export async function generateStaticParams() {
   });
 
   const paths: { project: string; pageNumber: string }[] = [];
+  let fallbackProject: string | null = null;
 
   for (const project of projects.docs) {
     if (typeof project === "object" && "slug" in project && project.slug) {
+      fallbackProject ??= project.slug as string;
       const postsResponse = await getPaginatedProjectPosts(
         project.slug as string,
         1,
@@ -193,5 +194,8 @@ export async function generateStaticParams() {
     }
   }
 
-  return paths;
+  return ensureStaticParams(paths, {
+    project: fallbackProject || "__placeholder__",
+    pageNumber: fallbackProject ? "1" : "__placeholder__",
+  });
 }

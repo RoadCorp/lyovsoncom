@@ -1,4 +1,4 @@
-import { updateTag } from "next/cache";
+import { revalidateTag } from "next/cache";
 import type { CollectionAfterChangeHook } from "payload";
 
 export const revalidateRedirects: CollectionAfterChangeHook = ({
@@ -7,7 +7,8 @@ export const revalidateRedirects: CollectionAfterChangeHook = ({
 }) => {
   payload.logger.info("Updating cache for redirects");
 
-  updateTag("redirects");
+  // Payload hooks are not Server Actions, so use tag revalidation here.
+  revalidateTag("redirects", { expire: 0 });
 
   return doc;
 };

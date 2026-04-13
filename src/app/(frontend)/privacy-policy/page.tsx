@@ -4,8 +4,6 @@ import { GridCard, GridCardSection } from "@/components/grid";
 import { cn } from "@/lib/utils";
 import { getServerSideURL } from "@/utilities/getURL";
 
-export const dynamic = "force-static";
-
 export default async function PrivacyPolicy() {
   "use cache";
   await Promise.resolve();

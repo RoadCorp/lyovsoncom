@@ -20,12 +20,17 @@ import {
   buildLyovsonMetadata,
   buildLyovsonNotFoundMetadata,
 } from "../../_utilities/metadata";
+import { getLyovsonPaginatedStaticParams } from "../../_utilities/staticParams";
 
 interface Args {
   params: Promise<{
     lyovson: string;
     pageNumber: string;
   }>;
+}
+
+export async function generateStaticParams() {
+  return getLyovsonPaginatedStaticParams("all");
 }
 
 function getLyovsonFeedItemUrl(item: LyovsonMixedFeedItem): string | null {
@@ -59,9 +64,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   cacheTag("lyovsons");
   cacheTag(`lyovson-${username}`);
   cacheTag(`lyovson-${username}-all-page-${pageNumber}`);
-  cacheLife("posts");
-  cacheLife("notes");
-  cacheLife("activities");
+  cacheLife("feed");
 
   if (!sanitizedPageNumber) {
     notFound();

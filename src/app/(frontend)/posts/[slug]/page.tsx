@@ -16,6 +16,7 @@ import RichText from "@/components/RichText";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import type { Media, Post } from "@/payload-types";
+import { ensureStaticParams } from "@/utilities/ensureStaticParams";
 import {
   generateArticleSchema,
   generateBreadcrumbSchema,
@@ -67,8 +68,6 @@ interface Args {
     slug: string;
   }>;
 }
-
-export const dynamicParams = true;
 
 export default async function PostPage({ params: paramsPromise }: Args) {
   "use cache";
@@ -238,11 +237,14 @@ export async function generateStaticParams() {
     limit: 1000,
   });
 
-  return posts.docs
-    .filter((post) => post.slug)
-    .map((post) => ({
-      slug: post.slug,
-    }));
+  return ensureStaticParams(
+    posts.docs
+      .filter((post) => post.slug)
+      .map((post) => ({
+        slug: post.slug,
+      })),
+    { slug: "__placeholder__" }
+  );
 }
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Metadata generation requires many conditional fields for SEO/social media

@@ -14,11 +14,11 @@ export const Media: React.FC<Props> = (props) => {
 
   return (
     <Tag
-      {...(htmlElement !== null
-        ? {
+      {...(htmlElement === null
+        ? {}
+        : {
             className: cn(className, "contents"),
-          }
-        : {})}
+          })}
     >
       {isVideo ? <VideoMedia {...props} /> : <ImageMedia {...props} />}
     </Tag>

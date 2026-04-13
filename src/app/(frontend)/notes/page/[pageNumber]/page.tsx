@@ -6,8 +6,9 @@ import { SkeletonGrid } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import { NotesArchive } from "@/components/NotesArchive";
 import { Pagination } from "@/components/Pagination";
+import { ensureStaticParams } from "@/utilities/ensureStaticParams";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
-import { getPaginatedNotes } from "@/utilities/get-note";
+import { getNoteCount, getPaginatedNotes } from "@/utilities/get-note";
 import { getServerSideURL } from "@/utilities/getURL";
 
 const NOTES_PER_PAGE = 25;
@@ -17,6 +18,22 @@ interface Args {
   params: Promise<{
     pageNumber: string;
   }>;
+}
+
+export async function generateStaticParams() {
+  "use cache";
+  cacheTag("notes");
+  cacheLife("static");
+
+  const { totalDocs } = await getNoteCount();
+  const totalPages = Math.ceil(totalDocs / NOTES_PER_PAGE);
+  const pages: { pageNumber: string }[] = [];
+
+  for (let pageNumber = 2; pageNumber <= totalPages; pageNumber++) {
+    pages.push({ pageNumber: String(pageNumber) });
+  }
+
+  return ensureStaticParams(pages, { pageNumber: "1" });
 }
 
 export default async function Page({ params: paramsPromise }: Args) {

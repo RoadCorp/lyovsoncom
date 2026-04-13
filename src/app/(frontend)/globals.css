@@ -530,7 +530,6 @@
     position: relative;
     min-height: var(--grid-card-size);
     contain: layout paint style;
-    overflow: hidden;
     overflow: clip;
     background: var(--glass-bg);
     background-image: var(--glass-aurora);
@@ -580,7 +579,6 @@
     position: relative;
     padding: var(--grid-section-padding);
     contain: layout paint style;
-    overflow: hidden;
     overflow: clip;
     background: var(--glass-bg);
     background-image:
@@ -1409,6 +1407,7 @@
 }
 
 @layer base {
+  /* biome-ignore lint/style/noDescendingSpecificity: Tailwind base reset intentionally applies globally after component styles. */
   * {
     @apply border-border outline-ring/50;
   }

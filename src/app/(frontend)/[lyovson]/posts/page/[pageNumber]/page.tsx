@@ -18,12 +18,17 @@ import {
   buildLyovsonMetadata,
   buildLyovsonNotFoundMetadata,
 } from "../../../_utilities/metadata";
+import { getLyovsonPaginatedStaticParams } from "../../../_utilities/staticParams";
 
 interface Args {
   params: Promise<{
     lyovson: string;
     pageNumber: string;
   }>;
+}
+
+export async function generateStaticParams() {
+  return getLyovsonPaginatedStaticParams("posts");
 }
 
 export default async function Page({ params: paramsPromise }: Args) {

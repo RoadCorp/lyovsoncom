@@ -9,8 +9,6 @@ import {
   generateEmbeddingForPost,
 } from "@/utilities/generate-embedding-helpers";
 
-export const dynamic = "force-dynamic";
-
 interface RegenerateEmbeddingBody {
   collection?: "posts" | "notes" | "activities";
   force?: boolean;

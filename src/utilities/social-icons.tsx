@@ -5,8 +5,9 @@ import {
   SiX,
   SiYoutube,
 } from "@icons-pack/react-simple-icons";
-import { Globe, Linkedin } from "lucide-react";
+import { Globe } from "lucide-react";
 import type { ComponentType } from "react";
+import { LinkedInIcon } from "@/components/LinkedInIcon";
 
 interface IconProps {
   className?: string;
@@ -27,7 +28,7 @@ export const SOCIAL_ICON_MAP: Record<string, SocialIconConfig> = {
     iconType: "simple",
   },
   linkedin: {
-    icon: Linkedin,
+    icon: LinkedInIcon,
     label: "LinkedIn",
     iconType: "lucide",
   },

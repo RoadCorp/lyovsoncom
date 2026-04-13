@@ -6,8 +6,9 @@ import { CollectionArchive } from "@/components/CollectionArchive";
 import { SkeletonGrid } from "@/components/grid/skeleton";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
+import { ensureStaticParams } from "@/utilities/ensureStaticParams";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
-import { getTopic } from "@/utilities/get-topic";
+import { getAllTopics, getTopic } from "@/utilities/get-topic";
 import { getPaginatedTopicPosts } from "@/utilities/get-topic-posts";
 import { getServerSideURL } from "@/utilities/getURL";
 
@@ -21,7 +22,37 @@ interface Args {
   }>;
 }
 
-export const dynamicParams = true;
+export async function generateStaticParams() {
+  "use cache";
+  cacheTag("topics");
+  cacheLife("static");
+
+  const topicsResponse = await getAllTopics();
+  const paths: { slug: string; pageNumber: string }[] = [];
+  let fallbackSlug: string | null = null;
+
+  for (const { slug } of topicsResponse.docs) {
+    if (!slug) {
+      continue;
+    }
+
+    fallbackSlug ??= slug;
+    const response = await getPaginatedTopicPosts(slug, 1, POSTS_PER_PAGE);
+    const totalPages = response?.totalPages || 0;
+
+    for (let pageNumber = 2; pageNumber <= totalPages; pageNumber++) {
+      paths.push({
+        slug,
+        pageNumber: String(pageNumber),
+      });
+    }
+  }
+
+  return ensureStaticParams(paths, {
+    slug: fallbackSlug || "__placeholder__",
+    pageNumber: fallbackSlug ? "1" : "__placeholder__",
+  });
+}
 
 export default async function Page({ params: paramsPromise }: Args) {
   "use cache";

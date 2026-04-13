@@ -41,6 +41,7 @@ const NEXT_PUBLIC_SERVER_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
   : process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000";
 
 const nextConfig: NextConfig = {
+  cacheComponents: true,
   images: {
     remotePatterns: [
       ...[NEXT_PUBLIC_SERVER_URL].map((item) => {
@@ -167,6 +168,11 @@ const nextConfig: NextConfig = {
       revalidate: 7200, // 2 hours revalidate (was 1h)
       expire: 86_400, // 24 hours max (was 2h)
     },
+    feed: {
+      stale: 3600, // 1 hour stale - mixed content feeds track post/note/activity cadence
+      revalidate: 7200, // 2 hours revalidate
+      expire: 86_400, // 24 hours max
+    },
     posts: {
       stale: 3600, // 1 hour stale (was 30min) - event-driven revalidation makes longer safe
       revalidate: 7200, // 2 hours revalidate (was 1h)
@@ -228,13 +234,11 @@ const nextConfig: NextConfig = {
       expire: 172_800, // 48 hours max
     },
   },
-  experimental: {
+  logging: {
     // Forward browser logs to the terminal for easier debugging
-    browserDebugInfoInTerminal: true,
-
-    // Enable new caching and pre-rendering behavior
-    useCache: true,
-
+    browserToTerminal: true,
+  },
+  experimental: {
     // Needed when using multiple root layouts so unmatched routes don't fall back
     // to the default framework 404 metadata pipeline.
     globalNotFound: true,

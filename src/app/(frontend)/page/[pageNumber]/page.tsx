@@ -12,10 +12,14 @@ import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
 import type { Activity, Note, Post } from "@/payload-types";
 import { getActivityPath } from "@/utilities/activity-path";
+import { ensureStaticParams } from "@/utilities/ensureStaticParams";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
-import { getLatestActivities } from "@/utilities/get-activity";
-import { getLatestNotes } from "@/utilities/get-note";
-import { getLatestPosts } from "@/utilities/get-post";
+import {
+  getActivityCount,
+  getLatestActivities,
+} from "@/utilities/get-activity";
+import { getLatestNotes, getNoteCount } from "@/utilities/get-note";
+import { getLatestPosts, getPostCount } from "@/utilities/get-post";
 import { getServerSideURL } from "@/utilities/getURL";
 
 const HOMEPAGE_ITEMS_LIMIT = 25;
@@ -53,6 +57,31 @@ interface Args {
   }>;
 }
 
+export async function generateStaticParams() {
+  "use cache";
+  cacheTag("homepage");
+  cacheTag("posts");
+  cacheTag("notes");
+  cacheTag("activities");
+  cacheLife("static");
+
+  const [
+    { totalDocs: postCount },
+    { totalDocs: noteCount },
+    { totalDocs: activityCount },
+  ] = await Promise.all([getPostCount(), getNoteCount(), getActivityCount()]);
+
+  const totalItems = postCount + noteCount + activityCount;
+  const totalPages = Math.ceil(totalItems / HOMEPAGE_ITEMS_LIMIT);
+  const pages: { pageNumber: string }[] = [];
+
+  for (let pageNumber = 2; pageNumber <= totalPages; pageNumber++) {
+    pages.push({ pageNumber: String(pageNumber) });
+  }
+
+  return ensureStaticParams(pages, { pageNumber: "1" });
+}
+
 export default async function Page({ params: paramsPromise }: Args) {
   "use cache";
 
@@ -64,9 +93,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   cacheTag("posts");
   cacheTag("notes");
   cacheTag("activities");
-  cacheLife("posts");
-  cacheLife("notes");
-  cacheLife("activities");
+  cacheLife("homepage");
 
   if (!Number.isInteger(sanitizedPageNumber) || sanitizedPageNumber < 1) {
     notFound();

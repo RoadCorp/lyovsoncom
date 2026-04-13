@@ -186,9 +186,8 @@ async function revalidatePostAuthors({
       return;
     }
 
-    revalidateTag("users", "authors");
     for (const username of authorUsernames) {
-      revalidateTag(`author-${username}`, "authors");
+      revalidateTag(`lyovson-${username}`, "authors");
       revalidatePath(`/${username}`);
     }
 
