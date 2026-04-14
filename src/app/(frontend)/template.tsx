@@ -12,6 +12,7 @@ export default function FrontendTemplate({
       default={frontendViewTransitionClasses.page.default}
       enter={frontendViewTransitionClasses.page.enter}
       exit={frontendViewTransitionClasses.page.exit}
+      update={frontendViewTransitionClasses.page.update}
     >
       {children}
     </ViewTransition>

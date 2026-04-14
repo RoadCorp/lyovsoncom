@@ -6,15 +6,22 @@ function sanitizeTransitionSegment(value: string) {
 
 export const frontendViewTransitionClasses = {
   page: {
-    default: {
-      default: "vt-default",
-      [transitionTypes.drillIn]: "vt-default",
+    default: "none",
+    enter: {
+      default: "vt-enter",
+      [transitionTypes.drillIn]: "none",
       [transitionTypes.paginationNext]: "vt-pagination-next",
       [transitionTypes.paginationPrev]: "vt-pagination-prev",
-      [transitionTypes.searchSubmit]: "vt-default",
+      [transitionTypes.searchSubmit]: "vt-enter",
     },
-    enter: "vt-enter",
-    exit: "vt-exit",
+    exit: {
+      default: "vt-exit",
+      [transitionTypes.drillIn]: "none",
+      [transitionTypes.paginationNext]: "vt-pagination-next",
+      [transitionTypes.paginationPrev]: "vt-pagination-prev",
+      [transitionTypes.searchSubmit]: "vt-exit",
+    },
+    update: "none",
   },
   sharedMedia: {
     default: "none",

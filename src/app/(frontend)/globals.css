@@ -1399,13 +1399,6 @@
   }
 }
 
-::view-transition-group(.vt-default),
-::view-transition-old(.vt-default),
-::view-transition-new(.vt-default) {
-  animation-duration: 220ms;
-  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
 ::view-transition-old(.vt-enter),
 ::view-transition-old(.vt-exit) {
   animation: none;
@@ -1509,9 +1502,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  ::view-transition-group(.vt-default),
-  ::view-transition-old(.vt-default),
-  ::view-transition-new(.vt-default),
   ::view-transition-group(.vt-pagination-next),
   ::view-transition-group(.vt-pagination-prev),
   ::view-transition-old(.vt-pagination-next),
