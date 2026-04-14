@@ -5,11 +5,11 @@ import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getLyovsonFeed } from "@/utilities/get-lyovson-feed";
-import { getMixedFeedItemUrl } from "@/utilities/mixed-feed";
 import {
   absoluteUrl,
   lyovsonPageRoute,
   lyovsonRoute,
+  postUrl,
 } from "@/utilities/routes";
 import { LyovsonFeedItems } from "./_components/lyovson-feed-items";
 import { LYOVSON_ITEMS_PER_PAGE } from "./_utilities/constants";
@@ -27,7 +27,7 @@ export default async function Page({ params }: PageProps) {
 
   const response = await getLyovsonFeed({
     username,
-    filter: "all",
+    filter: "posts",
     page: 1,
     limit: LYOVSON_ITEMS_PER_PAGE,
   });
@@ -39,30 +39,29 @@ export default async function Page({ params }: PageProps) {
   const { items, totalItems, totalPages, user } = response;
 
   const collectionPageSchema = generateCollectionPageSchema({
-    name: `${user.name} - Posts, Notes, and Activities`,
-    description:
-      user.quote ||
-      `Chronological feed of recent posts, notes, and activities by ${user.name}.`,
+    name: `${user.name} - Posts`,
+    description: `Published posts by ${user.name}.`,
     url: absoluteUrl(lyovsonRoute(username)),
     itemCount: totalItems,
     items: items
-      .map((item) => {
-        const url = getMixedFeedItemUrl(item);
-        return url ? { url } : null;
-      })
+      .map((item) =>
+        item.type === "post" && item.data.slug
+          ? { url: postUrl(item.data.slug) }
+          : null
+      )
       .filter((item): item is { url: string } => item !== null),
   });
 
   return (
     <>
-      <h1 className="sr-only">{user.name} feed</h1>
+      <h1 className="sr-only">{user.name} posts</h1>
       <JsonLd data={collectionPageSchema} />
       {items.length > 0 ? (
         <LyovsonFeedItems items={items} />
       ) : (
         <GridCardEmptyState
-          description={`No published posts, notes, or activities found for ${user.name} yet.`}
-          title="Nothing Published Yet"
+          description={`No published posts found for ${user.name} yet.`}
+          title="No Posts Yet"
         />
       )}
       {totalPages > 1 ? (
@@ -83,7 +82,7 @@ export async function generateMetadata({
 
   const response = await getLyovsonFeed({
     username,
-    filter: "all",
+    filter: "posts",
     page: 1,
     limit: LYOVSON_ITEMS_PER_PAGE,
   });
@@ -93,12 +92,10 @@ export async function generateMetadata({
   }
 
   const name = response.user.name || username;
-  const description =
-    response.user.quote ||
-    `Latest posts, notes, and activities by ${name}. Explore their work and updates.`;
+  const description = `Browse published posts by ${name}.`;
 
   return buildLyovsonMetadata({
-    title: `${name} Feed`,
+    title: `${name} Posts`,
     description,
     canonicalPath: lyovsonRoute(username),
   });

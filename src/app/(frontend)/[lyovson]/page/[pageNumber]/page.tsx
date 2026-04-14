@@ -5,11 +5,11 @@ import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getLyovsonFeed } from "@/utilities/get-lyovson-feed";
-import { getMixedFeedItemUrl } from "@/utilities/mixed-feed";
 import {
   absoluteUrl,
   lyovsonPageRoute,
   lyovsonRoute,
+  postUrl,
 } from "@/utilities/routes";
 import { LyovsonFeedItems } from "../../_components/lyovson-feed-items";
 import {
@@ -31,7 +31,7 @@ interface Args {
 }
 
 export async function generateStaticParams() {
-  return getLyovsonPaginatedStaticParams("all");
+  return getLyovsonPaginatedStaticParams("posts");
 }
 
 export default async function Page({ params: paramsPromise }: Args) {
@@ -48,7 +48,7 @@ export default async function Page({ params: paramsPromise }: Args) {
 
   const response = await getLyovsonFeed({
     username,
-    filter: "all",
+    filter: "posts",
     page: sanitizedPageNumber,
     limit: LYOVSON_ITEMS_PER_PAGE,
   });
@@ -60,29 +60,30 @@ export default async function Page({ params: paramsPromise }: Args) {
   const { items, totalItems, totalPages, user } = response;
 
   const collectionPageSchema = generateCollectionPageSchema({
-    name: `${user.name} - Feed Page ${sanitizedPageNumber}`,
-    description: `Chronological feed page ${sanitizedPageNumber} for ${user.name}.`,
+    name: `${user.name} - Posts Page ${sanitizedPageNumber}`,
+    description: `Published posts by ${user.name} on page ${sanitizedPageNumber}.`,
     url: absoluteUrl(lyovsonPageRoute(username, sanitizedPageNumber)),
     itemCount: totalItems,
     items: items
-      .map((item) => {
-        const url = getMixedFeedItemUrl(item);
-        return url ? { url } : null;
-      })
+      .map((item) =>
+        item.type === "post" && item.data.slug
+          ? { url: postUrl(item.data.slug) }
+          : null
+      )
       .filter((item): item is { url: string } => item !== null),
   });
 
   return (
     <>
       <h1 className="sr-only">
-        {user.name} feed page {sanitizedPageNumber}
+        {user.name} posts page {sanitizedPageNumber}
       </h1>
       <JsonLd data={collectionPageSchema} />
       {items.length > 0 ? (
         <LyovsonFeedItems items={items} />
       ) : (
         <GridCardEmptyState
-          description={`No items found on page ${sanitizedPageNumber} for ${user.name}.`}
+          description={`No posts found on page ${sanitizedPageNumber} for ${user.name}.`}
           title="No Results"
         />
       )}
@@ -109,7 +110,7 @@ export async function generateMetadata({
 
   const response = await getLyovsonFeed({
     username,
-    filter: "all",
+    filter: "posts",
     page: sanitizedPageNumber,
     limit: LYOVSON_ITEMS_PER_PAGE,
   });
@@ -121,8 +122,8 @@ export async function generateMetadata({
   const name = response.user.name || username;
 
   return buildLyovsonMetadata({
-    title: `${name} Feed - Page ${sanitizedPageNumber}`,
-    description: `Feed page ${sanitizedPageNumber} for ${name}.`,
+    title: `${name} Posts - Page ${sanitizedPageNumber}`,
+    description: `Published posts by ${name} on page ${sanitizedPageNumber}.`,
     canonicalPath: lyovsonPageRoute(username, sanitizedPageNumber),
     prevPath:
       sanitizedPageNumber === 2

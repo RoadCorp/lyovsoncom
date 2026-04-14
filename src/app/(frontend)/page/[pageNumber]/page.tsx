@@ -1,34 +1,25 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next/types";
-import { ArchiveItems } from "@/components/ArchiveItems";
+import { CollectionArchive } from "@/components/CollectionArchive";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
 import {
   getPaginatedStaticParams,
   MAX_INDEXED_PAGE,
+  POSTS_PER_PAGE,
   parsePageNumber,
 } from "@/utilities/archive";
 import { ensureStaticParams } from "@/utilities/ensureStaticParams";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
-import {
-  getActivityCount,
-  getLatestActivities,
-} from "@/utilities/get-activity";
-import { getLatestNotes, getNoteCount } from "@/utilities/get-note";
-import { getLatestPosts, getPostCount } from "@/utilities/get-post";
+import { getPaginatedPosts, getPostCount } from "@/utilities/get-post";
 import { getServerSideURL } from "@/utilities/getURL";
 import {
-  getMixedFeedItemUrl,
-  mapActivitiesToMixedFeedItems,
-  mapNotesToMixedFeedItems,
-  mapPostsToMixedFeedItems,
-  sortMixedFeedItems,
-} from "@/utilities/mixed-feed";
-import { absoluteUrl, homepageRoute, homeRoute } from "@/utilities/routes";
-
-const HOMEPAGE_ITEMS_LIMIT = 25;
-const HOMEPAGE_FETCH_BUFFER = 5;
+  absoluteUrl,
+  homepageRoute,
+  homeRoute,
+  postUrl,
+} from "@/utilities/routes";
 
 interface Args {
   params: Promise<{
@@ -41,21 +32,14 @@ export async function generateStaticParams() {
 
   cacheTag("homepage");
   cacheTag("posts");
-  cacheTag("notes");
-  cacheTag("activities");
   cacheLife("static");
 
-  const [
-    { totalDocs: postCount },
-    { totalDocs: noteCount },
-    { totalDocs: activityCount },
-  ] = await Promise.all([getPostCount(), getNoteCount(), getActivityCount()]);
+  const { totalDocs } = await getPostCount();
 
   return ensureStaticParams(
-    getPaginatedStaticParams(
-      postCount + noteCount + activityCount,
-      HOMEPAGE_ITEMS_LIMIT
-    ).map((pageNumber) => ({ pageNumber })),
+    getPaginatedStaticParams(totalDocs, POSTS_PER_PAGE).map((pageNumber) => ({
+      pageNumber,
+    })),
     { pageNumber: "__placeholder__" }
   );
 }
@@ -72,52 +56,30 @@ export default async function Page({ params: paramsPromise }: Args) {
     redirect(homeRoute());
   }
 
-  const mixedFeedFetchLimit =
-    sanitizedPageNumber * HOMEPAGE_ITEMS_LIMIT + HOMEPAGE_FETCH_BUFFER;
-
-  const [posts, notes, activities] = await Promise.all([
-    getLatestPosts(mixedFeedFetchLimit),
-    getLatestNotes(mixedFeedFetchLimit),
-    getLatestActivities(mixedFeedFetchLimit),
-  ]);
-
-  const totalItems = posts.totalDocs + notes.totalDocs + activities.totalDocs;
-  const totalPages = Math.ceil(totalItems / HOMEPAGE_ITEMS_LIMIT);
+  const response = await getPaginatedPosts(sanitizedPageNumber, POSTS_PER_PAGE);
+  const { docs, totalDocs, totalPages } = response;
 
   if (sanitizedPageNumber > totalPages) {
     notFound();
   }
 
-  const pageItems = sortMixedFeedItems([
-    ...mapPostsToMixedFeedItems(posts.docs),
-    ...mapNotesToMixedFeedItems(notes.docs),
-    ...mapActivitiesToMixedFeedItems(activities.docs),
-  ]).slice(
-    (sanitizedPageNumber - 1) * HOMEPAGE_ITEMS_LIMIT,
-    sanitizedPageNumber * HOMEPAGE_ITEMS_LIMIT
-  );
-
   const collectionPageSchema = generateCollectionPageSchema({
-    name: `Latest Posts, Notes, and Activities - Page ${sanitizedPageNumber}`,
-    description: `Chronological mixed-content archive page ${sanitizedPageNumber}.`,
+    name: `Latest Posts - Page ${sanitizedPageNumber}`,
+    description: `Latest posts archive page ${sanitizedPageNumber}.`,
     url: absoluteUrl(homepageRoute(sanitizedPageNumber)),
-    itemCount: totalItems,
-    items: pageItems
-      .map((item) => {
-        const url = getMixedFeedItemUrl(item);
-        return url ? { url } : null;
-      })
-      .filter((item): item is { url: string } => item !== null),
+    itemCount: totalDocs,
+    items: docs
+      .filter((post) => post.slug)
+      .map((post) => ({ url: postUrl(post.slug as string) })),
   });
 
   return (
     <>
       <h1 className="sr-only">
-        Lyóvson.com - Latest Posts, Notes & Activities - Page{" "}
-        {sanitizedPageNumber}
+        Lyóvson.com - Latest Posts - Page {sanitizedPageNumber}
       </h1>
       <JsonLd data={collectionPageSchema} />
-      <ArchiveItems items={pageItems} />
+      <CollectionArchive posts={docs} />
       <Pagination
         getPageHref={(pageNumberValue) => homepageRoute(pageNumberValue)}
         page={sanitizedPageNumber}
@@ -140,13 +102,16 @@ export async function generateMetadata({
     };
   }
 
-  const title = `Lyóvson.com - Page ${sanitizedPageNumber}`;
+  const title = `Latest Posts - Page ${sanitizedPageNumber} | Lyóvson.com`;
+  const description = `Latest posts archive page ${sanitizedPageNumber} from Lyovson.com.`;
 
   return {
     metadataBase: new URL(getServerSideURL()),
     title,
-    description: "Official website of Rafa and Jess Lyóvson",
+    description,
     keywords: [
+      "latest posts",
+      "articles",
       "Rafa Lyóvson",
       "Jess Lyóvson",
       "programming",
@@ -164,7 +129,7 @@ export async function generateMetadata({
     openGraph: {
       siteName: "Lyóvson.com",
       title,
-      description: "Official website of Rafa and Jess Lyóvson",
+      description,
       type: "website",
       url: homepageRoute(sanitizedPageNumber),
       images: [
@@ -172,20 +137,20 @@ export async function generateMetadata({
           url: "/og-image.png",
           width: 1200,
           height: 630,
-          alt: "Lyóvson.com - Writing, Projects & Research",
+          alt: "Latest Posts | Lyóvson.com",
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
       title,
-      description: "Official website of Rafa and Jess Lyóvson",
+      description,
       creator: "@lyovson",
       site: "@lyovson",
       images: [
         {
           url: "/og-image.png",
-          alt: "Lyóvson.com - Writing, Projects & Research",
+          alt: "Latest Posts | Lyóvson.com",
           width: 1200,
           height: 630,
         },

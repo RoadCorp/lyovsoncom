@@ -1,9 +1,15 @@
+import { ViewTransition } from "react";
 import { AppLink } from "@/components/AppLink";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { Media } from "@/components/Media";
 import { cn } from "@/lib/utils";
 import type { Post } from "@/payload-types";
-import { postRoute } from "@/utilities/routes";
+import { postRoute, transitionTypes } from "@/utilities/routes";
+import {
+  frontendViewTransitionClasses,
+  getPostMediaTransitionName,
+  getPostTitleTransitionName,
+} from "@/utilities/view-transitions";
 
 const MAX_STAGGER_INDEX = 6;
 
@@ -42,23 +48,34 @@ export const GridCardRelatedPosts = ({
             href={postRoute(post.slug)}
             key={post.id}
             prefetch={false}
+            transitionTypes={[transitionTypes.postDrillIn]}
           >
             <GridCardSection
               className={"grid h-full grid-cols-3 grid-rows-1 gap-2"}
               flush={true}
             >
               {post.featuredImage && (
-                <Media
-                  className="glass-media flex h-full items-center justify-center"
-                  imgClassName="object-cover h-full"
-                  pictureClassName="row-start-1 row-end-2 col-start-1 col-end-2 h-full"
-                  resource={post.featuredImage}
-                />
+                <ViewTransition
+                  name={getPostMediaTransitionName(post.slug)}
+                  {...frontendViewTransitionClasses.sharedMedia}
+                >
+                  <Media
+                    className="glass-media flex h-full items-center justify-center"
+                    imgClassName="object-cover h-full"
+                    pictureClassName="row-start-1 row-end-2 col-start-1 col-end-2 h-full"
+                    resource={post.featuredImage}
+                  />
+                </ViewTransition>
               )}
               <div className="col-start-2 col-end-4 row-start-1 row-end-2 grid items-center">
-                <h2 className="glass-text font-medium transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
-                  {post.title}
-                </h2>
+                <ViewTransition
+                  name={getPostTitleTransitionName(post.slug)}
+                  {...frontendViewTransitionClasses.sharedTitle}
+                >
+                  <h2 className="glass-text font-medium transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
+                    {post.title}
+                  </h2>
+                </ViewTransition>
               </div>
             </GridCardSection>
           </AppLink>

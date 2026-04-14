@@ -1,71 +1,45 @@
 import { cacheLife, cacheTag } from "next/cache";
 import type { Metadata } from "next/types";
-import { ArchiveItems } from "@/components/ArchiveItems";
+import { CollectionArchive } from "@/components/CollectionArchive";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
+import { POSTS_PER_PAGE } from "@/utilities/archive";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
-import { getLatestActivities } from "@/utilities/get-activity";
-import { getLatestNotes } from "@/utilities/get-note";
 import { getLatestPosts } from "@/utilities/get-post";
 import { getServerSideURL } from "@/utilities/getURL";
 import {
-  getMixedFeedItemUrl,
-  mapActivitiesToMixedFeedItems,
-  mapNotesToMixedFeedItems,
-  mapPostsToMixedFeedItems,
-  sortMixedFeedItems,
-} from "@/utilities/mixed-feed";
-import { absoluteUrl, homepageRoute, homeRoute } from "@/utilities/routes";
-
-const HOMEPAGE_ITEMS_LIMIT = 25;
-const HOMEPAGE_FETCH_BUFFER = 5;
-const HOMEPAGE_FETCH_LIMIT = HOMEPAGE_ITEMS_LIMIT + HOMEPAGE_FETCH_BUFFER;
+  absoluteUrl,
+  homepageRoute,
+  homeRoute,
+  postUrl,
+} from "@/utilities/routes";
 
 export default async function Page() {
   "use cache";
 
   cacheTag("homepage");
   cacheTag("posts");
-  cacheTag("notes");
-  cacheTag("activities");
   cacheLife("homepage");
 
-  const [posts, notes, activities] = await Promise.all([
-    getLatestPosts(HOMEPAGE_FETCH_LIMIT),
-    getLatestNotes(HOMEPAGE_FETCH_LIMIT),
-    getLatestActivities(HOMEPAGE_FETCH_LIMIT),
-  ]);
-
-  const latestItems = sortMixedFeedItems([
-    ...mapPostsToMixedFeedItems(posts.docs),
-    ...mapNotesToMixedFeedItems(notes.docs),
-    ...mapActivitiesToMixedFeedItems(activities.docs),
-  ]).slice(0, HOMEPAGE_ITEMS_LIMIT);
-
-  const totalItems = posts.totalDocs + notes.totalDocs + activities.totalDocs;
-  const totalPages = Math.ceil(totalItems / HOMEPAGE_ITEMS_LIMIT);
+  const response = await getLatestPosts(POSTS_PER_PAGE);
+  const { docs, totalDocs, totalPages } = response;
 
   const collectionPageSchema = generateCollectionPageSchema({
-    name: "Latest Posts, Notes, and Activities",
+    name: "Latest Posts",
     description:
-      "Chronological feed of recent posts, notes, and activities from Lyovson.com.",
+      "Latest posts and articles from Lyovson.com covering programming, design, philosophy, technology, and creative projects.",
     url: absoluteUrl(homeRoute()),
-    itemCount: totalItems,
-    items: latestItems
-      .map((item) => {
-        const url = getMixedFeedItemUrl(item);
-        return url ? { url } : null;
-      })
-      .filter((item): item is { url: string } => item !== null),
+    itemCount: totalDocs,
+    items: docs
+      .filter((post) => post.slug)
+      .map((post) => ({ url: postUrl(post.slug as string) })),
   });
 
   return (
     <>
-      <h1 className="sr-only">
-        Lyóvson.com - Latest Posts, Notes & Activities
-      </h1>
+      <h1 className="sr-only">Lyóvson.com - Latest Posts</h1>
       <JsonLd data={collectionPageSchema} />
-      <ArchiveItems items={latestItems} />
+      <CollectionArchive posts={docs} />
       {totalPages > 1 ? (
         <Pagination
           getPageHref={(pageNumber) => homepageRoute(pageNumber)}
@@ -79,9 +53,12 @@ export default async function Page() {
 
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
-  title: "Lyóvson.com",
-  description: "Official website of Rafa and Jess Lyóvson",
+  title: "Latest Posts | Lyóvson.com",
+  description:
+    "Latest posts and articles from Lyóvson.com covering programming, design, philosophy, technology, and creative projects by Rafa and Jess Lyóvson.",
   keywords: [
+    "latest posts",
+    "articles",
     "Rafa Lyóvson",
     "Jess Lyóvson",
     "programming",
@@ -98,8 +75,9 @@ export const metadata: Metadata = {
   },
   openGraph: {
     siteName: "Lyóvson.com",
-    title: "Lyóvson.com",
-    description: "Official website of Rafa and Jess Lyóvson",
+    title: "Latest Posts | Lyóvson.com",
+    description:
+      "Latest posts and articles from Lyóvson.com covering programming, design, philosophy, technology, and creative projects.",
     type: "website",
     url: homeRoute(),
     images: [
@@ -107,20 +85,21 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Lyóvson.com - Writing, Projects & Research",
+        alt: "Latest Posts | Lyóvson.com",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Lyóvson.com",
-    description: "Official website of Rafa and Jess Lyóvson",
+    title: "Latest Posts | Lyóvson.com",
+    description:
+      "Latest posts and articles from Lyóvson.com covering programming, design, philosophy, and technology.",
     creator: "@lyovson",
     site: "@lyovson",
     images: [
       {
         url: "/og-image.png",
-        alt: "Lyóvson.com - Writing, Projects & Research",
+        alt: "Latest Posts | Lyóvson.com",
         width: 1200,
         height: 630,
       },
