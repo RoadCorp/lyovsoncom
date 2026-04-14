@@ -11,6 +11,7 @@ import {
 } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import { OptionalErrorBoundary } from "@/components/OptionalErrorBoundary";
+import { PostTransitionBoundary } from "@/components/post-transitions/PostTransitionBoundary";
 import RichText from "@/components/RichText";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
@@ -152,55 +153,67 @@ export default async function PostPage({ params: paramsPromise }: Args) {
       <JsonLd data={breadcrumbSchema} />
 
       <GridCardHero post={post} />
-      <GridCard
-        className={cn(
-          "g2:col-start-2 g2:col-end-3 g2:row-auto g2:row-start-3",
-          "g3:col-end-4 g3:row-start-2 g3:w-[var(--grid-card-2x1)]",
-          "aspect-auto h-auto"
-        )}
-        interactive={false}
-      >
-        <GridCardSection className="col-span-3 row-span-3 p-6">
-          <RichText
-            className="glass-stagger-3 h-full"
-            content={post.content}
-            enableGutter={false}
-            enableProse={true}
-          />
-        </GridCardSection>
-      </GridCard>
-
-      <aside
-        className={cn(
-          "col-start-1 col-end-2 row-start-6 row-end-7 grid auto-rows-max gap-4 self-start",
-          "g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-5"
-        )}
-      >
-        {post.references && post.references.length > 0 ? (
-          <GridCardReferences references={post.references} />
-        ) : null}
-
-        <OptionalErrorBoundary title="Unable to load recommended posts.">
-          <Suspense
-            fallback={
-              <div className="glass-section glass-loading h-[var(--grid-card-1x1)] w-[var(--grid-card-1x1)] animate-pulse rounded-xl">
-                <Skeleton className="glass-badge h-full w-full" />
-              </div>
-            }
-          >
-            <RecommendedPosts
-              recommendedIds={post.recommended_post_ids as number[] | undefined}
+      <PostTransitionBoundary variant="body">
+        <GridCard
+          className={cn(
+            "g2:col-start-2 g2:col-end-3 g2:row-auto g2:row-start-3",
+            "g3:col-end-4 g3:row-start-2 g3:w-[var(--grid-card-2x1)]",
+            "aspect-auto h-auto"
+          )}
+          interactive={false}
+        >
+          <GridCardSection className="col-span-3 row-span-3 p-6">
+            <RichText
+              className="glass-stagger-3 h-full"
+              content={post.content}
+              enableGutter={false}
+              enableProse={true}
             />
-          </Suspense>
-        </OptionalErrorBoundary>
-      </aside>
+          </GridCardSection>
+        </GridCard>
+      </PostTransitionBoundary>
+
+      <PostTransitionBoundary variant="rail">
+        <aside
+          className={cn(
+            "col-start-1 col-end-2 row-start-6 row-end-7 grid auto-rows-max gap-4 self-start",
+            "g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-5"
+          )}
+        >
+          {post.references && post.references.length > 0 ? (
+            <GridCardReferences references={post.references} />
+          ) : null}
+
+          <OptionalErrorBoundary title="Unable to load recommended posts.">
+            <Suspense
+              fallback={
+                <div className="glass-section glass-loading h-[var(--grid-card-1x1)] w-[var(--grid-card-1x1)] animate-pulse rounded-xl">
+                  <Skeleton className="glass-badge h-full w-full" />
+                </div>
+              }
+            >
+              <RecommendedPosts
+                currentPostId={post.id}
+                currentSlug={post.slug}
+                recommendedIds={
+                  post.recommended_post_ids as number[] | undefined
+                }
+              />
+            </Suspense>
+          </OptionalErrorBoundary>
+        </aside>
+      </PostTransitionBoundary>
     </>
   );
 }
 
 async function RecommendedPosts({
+  currentPostId,
+  currentSlug,
   recommendedIds,
 }: {
+  currentPostId: number;
+  currentSlug?: string | null;
   recommendedIds?: number[];
 }) {
   if (!(recommendedIds && recommendedIds.length > 0)) {
@@ -220,7 +233,23 @@ async function RecommendedPosts({
     },
   });
 
-  const docs = posts.docs as Post[];
+  const seenSlugs = new Set<string>();
+  const docs = (posts.docs as Post[]).filter((post) => {
+    if (post.id === currentPostId) {
+      return false;
+    }
+    if (currentSlug && post.slug === currentSlug) {
+      return false;
+    }
+    if (!post.slug) {
+      return true;
+    }
+    if (seenSlugs.has(post.slug)) {
+      return false;
+    }
+    seenSlugs.add(post.slug);
+    return true;
+  });
   if (docs.length === 0) {
     return null;
   }

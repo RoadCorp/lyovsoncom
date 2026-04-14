@@ -3,6 +3,7 @@ import { ViewTransition } from "react";
 import { AppLink } from "@/components/AppLink";
 import { GridCard } from "@/components/grid";
 import { Media } from "@/components/Media";
+import { PostTransitionBoundary } from "@/components/post-transitions/PostTransitionBoundary";
 import { TopicPill } from "@/components/TopicPill";
 import { cn } from "@/lib/utils";
 import type { Activity, Note, Post } from "@/payload-types";
@@ -12,11 +13,18 @@ import {
   frontendViewTransitionClasses,
   getActivityMediaTransitionName,
   getActivityTitleTransitionName,
-  getPostMediaTransitionName,
-  getPostSurfaceTransitionName,
-  getPostTitleTransitionName,
 } from "@/utilities/view-transitions";
 import { GridCardSection } from "../section";
+
+function PostHeroDescription({ description }: { description: string }) {
+  return (
+    <PostTransitionBoundary variant="dek">
+      <p className="glass-text-secondary text-left text-base leading-relaxed">
+        {description}
+      </p>
+    </PostTransitionBoundary>
+  );
+}
 
 export const GridCardHero = ({
   className,
@@ -30,10 +38,7 @@ export const GridCardHero = ({
   }
 
   return (
-    <ViewTransition
-      name={getPostSurfaceTransitionName(post.slug)}
-      {...frontendViewTransitionClasses.sharedSurface}
-    >
+    <PostTransitionBoundary variant="heroShell">
       <GridCard
         className={cn(
           "col-start-1 col-end-2 row-start-2 row-end-4 h-[var(--grid-card-1x2)] w-[var(--grid-card-1x1)] [--grid-internal-rows:6]",
@@ -51,10 +56,7 @@ export const GridCardHero = ({
             )}
             flush={true}
           >
-            <ViewTransition
-              name={getPostMediaTransitionName(post.slug)}
-              {...frontendViewTransitionClasses.sharedMedia}
-            >
+            <PostTransitionBoundary slug={post.slug} variant="media">
               <Media
                 className="glass-media flex h-full items-center justify-center"
                 imgClassName="h-full object-cover"
@@ -62,31 +64,26 @@ export const GridCardHero = ({
                 priority={true}
                 resource={post.featuredImage}
               />
-            </ViewTransition>
+            </PostTransitionBoundary>
           </GridCardSection>
         ) : null}
 
         <GridCardSection className="col-start-1 g3:col-start-4 col-end-4 g3:col-end-7 g3:row-start-1 row-start-4 g3:row-end-4 row-end-7">
           <div className="flex h-full flex-col items-center justify-center px-4 md:px-8">
             <div className="mx-auto w-full max-w-3xl space-y-4">
-              <ViewTransition
-                name={getPostTitleTransitionName(post.slug)}
-                {...frontendViewTransitionClasses.sharedTitle}
-              >
+              <PostTransitionBoundary slug={post.slug} variant="title">
                 <h1 className="glass-text text-center font-bold text-2xl transition-colors duration-300 md:text-3xl lg:text-4xl">
                   {post.title}
                 </h1>
-              </ViewTransition>
+              </PostTransitionBoundary>
               {post.description ? (
-                <p className="glass-text-secondary text-left text-base leading-relaxed">
-                  {post.description}
-                </p>
+                <PostHeroDescription description={post.description} />
               ) : null}
             </div>
           </div>
         </GridCardSection>
       </GridCard>
-    </ViewTransition>
+    </PostTransitionBoundary>
   );
 };
 

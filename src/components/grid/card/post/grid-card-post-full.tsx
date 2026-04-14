@@ -8,10 +8,11 @@ import {
   Star,
   Video,
 } from "lucide-react";
-import { ViewTransition } from "react";
 import { AppLink } from "@/components/AppLink";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { Media } from "@/components/Media";
+import { PostDrillInLink } from "@/components/post-transitions/PostDrillInLink";
+import { PostTransitionBoundary } from "@/components/post-transitions/PostTransitionBoundary";
 import { TopicPill } from "@/components/TopicPill";
 import type { Post } from "@/payload-types";
 import { formatShortDate } from "@/utilities/date";
@@ -20,14 +21,7 @@ import {
   postRoute,
   projectRoute,
   topicRoute,
-  transitionTypes,
 } from "@/utilities/routes";
-import {
-  frontendViewTransitionClasses,
-  getPostMediaTransitionName,
-  getPostSurfaceTransitionName,
-  getPostTitleTransitionName,
-} from "@/utilities/view-transitions";
 
 const MAX_STAGGER_INDEX = 6;
 
@@ -108,27 +102,19 @@ export const GridCardPostFull = ({
     "glass-text h-5 w-5 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]";
 
   return (
-    <ViewTransition
-      name={getPostSurfaceTransitionName(slug)}
-      {...frontendViewTransitionClasses.sharedSurface}
-    >
+    <PostTransitionBoundary variant="cardShell">
       <GridCard className={className}>
         {featuredImage && typeof featuredImage !== "string" ? (
           <GridCardSection
             className="col-start-1 col-end-3 row-start-1 row-end-3"
             flush={true}
           >
-            <AppLink
+            <PostDrillInLink
               aria-label={`Read "${title}"`}
               className="group block h-full overflow-hidden rounded-lg"
               href={postHref}
-              prefetch={false}
-              transitionTypes={[transitionTypes.postDrillIn]}
             >
-              <ViewTransition
-                name={getPostMediaTransitionName(slug)}
-                {...frontendViewTransitionClasses.sharedMedia}
-              >
+              <PostTransitionBoundary slug={slug} variant="media">
                 <Media
                   className="glass-media flex h-full items-center justify-center"
                   imgClassName="h-full object-cover"
@@ -137,35 +123,25 @@ export const GridCardPostFull = ({
                   {...(loading ? { loading } : {})}
                   {...(priority ? { priority } : {})}
                 />
-              </ViewTransition>
-            </AppLink>
+              </PostTransitionBoundary>
+            </PostDrillInLink>
           </GridCardSection>
         ) : null}
 
         <GridCardSection className="col-start-1 col-end-3 row-start-3 row-end-4 flex h-full flex-col justify-center">
-          <AppLink
-            className="group block"
-            href={postHref}
-            prefetch={false}
-            transitionTypes={[transitionTypes.postDrillIn]}
-          >
-            <ViewTransition
-              name={getPostTitleTransitionName(slug)}
-              {...frontendViewTransitionClasses.sharedTitle}
-            >
+          <PostDrillInLink className="group block" href={postHref}>
+            <PostTransitionBoundary slug={slug} variant="title">
               <h2 className="glass-text text-center font-bold text-xl transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
                 {title}
               </h2>
-            </ViewTransition>
-          </AppLink>
+            </PostTransitionBoundary>
+          </PostDrillInLink>
         </GridCardSection>
 
         <GridCardSection className="col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
-          <AppLink
+          <PostDrillInLink
             className="group block flex flex-col items-center gap-1"
             href={postHref}
-            prefetch={false}
-            transitionTypes={[transitionTypes.postDrillIn]}
           >
             {postType === "article" ? (
               <FileText aria-hidden="true" className={iconClassName} />
@@ -190,7 +166,7 @@ export const GridCardPostFull = ({
             <span className="glass-text-secondary text-xs capitalize transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
               {postType}
             </span>
-          </AppLink>
+          </PostDrillInLink>
         </GridCardSection>
 
         <GridCardSection className="col-start-3 col-end-4 row-start-1 row-end-2 flex flex-col items-center justify-end gap-2">
@@ -285,6 +261,6 @@ export const GridCardPostFull = ({
           ) : null}
         </GridCardSection>
       </GridCard>
-    </ViewTransition>
+    </PostTransitionBoundary>
   );
 };

@@ -10,7 +10,7 @@ export const frontendViewTransitionClasses = {
     enter: {
       default: "vt-enter",
       [transitionTypes.drillIn]: "none",
-      [transitionTypes.postDrillIn]: "vt-post-enter",
+      [transitionTypes.postDrillIn]: "none",
       [transitionTypes.paginationNext]: "vt-pagination-next",
       [transitionTypes.paginationPrev]: "vt-pagination-prev",
       [transitionTypes.searchSubmit]: "vt-enter",
@@ -18,19 +18,12 @@ export const frontendViewTransitionClasses = {
     exit: {
       default: "vt-exit",
       [transitionTypes.drillIn]: "none",
-      [transitionTypes.postDrillIn]: "vt-post-exit",
+      [transitionTypes.postDrillIn]: "none",
       [transitionTypes.paginationNext]: "vt-pagination-next",
       [transitionTypes.paginationPrev]: "vt-pagination-prev",
       [transitionTypes.searchSubmit]: "vt-exit",
     },
     update: "none",
-  },
-  sharedSurface: {
-    default: "none",
-    share: {
-      default: "none",
-      [transitionTypes.postDrillIn]: "vt-share-post-surface",
-    },
   },
   sharedMedia: {
     default: "none",
@@ -55,14 +48,45 @@ export const frontendViewTransitionClasses = {
       [transitionTypes.drillIn]: "vt-share-content",
     },
   },
+  postCardShell: {
+    default: "none",
+    exit: {
+      default: "none",
+      [transitionTypes.postDrillIn]: "vt-post-card-exit",
+    },
+  },
+  postHeroShell: {
+    default: "none",
+    enter: {
+      default: "none",
+      [transitionTypes.postDrillIn]: "vt-post-hero-enter",
+    },
+  },
+  postDek: {
+    default: "none",
+    enter: {
+      default: "none",
+      [transitionTypes.postDrillIn]: "vt-post-dek-enter",
+    },
+  },
+  postBody: {
+    default: "none",
+    enter: {
+      default: "none",
+      [transitionTypes.postDrillIn]: "vt-post-body-enter",
+    },
+  },
+  postRail: {
+    default: "none",
+    enter: {
+      default: "none",
+      [transitionTypes.postDrillIn]: "vt-post-rail-enter",
+    },
+  },
 } as const;
 
 export function getPostMediaTransitionName(slug: string) {
   return `post-${sanitizeTransitionSegment(slug)}-media`;
-}
-
-export function getPostSurfaceTransitionName(slug: string) {
-  return `post-${sanitizeTransitionSegment(slug)}-surface`;
 }
 
 export function getPostTitleTransitionName(slug: string) {
