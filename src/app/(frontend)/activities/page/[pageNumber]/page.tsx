@@ -7,8 +7,6 @@ import { Pagination } from "@/components/Pagination";
 import {
   ACTIVITIES_PER_PAGE,
   getPaginatedStaticParams,
-  MAX_INDEXED_PAGE,
-  parsePageNumber,
 } from "@/utilities/archive";
 import { ensureStaticParams } from "@/utilities/ensureStaticParams";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
@@ -16,7 +14,11 @@ import {
   getActivityCount,
   getPaginatedActivities,
 } from "@/utilities/get-activity";
-import { getServerSideURL } from "@/utilities/getURL";
+import {
+  buildPaginatedArchiveMetadata,
+  getPaginatedArchivePageState,
+  isPaginatedArchivePageOutOfRange,
+} from "@/utilities/paginated-archive";
 import {
   absoluteUrl,
   activitiesPageRoute,
@@ -50,22 +52,26 @@ export async function generateStaticParams() {
 
 export default async function Page({ params: paramsPromise }: Args) {
   const { pageNumber } = await paramsPromise;
-  const sanitizedPageNumber = parsePageNumber(pageNumber);
+  const pageState = getPaginatedArchivePageState(pageNumber);
 
-  if (sanitizedPageNumber == null) {
+  if (pageState.kind === "notFound") {
     notFound();
   }
 
-  if (sanitizedPageNumber === 1) {
+  if (pageState.kind === "redirect") {
     redirect(activitiesRoute());
   }
 
+  const sanitizedPageNumber = pageState.pageNumber;
   const response = await getPaginatedActivities(
     sanitizedPageNumber,
     ACTIVITIES_PER_PAGE
   );
 
-  if (!response) {
+  if (
+    !response ||
+    isPaginatedArchivePageOutOfRange(sanitizedPageNumber, response.totalPages)
+  ) {
     return notFound();
   }
 
@@ -105,41 +111,23 @@ export async function generateMetadata({
   params: paramsPromise,
 }: Args): Promise<Metadata> {
   const { pageNumber } = await paramsPromise;
-  const sanitizedPageNumber = parsePageNumber(pageNumber);
+  const pageState = getPaginatedArchivePageState(pageNumber);
 
-  if (sanitizedPageNumber == null || sanitizedPageNumber < 2) {
+  if (pageState.kind !== "page") {
     return {
       title: "Not Found | Lyovson.com",
       description: "The requested page could not be found",
     };
   }
 
+  const sanitizedPageNumber = pageState.pageNumber;
   const title = `Activities & Consumption - Page ${sanitizedPageNumber} | Lyóvson.com`;
   const description = `Browse activities - Page ${sanitizedPageNumber}`;
 
-  return {
-    metadataBase: new URL(getServerSideURL()),
-    title,
+  return buildPaginatedArchiveMetadata({
+    canonicalPath: activitiesPageRoute(sanitizedPageNumber),
     description,
-    alternates: {
-      canonical: activitiesPageRoute(sanitizedPageNumber),
-    },
-    openGraph: {
-      title,
-      description,
-      type: "website",
-      url: activitiesPageRoute(sanitizedPageNumber),
-    },
-    twitter: {
-      card: "summary",
-      title,
-      description,
-      site: "@lyovson",
-    },
-    robots: {
-      index: sanitizedPageNumber <= MAX_INDEXED_PAGE,
-      follow: true,
-      noarchive: sanitizedPageNumber > 1,
-    },
-  };
+    pageNumber: sanitizedPageNumber,
+    title,
+  });
 }

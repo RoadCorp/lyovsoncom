@@ -4,16 +4,15 @@ import type { Metadata } from "next/types";
 import { CollectionArchive } from "@/components/CollectionArchive";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
-import {
-  getPaginatedStaticParams,
-  MAX_INDEXED_PAGE,
-  POSTS_PER_PAGE,
-  parsePageNumber,
-} from "@/utilities/archive";
+import { getPaginatedStaticParams, POSTS_PER_PAGE } from "@/utilities/archive";
 import { ensureStaticParams } from "@/utilities/ensureStaticParams";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getPaginatedPosts, getPostCount } from "@/utilities/get-post";
-import { getServerSideURL } from "@/utilities/getURL";
+import {
+  buildPaginatedArchiveMetadata,
+  getPaginatedArchivePageState,
+  isPaginatedArchivePageOutOfRange,
+} from "@/utilities/paginated-archive";
 import {
   absoluteUrl,
   postsPageRoute,
@@ -29,19 +28,23 @@ interface Args {
 
 export default async function Page({ params: paramsPromise }: Args) {
   const { pageNumber } = await paramsPromise;
-  const sanitizedPageNumber = parsePageNumber(pageNumber);
+  const pageState = getPaginatedArchivePageState(pageNumber);
 
-  if (sanitizedPageNumber == null) {
+  if (pageState.kind === "notFound") {
     notFound();
   }
 
-  if (sanitizedPageNumber === 1) {
+  if (pageState.kind === "redirect") {
     redirect(postsRoute());
   }
 
+  const sanitizedPageNumber = pageState.pageNumber;
   const response = await getPaginatedPosts(sanitizedPageNumber, POSTS_PER_PAGE);
 
-  if (!response) {
+  if (
+    !response ||
+    isPaginatedArchivePageOutOfRange(sanitizedPageNumber, response.totalPages)
+  ) {
     return notFound();
   }
 
@@ -76,43 +79,25 @@ export async function generateMetadata({
   params: paramsPromise,
 }: Args): Promise<Metadata> {
   const { pageNumber } = await paramsPromise;
-  const sanitizedPageNumber = parsePageNumber(pageNumber);
+  const pageState = getPaginatedArchivePageState(pageNumber);
 
-  if (sanitizedPageNumber == null || sanitizedPageNumber < 2) {
+  if (pageState.kind !== "page") {
     return {
       title: "Not Found | Lyovson.com",
       description: "The requested page could not be found",
     };
   }
 
+  const sanitizedPageNumber = pageState.pageNumber;
   const title = `Posts Page ${sanitizedPageNumber} | Lyóvson.com`;
   const description = `Posts and articles from Lyovson.com - Page ${sanitizedPageNumber}. Continue browsing our content on programming, design, and technology.`;
 
-  return {
-    metadataBase: new URL(getServerSideURL()),
-    title,
+  return buildPaginatedArchiveMetadata({
+    canonicalPath: postsPageRoute(sanitizedPageNumber),
     description,
-    alternates: {
-      canonical: postsPageRoute(sanitizedPageNumber),
-    },
-    openGraph: {
-      title,
-      description,
-      type: "website",
-      url: postsPageRoute(sanitizedPageNumber),
-    },
-    twitter: {
-      card: "summary",
-      title,
-      description,
-      site: "@lyovson",
-    },
-    robots: {
-      index: sanitizedPageNumber <= MAX_INDEXED_PAGE,
-      follow: true,
-      noarchive: sanitizedPageNumber > 1,
-    },
-  };
+    pageNumber: sanitizedPageNumber,
+    title,
+  });
 }
 
 export async function generateStaticParams() {

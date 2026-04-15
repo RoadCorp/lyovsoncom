@@ -25,6 +25,7 @@ import RichText from "@/components/RichText";
 import { cn } from "@/lib/utils";
 import type { Activity } from "@/payload-types";
 import { getActivityDateSlug } from "@/utilities/activity-path";
+import { dedupeRelationItemsById } from "@/utilities/dedupeRelationItemsById";
 import { ensureStaticParams } from "@/utilities/ensureStaticParams";
 import {
   generateArticleSchema,
@@ -78,13 +79,7 @@ function ReferenceTypeIcon({ type }: { type: string }) {
 }
 
 function getParticipants(activity: Activity) {
-  const objects =
-    activity.participants?.filter(
-      (p): p is Exclude<typeof p, number> => typeof p === "object" && p !== null
-    ) || [];
-  return objects.filter(
-    (p, i, arr) => arr.findIndex((x) => x.id === p.id) === i
-  );
+  return dedupeRelationItemsById(activity.participants);
 }
 
 function getFinishDateParts(activity: Activity) {

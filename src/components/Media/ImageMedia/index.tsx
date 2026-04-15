@@ -1,5 +1,3 @@
-"use client";
-
 import type { StaticImageData } from "next/image";
 import NextImage from "next/image";
 import type React from "react";

@@ -5,13 +5,28 @@ import {
 } from "@/components/grid";
 import type { Activity, Note, Post } from "@/payload-types";
 
-type ArchiveItem =
+export type ArchiveItem =
   | { type: "activity"; data: Activity }
   | { type: "note"; data: Note }
   | { type: "post"; data: Post };
 
 interface ArchiveItemsProps {
   items: ArchiveItem[];
+}
+
+export function toArchiveItems(
+  items: Activity[],
+  type: "activity"
+): ArchiveItem[];
+export function toArchiveItems(items: Note[], type: "note"): ArchiveItem[];
+export function toArchiveItems(items: Post[], type: "post"): ArchiveItem[];
+export function toArchiveItems(
+  items: Array<Activity | Note | Post>,
+  type: ArchiveItem["type"]
+) {
+  return items.flatMap((item) =>
+    typeof item === "object" && item !== null ? [{ type, data: item }] : []
+  );
 }
 
 export function ArchiveItems({ items }: ArchiveItemsProps) {

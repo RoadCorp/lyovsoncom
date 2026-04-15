@@ -3,7 +3,7 @@
 import { SearchIcon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import type React from "react";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,6 +16,10 @@ export const Search: React.FC<{ className?: string }> = ({ className }) => {
   const initialQuery = searchParams.get("q") || "";
   const [value, setValue] = useState(initialQuery);
   const [isPending, startSearchTransition] = useTransition();
+
+  useEffect(() => {
+    setValue(initialQuery);
+  }, [initialQuery]);
 
   const navigate = () => {
     const trimmed = value.trim();

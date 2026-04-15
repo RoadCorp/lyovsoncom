@@ -15,12 +15,12 @@ import {
   projectsRoute,
 } from "@/utilities/routes";
 import { GridCardNavItem } from "./grid-card-nav-item";
-import type { MenuModeType } from "./types";
+import type { ManualMenuMode } from "./types";
 
 export const MenuMode = ({
   setMenuMode,
 }: {
-  setMenuMode: (menuMode: MenuModeType) => void;
+  setMenuMode: (menuMode: ManualMenuMode) => void;
 }) => {
   return (
     <>

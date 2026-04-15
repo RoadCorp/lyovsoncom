@@ -12,7 +12,6 @@ import {
 
 export interface GridCardProjectProps {
   className?: string;
-  fetchPriority?: "high" | "low" | "auto";
   loading?: "lazy" | "eager";
   priority?: boolean;
   project: Project;
@@ -22,7 +21,6 @@ export const GridCardProject = ({
   project,
   className,
   loading,
-  fetchPriority,
   priority,
 }: GridCardProjectProps) => {
   const { name, slug } = project;
@@ -56,7 +54,6 @@ export const GridCardProject = ({
                 pictureClassName="h-full"
                 resource={project.image}
                 {...(loading ? { loading } : {})}
-                {...(fetchPriority ? { fetchPriority } : {})}
                 {...(priority ? { priority } : {})}
               />
             </ViewTransition>

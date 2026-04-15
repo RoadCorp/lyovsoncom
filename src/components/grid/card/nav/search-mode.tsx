@@ -2,19 +2,14 @@ import { X } from "lucide-react";
 import { GridCardNavItem } from "./grid-card-nav-item";
 import { SearchInput } from "./search-input";
 import { SiteTitleSection } from "./site-title-section";
-import type { MenuModeType } from "./types";
 
-export const SearchMode = ({
-  setMenuMode,
-}: {
-  setMenuMode: (menuMode: MenuModeType) => void;
-}) => {
+export const SearchMode = ({ onClose }: { onClose: () => void }) => {
   return (
     <>
       <SiteTitleSection />
       <GridCardNavItem
         className={"col-start-1 col-end-2 row-start-3 row-end-4"}
-        onClick={() => setMenuMode("hero")}
+        onClick={onClose}
         variant="button"
       >
         <X className="h-7 w-7" />

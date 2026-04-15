@@ -15,6 +15,10 @@ import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getPaginatedPosts, getPostCount } from "@/utilities/get-post";
 import { getServerSideURL } from "@/utilities/getURL";
 import {
+  getPaginatedArchivePageState,
+  isPaginatedArchivePageOutOfRange,
+} from "@/utilities/paginated-archive";
+import {
   absoluteUrl,
   homepageRoute,
   homeRoute,
@@ -46,20 +50,21 @@ export async function generateStaticParams() {
 
 export default async function Page({ params: paramsPromise }: Args) {
   const { pageNumber } = await paramsPromise;
-  const sanitizedPageNumber = parsePageNumber(pageNumber);
+  const pageState = getPaginatedArchivePageState(pageNumber);
 
-  if (sanitizedPageNumber == null) {
+  if (pageState.kind === "notFound") {
     notFound();
   }
 
-  if (sanitizedPageNumber === 1) {
+  if (pageState.kind === "redirect") {
     redirect(homeRoute());
   }
 
+  const sanitizedPageNumber = pageState.pageNumber;
   const response = await getPaginatedPosts(sanitizedPageNumber, POSTS_PER_PAGE);
   const { docs, totalDocs, totalPages } = response;
 
-  if (sanitizedPageNumber > totalPages) {
+  if (isPaginatedArchivePageOutOfRange(sanitizedPageNumber, totalPages)) {
     notFound();
   }
 

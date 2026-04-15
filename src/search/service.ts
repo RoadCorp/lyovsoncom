@@ -1,6 +1,11 @@
 import { sql } from "@payloadcms/db-vercel-postgres/drizzle";
 import type { Activity, Note, Post } from "@/payload-types";
 import {
+  publicActivitiesWhere,
+  publicNotesWhere,
+  publishedPostsWhere,
+} from "@/utilities/content-queries";
+import {
   EMBEDDING_VECTOR_DIMENSIONS,
   generateEmbedding,
 } from "@/utilities/generate-embedding";
@@ -151,9 +156,14 @@ export async function hydrateSearchResults(results: SearchResult[]) {
       ? payload.find({
           collection: "posts",
           where: {
-            id: {
-              in: postsResults.map((result) => result.id),
-            },
+            AND: [
+              publishedPostsWhere(),
+              {
+                id: {
+                  in: postsResults.map((result) => result.id),
+                },
+              },
+            ],
           },
           depth: 2,
           limit: postsResults.length,
@@ -163,9 +173,14 @@ export async function hydrateSearchResults(results: SearchResult[]) {
       ? payload.find({
           collection: "notes",
           where: {
-            id: {
-              in: notesResults.map((result) => result.id),
-            },
+            AND: [
+              publicNotesWhere(),
+              {
+                id: {
+                  in: notesResults.map((result) => result.id),
+                },
+              },
+            ],
           },
           depth: 1,
           limit: notesResults.length,
@@ -175,9 +190,14 @@ export async function hydrateSearchResults(results: SearchResult[]) {
       ? payload.find({
           collection: "activities",
           where: {
-            id: {
-              in: activitiesResults.map((result) => result.id),
-            },
+            AND: [
+              publicActivitiesWhere(),
+              {
+                id: {
+                  in: activitiesResults.map((result) => result.id),
+                },
+              },
+            ],
           },
           depth: 2,
           limit: activitiesResults.length,

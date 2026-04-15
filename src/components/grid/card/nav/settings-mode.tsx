@@ -1,12 +1,12 @@
 import { ShieldUser, X } from "lucide-react";
 import { GridCardNavItem } from "./grid-card-nav-item";
 import { ThemeSwitcher } from "./theme-switcher";
-import type { MenuModeType } from "./types";
+import type { ManualMenuMode } from "./types";
 
 export const SettingsMode = ({
   setMenuMode,
 }: {
-  setMenuMode: (menuMode: MenuModeType) => void;
+  setMenuMode: (menuMode: ManualMenuMode) => void;
 }) => {
   return (
     <>

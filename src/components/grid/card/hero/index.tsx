@@ -8,6 +8,7 @@ import { TopicPill } from "@/components/TopicPill";
 import { cn } from "@/lib/utils";
 import type { Activity, Note, Post } from "@/payload-types";
 import { formatShortDate } from "@/utilities/date";
+import { dedupeRelationItemsById } from "@/utilities/dedupeRelationItemsById";
 import { getActivityDateSlug, topicRoute } from "@/utilities/routes";
 import {
   frontendViewTransitionClasses,
@@ -114,38 +115,23 @@ export const GridCardHeroNote = ({
       </GridCardSection>
 
       <GridCardSection className="col-start-1 col-end-2 row-start-3 row-end-4 flex h-full flex-col items-center justify-end gap-2">
-        {note.topics
-          ?.filter((topic, index, self) => {
-            if (typeof topic !== "object" || !topic?.id) {
-              return false;
-            }
+        {dedupeRelationItemsById(note.topics).map((topic) => {
+          if (typeof topic !== "object" || !topic.slug || !topic.id) {
+            return null;
+          }
 
-            return (
-              index ===
-              self.findIndex((candidate) => {
-                return (
-                  typeof candidate === "object" && candidate?.id === topic.id
-                );
-              })
-            );
-          })
-          .map((topic) => {
-            if (typeof topic !== "object" || !topic.slug || !topic.id) {
-              return null;
-            }
-
-            return (
-              <AppLink
-                aria-label={`View notes about ${topic.name}`}
-                className="w-full"
-                href={topicRoute(topic.slug)}
-                key={topic.id}
-                prefetch={false}
-              >
-                <TopicPill>{topic.name}</TopicPill>
-              </AppLink>
-            );
-          })}
+          return (
+            <AppLink
+              aria-label={`View notes about ${topic.name}`}
+              className="w-full"
+              href={topicRoute(topic.slug)}
+              key={topic.id}
+              prefetch={false}
+            >
+              <TopicPill>{topic.name}</TopicPill>
+            </AppLink>
+          );
+        })}
       </GridCardSection>
 
       <GridCardSection className="col-start-2 col-end-3 row-start-3 row-end-4 flex flex-col justify-evenly gap-2">

@@ -2,12 +2,14 @@ import { LucideMenu, Search, Settings } from "lucide-react";
 
 import { GridCardNavItem } from "./grid-card-nav-item";
 import { SiteTitleSection } from "./site-title-section";
-import type { MenuModeType } from "./types";
+import type { ManualMenuMode } from "./types";
 
 export const HeroMode = ({
+  openSearch,
   setMenuMode,
 }: {
-  setMenuMode: (menuMode: MenuModeType) => void;
+  openSearch: () => void;
+  setMenuMode: (menuMode: ManualMenuMode) => void;
 }) => {
   return (
     <>
@@ -15,9 +17,7 @@ export const HeroMode = ({
 
       <GridCardNavItem
         className="col-start-1 col-end-2 row-start-3 row-end-4"
-        onClick={() => {
-          setMenuMode("search");
-        }}
+        onClick={openSearch}
         variant="button"
       >
         <Search className="h-7 w-7" />

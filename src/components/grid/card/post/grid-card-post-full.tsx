@@ -16,6 +16,7 @@ import { PostTransitionBoundary } from "@/components/post-transitions/PostTransi
 import { TopicPill } from "@/components/TopicPill";
 import type { Post } from "@/payload-types";
 import { formatShortDate } from "@/utilities/date";
+import { dedupeRelationItemsById } from "@/utilities/dedupeRelationItemsById";
 import {
   lyovsonRoute,
   postRoute,
@@ -170,76 +171,46 @@ export const GridCardPostFull = ({
         </GridCardSection>
 
         <GridCardSection className="col-start-3 col-end-4 row-start-1 row-end-2 flex flex-col items-center justify-end gap-2">
-          {topics
-            ?.filter((topic, index, self) => {
-              if (typeof topic !== "object" || !topic?.id) {
-                return false;
-              }
+          {dedupeRelationItemsById(topics).map((topic, index) => {
+            if (typeof topic !== "object" || !topic.slug || !topic.id) {
+              return null;
+            }
 
-              return (
-                index ===
-                self.findIndex((candidate) => {
-                  return (
-                    typeof candidate === "object" && candidate?.id === topic.id
-                  );
-                })
-              );
-            })
-            .map((topic, index) => {
-              if (typeof topic !== "object" || !topic.slug || !topic.id) {
-                return null;
-              }
-
-              return (
-                <AppLink
-                  aria-label={`View posts about ${topic.name}`}
-                  className={`w-full ${getStaggerClass(index)}`}
-                  href={topicRoute(topic.slug)}
-                  key={topic.id}
-                  prefetch={false}
-                >
-                  <TopicPill>{topic.name}</TopicPill>
-                </AppLink>
-              );
-            })}
+            return (
+              <AppLink
+                aria-label={`View posts about ${topic.name}`}
+                className={`w-full ${getStaggerClass(index)}`}
+                href={topicRoute(topic.slug)}
+                key={topic.id}
+                prefetch={false}
+              >
+                <TopicPill>{topic.name}</TopicPill>
+              </AppLink>
+            );
+          })}
         </GridCardSection>
 
         <GridCardSection className="col-start-3 col-end-4 row-start-2 row-end-3 flex flex-col justify-evenly gap-2">
-          {populatedAuthors
-            ?.filter((author, index, self) => {
-              if (typeof author !== "object" || !author?.id) {
-                return false;
-              }
+          {dedupeRelationItemsById(populatedAuthors).map((author, index) => {
+            if (!(typeof author === "object" && author.username)) {
+              return null;
+            }
 
-              return (
-                index ===
-                self.findIndex((candidate) => {
-                  return (
-                    typeof candidate === "object" && candidate?.id === author.id
-                  );
-                })
-              );
-            })
-            .map((author, index) => {
-              if (!(typeof author === "object" && author.username)) {
-                return null;
-              }
-
-              return (
-                <AppLink
-                  aria-label={`View ${author.name}'s profile`}
-                  className={`glass-text glass-interactive flex items-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)] ${getStaggerClass(index)}`}
-                  href={lyovsonRoute(author.username)}
-                  key={author.id}
-                  prefetch={false}
-                >
-                  <PenTool aria-hidden="true" className="h-5 w-5" />
-                  <span className="font-medium text-xs">
-                    {author.name?.replace(" Lyovson", "")}
-                  </span>
-                </AppLink>
-              );
-            })}
+            return (
+              <AppLink
+                aria-label={`View ${author.name}'s profile`}
+                className={`glass-text glass-interactive flex items-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)] ${getStaggerClass(index)}`}
+                href={lyovsonRoute(author.username)}
+                key={author.id}
+                prefetch={false}
+              >
+                <PenTool aria-hidden="true" className="h-5 w-5" />
+                <span className="font-medium text-xs">
+                  {author.name?.replace(" Lyovson", "")}
+                </span>
+              </AppLink>
+            );
+          })}
 
           <div className="glass-text-secondary flex items-center gap-2 text-xs">
             <Calendar aria-hidden="true" className="h-5 w-5" />

@@ -3,6 +3,25 @@ import { after, NextResponse } from "next/server";
 import { runHybridSearch, SearchInputError } from "@/search/service";
 import { getPayloadClient } from "@/utilities/payload-client";
 
+const SEARCH_FAILURE_STATUS = 500;
+
+function logSearchRouteFailure(
+  startedAt: number,
+  query: string | null,
+  error: unknown
+) {
+  after(async () => {
+    const payload = await getPayloadClient();
+    payload.logger.error({
+      msg: "api.search.failed",
+      durationMs: Date.now() - startedAt,
+      query,
+      queryLength: query?.length ?? 0,
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  });
+}
+
 export async function GET(request: NextRequest) {
   const startedAt = Date.now();
   const query = request.nextUrl.searchParams.get("q");
@@ -31,6 +50,10 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     if (error instanceof SearchInputError) {
+      if (error.status >= SEARCH_FAILURE_STATUS) {
+        logSearchRouteFailure(startedAt, query, error);
+      }
+
       return NextResponse.json(
         {
           results: [],
@@ -42,14 +65,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    after(async () => {
-      const payload = await getPayloadClient();
-      payload.logger.error({
-        msg: "api.search.failed",
-        durationMs: Date.now() - startedAt,
-        error: error instanceof Error ? error.message : "Unknown error",
-      });
-    });
+    logSearchRouteFailure(startedAt, query, error);
 
     return NextResponse.json(
       {

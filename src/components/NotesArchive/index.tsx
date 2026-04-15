@@ -1,5 +1,5 @@
 import type React from "react";
-import { ArchiveItems } from "@/components/ArchiveItems";
+import { ArchiveItems, toArchiveItems } from "@/components/ArchiveItems";
 import type { Note } from "@/payload-types";
 
 export interface Props {
@@ -9,13 +9,5 @@ export interface Props {
 export const NotesArchive: React.FC<Props> = (props) => {
   const { notes } = props;
 
-  return (
-    <ArchiveItems
-      items={notes.flatMap((note) =>
-        typeof note === "object" && note !== null
-          ? [{ type: "note" as const, data: note }]
-          : []
-      )}
-    />
-  );
+  return <ArchiveItems items={toArchiveItems(notes, "note")} />;
 };

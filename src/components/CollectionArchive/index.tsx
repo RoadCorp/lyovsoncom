@@ -1,5 +1,5 @@
 import type React from "react";
-import { ArchiveItems } from "@/components/ArchiveItems";
+import { ArchiveItems, toArchiveItems } from "@/components/ArchiveItems";
 import type { Post } from "@/payload-types";
 
 export interface Props {
@@ -9,13 +9,5 @@ export interface Props {
 export const CollectionArchive: React.FC<Props> = (props) => {
   const { posts } = props;
 
-  return (
-    <ArchiveItems
-      items={posts.flatMap((post) =>
-        typeof post === "object" && post !== null
-          ? [{ type: "post" as const, data: post }]
-          : []
-      )}
-    />
-  );
+  return <ArchiveItems items={toArchiveItems(posts, "post")} />;
 };
