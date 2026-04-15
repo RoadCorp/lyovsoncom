@@ -18,7 +18,7 @@ export const Code: React.FC<Props> = ({ code, language = "" }) => {
     <div className="glass-section glass-premium relative">
       <Highlight code={code} language={language} theme={themes.vsDark}>
         {({ getLineProps, getTokenProps, tokens }) => (
-          <pre className="glass-bg glass-text overflow-x-auto rounded-lg border border-glass-border p-6 font-mono text-sm leading-relaxed backdrop-blur-md">
+          <pre className="glass-code-pre rounded-lg p-6 font-mono text-sm leading-relaxed">
             {/* Language indicator */}
             {language && (
               <div className="glass-badge absolute top-3 right-15 rounded px-2 py-1 font-medium text-xs">

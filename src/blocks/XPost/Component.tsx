@@ -65,7 +65,7 @@ export async function XPostBlock({ postId, caption }: XPostBlockType) {
   const tweet = tweetResult.data;
 
   return (
-    <Card className="glass-longform-block glass-interactive glass-stagger-2 gap-0 overflow-hidden py-0 transition-all duration-300">
+    <Card className="glass-longform-block glass-block-card glass-interactive glass-stagger-2 gap-0 overflow-hidden py-0">
       <CardContent
         className={cn("flex justify-center", contentPaddingClassName)}
       >
@@ -81,16 +81,9 @@ export async function XPostBlock({ postId, caption }: XPostBlockType) {
       </CardContent>
 
       {caption && (
-        <CardFooter
-          className={cn(
-            "glass-section m-3 mt-0 rounded-lg px-4 py-2 transition-all duration-300 sm:px-5 sm:py-3",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--glass-border-hover)] focus-visible:ring-offset-2",
-            "hover:shadow-md"
-          )}
-          dir="auto"
-        >
+        <CardFooter className="glass-caption-shell sm:px-5 sm:py-3" dir="auto">
           <RichText
-            className="glass-text-secondary w-full break-words text-center text-sm italic"
+            className="glass-caption-text"
             content={caption}
             enableGutter={false}
             enableProse={false}

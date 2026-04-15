@@ -149,8 +149,7 @@ export const GridCardActivityFull = ({
   const ActivityIcon = getActivityIcon(referenceType);
   const participants = getUniqueParticipants(activity);
 
-  const iconClassName =
-    "glass-text h-5 w-5 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]";
+  const iconClassName = "glass-text glass-group-hover-dim h-5 w-5";
 
   return (
     <GridCard className={className}>
@@ -185,7 +184,7 @@ export const GridCardActivityFull = ({
 
       <GridCardSection className="col-start-3 col-end-4 row-start-1 row-end-2 flex h-full flex-col justify-center">
         <AppLink
-          className="group block"
+          className="glass-focus-ring group block"
           href={activityHref}
           prefetch={false}
           transitionTypes={[transitionTypes.drillIn]}
@@ -194,7 +193,7 @@ export const GridCardActivityFull = ({
             name={getActivityTitleTransitionName(dateSlug, slug)}
             {...frontendViewTransitionClasses.sharedTitle}
           >
-            <h2 className="glass-text text-center font-bold text-sm transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
+            <h2 className="glass-text glass-group-hover-dim text-center font-bold text-sm">
               {referenceTitle}
             </h2>
           </ViewTransition>
@@ -205,7 +204,7 @@ export const GridCardActivityFull = ({
         {participants.map((participant, index) => (
           <AppLink
             aria-label={`View ${participant.name}'s profile`}
-            className={`glass-text glass-interactive flex items-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)] ${getParticipantStaggerClass(index)}`}
+            className={`glass-meta-link glass-focus-ring glass-interactive ${getParticipantStaggerClass(index)}`}
             href={lyovsonRoute(participant.username)}
             key={participant.id}
             prefetch={false}
@@ -236,13 +235,13 @@ export const GridCardActivityFull = ({
 
       <GridCardSection className="col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
         <AppLink
-          className="group block flex flex-col items-center gap-1"
+          className="glass-focus-ring group block flex flex-col items-center gap-1"
           href={activityHref}
           prefetch={false}
           transitionTypes={[transitionTypes.drillIn]}
         >
           <ActivityIcon aria-hidden="true" className={iconClassName} />
-          <span className="glass-text-secondary text-xs capitalize transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
+          <span className="glass-text-secondary text-xs capitalize">
             {activityTypeLabel}
           </span>
         </AppLink>

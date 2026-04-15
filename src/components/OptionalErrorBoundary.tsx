@@ -17,7 +17,7 @@ function OptionalErrorBoundaryImpl(
     <div className="glass-section flex h-[var(--grid-card-1x1)] w-[var(--grid-card-1x1)] flex-col items-center justify-center gap-4 rounded-xl p-6 text-center">
       <p className="glass-text-secondary text-sm">{title}</p>
       <button
-        className="glass-text rounded-full border px-4 py-2 text-sm transition-colors hover:text-[var(--glass-text-secondary)]"
+        className="glass-action-button glass-focus-ring glass-interactive"
         onClick={() => unstable_retry()}
         type="button"
       >

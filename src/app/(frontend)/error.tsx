@@ -12,7 +12,7 @@ export default function FrontendError({ error, unstable_retry }: ErrorInfo) {
         </p>
       </div>
       <button
-        className="glass-text rounded-full border px-4 py-2 text-sm transition-colors hover:text-[var(--glass-text-secondary)]"
+        className="glass-action-button glass-focus-ring glass-interactive"
         onClick={() => unstable_retry()}
         type="button"
       >

@@ -1,7 +1,6 @@
 import { AlertCircle, X } from "lucide-react";
 import { GridCardSection } from "@/components/grid";
 import { GridCardNavItem } from "@/components/grid/card/nav";
-import { cn } from "@/lib/utils";
 import type { SubscribeMode } from "./types";
 
 interface ErrorModeProps {
@@ -12,23 +11,15 @@ interface ErrorModeProps {
 export const ErrorMode = ({ message, setMode }: ErrorModeProps) => {
   return (
     <>
-      <GridCardSection
-        className={cn(
-          "col-start-1 col-end-4 row-start-1 row-end-3 flex flex-col items-center justify-center gap-4 text-center"
-        )}
-      >
+      <GridCardSection className="col-start-1 col-end-4 row-start-1 row-end-3 flex flex-col items-center justify-center gap-4 text-center">
         <AlertCircle
           aria-label="Error"
-          className="h-16 w-16"
-          style={{ color: "var(--destructive)" }}
+          className="glass-semantic-error h-16 w-16"
         />
-        <h2
-          className={cn("font-bold text-2xl")}
-          style={{ color: "var(--destructive)" }}
-        >
+        <h2 className="glass-semantic-error font-bold text-2xl">
           Something went wrong
         </h2>
-        <p className={cn("glass-text-secondary text-base")}>{message}</p>
+        <p className="glass-text-secondary text-base">{message}</p>
       </GridCardSection>
 
       <GridCardNavItem

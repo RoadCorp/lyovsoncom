@@ -20,7 +20,7 @@ export function CopyButton({ code }: { code: string }) {
   return (
     <div className="absolute top-3 right-3">
       <Button
-        className="glass-badge glass-interactive hover:glass-text-secondary flex gap-2 rounded px-2 py-1 font-medium text-xs transition-all duration-300"
+        className="glass-badge glass-copy-button glass-focus-ring glass-hover-dim glass-interactive flex gap-2 px-2 py-1 font-medium text-xs"
         onClick={async () => {
           await navigator.clipboard.writeText(code);
           updateCopyStatus();
@@ -29,7 +29,7 @@ export function CopyButton({ code }: { code: string }) {
         variant="ghost"
       >
         <span className="glass-text sr-only">{text}</span>
-        <div className="glass-text h-4 w-4">
+        <div className="flex h-4 w-4 items-center justify-center">
           <CopyIcon />
         </div>
       </Button>

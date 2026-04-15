@@ -33,7 +33,7 @@ export const GridCardProject = ({
   return (
     <AppLink
       aria-label={`View ${name} project`}
-      className="group glass-interactive"
+      className="glass-focus-ring group glass-interactive"
       href={projectHref}
       prefetch={false}
       transitionTypes={[transitionTypes.drillIn]}
@@ -64,7 +64,7 @@ export const GridCardProject = ({
             name={getProjectTitleTransitionName(slug)}
             {...frontendViewTransitionClasses.sharedTitle}
           >
-            <h2 className="glass-text text-center font-bold text-xl transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
+            <h2 className="glass-text glass-group-hover-dim text-center font-bold text-xl">
               {name}
             </h2>
           </ViewTransition>
@@ -125,7 +125,7 @@ export const GridCardProjectHero = ({
               name={getProjectTitleTransitionName(slug)}
               {...frontendViewTransitionClasses.sharedTitle}
             >
-              <h1 className="glass-text text-center font-bold text-2xl transition-colors duration-300 md:text-3xl lg:text-4xl">
+              <h1 className="glass-text text-center font-bold text-2xl md:text-3xl lg:text-4xl">
                 {name}
               </h1>
             </ViewTransition>

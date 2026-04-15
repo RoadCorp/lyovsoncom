@@ -122,22 +122,19 @@ export function GridCardUserSocial({ className }: { className?: string }) {
           >
             <a
               aria-label={`Visit ${link.name} profile`}
-              className="glass-interactive group"
+              className="glass-focus-ring glass-hover-dim glass-interactive glass-text block"
               href={link.url}
               rel="noopener noreferrer"
               target="_blank"
             >
               {link.iconType === "simple" ? (
                 <IconComponent
-                  className="glass-text transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]"
+                  className="block"
                   color={link.useDefaultColor ? "default" : "currentColor"}
                   size={32}
                 />
               ) : (
-                <IconComponent
-                  className="glass-text transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]"
-                  size={32}
-                />
+                <IconComponent className="block" size={32} />
               )}
             </a>
           </GridCardNavItem>

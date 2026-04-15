@@ -47,7 +47,7 @@ export const GridCardRelatedPosts = ({
           <PostDrillInLink
             aria-label={`Read related post: ${post.title}`}
             className={cn(
-              "group glass-interactive col-start-1 col-end-4",
+              "glass-focus-ring group glass-interactive col-start-1 col-end-4",
               rowClass,
               staggerClass
             )}
@@ -71,7 +71,7 @@ export const GridCardRelatedPosts = ({
                 ) : null}
                 <div className="col-start-2 col-end-4 row-start-1 row-end-2 grid items-center">
                   <PostTransitionBoundary slug={post.slug} variant="title">
-                    <h2 className="glass-text font-medium transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
+                    <h2 className="glass-text glass-group-hover-dim font-medium">
                       {post.title}
                     </h2>
                   </PostTransitionBoundary>

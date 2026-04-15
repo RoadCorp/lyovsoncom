@@ -194,7 +194,7 @@ function NoteContentPreview({
 }) {
   return (
     <AppLink
-      className="group block h-full"
+      className="glass-focus-ring group block h-full"
       href={noteUrl}
       prefetch={false}
       transitionTypes={[transitionTypes.drillIn]}
@@ -294,7 +294,7 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
 
       <GridCardSection className="col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
         <AppLink
-          className="group block flex flex-col items-center gap-1"
+          className="glass-focus-ring group block flex flex-col items-center gap-1"
           href={noteUrl}
           prefetch={false}
           transitionTypes={[transitionTypes.drillIn]}
@@ -302,15 +302,15 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
           {isQuoteType ? (
             <Quote
               aria-hidden="true"
-              className="glass-text h-5 w-5 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]"
+              className="glass-text glass-group-hover-dim h-5 w-5"
             />
           ) : (
             <Brain
               aria-hidden="true"
-              className="glass-text h-5 w-5 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]"
+              className="glass-text glass-group-hover-dim h-5 w-5"
             />
           )}
-          <span className="glass-text-secondary text-xs capitalize transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
+          <span className="glass-text-secondary text-xs capitalize">
             {typeLabel}
           </span>
         </AppLink>

@@ -50,7 +50,7 @@ export default async function Page({ params }: PageProps) {
           <ul className="flex h-full flex-col justify-center gap-2">
             <li>
               <Link
-                className="glass-text glass-interactive flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors duration-300 hover:text-[var(--glass-text-secondary)]"
+                className="glass-inline-action glass-focus-ring glass-interactive text-sm"
                 href={`mailto:${PUBLIC_EMAIL}`}
               >
                 <Mail aria-hidden="true" className="h-5 w-5" />
@@ -69,7 +69,7 @@ export default async function Page({ params }: PageProps) {
               return (
                 <li key={link.url}>
                   <a
-                    className="glass-text glass-interactive flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors duration-300 hover:text-[var(--glass-text-secondary)]"
+                    className="glass-inline-action glass-focus-ring glass-interactive text-sm"
                     href={link.url}
                     rel="noopener"
                     target="_blank"

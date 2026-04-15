@@ -259,7 +259,7 @@ export default async function PrivacyPolicy() {
             </p>
           </section>
 
-          <footer className="glass-text-secondary border-glass-border border-t pt-6 text-sm">
+          <footer className="glass-text-secondary border-border border-t pt-6 text-sm">
             <p>This Privacy Policy was last updated on March 19, 2024.</p>
           </footer>
         </article>

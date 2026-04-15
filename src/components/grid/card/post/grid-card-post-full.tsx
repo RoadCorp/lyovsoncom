@@ -99,8 +99,7 @@ export const GridCardPostFull = ({
   const postHref = postRoute(slug);
   const postType = type || "article";
   const projectLink = getProjectLinkData(project);
-  const iconClassName =
-    "glass-text h-5 w-5 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]";
+  const iconClassName = "glass-text glass-group-hover-dim h-5 w-5";
 
   return (
     <PostTransitionBoundary variant="cardShell">
@@ -112,7 +111,7 @@ export const GridCardPostFull = ({
           >
             <PostDrillInLink
               aria-label={`Read "${title}"`}
-              className="group block h-full overflow-hidden rounded-lg"
+              className="glass-focus-ring group block h-full overflow-hidden rounded-lg"
               href={postHref}
             >
               <PostTransitionBoundary slug={slug} variant="media">
@@ -130,9 +129,12 @@ export const GridCardPostFull = ({
         ) : null}
 
         <GridCardSection className="col-start-1 col-end-3 row-start-3 row-end-4 flex h-full flex-col justify-center">
-          <PostDrillInLink className="group block" href={postHref}>
+          <PostDrillInLink
+            className="glass-focus-ring group block"
+            href={postHref}
+          >
             <PostTransitionBoundary slug={slug} variant="title">
-              <h2 className="glass-text text-center font-bold text-xl transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
+              <h2 className="glass-text glass-group-hover-dim text-center font-bold text-xl">
                 {title}
               </h2>
             </PostTransitionBoundary>
@@ -141,7 +143,7 @@ export const GridCardPostFull = ({
 
         <GridCardSection className="col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
           <PostDrillInLink
-            className="group block flex flex-col items-center gap-1"
+            className="glass-focus-ring group block flex flex-col items-center gap-1"
             href={postHref}
           >
             {postType === "article" ? (
@@ -164,7 +166,7 @@ export const GridCardPostFull = ({
             ) ? null : (
               <FileText aria-hidden="true" className={iconClassName} />
             )}
-            <span className="glass-text-secondary text-xs capitalize transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
+            <span className="glass-text-secondary text-xs capitalize">
               {postType}
             </span>
           </PostDrillInLink>
@@ -199,7 +201,7 @@ export const GridCardPostFull = ({
             return (
               <AppLink
                 aria-label={`View ${author.name}'s profile`}
-                className={`glass-text glass-interactive flex items-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)] ${getStaggerClass(index)}`}
+                className={`glass-meta-link glass-focus-ring glass-interactive ${getStaggerClass(index)}`}
                 href={lyovsonRoute(author.username)}
                 key={author.id}
                 prefetch={false}
@@ -222,7 +224,7 @@ export const GridCardPostFull = ({
           {projectLink ? (
             <AppLink
               aria-label={`View ${projectLink.label} project`}
-              className="glass-text glass-interactive flex items-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)]"
+              className="glass-meta-link glass-focus-ring glass-interactive"
               href={projectLink.href}
               prefetch={false}
             >

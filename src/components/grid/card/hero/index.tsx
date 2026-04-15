@@ -73,7 +73,7 @@ export const GridCardHero = ({
           <div className="flex h-full flex-col items-center justify-center px-4 md:px-8">
             <div className="mx-auto w-full max-w-3xl space-y-4">
               <PostTransitionBoundary slug={post.slug} variant="title">
-                <h1 className="glass-text text-center font-bold text-2xl transition-colors duration-300 md:text-3xl lg:text-4xl">
+                <h1 className="glass-text text-center font-bold text-2xl md:text-3xl lg:text-4xl">
                   {post.title}
                 </h1>
               </PostTransitionBoundary>
@@ -109,7 +109,7 @@ export const GridCardHeroNote = ({
       )}
     >
       <GridCardSection className="col-start-1 col-end-4 row-start-1 row-end-3 flex h-full flex-col items-center justify-center px-6 py-6">
-        <h1 className="glass-text text-center font-bold text-2xl transition-colors duration-300">
+        <h1 className="glass-text text-center font-bold text-2xl">
           {note.title}
         </h1>
       </GridCardSection>
@@ -154,15 +154,9 @@ export const GridCardHeroNote = ({
 
       <GridCardSection className="col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
         {isQuoteType ? (
-          <Quote
-            aria-hidden="true"
-            className="glass-text h-5 w-5 transition-colors duration-300"
-          />
+          <Quote aria-hidden="true" className="glass-text h-5 w-5" />
         ) : (
-          <Brain
-            aria-hidden="true"
-            className="glass-text h-5 w-5 transition-colors duration-300"
-          />
+          <Brain aria-hidden="true" className="glass-text h-5 w-5" />
         )}
         <span className="glass-text-secondary text-xs capitalize">
           {typeLabel}
@@ -237,7 +231,7 @@ export const GridCardHeroActivity = ({
               name={getActivityTitleTransitionName(dateSlug, activity.slug)}
               {...frontendViewTransitionClasses.sharedTitle}
             >
-              <h1 className="glass-text text-center font-bold text-2xl transition-colors duration-300 md:text-3xl lg:text-4xl">
+              <h1 className="glass-text text-center font-bold text-2xl md:text-3xl lg:text-4xl">
                 {title}
               </h1>
             </ViewTransition>

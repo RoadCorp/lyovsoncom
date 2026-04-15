@@ -1,7 +1,6 @@
 import { CheckCircle2, X } from "lucide-react";
 import { GridCardSection } from "@/components/grid";
 import { GridCardNavItem } from "@/components/grid/card/nav";
-import { cn } from "@/lib/utils";
 import type { SubscribeMode } from "./types";
 
 interface SuccessModeProps {
@@ -12,23 +11,13 @@ interface SuccessModeProps {
 export const SuccessMode = ({ message, setMode }: SuccessModeProps) => {
   return (
     <>
-      <GridCardSection
-        className={cn(
-          "col-start-1 col-end-4 row-start-1 row-end-3 flex flex-col items-center justify-center gap-4 text-center"
-        )}
-      >
+      <GridCardSection className="col-start-1 col-end-4 row-start-1 row-end-3 flex flex-col items-center justify-center gap-4 text-center">
         <CheckCircle2
           aria-label="Success"
-          className="h-16 w-16"
-          style={{ color: "var(--success)" }}
+          className="glass-semantic-success h-16 w-16"
         />
-        <h2
-          className={cn("font-bold text-2xl")}
-          style={{ color: "var(--success)" }}
-        >
-          Success!
-        </h2>
-        <p className={cn("glass-text-secondary text-base")}>{message}</p>
+        <h2 className="glass-semantic-success font-bold text-2xl">Success!</h2>
+        <p className="glass-text-secondary text-base">{message}</p>
       </GridCardSection>
 
       <GridCardNavItem

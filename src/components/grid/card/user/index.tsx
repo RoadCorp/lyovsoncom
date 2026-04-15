@@ -106,7 +106,7 @@ export const GridCardUser = ({ user, className }: Props) => {
           >
             <a
               aria-label={`${userName} on ${iconConfig.label}`}
-              className="flex flex-col items-center justify-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)]"
+              className="glass-focus-ring glass-hover-dim glass-text flex flex-col items-center justify-center gap-2"
               href={link.url}
               rel="noopener"
               target="_blank"

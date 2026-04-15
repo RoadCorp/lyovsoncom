@@ -131,7 +131,7 @@ export function GridCardActivityReview({
 
             {isTruncated && (
               <>
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-[color:var(--glass-bg)] to-transparent" />
+                <div className="glass-fade-bottom pointer-events-none absolute inset-x-0 bottom-0 h-14" />
                 <span className="glass-text-secondary pointer-events-none absolute right-6 bottom-4 text-xs tracking-widest">
                   ...
                 </span>
@@ -153,15 +153,15 @@ export function GridCardActivityReview({
       >
         {username ? (
           <AppLink
-            className="group block flex flex-col items-center gap-1"
+            className="glass-focus-ring group block flex flex-col items-center gap-1"
             href={lyovsonRoute(username)}
             prefetch={false}
           >
             <User
               aria-hidden="true"
-              className="glass-text h-5 w-5 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]"
+              className="glass-text glass-group-hover-dim h-5 w-5"
             />
-            <span className="glass-text-secondary text-xs capitalize transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
+            <span className="glass-text-secondary text-xs capitalize">
               {name.replace(" Lyovson", "")}
             </span>
           </AppLink>

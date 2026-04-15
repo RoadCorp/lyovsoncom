@@ -98,7 +98,7 @@ export const GridCardReferences = ({
         <div className="flex items-center gap-2">
           <BookOpenText
             aria-hidden="true"
-            className="glass-text-secondary h-4 w-4 transition-colors duration-300"
+            className="glass-text-secondary h-4 w-4"
           />
           <h3 className="glass-text font-bold text-base uppercase tracking-wide">
             References
@@ -123,14 +123,12 @@ export const GridCardReferences = ({
           const content = (
             <div
               className={cn(
-                "group/reference relative grid grid-cols-[5.5rem_1fr_auto] items-center gap-3 rounded-lg border border-[var(--glass-border)] bg-[color:var(--glass-bg)] p-2",
-                "transition-colors duration-300",
+                "group glass-reference-row relative grid grid-cols-[5.5rem_1fr_auto] items-center gap-3 rounded-lg p-2",
                 getStaggerClass(index),
-                isExternal &&
-                  "glass-interactive hover:border-[var(--glass-border-hover)] hover:bg-[color:var(--glass-bg-hover)]"
+                isExternal && "glass-interactive"
               )}
             >
-              <div className="h-[5.5rem] w-[5.5rem] shrink-0 overflow-hidden rounded-md border border-[var(--glass-border)] bg-[color:var(--glass-bg)]">
+              <div className="glass-reference-thumb h-[5.5rem] w-[5.5rem] shrink-0 overflow-hidden rounded-md">
                 {imageObj ? (
                   <Media
                     className="glass-media h-full w-full"
@@ -142,7 +140,7 @@ export const GridCardReferences = ({
                   <div className="flex h-full w-full items-center justify-center">
                     <IconComponent
                       aria-hidden="true"
-                      className="glass-text-secondary h-6 w-6 transition-colors duration-300"
+                      className="glass-text-secondary h-6 w-6"
                     />
                   </div>
                 )}
@@ -167,7 +165,7 @@ export const GridCardReferences = ({
               {isExternal && (
                 <ExternalLink
                   aria-hidden="true"
-                  className="h-4 w-4 flex-shrink-0 text-[var(--glass-text-secondary)] transition-colors duration-300 group-hover/reference:text-[var(--glass-text)]"
+                  className="glass-group-hover-bright glass-text-secondary h-4 w-4 flex-shrink-0"
                 />
               )}
             </div>
@@ -177,6 +175,7 @@ export const GridCardReferences = ({
             return (
               <a
                 aria-label={`Open reference: ${reference.title}`}
+                className="glass-focus-ring block"
                 href={reference.url}
                 key={reference.id}
                 rel="noopener"

@@ -17,20 +17,8 @@ export const Grid = ({ children }: { children: ReactNode }) => {
   return (
     <main className="relative mx-auto grid min-h-screen g2:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)] g3:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)] g4:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)] g5:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)] g6:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)] grid-cols-[minmax(0,clamp(18rem,100vw-2rem,var(--grid-card-1x1)))] place-items-center justify-center gap-[var(--grid-gap)] p-[var(--grid-gap)] g2:[grid-auto-rows:max-content]">
       {/* Theme-aware glassmorphism background context */}
-      <div
-        className="pointer-events-none fixed inset-0 -z-10"
-        style={{
-          background:
-            "linear-gradient(135deg, var(--grid-bg-start), var(--grid-bg-middle), var(--grid-bg-end))",
-        }}
-      />
-      <div
-        className="pointer-events-none fixed inset-0 -z-10 opacity-30"
-        style={{
-          background:
-            "radial-gradient(ellipse 80% 80% at 50% -20%, var(--grid-bg-middle), transparent)",
-        }}
-      />
+      <div className="glass-grid-backdrop pointer-events-none fixed inset-0 -z-10" />
+      <div className="glass-grid-spotlight pointer-events-none fixed inset-0 -z-10 opacity-30" />
 
       {/* Enhanced children with staggered animations */}
       {Array.isArray(childrenArray)

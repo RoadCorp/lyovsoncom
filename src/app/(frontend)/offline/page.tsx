@@ -24,7 +24,7 @@ export default function OfflinePage() {
 
       <GridCardSection className="col-start-1 col-end-2 row-start-3 row-end-4">
         <Link
-          className="glass-text flex h-full w-full flex-col items-center justify-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)]"
+          className="glass-text glass-focus-ring glass-hover-dim flex h-full w-full flex-col items-center justify-center gap-2"
           href="/"
         >
           <Home aria-hidden="true" className="h-6 w-6" />

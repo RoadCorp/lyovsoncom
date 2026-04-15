@@ -39,7 +39,7 @@ export const GridCardNavItem = ({
     return (
       <GridCardSection className={cn("group", className)}>
         <AppLink
-          className="glass-text flex h-full w-full flex-col items-center justify-center gap-2 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]"
+          className="glass-text glass-focus-ring glass-group-hover-dim flex h-full w-full flex-col items-center justify-center gap-2"
           href={props.href}
           pendingHintClassName="absolute top-2 right-2"
           prefetch={null}

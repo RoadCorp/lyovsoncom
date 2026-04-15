@@ -43,7 +43,7 @@ export function GridCardRelatedNotes({
           <AppLink
             aria-label={`Read related note: ${note.title}`}
             className={cn(
-              "group glass-interactive col-start-1 col-end-4",
+              "glass-focus-ring group glass-interactive col-start-1 col-end-4",
               rowClass,
               staggerClass
             )}
@@ -59,18 +59,18 @@ export function GridCardRelatedNotes({
                 {isQuote ? (
                   <Quote
                     aria-hidden="true"
-                    className="glass-text h-8 w-8 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]"
+                    className="glass-text glass-group-hover-dim h-8 w-8"
                   />
                 ) : (
                   <Brain
                     aria-hidden="true"
-                    className="glass-text h-8 w-8 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]"
+                    className="glass-text glass-group-hover-dim h-8 w-8"
                   />
                 )}
               </div>
               {/* Content column */}
               <div className="col-start-2 col-end-4 row-start-1 row-end-2 flex flex-col justify-center gap-1">
-                <h2 className="glass-text font-medium text-sm transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
+                <h2 className="glass-text glass-group-hover-dim font-medium text-sm">
                   {note.title}
                 </h2>
                 {excerpt && (

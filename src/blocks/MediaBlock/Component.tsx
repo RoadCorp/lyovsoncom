@@ -33,13 +33,13 @@ export function MediaBlock(props: Props) {
   return (
     <Card
       className={cn(
-        "glass-longform-block glass-interactive glass-stagger-1 gap-0 overflow-hidden py-0 transition-all duration-300",
+        "glass-longform-block glass-block-card glass-interactive glass-stagger-1 gap-0 overflow-hidden py-0",
         className
       )}
     >
       <CardContent className={cn(hasCaption ? "p-3" : "p-0")}>
         <Media
-          className="flex h-full items-center justify-center"
+          className="glass-media flex h-full items-center justify-center"
           imgClassName={cn(
             "h-full object-cover",
             hasCaption && "rounded-lg",
@@ -51,19 +51,9 @@ export function MediaBlock(props: Props) {
         />
       </CardContent>
       {caption && (
-        <CardFooter
-          className={cn(
-            "glass-section m-3 mt-0 rounded-lg px-4 py-2 transition-all duration-300 sm:px-5 sm:py-3",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--glass-border-hover)] focus-visible:ring-offset-2",
-            "hover:shadow-md"
-          )}
-          dir="auto"
-        >
+        <CardFooter className="glass-caption-shell sm:px-5 sm:py-3" dir="auto">
           <RichText
-            className={cn(
-              "glass-text-secondary w-full break-words text-center text-sm italic",
-              captionClassName
-            )}
+            className={cn("glass-caption-text", captionClassName)}
             content={caption}
             enableGutter={false}
             enableProse={false}
