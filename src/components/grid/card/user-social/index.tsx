@@ -39,7 +39,7 @@ interface SocialLink {
 }
 
 function getStaggerClass(index: number): string {
-  return `glass-stagger-${Math.min(index + 1, MAX_STAGGER_INDEX)}`;
+  return `reveal-stagger-${Math.min(index + 1, MAX_STAGGER_INDEX)}`;
 }
 
 const socialLinks: SocialLink[] = [
@@ -122,7 +122,7 @@ export function GridCardUserSocial({ className }: { className?: string }) {
           >
             <a
               aria-label={`Visit ${link.name} profile`}
-              className="glass-focus-ring glass-hover-dim glass-interactive glass-text block"
+              className="ui-focus-ring ui-hover-dim ui-interactive tone-heading block"
               href={link.url}
               rel="noopener noreferrer"
               target="_blank"

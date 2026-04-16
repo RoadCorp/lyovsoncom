@@ -15,13 +15,13 @@ export const Code: React.FC<Props> = ({ code, language = "" }) => {
   }
 
   return (
-    <div className="glass-section glass-premium relative">
+    <div className="surface-panel surface-emphasis relative">
       <Highlight code={code} language={language} theme={themes.vsDark}>
         {({ getLineProps, getTokenProps, tokens }) => (
-          <pre className="glass-code-pre rounded-lg p-6 font-mono text-sm leading-relaxed">
+          <pre className="rounded-lg p-6 font-mono text-sm leading-relaxed content-code-shell">
             {/* Language indicator */}
             {language && (
-              <div className="glass-badge absolute top-3 right-15 rounded px-2 py-1 font-medium text-xs">
+              <div className="surface-chip absolute top-3 right-15 rounded px-2 py-1 font-medium text-xs">
                 {language.toUpperCase()}
               </div>
             )}
@@ -29,7 +29,7 @@ export const Code: React.FC<Props> = ({ code, language = "" }) => {
             {tokens.map((line, i) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: Syntax highlighting tokens are static and ordered
               <div key={i} {...getLineProps({ className: "table-row", line })}>
-                <span className="glass-text-secondary table-cell min-w-[3rem] select-none pr-4 text-right opacity-50">
+                <span className="tone-muted table-cell min-w-[3rem] select-none pr-4 text-right opacity-50">
                   {i + 1}
                 </span>
                 <span className="table-cell">

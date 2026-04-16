@@ -75,7 +75,7 @@ const referenceTypeIcons: Record<string, typeof Book> = {
 
 function ReferenceTypeIcon({ type }: { type: string }) {
   const Icon = referenceTypeIcons[type] || Info;
-  return <Icon aria-hidden="true" className="glass-text h-6 w-6" />;
+  return <Icon aria-hidden="true" className="tone-heading h-6 w-6" />;
 }
 
 function getParticipants(activity: Activity) {
@@ -172,23 +172,21 @@ export default async function ActivityPage({ params: paramsPromise }: Args) {
           {activity.notes ? (
             <div className="flex h-full w-full items-center justify-center text-center">
               <RichText
-                className="glass-stagger-1 text-sm"
+                className="reveal-stagger-1 text-sm"
                 content={activity.notes}
                 enableGutter={false}
                 enableProse={true}
               />
             </div>
           ) : (
-            <p className="glass-text-secondary text-center text-sm">
-              No additional info
-            </p>
+            <p className="tone-muted text-center text-sm">No additional info</p>
           )}
         </GridCardSection>
 
         {/* Bottom row - Column 1: Activity type icon + label */}
         <GridCardSection className="col-start-1 col-end-2 row-start-3 row-end-4 flex flex-col items-center justify-center gap-1">
           <ReferenceTypeIcon type={referenceType} />
-          <span className="glass-text-secondary font-medium text-xs">
+          <span className="tone-muted font-medium text-xs">
             {activityLabel}
           </span>
         </GridCardSection>
@@ -201,8 +199,8 @@ export default async function ActivityPage({ params: paramsPromise }: Args) {
                 className="flex flex-col items-center gap-0.5"
                 key={participant.id}
               >
-                <User aria-hidden="true" className="glass-text h-5 w-5" />
-                <span className="glass-text-secondary text-[10px]">
+                <User aria-hidden="true" className="tone-heading h-5 w-5" />
+                <span className="tone-muted text-[10px]">
                   {participant.name?.split(" ").at(0) || "?"}
                 </span>
               </div>
@@ -217,15 +215,15 @@ export default async function ActivityPage({ params: paramsPromise }: Args) {
               className="flex flex-col items-center"
               dateTime={finishDateParts.iso}
             >
-              <span className="glass-text font-bold text-2xl leading-none">
+              <span className="tone-heading font-bold text-2xl leading-none">
                 {finishDateParts.day}
               </span>
-              <span className="glass-text-secondary text-[10px] uppercase tracking-wider">
+              <span className="tone-muted text-[10px] uppercase tracking-wider">
                 {finishDateParts.monthYear}
               </span>
             </time>
           ) : (
-            <span className="glass-text-secondary text-xs">—</span>
+            <span className="tone-muted text-xs">—</span>
           )}
         </GridCardSection>
       </GridCard>

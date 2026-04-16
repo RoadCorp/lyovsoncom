@@ -73,17 +73,13 @@ export const GridCardUser = ({ user, className }: Props) => {
         <div className="mx-auto w-full max-w-3xl space-y-4">
           <h1
             className={
-              "glass-text text-center font-bold text-2xl md:text-3xl lg:text-4xl"
+              "tone-heading text-center font-bold text-2xl md:text-3xl lg:text-4xl"
             }
           >
             {userName}
           </h1>
           {userQuote && (
-            <p
-              className={
-                "glass-text-secondary text-center text-base leading-relaxed"
-              }
-            >
+            <p className={"tone-muted text-center text-base leading-relaxed"}>
               {userQuote}
             </p>
           )}
@@ -106,7 +102,7 @@ export const GridCardUser = ({ user, className }: Props) => {
           >
             <a
               aria-label={`${userName} on ${iconConfig.label}`}
-              className="glass-focus-ring glass-hover-dim glass-text flex flex-col items-center justify-center gap-2"
+              className="ui-focus-ring ui-hover-dim tone-heading flex flex-col items-center justify-center gap-2"
               href={link.url}
               rel="noopener"
               target="_blank"

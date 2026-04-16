@@ -89,27 +89,24 @@ export default async function NotePage({ params: paramsPromise }: Args) {
             {...frontendViewTransitionClasses.sharedContent}
           >
             {isQuoteNote ? (
-              <article className="glass-note-stage glass-stagger-3" dir="auto">
-                <span aria-hidden="true" className="glass-note-quote-mark">
+              <article className="note-stage reveal-stagger-3" dir="auto">
+                <span aria-hidden="true" className="note-quote-mark">
                   &ldquo;
                 </span>
-                <RichText
-                  className="glass-note-quote-prose"
-                  {...noteRichTextProps}
-                />
+                <RichText className="note-quote-prose" {...noteRichTextProps} />
                 {quoteAttribution ? (
-                  <footer className="glass-note-quote-attribution" dir="auto">
+                  <footer className="note-quote-attribution" dir="auto">
                     <cite>— {quoteAttribution}</cite>
                   </footer>
                 ) : null}
               </article>
             ) : (
               <article
-                className="glass-note-thought-stage glass-stagger-3"
+                className="note-thought-stage reveal-stagger-3"
                 dir="auto"
               >
                 <RichText
-                  className="glass-note-thought-prose"
+                  className="note-thought-prose"
                   {...noteRichTextProps}
                 />
               </article>
@@ -134,8 +131,8 @@ export default async function NotePage({ params: paramsPromise }: Args) {
           <OptionalErrorBoundary title="Unable to load related notes.">
             <Suspense
               fallback={
-                <div className="glass-section glass-loading h-[var(--grid-card-1x1)] w-[var(--grid-card-1x1)] animate-pulse rounded-xl">
-                  <Skeleton className="glass-badge h-full w-full" />
+                <div className="surface-panel surface-loading h-[var(--grid-card-1x1)] w-[var(--grid-card-1x1)] animate-pulse rounded-xl">
+                  <Skeleton className="surface-chip h-full w-full" />
                 </div>
               }
             >

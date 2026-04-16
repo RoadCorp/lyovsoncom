@@ -9,6 +9,7 @@ import { Grid, GridCardNav, SkeletonCard } from "@/components/grid";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import { Providers } from "@/providers";
+import { browserTheme } from "@/utilities/browserTheme";
 import { getServerSideURL } from "@/utilities/getURL";
 import { LEGACY_BROWSER_CLEANUP_SCRIPT } from "@/utilities/legacy-browser-cleanup";
 import { mergeOpenGraph } from "@/utilities/mergeOpenGraph";
@@ -225,8 +226,8 @@ export const viewport: Viewport = {
   maximumScale: 5,
   userScalable: true,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
+    { media: "(prefers-color-scheme: light)", color: browserTheme.light },
+    { media: "(prefers-color-scheme: dark)", color: browserTheme.dark },
   ],
 };
 
@@ -323,7 +324,7 @@ export const metadata: Metadata = {
     "facebook-domain-verification":
       process.env.FACEBOOK_DOMAIN_VERIFICATION || "",
     "apple-mobile-web-app-capable": "yes",
-    "apple-mobile-web-app-status-bar-style": "black-translucent",
+    "apple-mobile-web-app-status-bar-style": "default",
     "mobile-web-app-capable": "yes",
     HandheldFriendly: "true",
     MobileOptimized: "320",

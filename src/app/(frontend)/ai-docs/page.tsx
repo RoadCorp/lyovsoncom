@@ -7,7 +7,7 @@ const DOCS_CARD_CLASS_NAME =
   "aspect-auto h-auto g2:col-start-2 g2:col-end-3 g3:col-start-2 g3:col-end-4 g3:w-[var(--grid-card-2x1)]";
 
 const DOCS_SECTION_CLASS_NAME =
-  "glass-longform col-span-3 row-span-3 p-6 md:p-8";
+  "content-prose col-span-3 row-span-3 p-6 md:p-8";
 
 const LAST_UPDATED_FORMATTER = new Intl.DateTimeFormat("en-US", {
   month: "long",
@@ -78,13 +78,11 @@ export const metadata: Metadata = {
 
 function CodeBlock({ children, title }: { children: string; title?: string }) {
   return (
-    <div className="glass-longform-block">
+    <div className="content-block">
       {title && (
-        <h4 className="glass-text-secondary mb-2 font-medium text-sm">
-          {title}
-        </h4>
+        <h4 className="tone-muted mb-2 font-medium text-sm">{title}</h4>
       )}
-      <pre className="glass-longform-code-block text-sm">
+      <pre className="text-sm content-code-block">
         <code>{children}</code>
       </pre>
     </div>
@@ -100,7 +98,7 @@ function ExternalLink({
 }) {
   return (
     <a
-      className="glass-text underline decoration-current/40 underline-offset-3 transition-opacity duration-300 hover:opacity-80"
+      className="tone-heading underline decoration-current/40 underline-offset-3 transition-opacity duration-300 hover:opacity-80"
       href={href}
       rel="noopener noreferrer"
       target="_blank"
@@ -118,7 +116,7 @@ export default async function AIDocsPage() {
     <>
       <GridCard className={DOCS_CARD_CLASS_NAME}>
         <GridCardSection className={DOCS_SECTION_CLASS_NAME}>
-          <div className="glass-longform">
+          <div className="content-prose">
             <h1>AI and Bot Access Documentation</h1>
             <p>
               Comprehensive guide for AI systems, research bots, and automated
@@ -239,7 +237,7 @@ export default async function AIDocsPage() {
                   </ExternalLink>
                 </li>
                 <li>
-                  ⚡ <span className="glass-text">pgvector + OpenAI</span>
+                  ⚡ <span className="tone-heading">pgvector + OpenAI</span>
                 </li>
               </ul>
             </div>
@@ -392,7 +390,7 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
             🧠 Advanced Vector Embeddings System
           </h2>
 
-          <div className="glass-premium mb-4 rounded-lg p-4">
+          <div className="surface-emphasis mb-4 rounded-lg p-4">
             <h3 className="mb-2 font-medium">
               ⚡ High-Performance Pre-computed Embeddings
             </h3>
@@ -469,12 +467,12 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
             </div>
           </div>
 
-          <div className="glass-section mt-6 rounded-lg p-4">
+          <div className="surface-panel mt-6 rounded-lg p-4">
             <h4 className="mb-2 font-medium">📊 Monitor System Health</h4>
             <p className="mb-2 text-sm">
               Check embedding coverage and system status:
             </p>
-            <code className="glass-longform-inline-code text-sm">
+            <code className="text-sm content-inline-code">
               GET{" "}
               <ExternalLink href={`${SITE_URL}/api/embeddings/status`}>
                 {SITE_URL}/api/embeddings/status
@@ -575,7 +573,7 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
             </div>
           </div>
 
-          <div className="glass-section rounded-lg p-4 text-sm">
+          <div className="surface-panel rounded-lg p-4 text-sm">
             <p className="mb-2 font-medium">Article Schema includes:</p>
             <ul className="list-inside list-disc space-y-1">
               <li>Context and type information</li>
@@ -617,7 +615,7 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
               </ExternalLink>
             </p>
           </div>
-          <p className="glass-text-secondary mt-4 text-sm">
+          <p className="tone-muted mt-4 text-sm">
             Last updated: {lastUpdated} •{" "}
             <ExternalLink href={`${SITE_URL}/api/docs`}>
               Machine-readable version

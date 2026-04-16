@@ -37,10 +37,10 @@ export default async function Page({ params }: PageProps) {
       >
         <GridCardSection className="col-span-3 row-span-1 flex items-center justify-center p-5">
           <div className="text-center">
-            <h2 className="glass-text font-bold text-xl">
+            <h2 className="tone-heading font-bold text-xl">
               Contact {user.name}
             </h2>
-            <p className="glass-text-secondary mt-2 text-sm">
+            <p className="tone-muted mt-2 text-sm">
               Reach out via public channels below.
             </p>
           </div>
@@ -50,7 +50,7 @@ export default async function Page({ params }: PageProps) {
           <ul className="flex h-full flex-col justify-center gap-2">
             <li>
               <Link
-                className="glass-inline-action glass-focus-ring glass-interactive text-sm"
+                className="ui-inline-action ui-focus-ring ui-interactive text-sm"
                 href={`mailto:${PUBLIC_EMAIL}`}
               >
                 <Mail aria-hidden="true" className="h-5 w-5" />
@@ -69,7 +69,7 @@ export default async function Page({ params }: PageProps) {
               return (
                 <li key={link.url}>
                   <a
-                    className="glass-inline-action glass-focus-ring glass-interactive text-sm"
+                    className="ui-inline-action ui-focus-ring ui-interactive text-sm"
                     href={link.url}
                     rel="noopener"
                     target="_blank"

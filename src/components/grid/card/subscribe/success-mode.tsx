@@ -14,10 +14,10 @@ export const SuccessMode = ({ message, setMode }: SuccessModeProps) => {
       <GridCardSection className="col-start-1 col-end-4 row-start-1 row-end-3 flex flex-col items-center justify-center gap-4 text-center">
         <CheckCircle2
           aria-label="Success"
-          className="glass-semantic-success h-16 w-16"
+          className="state-success h-16 w-16"
         />
-        <h2 className="glass-semantic-success font-bold text-2xl">Success!</h2>
-        <p className="glass-text-secondary text-base">{message}</p>
+        <h2 className="state-success font-bold text-2xl">Success!</h2>
+        <p className="tone-muted text-base">{message}</p>
       </GridCardSection>
 
       <GridCardNavItem

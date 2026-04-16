@@ -153,7 +153,7 @@ export function Pagination({
                 positionClass,
                 "flex h-full w-full items-center justify-center text-lg",
                 isNumeric && "font-semibold",
-                cell.isCurrent && "glass-premium",
+                cell.isCurrent && "surface-emphasis",
                 cell.disabled && !cell.isCurrent && "opacity-45"
               )}
               key={cell.key}

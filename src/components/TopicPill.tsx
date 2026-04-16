@@ -7,5 +7,14 @@ interface TopicPillProps {
 }
 
 export function TopicPill({ children, className }: TopicPillProps) {
-  return <span className={cn("glass-topic-pill", className)}>{children}</span>;
+  return (
+    <span
+      className={cn(
+        "surface-chip topic-pill tone-heading flex w-full items-center justify-center",
+        className
+      )}
+    >
+      {children}
+    </span>
+  );
 }

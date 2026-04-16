@@ -10,7 +10,7 @@ const RELATED_NOTE_EXCERPT_MAX = 80;
 const MAX_STAGGER_INDEX = 6;
 
 function getStaggerClass(index: number): string {
-  return `glass-stagger-${Math.min(index + 1, MAX_STAGGER_INDEX)}`;
+  return `reveal-stagger-${Math.min(index + 1, MAX_STAGGER_INDEX)}`;
 }
 
 export function GridCardRelatedNotes({
@@ -43,7 +43,7 @@ export function GridCardRelatedNotes({
           <AppLink
             aria-label={`Read related note: ${note.title}`}
             className={cn(
-              "glass-focus-ring group glass-interactive col-start-1 col-end-4",
+              "ui-focus-ring group ui-interactive col-start-1 col-end-4",
               rowClass,
               staggerClass
             )}
@@ -59,22 +59,22 @@ export function GridCardRelatedNotes({
                 {isQuote ? (
                   <Quote
                     aria-hidden="true"
-                    className="glass-text glass-group-hover-dim h-8 w-8"
+                    className="tone-heading ui-group-hover-dim h-8 w-8"
                   />
                 ) : (
                   <Brain
                     aria-hidden="true"
-                    className="glass-text glass-group-hover-dim h-8 w-8"
+                    className="tone-heading ui-group-hover-dim h-8 w-8"
                   />
                 )}
               </div>
               {/* Content column */}
               <div className="col-start-2 col-end-4 row-start-1 row-end-2 flex flex-col justify-center gap-1">
-                <h2 className="glass-text glass-group-hover-dim font-medium text-sm">
+                <h2 className="tone-heading ui-group-hover-dim font-medium text-sm">
                   {note.title}
                 </h2>
                 {excerpt && (
-                  <p className="glass-text-secondary line-clamp-2 text-xs">
+                  <p className="tone-muted line-clamp-2 text-xs">
                     {excerpt}
                     {isTruncated && "..."}
                   </p>

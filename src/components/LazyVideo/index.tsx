@@ -65,7 +65,7 @@ export const LazyVideo = ({
       aria-label={alt}
       autoPlay
       className={cn(
-        "glass-media h-auto w-full rounded-lg object-cover",
+        "media-frame h-auto w-full rounded-lg object-cover",
         className
       )}
       loop

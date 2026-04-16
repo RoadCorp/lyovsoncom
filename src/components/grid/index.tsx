@@ -5,10 +5,10 @@ const STAGGERED_ENTRANCE_ITEMS = 6;
 
 function getStaggerClass(index: number): string {
   if (index >= STAGGERED_ENTRANCE_ITEMS) {
-    return "glass-no-entrance";
+    return "reveal-none";
   }
 
-  return `glass-stagger-${Math.min(index + 1, MAX_STAGGER_INDEX)}`;
+  return `reveal-stagger-${Math.min(index + 1, MAX_STAGGER_INDEX)}`;
 }
 
 export const Grid = ({ children }: { children: ReactNode }) => {
@@ -16,11 +16,11 @@ export const Grid = ({ children }: { children: ReactNode }) => {
 
   return (
     <main className="relative mx-auto grid min-h-screen g2:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)] g3:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)] g4:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)] g5:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)] g6:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)] grid-cols-[minmax(0,clamp(18rem,100vw-2rem,var(--grid-card-1x1)))] place-items-center justify-center gap-[var(--grid-gap)] p-[var(--grid-gap)] g2:[grid-auto-rows:max-content]">
-      {/* Theme-aware glassmorphism background context */}
-      <div className="glass-grid-backdrop pointer-events-none fixed inset-0 -z-10" />
-      <div className="glass-grid-spotlight pointer-events-none fixed inset-0 -z-10 opacity-30" />
+      {/* Theme-aware page ambience */}
+      <div className="site-backdrop pointer-events-none fixed inset-0 -z-10" />
+      <div className="site-spotlight pointer-events-none fixed inset-0 -z-10 opacity-30" />
 
-      {/* Enhanced children with staggered animations */}
+      {/* Enhanced children with staggered entrance motion */}
       {Array.isArray(childrenArray)
         ? childrenArray.map((child, index) => {
             const childKey =

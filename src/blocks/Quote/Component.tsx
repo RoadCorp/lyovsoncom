@@ -8,20 +8,20 @@ type Props = {
 
 export function QuoteBlock({ className, quote, attribution }: Props) {
   return (
-    <div className={cn("glass-longform-block", className)}>
+    <div className={cn("content-block", className)}>
       <div
-        className="glass-section mt-0 mb-0 rounded-lg px-4 py-3 sm:px-5 sm:py-4"
+        className="surface-panel mt-0 mb-0 rounded-lg px-4 py-3 sm:px-5 sm:py-4"
         dir="auto"
       >
         <blockquote className="m-0">
           <span
             aria-hidden="true"
-            className="glass-text-secondary mb-2 block text-2xl leading-none opacity-60"
+            className="tone-muted mb-2 block text-2xl leading-none opacity-60"
           >
             &ldquo;
           </span>
           <RichText
-            className="glass-text-secondary text-base italic leading-relaxed [overflow-wrap:anywhere] [&_p+_p]:mt-3 [&_p]:m-0"
+            className="tone-muted text-base italic leading-relaxed [overflow-wrap:anywhere] [&_p+_p]:mt-3 [&_p]:m-0"
             content={quote}
             enableGutter={false}
             enableProse={false}
@@ -29,7 +29,7 @@ export function QuoteBlock({ className, quote, attribution }: Props) {
         </blockquote>
         {attribution && (
           <footer
-            className="glass-text-secondary mt-3 text-start font-medium text-sm opacity-80"
+            className="tone-muted mt-3 text-start font-medium text-sm opacity-80"
             dir="auto"
           >
             — {attribution}

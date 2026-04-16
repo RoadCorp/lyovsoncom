@@ -26,9 +26,9 @@ export function GIFBlock(props: GIFBlockType) {
   // Validation with helpful error messages
   if (!mp4Url) {
     return (
-      <div className="glass-alert glass-alert-error rounded-lg p-4">
-        <p className="glass-semantic-error font-semibold">GIF Block Error</p>
-        <p className="glass-text-secondary text-sm">
+      <div className="surface-alert surface-alert-error rounded-lg p-4">
+        <p className="state-error font-semibold">GIF Block Error</p>
+        <p className="tone-muted text-sm">
           Missing video URL. Please select a GIF in the admin panel.
         </p>
       </div>
@@ -39,9 +39,9 @@ export function GIFBlock(props: GIFBlockType) {
   const normalizedAspectRatio = normalizeAspectRatio(aspectRatio || "1");
 
   return (
-    <Card className="glass-longform-block glass-block-card glass-interactive glass-stagger-1 gap-0 overflow-hidden py-0">
+    <Card className="surface-block reveal-stagger-1 gap-0 overflow-hidden py-0 content-block">
       <CardContent className={cn(hasCaption ? "p-3" : "p-0")}>
-        <div className="glass-media overflow-hidden rounded-lg">
+        <div className="media-frame overflow-hidden rounded-lg">
           <LazyVideo
             alt="Animated GIF"
             aspectRatio={normalizedAspectRatio}
@@ -53,9 +53,9 @@ export function GIFBlock(props: GIFBlockType) {
       </CardContent>
 
       {props.caption && (
-        <CardFooter className="glass-caption-shell sm:px-5 sm:py-3" dir="auto">
+        <CardFooter className="surface-caption sm:px-5 sm:py-3" dir="auto">
           <RichText
-            className="glass-caption-text"
+            className="surface-caption-text"
             content={props.caption}
             enableGutter={false}
             enableProse={false}

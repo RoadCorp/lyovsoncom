@@ -12,7 +12,7 @@ import { YouTubePlayer } from "./YouTubePlayer";
  * - Shows lightweight thumbnail image until user interaction
  * - Eliminates ~1.5 MB YouTube player JavaScript on initial page load
  * - Only loads iframe when user clicks play button
- * - Custom glassmorphism styling with play button overlay
+ * - Uses the site's solid-surface media treatment with a custom play overlay
  * - Supports flexible CSS aspect ratios (for example "16:9", "4:3", "1:1")
  *
  * Note: This implementation is equivalent to @next/third-parties/YouTubeEmbed
@@ -29,7 +29,7 @@ export function YouTubeBlock({
   }
 
   return (
-    <Card className="glass-longform-block glass-block-card glass-interactive glass-stagger-1 gap-0 overflow-hidden py-0">
+    <Card className="surface-block reveal-stagger-1 gap-0 overflow-hidden py-0 content-block">
       <CardContent className={cn(caption ? "p-3" : "p-0")}>
         <YouTubePlayer
           aspectRatio={aspectRatio || undefined}
@@ -38,9 +38,9 @@ export function YouTubeBlock({
       </CardContent>
 
       {caption && (
-        <CardFooter className="glass-caption-shell sm:px-5 sm:py-3" dir="auto">
+        <CardFooter className="surface-caption sm:px-5 sm:py-3" dir="auto">
           <RichText
-            className="glass-caption-text"
+            className="surface-caption-text"
             content={caption}
             enableGutter={false}
             enableProse={false}

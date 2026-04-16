@@ -20,11 +20,11 @@ export default async function PrivacyPolicy() {
       interactive={false}
     >
       <GridCardSection className="col-span-3 row-span-3 p-6">
-        <article className="glass-longform">
+        <article className="content-prose">
           <h1>Privacy Policy for Lyovson.com</h1>
 
-          <section className="glass-section">
-            <p className="glass-text-secondary text-sm">
+          <section className="surface-panel">
+            <p className="tone-muted text-sm">
               <strong>Effective Date:</strong> March 19, 2024
               <br />
               <strong>Last Updated:</strong> March 19, 2024
@@ -259,7 +259,7 @@ export default async function PrivacyPolicy() {
             </p>
           </section>
 
-          <footer className="glass-text-secondary border-border border-t pt-6 text-sm">
+          <footer className="tone-muted border-border border-t pt-6 text-sm">
             <p>This Privacy Policy was last updated on March 19, 2024.</p>
           </footer>
         </article>

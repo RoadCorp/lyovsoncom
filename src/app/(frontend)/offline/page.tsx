@@ -13,18 +13,18 @@ export default function OfflinePage() {
       interactive={false}
     >
       <GridCardSection className="col-start-1 col-end-4 row-start-1 row-end-3 flex flex-col items-center justify-center gap-4 px-6 text-center">
-        <span className="glass-badge flex h-16 w-16 items-center justify-center rounded-full">
+        <span className="surface-chip flex h-16 w-16 items-center justify-center rounded-full">
           <WifiOff aria-hidden="true" className="h-8 w-8" />
         </span>
-        <h1 className="glass-text font-bold text-2xl">You are offline</h1>
-        <p className="glass-text-secondary text-sm">
+        <h1 className="tone-heading font-bold text-2xl">You are offline</h1>
+        <p className="tone-muted text-sm">
           Cached pages still work. Reconnect and refresh when you are ready.
         </p>
       </GridCardSection>
 
       <GridCardSection className="col-start-1 col-end-2 row-start-3 row-end-4">
         <Link
-          className="glass-text glass-focus-ring glass-hover-dim flex h-full w-full flex-col items-center justify-center gap-2"
+          className="tone-heading ui-focus-ring ui-hover-dim flex h-full w-full flex-col items-center justify-center gap-2"
           href="/"
         >
           <Home aria-hidden="true" className="h-6 w-6" />
@@ -33,7 +33,7 @@ export default function OfflinePage() {
       </GridCardSection>
 
       <GridCardSection
-        className="glass-text col-start-2 col-end-3 row-start-3 row-end-4 flex flex-col items-center justify-center gap-2"
+        className="tone-heading col-start-2 col-end-3 row-start-3 row-end-4 flex flex-col items-center justify-center gap-2"
         mode="button"
         onClick={() => window.location.reload()}
       >
@@ -42,7 +42,7 @@ export default function OfflinePage() {
       </GridCardSection>
 
       <GridCardSection className="col-start-3 col-end-4 row-start-3 row-end-4 flex items-center justify-center px-3 text-center">
-        <p className="glass-text-secondary text-xs">PWA cache active</p>
+        <p className="tone-muted text-xs">PWA cache active</p>
       </GridCardSection>
     </GridCard>
   );

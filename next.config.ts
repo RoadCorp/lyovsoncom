@@ -39,6 +39,11 @@ const NEXT_PUBLIC_SERVER_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
   ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
   : process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000";
 
+const IS_VERCEL_DEPLOYMENT =
+  process.env.VERCEL === "1" ||
+  Boolean(process.env.VERCEL_ENV) ||
+  Boolean(process.env.VERCEL_URL);
+
 const nextConfig: NextConfig = {
   cacheComponents: true,
   typedRoutes: true,
@@ -78,6 +83,66 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   redirects,
   async headers() {
+    const contentSecurityPolicy = [
+      "default-src 'self'",
+      // Removed platform.twitter.com - replaced by react-tweet (no external scripts)
+      // Removed *.tenor.com from script-src - replaced by direct video URLs
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.google-analytics.com *.googletagmanager.com *.vercel-scripts.com",
+      "style-src 'self' 'unsafe-inline' fonts.googleapis.com",
+      "font-src 'self' fonts.gstatic.com data:",
+      // Added cdn.syndication.twimg.com, pbs.twimg.com, abs.twimg.com for react-tweet
+      // Kept media.tenor.com for video sources (GIF optimization)
+      "img-src 'self' data: blob: *.vercel-insights.com *.google-analytics.com *.googletagmanager.com pbs.twimg.com abs.twimg.com *.twimg.com media.tenor.com",
+      // Kept media.tenor.com for MP4/WebM videos (GIF optimization)
+      "media-src 'self' blob: video.twimg.com media.tenor.com",
+      // Added cdn.syndication.twimg.com for react-tweet API
+      "connect-src 'self' *.vercel-insights.com *.google-analytics.com *.googletagmanager.com cdn.syndication.twimg.com vitals.vercel-insights.com",
+      // Removed platform.twitter.com and tenor.com - no longer needed (eliminated iframes)
+      "frame-src 'self' www.youtube.com youtube.com",
+      "worker-src 'self' blob:",
+      "child-src 'self' blob:",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "frame-ancestors 'self'",
+      ...(IS_VERCEL_DEPLOYMENT ? ["upgrade-insecure-requests"] : []),
+    ].join("; ");
+
+    const commonHeaders = [
+      {
+        key: "Content-Security-Policy",
+        value: contentSecurityPolicy,
+      },
+      {
+        key: "X-Frame-Options",
+        value: "SAMEORIGIN",
+      },
+      {
+        key: "X-Content-Type-Options",
+        value: "nosniff",
+      },
+      ...(IS_VERCEL_DEPLOYMENT
+        ? [
+            {
+              key: "Strict-Transport-Security",
+              value: "max-age=31536000; includeSubDomains",
+            },
+          ]
+        : []),
+      {
+        key: "Cross-Origin-Opener-Policy",
+        value: "same-origin-allow-popups",
+      },
+      {
+        key: "Referrer-Policy",
+        value: "origin-when-cross-origin",
+      },
+      {
+        key: "Permissions-Policy",
+        value: "camera=(), microphone=(), geolocation=()",
+      },
+    ];
+
     return await Promise.resolve([
       {
         source: "/api/:path*",
@@ -99,59 +164,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/:path*",
-        headers: [
-          {
-            key: "Content-Security-Policy",
-            value: [
-              "default-src 'self'",
-              // Removed platform.twitter.com - replaced by react-tweet (no external scripts)
-              // Removed *.tenor.com from script-src - replaced by direct video URLs
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.google-analytics.com *.googletagmanager.com *.vercel-scripts.com",
-              "style-src 'self' 'unsafe-inline' fonts.googleapis.com",
-              "font-src 'self' fonts.gstatic.com data:",
-              // Added cdn.syndication.twimg.com, pbs.twimg.com, abs.twimg.com for react-tweet
-              // Kept media.tenor.com for video sources (GIF optimization)
-              "img-src 'self' data: blob: *.vercel-insights.com *.google-analytics.com *.googletagmanager.com pbs.twimg.com abs.twimg.com *.twimg.com media.tenor.com",
-              // Kept media.tenor.com for MP4/WebM videos (GIF optimization)
-              "media-src 'self' blob: video.twimg.com media.tenor.com",
-              // Added cdn.syndication.twimg.com for react-tweet API
-              "connect-src 'self' *.vercel-insights.com *.google-analytics.com *.googletagmanager.com cdn.syndication.twimg.com vitals.vercel-insights.com",
-              // Removed platform.twitter.com and tenor.com - no longer needed (eliminated iframes)
-              "frame-src 'self' www.youtube.com youtube.com",
-              "worker-src 'self' blob:",
-              "child-src 'self' blob:",
-              "object-src 'none'",
-              "base-uri 'self'",
-              "form-action 'self'",
-              "frame-ancestors 'self'",
-              "upgrade-insecure-requests",
-            ].join("; "),
-          },
-          {
-            key: "X-Frame-Options",
-            value: "SAMEORIGIN",
-          },
-          {
-            key: "X-Content-Type-Options",
-            value: "nosniff",
-          },
-          {
-            key: "Strict-Transport-Security",
-            value: "max-age=31536000; includeSubDomains",
-          },
-          {
-            key: "Cross-Origin-Opener-Policy",
-            value: "same-origin-allow-popups",
-          },
-          {
-            key: "Referrer-Policy",
-            value: "origin-when-cross-origin",
-          },
-          {
-            key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=()",
-          },
-        ],
+        headers: commonHeaders,
       },
     ]);
   },

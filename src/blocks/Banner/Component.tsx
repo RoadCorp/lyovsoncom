@@ -9,17 +9,17 @@ type Props = {
 export function BannerBlock({ className, content, style }: Props) {
   const bannerStyle = style || "info";
   const styleClasses = {
-    info: "glass-alert-info",
-    error: "glass-alert-error",
-    success: "glass-alert-success",
-    warning: "glass-alert-warning",
+    info: "surface-alert-info",
+    error: "surface-alert-error",
+    success: "surface-alert-success",
+    warning: "surface-alert-warning",
   };
 
   const accentClasses = {
-    info: "glass-semantic-info",
-    error: "glass-semantic-error",
-    success: "glass-semantic-success",
-    warning: "glass-semantic-warning",
+    info: "state-info",
+    error: "state-error",
+    success: "state-success",
+    warning: "state-warning",
   };
 
   const iconClasses = {
@@ -30,17 +30,17 @@ export function BannerBlock({ className, content, style }: Props) {
   };
 
   return (
-    <div className={cn("glass-longform-block mx-auto w-full", className)}>
+    <div className={cn("mx-auto w-full content-block", className)}>
       <div
         className={cn(
-          "glass-section glass-alert glass-interactive flex items-start gap-3 rounded-xl px-5 py-5 sm:gap-4 sm:px-6",
+          "surface-panel surface-alert flex items-start gap-3 rounded-xl px-5 py-5 sm:gap-4 sm:px-6",
           styleClasses[bannerStyle]
         )}
       >
         {/* Icon indicator */}
         <div
           className={cn(
-            "glass-badge mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full",
+            "surface-chip mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full",
             accentClasses[bannerStyle]
           )}
         >
@@ -48,7 +48,7 @@ export function BannerBlock({ className, content, style }: Props) {
         </div>
 
         {/* Content */}
-        <div className="glass-text min-w-0 flex-1" dir="auto">
+        <div className="tone-body min-w-0 flex-1" dir="auto">
           <RichText
             className="text-sm leading-relaxed sm:text-base"
             content={content}

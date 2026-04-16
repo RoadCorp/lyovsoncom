@@ -11,7 +11,7 @@ const MAX_STAGGER_INDEX = 6;
 export { GridCardRelatedNotes } from "./grid-card-related-notes";
 
 function getStaggerClass(index: number): string {
-  return `glass-stagger-${Math.min(index + 1, MAX_STAGGER_INDEX)}`;
+  return `reveal-stagger-${Math.min(index + 1, MAX_STAGGER_INDEX)}`;
 }
 
 function isUniquePostWithSlug(
@@ -47,7 +47,7 @@ export const GridCardRelatedPosts = ({
           <PostDrillInLink
             aria-label={`Read related post: ${post.title}`}
             className={cn(
-              "glass-focus-ring group glass-interactive col-start-1 col-end-4",
+              "ui-focus-ring group ui-interactive col-start-1 col-end-4",
               rowClass,
               staggerClass
             )}
@@ -62,7 +62,7 @@ export const GridCardRelatedPosts = ({
                 {post.featuredImage ? (
                   <PostTransitionBoundary slug={post.slug} variant="media">
                     <Media
-                      className="glass-media flex h-full items-center justify-center"
+                      className="media-frame flex h-full items-center justify-center"
                       imgClassName="object-cover h-full"
                       pictureClassName="row-start-1 row-end-2 col-start-1 col-end-2 h-full"
                       resource={post.featuredImage}
@@ -71,7 +71,7 @@ export const GridCardRelatedPosts = ({
                 ) : null}
                 <div className="col-start-2 col-end-4 row-start-1 row-end-2 grid items-center">
                   <PostTransitionBoundary slug={post.slug} variant="title">
-                    <h2 className="glass-text glass-group-hover-dim font-medium">
+                    <h2 className="tone-heading ui-group-hover-dim font-medium">
                       {post.title}
                     </h2>
                   </PostTransitionBoundary>

@@ -178,63 +178,24 @@ export const GifPicker: React.FC = () => {
   return (
     <div className="field-type gif-picker">
       {shouldShowPreview ? (
-        // Preview Mode: Show selected GIF
         <>
           <FieldLabel label="Selected GIF" />
-          <div
-            style={{
-              marginBottom: "16px",
-              padding: "12px",
-              border: "1px solid var(--theme-elevation-150)",
-              borderRadius: "4px",
-              backgroundColor: "var(--theme-elevation-50)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: "12px",
-            }}
-          >
-            <div
-              style={{
-                position: "relative",
-                width: "120px",
-                flexShrink: 0,
-                borderRadius: "4px",
-                overflow: "hidden",
-                boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-              }}
-            >
+          <div className="gif-picker__preview">
+            <div className="gif-picker__thumb">
               {previewUrl ? (
                 // biome-ignore lint/performance/noImgElement: Payload admin component cannot use Next.js Image
                 <img
                   alt="Selected GIF preview"
+                  className="gif-picker__thumb-image"
                   height={120}
                   src={previewUrl}
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    display: "block",
-                  }}
                   width={120}
                 />
               ) : (
-                <div
-                  style={{
-                    width: "100%",
-                    height: "120px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: "var(--theme-elevation-100)",
-                    color: "var(--theme-elevation-500)",
-                    fontSize: "12px",
-                  }}
-                >
-                  Loading...
-                </div>
+                <div className="gif-picker__thumb-placeholder">Loading...</div>
               )}
             </div>
-            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+            <div className="gif-picker__actions">
               <Button onClick={handleChangeGif}>Change GIF</Button>
               <Button buttonStyle="secondary" onClick={handleRemoveGif}>
                 Remove GIF
@@ -243,12 +204,11 @@ export const GifPicker: React.FC = () => {
           </div>
         </>
       ) : (
-        // Search Mode: Show Tenor search interface
         <>
           <FieldLabel label="Search Tenor GIFs" />
 
-          <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
-            <div style={{ flex: 1 }}>
+          <div className="gif-picker__search">
+            <div className="gif-picker__search-input">
               <TextInput
                 onChange={(e: string | React.ChangeEvent<HTMLInputElement>) => {
                   if (typeof e === "string") {
@@ -268,73 +228,29 @@ export const GifPicker: React.FC = () => {
             </Button>
           </div>
 
-          {error && (
-            <div
-              style={{
-                padding: "12px",
-                marginBottom: "16px",
-                backgroundColor: "#fee",
-                border: "1px solid #fcc",
-                borderRadius: "4px",
-                color: "#c00",
-              }}
-            >
-              {error}
-            </div>
-          )}
+          {error && <div className="gif-picker__error">{error}</div>}
 
           {results.length > 0 && (
-            <div
-              className="gif-results-grid"
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
-                gap: "12px",
-                marginTop: "16px",
-              }}
-            >
+            <div className="gif-picker__results">
               {results.map((result) => {
                 const isSelected = selectedGifId === result.id;
+                const resultClassName = isSelected
+                  ? "gif-picker__result gif-picker__result--selected"
+                  : "gif-picker__result";
 
                 return (
                   <button
-                    className="gif-result-item"
+                    className={resultClassName}
                     key={result.id}
                     onClick={() => handleSelectGif(result)}
-                    onMouseEnter={(e) => {
-                      if (!isSelected) {
-                        e.currentTarget.style.borderColor = "#999";
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isSelected) {
-                        e.currentTarget.style.borderColor = "#ddd";
-                      }
-                    }}
-                    style={{
-                      border: isSelected
-                        ? "3px solid #0066ff"
-                        : "2px solid #ddd",
-                      borderRadius: "8px",
-                      padding: "4px",
-                      cursor: "pointer",
-                      backgroundColor: isSelected ? "#f0f8ff" : "white",
-                      overflow: "hidden",
-                      transition: "all 0.2s ease",
-                    }}
                     type="button"
                   >
                     {/* biome-ignore lint/performance/noImgElement: Payload admin component cannot use Next.js Image */}
                     <img
                       alt="GIF preview"
+                      className="gif-picker__result-image"
                       height={result.media_formats.tinygif.dims[1]}
                       src={result.media_formats.tinygif.url}
-                      style={{
-                        width: "100%",
-                        height: "auto",
-                        display: "block",
-                        borderRadius: "4px",
-                      }}
                       width={result.media_formats.tinygif.dims[0]}
                     />
                   </button>
@@ -344,13 +260,7 @@ export const GifPicker: React.FC = () => {
           )}
 
           {!loading && results.length === 0 && searchTerm && !error && (
-            <div
-              style={{
-                padding: "24px",
-                textAlign: "center",
-                color: "#666",
-              }}
-            >
+            <div className="gif-picker__empty">
               No GIFs found for "{searchTerm}". Try a different search term.
             </div>
           )}

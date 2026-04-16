@@ -169,7 +169,7 @@ function serializeTextNode(
     text = <span className="underline">{text}</span>;
   }
   if (format & IS_CODE) {
-    text = <code className="glass-longform-inline-code">{node.text}</code>;
+    text = <code className="content-inline-code">{node.text}</code>;
   }
   if (format & IS_SUBSCRIPT) {
     text = <sub>{text}</sub>;
@@ -224,23 +224,27 @@ function renderRichTextBlock(
           imgClassName="m-0 w-full rounded-lg"
           key={key}
           {...block}
-          captionClassName="mx-auto max-w-[48rem] glass-text-secondary text-center"
+          captionClassName="mx-auto max-w-[48rem] tone-muted text-center"
           disableInnerContainer={true}
           enableGutter={false}
         />
       );
     case "banner":
-      return <BannerBlock className="glass-stagger-2" key={key} {...block} />;
+      return <BannerBlock className="reveal-stagger-2" key={key} {...block} />;
     case "code":
       return (
-        <CodeBlock className="glass-stagger-2 font-mono" key={key} {...block} />
+        <CodeBlock
+          className="reveal-stagger-2 font-mono"
+          key={key}
+          {...block}
+        />
       );
     case "youtube":
       return <YouTubeBlock key={key} {...block} />;
     case "xpost":
       return <XPostBlock key={key} {...block} />;
     case "quote":
-      return <QuoteBlock className="glass-stagger-2" key={key} {...block} />;
+      return <QuoteBlock className="reveal-stagger-2" key={key} {...block} />;
     case "gif":
       return <GIFBlock key={key} {...block} />;
     default:
@@ -252,11 +256,8 @@ function renderUnsupportedBlock(block: unknown, key: string): JSX.Element {
   const blockType = getUnknownBlockType(block);
 
   return (
-    <div
-      className="glass-longform-block glass-section rounded-lg p-4"
-      key={key}
-    >
-      <p className="glass-text-secondary text-sm">
+    <div className="surface-panel rounded-lg p-4 content-block" key={key}>
+      <p className="tone-muted text-sm">
         Unsupported content block: {blockType}
       </p>
     </div>
@@ -287,8 +288,8 @@ function renderElementNode(
           <li
             className={
               node.checked
-                ? "glass-longform-checklist-item line-through opacity-65"
-                : "glass-longform-checklist-item"
+                ? "line-through opacity-65 content-checklist-item"
+                : "content-checklist-item"
             }
             key={key}
             value={node.value}

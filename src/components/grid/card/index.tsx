@@ -44,10 +44,10 @@ export const GridCard = <T extends ElementType = "div">({
       : {};
 
   const cardClassName = cn(
-    "glass-card rounded-xl",
-    "grid gap-[var(--grid-section-gap)] p-[var(--grid-section-gap)]",
+    "surface-card rounded-xl",
+    "grid gap-[var(--grid-section-gap)] p-[var(--grid-frame-padding)]",
     variant === "default" ? "aspect-square" : "auto-rows-auto grid-cols-1",
-    interactive && "glass-interactive",
+    interactive && "ui-interactive",
     className
   );
 

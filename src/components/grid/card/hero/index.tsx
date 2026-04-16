@@ -20,7 +20,7 @@ import { GridCardSection } from "../section";
 function PostHeroDescription({ description }: { description: string }) {
   return (
     <PostTransitionBoundary variant="dek">
-      <p className="glass-text-secondary text-left text-base leading-relaxed">
+      <p className="tone-muted text-left text-base leading-relaxed">
         {description}
       </p>
     </PostTransitionBoundary>
@@ -59,7 +59,7 @@ export const GridCardHero = ({
           >
             <PostTransitionBoundary slug={post.slug} variant="media">
               <Media
-                className="glass-media flex h-full items-center justify-center"
+                className="media-frame flex h-full items-center justify-center"
                 imgClassName="h-full object-cover"
                 pictureClassName="h-full"
                 priority={true}
@@ -73,7 +73,7 @@ export const GridCardHero = ({
           <div className="flex h-full flex-col items-center justify-center px-4 md:px-8">
             <div className="mx-auto w-full max-w-3xl space-y-4">
               <PostTransitionBoundary slug={post.slug} variant="title">
-                <h1 className="glass-text text-center font-bold text-2xl md:text-3xl lg:text-4xl">
+                <h1 className="tone-heading text-center font-bold text-2xl md:text-3xl lg:text-4xl">
                   {post.title}
                 </h1>
               </PostTransitionBoundary>
@@ -109,12 +109,12 @@ export const GridCardHeroNote = ({
       )}
     >
       <GridCardSection className="col-start-1 col-end-4 row-start-1 row-end-3 flex h-full flex-col items-center justify-center px-6 py-6">
-        <h1 className="glass-text text-center font-bold text-2xl">
+        <h1 className="tone-heading text-center font-bold text-2xl">
           {note.title}
         </h1>
       </GridCardSection>
 
-      <GridCardSection className="col-start-1 col-end-2 row-start-3 row-end-4 flex h-full flex-col items-center justify-end gap-2">
+      <GridCardSection className="card-rail-stack card-topic-stack col-start-1 col-end-2 row-start-3 row-end-4 h-full">
         {dedupeRelationItemsById(note.topics).map((topic) => {
           if (typeof topic !== "object" || !topic.slug || !topic.id) {
             return null;
@@ -134,16 +134,16 @@ export const GridCardHeroNote = ({
         })}
       </GridCardSection>
 
-      <GridCardSection className="col-start-2 col-end-3 row-start-3 row-end-4 flex flex-col justify-evenly gap-2">
+      <GridCardSection className="card-rail-stack card-meta-stack col-start-2 col-end-3 row-start-3 row-end-4">
         {note.author ? (
-          <div className="glass-text-secondary flex items-center gap-2 text-xs capitalize">
+          <div className="tone-muted flex items-center gap-2 text-xs capitalize">
             <PenTool aria-hidden="true" className="h-5 w-5" />
             <span className="font-medium">{note.author}</span>
           </div>
         ) : null}
 
         {note.publishedAt ? (
-          <div className="glass-text-secondary flex items-center gap-2 text-xs">
+          <div className="tone-muted flex items-center gap-2 text-xs">
             <Calendar aria-hidden="true" className="h-5 w-5" />
             <time dateTime={note.publishedAt}>
               {formatShortDate(note.publishedAt)}
@@ -154,13 +154,11 @@ export const GridCardHeroNote = ({
 
       <GridCardSection className="col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
         {isQuoteType ? (
-          <Quote aria-hidden="true" className="glass-text h-5 w-5" />
+          <Quote aria-hidden="true" className="tone-heading h-5 w-5" />
         ) : (
-          <Brain aria-hidden="true" className="glass-text h-5 w-5" />
+          <Brain aria-hidden="true" className="tone-heading h-5 w-5" />
         )}
-        <span className="glass-text-secondary text-xs capitalize">
-          {typeLabel}
-        </span>
+        <span className="tone-muted text-xs capitalize">{typeLabel}</span>
       </GridCardSection>
     </GridCard>
   );
@@ -214,7 +212,7 @@ export const GridCardHeroActivity = ({
             {...frontendViewTransitionClasses.sharedMedia}
           >
             <Media
-              className="glass-media flex h-full items-center justify-center"
+              className="media-frame flex h-full items-center justify-center"
               imgClassName="h-full object-cover"
               pictureClassName="h-full"
               priority={true}
@@ -231,7 +229,7 @@ export const GridCardHeroActivity = ({
               name={getActivityTitleTransitionName(dateSlug, activity.slug)}
               {...frontendViewTransitionClasses.sharedTitle}
             >
-              <h1 className="glass-text text-center font-bold text-2xl md:text-3xl lg:text-4xl">
+              <h1 className="tone-heading text-center font-bold text-2xl md:text-3xl lg:text-4xl">
                 {title}
               </h1>
             </ViewTransition>

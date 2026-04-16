@@ -28,13 +28,10 @@ function getSectionClassName(
   flush: boolean
 ): string {
   return cn(
-    "glass-section",
+    "surface-panel",
     flush && "p-0",
     "focus-visible:outline-none",
-    isInteractive && [
-      "glass-interactive cursor-pointer",
-      "active:scale-[0.98] active:transition-glass-fast",
-    ],
+    isInteractive && "ui-interactive cursor-pointer active:scale-[0.98]",
     className
   );
 }

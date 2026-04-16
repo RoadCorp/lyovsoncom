@@ -164,7 +164,7 @@ export default async function PostPage({ params: paramsPromise }: Args) {
         >
           <GridCardSection className="col-span-3 row-span-3 p-6">
             <RichText
-              className="glass-stagger-3 h-full"
+              className="reveal-stagger-3 h-full"
               content={post.content}
               enableGutter={false}
               enableProse={true}
@@ -187,8 +187,8 @@ export default async function PostPage({ params: paramsPromise }: Args) {
           <OptionalErrorBoundary title="Unable to load recommended posts.">
             <Suspense
               fallback={
-                <div className="glass-section glass-loading h-[var(--grid-card-1x1)] w-[var(--grid-card-1x1)] animate-pulse rounded-xl">
-                  <Skeleton className="glass-badge h-full w-full" />
+                <div className="surface-panel surface-loading h-[var(--grid-card-1x1)] w-[var(--grid-card-1x1)] animate-pulse rounded-xl">
+                  <Skeleton className="surface-chip h-full w-full" />
                 </div>
               }
             >

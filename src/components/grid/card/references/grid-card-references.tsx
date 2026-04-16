@@ -66,7 +66,7 @@ const referenceTypeLabels: Partial<Record<Reference["type"], string>> = {
 };
 
 function getStaggerClass(index: number): string {
-  return `glass-stagger-${Math.min(index + 1, MAX_STAGGER_INDEX)}`;
+  return `reveal-stagger-${Math.min(index + 1, MAX_STAGGER_INDEX)}`;
 }
 
 function hasExternalUrl(
@@ -96,15 +96,12 @@ export const GridCardReferences = ({
     <GridCard className={cn("col-span-1", className)}>
       <GridCardSection className="col-start-1 col-end-4 row-start-1 row-end-2 flex items-center justify-between px-4">
         <div className="flex items-center gap-2">
-          <BookOpenText
-            aria-hidden="true"
-            className="glass-text-secondary h-4 w-4"
-          />
-          <h3 className="glass-text font-bold text-base uppercase tracking-wide">
+          <BookOpenText aria-hidden="true" className="tone-muted h-4 w-4" />
+          <h3 className="tone-heading font-bold text-base uppercase tracking-wide">
             References
           </h3>
         </div>
-        <span className="glass-badge min-w-7 justify-center px-2 py-1 text-xs tabular-nums">
+        <span className="surface-chip min-w-7 justify-center px-2 py-1 text-xs tabular-nums">
           {validReferences.length}
         </span>
       </GridCardSection>
@@ -123,15 +120,15 @@ export const GridCardReferences = ({
           const content = (
             <div
               className={cn(
-                "group glass-reference-row relative grid grid-cols-[5.5rem_1fr_auto] items-center gap-3 rounded-lg p-2",
+                "group surface-row relative grid grid-cols-[5.5rem_1fr_auto] items-center gap-3 rounded-lg p-2",
                 getStaggerClass(index),
-                isExternal && "glass-interactive"
+                isExternal && "ui-interactive"
               )}
             >
-              <div className="glass-reference-thumb h-[5.5rem] w-[5.5rem] shrink-0 overflow-hidden rounded-md">
+              <div className="surface-thumb h-[5.5rem] w-[5.5rem] shrink-0 overflow-hidden rounded-md">
                 {imageObj ? (
                   <Media
-                    className="glass-media h-full w-full"
+                    className="media-frame h-full w-full"
                     imgClassName="object-cover h-full w-full"
                     pictureClassName="h-full w-full"
                     resource={imageObj}
@@ -140,23 +137,23 @@ export const GridCardReferences = ({
                   <div className="flex h-full w-full items-center justify-center">
                     <IconComponent
                       aria-hidden="true"
-                      className="glass-text-secondary h-6 w-6"
+                      className="tone-muted h-6 w-6"
                     />
                   </div>
                 )}
               </div>
 
               <div className="flex min-w-0 flex-1 flex-col gap-1">
-                <div className="glass-text font-semibold text-sm leading-snug">
+                <div className="tone-heading font-semibold text-sm leading-snug">
                   <span className="line-clamp-2">{reference.title}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="glass-badge px-2 py-0.5 text-[11px] uppercase tracking-wide">
+                  <span className="surface-chip px-2 py-0.5 text-[11px] uppercase tracking-wide">
                     {typeLabel}
                   </span>
                 </div>
                 {reference.description && (
-                  <p className="glass-text-secondary line-clamp-2 text-xs leading-relaxed">
+                  <p className="tone-muted line-clamp-2 text-xs leading-relaxed">
                     {reference.description}
                   </p>
                 )}
@@ -165,7 +162,7 @@ export const GridCardReferences = ({
               {isExternal && (
                 <ExternalLink
                   aria-hidden="true"
-                  className="glass-group-hover-bright glass-text-secondary h-4 w-4 flex-shrink-0"
+                  className="ui-group-hover-bright tone-muted h-4 w-4 flex-shrink-0"
                 />
               )}
             </div>
@@ -175,7 +172,7 @@ export const GridCardReferences = ({
             return (
               <a
                 aria-label={`Open reference: ${reference.title}`}
-                className="glass-focus-ring block"
+                className="ui-focus-ring block"
                 href={reference.url}
                 key={reference.id}
                 rel="noopener"

@@ -1,81 +1,52 @@
-/* ============================================
-   Lyovson.com Admin — Brand Theme Overrides
-
-   Strategy: Override Payload's --color-base-* source palette
-   with cool slate OKLch values. Payload's --theme-elevation-*
-   mappings and dark mode inversion work automatically.
-
-   Specificity: Payload uses @layer payload-default;
-   this file is unlayered, so overrides win via cascade.
-
-   Structure:
-   1. Font import
-   2. Root tokens (palette + font stacks)
-   3. Global polish (selection, scrollbar, focus rings)
-   4. Login — glass treatment
-   5. Dashboard — glass cards
-   6. Nav sidebar
-   7. Buttons & forms
-   8. Accessibility
-   ============================================ */
-
-/* === 1. Font Import === */
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
-/* === 2. Root Tokens === */
-
-/* Brand Slate Base Palette */
 :root {
   --font-body: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
 
-  --color-base-0:    oklch(0.985 0.004 230);
-  --color-base-50:   oklch(0.960 0.008 228);
-  --color-base-100:  oklch(0.935 0.012 226);
-  --color-base-150:  oklch(0.900 0.014 226);
-  --color-base-200:  oklch(0.860 0.015 228);
-  --color-base-250:  oklch(0.810 0.016 230);
-  --color-base-300:  oklch(0.760 0.016 232);
-  --color-base-350:  oklch(0.700 0.016 234);
-  --color-base-400:  oklch(0.640 0.015 235);
-  --color-base-450:  oklch(0.580 0.014 236);
-  --color-base-500:  oklch(0.520 0.014 237);
-  --color-base-550:  oklch(0.470 0.015 237);
-  --color-base-600:  oklch(0.420 0.016 238);
-  --color-base-650:  oklch(0.370 0.016 238);
-  --color-base-700:  oklch(0.320 0.016 238);
-  --color-base-750:  oklch(0.275 0.015 240);
-  --color-base-800:  oklch(0.230 0.014 240);
-  --color-base-850:  oklch(0.185 0.013 242);
-  --color-base-900:  oklch(0.145 0.012 242);
-  --color-base-950:  oklch(0.100 0.010 244);
-  --color-base-1000: oklch(0.060 0.008 244);
-}
+  --color-base-0: oklch(0.985 0.004 230);
+  --color-base-50: oklch(0.965 0.007 228);
+  --color-base-100: oklch(0.942 0.01 226);
+  --color-base-150: oklch(0.916 0.012 226);
+  --color-base-200: oklch(0.884 0.014 228);
+  --color-base-250: oklch(0.844 0.016 230);
+  --color-base-300: oklch(0.792 0.018 232);
+  --color-base-350: oklch(0.734 0.018 234);
+  --color-base-400: oklch(0.67 0.018 235);
+  --color-base-450: oklch(0.612 0.017 236);
+  --color-base-500: oklch(0.548 0.016 237);
+  --color-base-550: oklch(0.49 0.017 237);
+  --color-base-600: oklch(0.438 0.018 238);
+  --color-base-650: oklch(0.386 0.019 238);
+  --color-base-700: oklch(0.334 0.019 238);
+  --color-base-750: oklch(0.286 0.018 240);
+  --color-base-800: oklch(0.238 0.018 240);
+  --color-base-850: oklch(0.19 0.017 242);
+  --color-base-900: oklch(0.148 0.016 242);
+  --color-base-950: oklch(0.108 0.013 244);
+  --color-base-1000: oklch(0.07 0.011 244);
 
-/* Brand Cyan Accent Palette */
-:root {
-  --color-success-50:  oklch(0.970 0.020 236);
-  --color-success-100: oklch(0.940 0.040 238);
-  --color-success-150: oklch(0.905 0.060 240);
-  --color-success-200: oklch(0.870 0.080 240);
-  --color-success-250: oklch(0.830 0.095 241);
-  --color-success-300: oklch(0.785 0.110 241);
-  --color-success-350: oklch(0.735 0.120 242);
-  --color-success-400: oklch(0.680 0.132 242);
-  --color-success-450: oklch(0.620 0.140 242);
-  --color-success-500: oklch(0.560 0.145 242);
-  --color-success-550: oklch(0.520 0.145 242);
-  --color-success-600: oklch(0.475 0.135 242);
-  --color-success-650: oklch(0.430 0.125 243);
-  --color-success-700: oklch(0.385 0.110 243);
-  --color-success-750: oklch(0.340 0.095 244);
-  --color-success-800: oklch(0.295 0.080 244);
-  --color-success-850: oklch(0.250 0.065 244);
-  --color-success-900: oklch(0.205 0.050 245);
-  --color-success-950: oklch(0.160 0.035 246);
+  --color-success-50: oklch(0.966 0.02 248);
+  --color-success-100: oklch(0.934 0.04 249);
+  --color-success-150: oklch(0.898 0.06 250);
+  --color-success-200: oklch(0.858 0.082 252);
+  --color-success-250: oklch(0.816 0.098 255);
+  --color-success-300: oklch(0.774 0.112 258);
+  --color-success-350: oklch(0.734 0.122 260);
+  --color-success-400: oklch(0.694 0.128 262);
+  --color-success-450: oklch(0.652 0.132 263);
+  --color-success-500: oklch(0.61 0.136 264);
+  --color-success-550: oklch(0.57 0.136 264);
+  --color-success-600: oklch(0.526 0.13 265);
+  --color-success-650: oklch(0.482 0.122 266);
+  --color-success-700: oklch(0.438 0.112 267);
+  --color-success-750: oklch(0.392 0.1 268);
+  --color-success-800: oklch(0.346 0.086 269);
+  --color-success-850: oklch(0.3 0.07 270);
+  --color-success-900: oklch(0.252 0.055 272);
+  --color-success-950: oklch(0.206 0.04 274);
 
-  /* Blue mirrors success (Payload uses both interchangeably) */
-  --color-blue-50:  var(--color-success-50);
+  --color-blue-50: var(--color-success-50);
   --color-blue-100: var(--color-success-100);
   --color-blue-150: var(--color-success-150);
   --color-blue-200: var(--color-success-200);
@@ -94,9 +65,45 @@
   --color-blue-850: var(--color-success-850);
   --color-blue-900: var(--color-success-900);
   --color-blue-950: var(--color-success-950);
+
+  --admin-surface-1: var(--theme-elevation-0);
+  --admin-surface-2: var(--theme-elevation-50);
+  --admin-surface-3: var(--theme-elevation-100);
+  --admin-line-1: var(--theme-elevation-150);
+  --admin-line-2: var(--theme-elevation-300);
+  --admin-text-1: var(--theme-text);
+  --admin-text-2: var(--theme-elevation-700);
+  --admin-text-3: var(--theme-elevation-500);
+  --admin-accent: var(--theme-success-500);
+  --admin-accent-soft: color-mix(in oklch, var(--theme-success-500) 14%, var(--theme-elevation-0));
+  --admin-danger-soft: color-mix(in oklch, oklch(0.72 0.1589 10.2758) 14%, var(--theme-elevation-0));
+  --admin-shadow:
+    0 16px 36px oklch(0.2 0.02 250 / 0.12),
+    0 2px 6px oklch(0.2 0.02 250 / 0.06);
+  --admin-shadow-strong:
+    0 22px 48px oklch(0.2 0.02 250 / 0.16),
+    0 6px 12px oklch(0.2 0.02 250 / 0.08);
 }
 
-/* Mono font for code contexts (Payload already applies --font-body to body) */
+[data-theme='dark'] {
+  --admin-surface-1: var(--theme-elevation-50);
+  --admin-surface-2: var(--theme-elevation-100);
+  --admin-surface-3: var(--theme-elevation-150);
+  --admin-line-1: var(--theme-elevation-200);
+  --admin-line-2: var(--theme-elevation-350);
+  --admin-text-1: var(--theme-text);
+  --admin-text-2: var(--theme-elevation-800);
+  --admin-text-3: var(--theme-elevation-600);
+  --admin-accent-soft: color-mix(in oklch, var(--theme-success-500) 16%, var(--theme-elevation-50));
+  --admin-danger-soft: color-mix(in oklch, oklch(0.72 0.1589 10.2758) 16%, var(--theme-elevation-50));
+  --admin-shadow:
+    0 18px 42px oklch(0 0 0 / 0.34),
+    0 4px 10px oklch(0 0 0 / 0.22);
+  --admin-shadow-strong:
+    0 24px 54px oklch(0 0 0 / 0.42),
+    0 8px 16px oklch(0 0 0 / 0.28);
+}
+
 code,
 pre,
 .code-field,
@@ -104,19 +111,11 @@ pre,
   font-family: var(--font-mono);
 }
 
-/* === 3. Global Polish === */
-
-/* Text selection — brand cyan tint */
 ::selection {
-  background: oklch(0.52 0.145 242 / 0.25);
+  background: color-mix(in oklch, var(--theme-success-500) 28%, transparent);
   color: inherit;
 }
 
-[data-theme="dark"] ::selection {
-  background: oklch(0.73 0.13 236 / 0.3);
-}
-
-/* Subtle branded scrollbar (WebKit) */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -128,203 +127,279 @@ pre,
 
 ::-webkit-scrollbar-thumb {
   background: var(--theme-elevation-250);
-  border-radius: 4px;
+  border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--theme-elevation-350);
 }
 
-/* Focus rings — brand cyan */
 *:focus-visible {
-  outline: 2px solid oklch(0.52 0.145 242 / 0.6);
+  outline: 2px solid color-mix(in oklch, var(--theme-success-500) 60%, transparent);
   outline-offset: 2px;
 }
 
-[data-theme="dark"] *:focus-visible {
-  outline-color: oklch(0.73 0.13 236 / 0.6);
-}
-
-/* === 4. Login — Glass Treatment === */
-
-/* Aurora gradient background */
 .template-minimal {
-  background: linear-gradient(
-    168deg,
-    var(--theme-elevation-0) 0%,
-    oklch(0.96 0.013 222 / 0.6) 35%,
-    oklch(0.94 0.024 210 / 0.4) 65%,
-    var(--theme-elevation-50) 100%
-  );
   min-height: 100vh;
+  background:
+    radial-gradient(
+      36rem 20rem at 14% -8%,
+      color-mix(in oklch, var(--theme-success-300) 20%, transparent),
+      transparent 58%
+    ),
+    radial-gradient(
+      28rem 18rem at 84% 0%,
+      color-mix(in oklch, var(--theme-success-150) 18%, transparent),
+      transparent 62%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in oklch, var(--theme-elevation-0) 96%, white 4%),
+      var(--theme-elevation-50)
+    );
 }
 
-[data-theme="dark"] .template-minimal {
-  background: linear-gradient(
-    168deg,
-    var(--theme-elevation-0) 0%,
-    oklch(0.14 0.02 226 / 0.8) 35%,
-    oklch(0.18 0.03 194 / 0.5) 65%,
-    var(--theme-elevation-50) 100%
-  );
+[data-theme='dark'] .template-minimal {
+  background:
+    radial-gradient(
+      38rem 22rem at 14% -8%,
+      color-mix(in oklch, var(--theme-success-500) 18%, transparent),
+      transparent 56%
+    ),
+    radial-gradient(
+      30rem 18rem at 84% 0%,
+      color-mix(in oklch, var(--theme-success-300) 16%, transparent),
+      transparent 60%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in oklch, var(--theme-elevation-0) 88%, black 12%),
+      var(--theme-elevation-50)
+    );
 }
 
-/* Glass card — login content wrapper */
-.template-minimal__wrap {
-  background: oklch(0.958 0.016 226 / 0.58);
-  border: 1px solid oklch(0.86 0.028 216 / 0.42);
-  border-radius: 12px;
-  box-shadow:
-    0 8px 20px oklch(0.42 0.02 240 / 0.14),
-    0 2px 6px oklch(0.42 0.02 240 / 0.09),
-    inset 0 1px 0 oklch(1 0 0 / 0.52),
-    inset 0 -1px 0 oklch(0.44 0.02 236 / 0.2);
-  backdrop-filter: blur(11px) saturate(132%);
-  -webkit-backdrop-filter: blur(11px) saturate(132%);
-  padding: calc(var(--base) * 2);
-  transition:
-    box-shadow 240ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    border-color 240ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-[data-theme="dark"] .template-minimal__wrap {
-  background: oklch(0.74 0.028 224 / 0.14);
-  border-color: oklch(0.86 0.022 220 / 0.32);
-  box-shadow:
-    0 8px 22px oklch(0 0 0 / 0.36),
-    0 2px 7px oklch(0 0 0 / 0.2),
-    inset 0 1px 0 oklch(1 0 0 / 0.06),
-    inset 0 -1px 0 oklch(0 0 0 / 0.15);
-  backdrop-filter: blur(11px) saturate(132%) brightness(112%);
-  -webkit-backdrop-filter: blur(11px) saturate(132%) brightness(112%);
-}
-
-/* === 5. Dashboard — Glass Cards === */
-
-/* Softer glass for workspace cards */
+.template-minimal__wrap,
 .modular-dashboard .card {
-  background: oklch(0.958 0.016 226 / 0.42);
-  border: 1px solid oklch(0.86 0.028 216 / 0.32);
-  border-radius: 8px;
-  box-shadow:
-    0 4px 12px oklch(0.42 0.02 240 / 0.1),
-    0 1px 4px oklch(0.42 0.02 240 / 0.06),
-    inset 0 1px 0 oklch(1 0 0 / 0.38);
-  backdrop-filter: blur(8px) saturate(125%);
-  -webkit-backdrop-filter: blur(8px) saturate(125%);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklch, var(--admin-surface-1) 92%, white 8%),
+      var(--admin-surface-1)
+    );
+  border: 1px solid var(--admin-line-1);
+  box-shadow: var(--admin-shadow);
+}
+
+[data-theme='dark'] .template-minimal__wrap,
+[data-theme='dark'] .modular-dashboard .card {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklch, var(--admin-surface-1) 96%, white 4%),
+      var(--admin-surface-1)
+    );
+}
+
+.template-minimal__wrap {
+  border-radius: 14px;
+  padding: calc(var(--base) * 2);
+}
+
+.modular-dashboard .card {
+  border-radius: 10px;
   transition:
-    transform 240ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    box-shadow 240ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    border-color 240ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .modular-dashboard .card:hover {
+  border-color: var(--admin-line-2);
+  box-shadow: var(--admin-shadow-strong);
   transform: translateY(-1px);
-  border-color: oklch(0.8 0.038 198 / 0.52);
-  box-shadow:
-    0 8px 20px oklch(0.42 0.02 240 / 0.16),
-    0 2px 6px oklch(0.42 0.02 240 / 0.1),
-    inset 0 1px 0 oklch(1 0 0 / 0.48),
-    0 0 16px oklch(0.72 0.1 228 / 0.08);
 }
-
-[data-theme="dark"] .modular-dashboard .card {
-  background: oklch(0.74 0.028 224 / 0.1);
-  border-color: oklch(0.86 0.022 220 / 0.22);
-  box-shadow:
-    0 4px 14px oklch(0 0 0 / 0.28),
-    0 1px 5px oklch(0 0 0 / 0.16),
-    inset 0 1px 0 oklch(1 0 0 / 0.04);
-  backdrop-filter: blur(8px) saturate(125%) brightness(108%);
-  -webkit-backdrop-filter: blur(8px) saturate(125%) brightness(108%);
-}
-
-[data-theme="dark"] .modular-dashboard .card:hover {
-  border-color: oklch(0.89 0.026 194 / 0.36);
-  box-shadow:
-    0 8px 22px oklch(0 0 0 / 0.38),
-    0 2px 7px oklch(0 0 0 / 0.22),
-    inset 0 1px 0 oklch(1 0 0 / 0.07),
-    0 0 18px oklch(0.75 0.09 220 / 0.1);
-}
-
-/* === 6. Nav Sidebar === */
 
 .nav {
-  border-right-color: var(--theme-elevation-100);
+  border-right: 1px solid var(--theme-elevation-150);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklch, var(--theme-elevation-0) 92%, white 8%),
+      var(--theme-elevation-50)
+    );
 }
 
-/* Group headers */
+[data-theme='dark'] .nav {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklch, var(--theme-elevation-50) 96%, white 4%),
+      var(--theme-elevation-100)
+    );
+}
+
 .nav-group__toggle {
   font-weight: 500;
   letter-spacing: -0.01em;
 }
 
-/* === 7. Buttons & Forms === */
-
-/* Buttons — consistent radius + micro-interactions */
 .btn {
-  border-radius: 6px;
+  border-radius: 8px;
   transition:
+    transform 150ms ease,
     background-color 150ms ease,
-    box-shadow 150ms ease,
-    transform 150ms ease;
-}
-
-.btn--style-primary:hover {
-  transform: translateY(-0.5px);
-}
-
-.btn--style-primary:active {
-  transform: translateY(0);
-}
-
-/* Form fields — consistent radius + smooth focus */
-.field-type input,
-.field-type textarea,
-.field-type select {
-  border-radius: 6px;
-  transition:
     border-color 150ms ease,
     box-shadow 150ms ease;
 }
 
-/* === 8. Accessibility === */
+.btn--style-primary {
+  box-shadow: 0 10px 20px color-mix(in oklch, var(--theme-success-600) 18%, transparent);
+}
 
-/* Respect user motion preferences */
+.btn--style-primary:hover {
+  transform: translateY(-1px);
+}
+
+.btn--style-primary:active,
+.btn:active {
+  transform: translateY(0);
+}
+
+.field-type input,
+.field-type textarea,
+.field-type select {
+  border-radius: 8px;
+  background: var(--admin-surface-2);
+  border-color: var(--admin-line-1);
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    background-color 150ms ease;
+}
+
+.field-type input:focus,
+.field-type textarea:focus,
+.field-type select:focus {
+  border-color: var(--admin-line-2);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--theme-success-500) 18%, transparent);
+}
+
+.gif-picker__preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  margin-bottom: 16px;
+  background: var(--admin-surface-2);
+  border: 1px solid var(--admin-line-1);
+  border-radius: 10px;
+  box-shadow: var(--admin-shadow);
+}
+
+.gif-picker__thumb {
+  position: relative;
+  width: 120px;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--admin-surface-3);
+  border: 1px solid var(--admin-line-1);
+  border-radius: 8px;
+}
+
+.gif-picker__thumb-image,
+.gif-picker__result-image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.gif-picker__thumb-placeholder,
+.gif-picker__empty {
+  color: var(--admin-text-3);
+  text-align: center;
+}
+
+.gif-picker__thumb-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+  padding: 12px;
+  font-size: 12px;
+}
+
+.gif-picker__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.gif-picker__search {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.gif-picker__search-input {
+  flex: 1;
+}
+
+.gif-picker__error {
+  padding: 12px;
+  margin-bottom: 16px;
+  color: color-mix(in oklch, oklch(0.55 0.15 12) 82%, var(--admin-text-1));
+  background: var(--admin-danger-soft);
+  border: 1px solid color-mix(in oklch, oklch(0.72 0.1589 10.2758) 36%, var(--admin-line-1));
+  border-radius: 8px;
+}
+
+.gif-picker__results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.gif-picker__result {
+  padding: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--admin-surface-1);
+  border: 2px solid var(--admin-line-1);
+  border-radius: 10px;
+  box-shadow: var(--admin-shadow);
+  transition:
+    transform 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    background-color 150ms ease;
+}
+
+.gif-picker__result:hover,
+.gif-picker__result:focus-visible {
+  border-color: var(--admin-line-2);
+  box-shadow: var(--admin-shadow-strong);
+  transform: translateY(-1px);
+}
+
+.gif-picker__result--selected {
+  background: var(--admin-accent-soft);
+  border-color: var(--admin-accent);
+}
+
+.gif-picker__empty {
+  padding: 24px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .template-minimal__wrap,
   .modular-dashboard .card,
   .btn,
   .field-type input,
   .field-type textarea,
-  .field-type select {
+  .field-type select,
+  .gif-picker__result {
     transition: none !important;
-  }
-}
-
-/* Respect user transparency preferences */
-@media (prefers-reduced-transparency: reduce) {
-  .template-minimal__wrap {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    background: var(--theme-elevation-50);
-  }
-
-  .modular-dashboard .card {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    background: var(--theme-elevation-50);
-  }
-}
-
-/* Fallback for browsers without backdrop-filter support */
-@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-  .template-minimal__wrap {
-    background: var(--theme-elevation-50);
-  }
-
-  .modular-dashboard .card {
-    background: var(--theme-elevation-50);
   }
 }

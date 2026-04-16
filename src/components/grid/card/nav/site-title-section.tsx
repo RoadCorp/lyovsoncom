@@ -17,7 +17,7 @@ export const SiteTitleSection = () => {
         transitionTypes={[transitionTypes.drillIn]}
       >
         <Logo />
-        <span className={"glass-text text-center font-bold text-3xl"}>
+        <span className={"tone-heading text-center font-bold text-3xl"}>
           Lyóvson.com
         </span>
       </AppLink>

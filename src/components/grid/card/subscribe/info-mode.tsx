@@ -12,12 +12,9 @@ export const InfoMode = ({ message, setMode }: InfoModeProps) => {
   return (
     <>
       <GridCardSection className="col-start-1 col-end-4 row-start-1 row-end-3 flex flex-col items-center justify-center gap-4 text-center">
-        <Info
-          aria-label="Information"
-          className="glass-semantic-info h-16 w-16"
-        />
-        <h2 className="glass-semantic-info font-bold text-2xl">Note</h2>
-        <p className="glass-text-secondary text-base">{message}</p>
+        <Info aria-label="Information" className="state-info h-16 w-16" />
+        <h2 className="state-info font-bold text-2xl">Note</h2>
+        <p className="tone-muted text-base">{message}</p>
       </GridCardSection>
 
       <GridCardNavItem

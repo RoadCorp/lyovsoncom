@@ -109,7 +109,7 @@ function getUniqueTopics(topics: Note["topics"]): Topic[] {
 }
 
 function getTopicStaggerClass(index: number): string {
-  return `glass-stagger-${Math.min(index + 1, MAX_TOPIC_STAGGER)}`;
+  return `reveal-stagger-${Math.min(index + 1, MAX_TOPIC_STAGGER)}`;
 }
 
 function NoteQuoteContent({
@@ -122,7 +122,7 @@ function NoteQuoteContent({
     <div className="relative flex h-full flex-col justify-start px-6 py-6">
       <p
         className={[
-          "glass-text overflow-hidden break-words pr-10 text-left text-[15px] italic leading-snug",
+          "tone-heading overflow-hidden break-words pr-10 text-left text-[15px] italic leading-snug",
           isTruncated ? QUOTE_TRUNCATION_MASK_CLASS : "",
           isPoem ? "whitespace-pre-line" : "whitespace-normal",
         ]
@@ -136,14 +136,12 @@ function NoteQuoteContent({
         <div className="mt-4 flex items-center justify-between gap-4">
           <div className="min-w-0">
             {isTruncated ? (
-              <span className="glass-text-secondary text-xs tracking-widest">
-                ***
-              </span>
+              <span className="tone-muted text-xs tracking-widest">***</span>
             ) : null}
           </div>
           <div className="min-w-0 text-right">
             {attribution ? (
-              <cite className="glass-text-secondary block truncate font-normal text-xs not-italic before:mr-2 before:content-['—']">
+              <cite className="tone-muted block truncate font-normal text-xs not-italic before:mr-2 before:content-['—']">
                 {attribution}
               </cite>
             ) : null}
@@ -163,7 +161,7 @@ function NoteThoughtContent({
     <div className="relative flex h-full flex-col justify-start px-6 py-6">
       <p
         className={[
-          "glass-text overflow-hidden text-pretty break-words pr-10 text-left text-[15px] leading-relaxed",
+          "tone-heading overflow-hidden text-pretty break-words pr-10 text-left text-[15px] leading-relaxed",
           "tracking-[-0.01em]",
           isTruncated ? THOUGHT_TRUNCATION_MASK_CLASS : "",
           isMultiLineThought ? "whitespace-pre-line" : "whitespace-normal",
@@ -175,7 +173,7 @@ function NoteThoughtContent({
       </p>
 
       {isTruncated ? (
-        <span className="glass-text-secondary pointer-events-none absolute right-6 bottom-4 text-xs tracking-widest">
+        <span className="tone-muted pointer-events-none absolute right-6 bottom-4 text-xs tracking-widest">
           ***
         </span>
       ) : null}
@@ -194,7 +192,7 @@ function NoteContentPreview({
 }) {
   return (
     <AppLink
-      className="glass-focus-ring group block h-full"
+      className="ui-focus-ring group block h-full"
       href={noteUrl}
       prefetch={false}
       transitionTypes={[transitionTypes.drillIn]}
@@ -256,7 +254,7 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
         />
       </GridCardSection>
 
-      <GridCardSection className="col-start-1 col-end-2 row-start-3 row-end-4 flex h-full flex-col items-center justify-end gap-2">
+      <GridCardSection className="card-rail-stack card-topic-stack col-start-1 col-end-2 row-start-3 row-end-4 h-full">
         {uniqueTopics.map((topic, index) => {
           if (!topic.slug) {
             return null;
@@ -276,15 +274,15 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
         })}
       </GridCardSection>
 
-      <GridCardSection className="col-start-2 col-end-3 row-start-3 row-end-4 flex flex-col justify-evenly gap-2">
+      <GridCardSection className="card-rail-stack card-meta-stack col-start-2 col-end-3 row-start-3 row-end-4">
         {author ? (
-          <div className="glass-text-secondary flex items-center gap-2 text-xs capitalize">
+          <div className="tone-muted flex items-center gap-2 text-xs capitalize">
             <PenTool aria-hidden="true" className="h-5 w-5" />
             <span className="font-medium">{author}</span>
           </div>
         ) : null}
 
-        <div className="glass-text-secondary flex items-center gap-2 text-xs">
+        <div className="tone-muted flex items-center gap-2 text-xs">
           <Calendar aria-hidden="true" className="h-5 w-5" />
           <time dateTime={publishedAt || undefined}>
             {formatShortDate(publishedAt)}
@@ -294,7 +292,7 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
 
       <GridCardSection className="col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
         <AppLink
-          className="glass-focus-ring group block flex flex-col items-center gap-1"
+          className="ui-focus-ring group block flex flex-col items-center gap-1"
           href={noteUrl}
           prefetch={false}
           transitionTypes={[transitionTypes.drillIn]}
@@ -302,17 +300,15 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
           {isQuoteType ? (
             <Quote
               aria-hidden="true"
-              className="glass-text glass-group-hover-dim h-5 w-5"
+              className="tone-heading ui-group-hover-dim h-5 w-5"
             />
           ) : (
             <Brain
               aria-hidden="true"
-              className="glass-text glass-group-hover-dim h-5 w-5"
+              className="tone-heading ui-group-hover-dim h-5 w-5"
             />
           )}
-          <span className="glass-text-secondary text-xs capitalize">
-            {typeLabel}
-          </span>
+          <span className="tone-muted text-xs capitalize">{typeLabel}</span>
         </AppLink>
       </GridCardSection>
     </GridCard>

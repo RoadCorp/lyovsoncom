@@ -64,7 +64,7 @@ export default async function Page({ params }: PageProps) {
         >
           <GridCardSection className="col-span-3 row-span-3 p-6">
             <RichText
-              className="glass-stagger-3 h-full"
+              className="reveal-stagger-3 h-full"
               content={user.bio}
               enableGutter={false}
               enableProse={true}

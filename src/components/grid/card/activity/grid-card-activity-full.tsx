@@ -125,7 +125,7 @@ function getUniqueParticipants(activity: Activity): ParticipantLinkData[] {
 }
 
 function getParticipantStaggerClass(index: number): string {
-  return `glass-stagger-${Math.min(index + 1, MAX_PARTICIPANT_STAGGER)}`;
+  return `reveal-stagger-${Math.min(index + 1, MAX_PARTICIPANT_STAGGER)}`;
 }
 
 export const GridCardActivityFull = ({
@@ -149,7 +149,7 @@ export const GridCardActivityFull = ({
   const ActivityIcon = getActivityIcon(referenceType);
   const participants = getUniqueParticipants(activity);
 
-  const iconClassName = "glass-text glass-group-hover-dim h-5 w-5";
+  const iconClassName = "tone-heading ui-group-hover-dim h-5 w-5";
 
   return (
     <GridCard className={className}>
@@ -170,7 +170,7 @@ export const GridCardActivityFull = ({
               {...frontendViewTransitionClasses.sharedMedia}
             >
               <Media
-                className="glass-media flex h-full items-center justify-center"
+                className="media-frame flex h-full items-center justify-center"
                 imgClassName="h-full w-full object-cover"
                 pictureClassName="h-full w-full"
                 resource={referenceImage}
@@ -184,7 +184,7 @@ export const GridCardActivityFull = ({
 
       <GridCardSection className="col-start-3 col-end-4 row-start-1 row-end-2 flex h-full flex-col justify-center">
         <AppLink
-          className="glass-focus-ring group block"
+          className="ui-focus-ring group block"
           href={activityHref}
           prefetch={false}
           transitionTypes={[transitionTypes.drillIn]}
@@ -193,18 +193,18 @@ export const GridCardActivityFull = ({
             name={getActivityTitleTransitionName(dateSlug, slug)}
             {...frontendViewTransitionClasses.sharedTitle}
           >
-            <h2 className="glass-text glass-group-hover-dim text-center font-bold text-sm">
+            <h2 className="card-title tone-heading ui-group-hover-dim text-center font-bold text-sm">
               {referenceTitle}
             </h2>
           </ViewTransition>
         </AppLink>
       </GridCardSection>
 
-      <GridCardSection className="col-start-3 col-end-4 row-start-2 row-end-3 flex flex-col justify-evenly gap-2">
+      <GridCardSection className="card-rail-stack card-meta-stack col-start-3 col-end-4 row-start-2 row-end-3">
         {participants.map((participant, index) => (
           <AppLink
             aria-label={`View ${participant.name}'s profile`}
-            className={`glass-meta-link glass-focus-ring glass-interactive ${getParticipantStaggerClass(index)}`}
+            className={`ui-meta-link ui-focus-ring ui-interactive ${getParticipantStaggerClass(index)}`}
             href={lyovsonRoute(participant.username)}
             key={participant.id}
             prefetch={false}
@@ -216,7 +216,7 @@ export const GridCardActivityFull = ({
           </AppLink>
         ))}
 
-        <div className="glass-text-secondary flex items-center gap-2 text-xs">
+        <div className="tone-muted flex items-center gap-2 text-xs">
           <Calendar aria-hidden="true" className="h-5 w-5" />
           <time
             dateTime={
@@ -235,13 +235,13 @@ export const GridCardActivityFull = ({
 
       <GridCardSection className="col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
         <AppLink
-          className="glass-focus-ring group block flex flex-col items-center gap-1"
+          className="ui-focus-ring group block flex flex-col items-center gap-1"
           href={activityHref}
           prefetch={false}
           transitionTypes={[transitionTypes.drillIn]}
         >
           <ActivityIcon aria-hidden="true" className={iconClassName} />
-          <span className="glass-text-secondary text-xs capitalize">
+          <span className="tone-muted text-xs capitalize">
             {activityTypeLabel}
           </span>
         </AppLink>

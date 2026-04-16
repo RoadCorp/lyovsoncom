@@ -39,7 +39,7 @@ export const GridCardNavItem = ({
     return (
       <GridCardSection className={cn("group", className)}>
         <AppLink
-          className="glass-text glass-focus-ring glass-group-hover-dim flex h-full w-full flex-col items-center justify-center gap-2"
+          className="tone-heading ui-focus-ring ui-group-hover-dim flex h-full w-full flex-col items-center justify-center gap-2"
           href={props.href}
           pendingHintClassName="absolute top-2 right-2"
           prefetch={null}
@@ -56,7 +56,7 @@ export const GridCardNavItem = ({
     return (
       <GridCardSection
         className={cn(
-          "glass-text flex h-full flex-col items-center justify-center gap-2",
+          "tone-heading flex h-full flex-col items-center justify-center gap-2",
           className
         )}
         disabled={props.disabled}
@@ -71,7 +71,7 @@ export const GridCardNavItem = ({
   return (
     <GridCardSection
       className={cn(
-        "glass-text flex h-full flex-col items-center justify-center gap-2",
+        "tone-heading flex h-full flex-col items-center justify-center gap-2",
         className
       )}
     >

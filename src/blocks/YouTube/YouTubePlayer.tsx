@@ -11,10 +11,10 @@ const PlayButton = () => (
     className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center"
   >
     <div className="relative">
-      <div className="glass-play-button">
-        <div className="glass-play-icon" />
+      <div className="media-play-button">
+        <div className="media-play-icon" />
       </div>
-      <div className="glass-play-glow absolute inset-0 rounded-full" />
+      <div className="media-play-halo absolute inset-0 rounded-full" />
     </div>
   </div>
 );
@@ -50,7 +50,7 @@ export const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
 
   return (
     <div
-      className="glass-media relative w-full overflow-hidden rounded-lg"
+      className="media-frame relative w-full overflow-hidden rounded-lg"
       style={{ aspectRatio: normalizedAspectRatio }}
     >
       {isLoaded ? (
@@ -64,11 +64,11 @@ export const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
       ) : (
         <button
           aria-label="Play video"
-          className="glass-focus-ring glass-hover-group group relative block h-full w-full"
+          className="ui-focus-ring ui-hover-group group relative block h-full w-full"
           onClick={() => setIsLoaded(true)}
           type="button"
         >
-          <div className="glass-media-dim absolute inset-0 z-10" />
+          <div className="media-overlay absolute inset-0 z-10" />
 
           {/* Thumbnail image */}
           <div className="absolute inset-0">

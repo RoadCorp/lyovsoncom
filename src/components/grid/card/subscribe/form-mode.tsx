@@ -29,8 +29,8 @@ export const FormMode = ({
           aria-label="Email subscription"
           className="h-12 w-12 text-primary"
         />
-        <h2 className={cn("glass-text font-bold text-2xl")}>{title}</h2>
-        <p className={cn("glass-text-secondary text-sm")}>{description}</p>
+        <h2 className={cn("tone-heading font-bold text-2xl")}>{title}</h2>
+        <p className={cn("tone-muted text-sm")}>{description}</p>
       </GridCardSection>
 
       <GridCardSection className="col-start-1 col-end-4 row-start-3 row-end-4">

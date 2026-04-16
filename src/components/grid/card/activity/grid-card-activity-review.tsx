@@ -40,10 +40,10 @@ function renderRating(rating: number) {
     >
       {/* Numeric rating */}
       <div className="flex items-baseline gap-0.5">
-        <span className="glass-text font-bold text-2xl leading-none">
+        <span className="tone-heading font-bold text-2xl leading-none">
           {rating}
         </span>
-        <span className="glass-text-secondary text-xs">/{RATING_MAX}</span>
+        <span className="tone-muted text-xs">/{RATING_MAX}</span>
       </div>
       {/* 10 stars in two rows of 5 */}
       <div className="flex flex-col gap-0.5">
@@ -51,14 +51,14 @@ function renderRating(rating: number) {
           {buildStarKeys("full-top", fullTopRow).map((starKey) => (
             <Star
               aria-hidden="true"
-              className="glass-text h-3 w-3 fill-current"
+              className="tone-heading h-3 w-3 fill-current"
               key={starKey}
             />
           ))}
           {buildStarKeys("empty-top", emptyTopRow).map((starKey) => (
             <Star
               aria-hidden="true"
-              className="glass-text-secondary h-3 w-3 opacity-30"
+              className="tone-muted h-3 w-3 opacity-30"
               key={starKey}
             />
           ))}
@@ -67,14 +67,14 @@ function renderRating(rating: number) {
           {buildStarKeys("full-bottom", fullBottomRow).map((starKey) => (
             <Star
               aria-hidden="true"
-              className="glass-text h-3 w-3 fill-current"
+              className="tone-heading h-3 w-3 fill-current"
               key={starKey}
             />
           ))}
           {buildStarKeys("empty-bottom", emptyBottomRow).map((starKey) => (
             <Star
               aria-hidden="true"
-              className="glass-text-secondary h-3 w-3 opacity-30"
+              className="tone-muted h-3 w-3 opacity-30"
               key={starKey}
             />
           ))}
@@ -118,11 +118,11 @@ export function GridCardActivityReview({
             {/* Opening quote mark */}
             <Quote
               aria-hidden="true"
-              className="glass-text-secondary absolute top-3 left-4 h-5 w-5 rotate-180 opacity-40"
+              className="tone-muted absolute top-3 left-4 h-5 w-5 rotate-180 opacity-40"
             />
             <p
               className={cn(
-                "glass-text overflow-hidden text-pretty break-words pr-6 pl-4 text-left text-[15px] italic leading-relaxed",
+                "tone-heading overflow-hidden text-pretty break-words pr-6 pl-4 text-left text-[15px] italic leading-relaxed",
                 "whitespace-pre-line tracking-[-0.01em]"
               )}
             >
@@ -131,8 +131,8 @@ export function GridCardActivityReview({
 
             {isTruncated && (
               <>
-                <div className="glass-fade-bottom pointer-events-none absolute inset-x-0 bottom-0 h-14" />
-                <span className="glass-text-secondary pointer-events-none absolute right-6 bottom-4 text-xs tracking-widest">
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 content-fade-bottom" />
+                <span className="tone-muted pointer-events-none absolute right-6 bottom-4 text-xs tracking-widest">
                   ...
                 </span>
               </>
@@ -140,7 +140,7 @@ export function GridCardActivityReview({
           </div>
         ) : (
           <div className="flex h-full items-center justify-center px-6 py-6">
-            <p className="glass-text-secondary text-sm italic">No note</p>
+            <p className="tone-muted text-sm italic">No note</p>
           </div>
         )}
       </GridCardSection>
@@ -153,22 +153,22 @@ export function GridCardActivityReview({
       >
         {username ? (
           <AppLink
-            className="glass-focus-ring group block flex flex-col items-center gap-1"
+            className="ui-focus-ring group block flex flex-col items-center gap-1"
             href={lyovsonRoute(username)}
             prefetch={false}
           >
             <User
               aria-hidden="true"
-              className="glass-text glass-group-hover-dim h-5 w-5"
+              className="tone-heading ui-group-hover-dim h-5 w-5"
             />
-            <span className="glass-text-secondary text-xs capitalize">
+            <span className="tone-muted text-xs capitalize">
               {name.replace(" Lyovson", "")}
             </span>
           </AppLink>
         ) : (
           <div className="flex flex-col items-center gap-1">
-            <User aria-hidden="true" className="glass-text h-5 w-5" />
-            <span className="glass-text-secondary text-xs capitalize">
+            <User aria-hidden="true" className="tone-heading h-5 w-5" />
+            <span className="tone-muted text-xs capitalize">
               {name.replace(" Lyovson", "")}
             </span>
           </div>

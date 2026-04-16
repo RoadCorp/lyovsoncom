@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { browserTheme } from "@/utilities/browserTheme";
 import { getServerSideURL } from "@/utilities/getURL";
 
 export default function manifest(): MetadataRoute.Manifest {
@@ -11,8 +12,8 @@ export default function manifest(): MetadataRoute.Manifest {
       "Official website of Rafa and Jess Lyóvson featuring writing, projects, and research on programming, design, philosophy, and technology.",
     start_url: "/",
     display: "standalone",
-    background_color: "#000000",
-    theme_color: "#000000",
+    background_color: browserTheme.manifest,
+    theme_color: browserTheme.manifest,
     orientation: "portrait-primary",
     scope: "/",
     lang: "en-US",
