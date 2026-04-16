@@ -11,7 +11,9 @@ export const SettingsMode = ({
   return (
     <>
       <GridCardNavItem
-        className={"col-start-1 col-end-2 row-start-1 row-end-2"}
+        className={
+          "surface-nav-tile col-start-1 col-end-2 row-start-1 row-end-2"
+        }
         href="/admin"
         variant="link"
       >
@@ -19,10 +21,14 @@ export const SettingsMode = ({
         <span>Admin</span>
       </GridCardNavItem>
       <ThemeSwitcher
-        className={"col-start-2 col-end-3 row-start-2 row-end-3"}
+        className={
+          "surface-nav-tile col-start-2 col-end-3 row-start-2 row-end-3"
+        }
       />
       <GridCardNavItem
-        className={"col-start-3 col-end-4 row-start-3 row-end-4"}
+        className={
+          "surface-nav-tile col-start-3 col-end-4 row-start-3 row-end-4"
+        }
         onClick={() => setMenuMode("hero")}
         variant="button"
       >

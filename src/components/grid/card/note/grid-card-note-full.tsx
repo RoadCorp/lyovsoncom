@@ -254,7 +254,7 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
         />
       </GridCardSection>
 
-      <GridCardSection className="card-rail-stack card-topic-stack col-start-1 col-end-2 row-start-3 row-end-4 h-full">
+      <GridCardSection className="surface-rail-panel card-rail-stack card-topic-stack col-start-1 col-end-2 row-start-3 row-end-4 h-full">
         {uniqueTopics.map((topic, index) => {
           if (!topic.slug) {
             return null;
@@ -274,7 +274,7 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
         })}
       </GridCardSection>
 
-      <GridCardSection className="card-rail-stack card-meta-stack col-start-2 col-end-3 row-start-3 row-end-4">
+      <GridCardSection className="surface-rail-panel card-rail-stack card-meta-stack col-start-2 col-end-3 row-start-3 row-end-4">
         {author ? (
           <div className="tone-muted flex items-center gap-2 text-xs capitalize">
             <PenTool aria-hidden="true" className="h-5 w-5" />
@@ -290,7 +290,7 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
         </div>
       </GridCardSection>
 
-      <GridCardSection className="col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
+      <GridCardSection className="surface-rail-panel col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
         <AppLink
           className="ui-focus-ring group block flex flex-col items-center gap-1"
           href={noteUrl}

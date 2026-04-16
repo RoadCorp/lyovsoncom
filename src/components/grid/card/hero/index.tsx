@@ -69,7 +69,7 @@ export const GridCardHero = ({
           </GridCardSection>
         ) : null}
 
-        <GridCardSection className="col-start-1 g3:col-start-4 col-end-4 g3:col-end-7 g3:row-start-1 row-start-4 g3:row-end-4 row-end-7">
+        <GridCardSection className="surface-title-stage col-start-1 g3:col-start-4 col-end-4 g3:col-end-7 g3:row-start-1 row-start-4 g3:row-end-4 row-end-7">
           <div className="flex h-full flex-col items-center justify-center px-4 md:px-8">
             <div className="mx-auto w-full max-w-3xl space-y-4">
               <PostTransitionBoundary slug={post.slug} variant="title">
@@ -108,13 +108,13 @@ export const GridCardHeroNote = ({
         className
       )}
     >
-      <GridCardSection className="col-start-1 col-end-4 row-start-1 row-end-3 flex h-full flex-col items-center justify-center px-6 py-6">
+      <GridCardSection className="surface-title-stage col-start-1 col-end-4 row-start-1 row-end-3 flex h-full flex-col items-center justify-center px-6 py-6">
         <h1 className="tone-heading text-center font-bold text-2xl">
           {note.title}
         </h1>
       </GridCardSection>
 
-      <GridCardSection className="card-rail-stack card-topic-stack col-start-1 col-end-2 row-start-3 row-end-4 h-full">
+      <GridCardSection className="surface-rail-panel card-rail-stack card-topic-stack col-start-1 col-end-2 row-start-3 row-end-4 h-full">
         {dedupeRelationItemsById(note.topics).map((topic) => {
           if (typeof topic !== "object" || !topic.slug || !topic.id) {
             return null;
@@ -134,7 +134,7 @@ export const GridCardHeroNote = ({
         })}
       </GridCardSection>
 
-      <GridCardSection className="card-rail-stack card-meta-stack col-start-2 col-end-3 row-start-3 row-end-4">
+      <GridCardSection className="surface-rail-panel card-rail-stack card-meta-stack col-start-2 col-end-3 row-start-3 row-end-4">
         {note.author ? (
           <div className="tone-muted flex items-center gap-2 text-xs capitalize">
             <PenTool aria-hidden="true" className="h-5 w-5" />
@@ -152,7 +152,7 @@ export const GridCardHeroNote = ({
         ) : null}
       </GridCardSection>
 
-      <GridCardSection className="col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
+      <GridCardSection className="surface-rail-panel col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
         {isQuoteType ? (
           <Quote aria-hidden="true" className="tone-heading h-5 w-5" />
         ) : (
@@ -222,7 +222,7 @@ export const GridCardHeroActivity = ({
         </GridCardSection>
       ) : null}
 
-      <GridCardSection className="col-start-1 g3:col-start-4 col-end-4 g3:col-end-7 g3:row-start-1 row-start-4 g3:row-end-4 row-end-7">
+      <GridCardSection className="surface-title-stage col-start-1 g3:col-start-4 col-end-4 g3:col-end-7 g3:row-start-1 row-start-4 g3:row-end-4 row-end-7">
         <div className="flex h-full flex-col items-center justify-center px-4 md:px-8">
           <div className="mx-auto w-full max-w-3xl space-y-4">
             <ViewTransition

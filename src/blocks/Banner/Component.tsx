@@ -40,7 +40,7 @@ export function BannerBlock({ className, content, style }: Props) {
         {/* Icon indicator */}
         <div
           className={cn(
-            "surface-chip mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full",
+            "surface-chip surface-alert-icon mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full",
             accentClasses[bannerStyle]
           )}
         >

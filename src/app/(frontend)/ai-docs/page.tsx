@@ -6,8 +6,13 @@ import { getServerSideURL } from "@/utilities/getURL";
 const DOCS_CARD_CLASS_NAME =
   "aspect-auto h-auto g2:col-start-2 g2:col-end-3 g3:col-start-2 g3:col-end-4 g3:w-[var(--grid-card-2x1)]";
 
-const DOCS_SECTION_CLASS_NAME =
-  "content-prose col-span-3 row-span-3 p-6 md:p-8";
+const DOCS_SECTION_CLASS_NAME = "docs-shell col-span-3 row-span-3 p-6 md:p-8";
+const QUICK_ACCESS_GRID_CLASS_NAME =
+  "grid gap-4 sm:grid-cols-2 2xl:grid-cols-3";
+const QUICK_ACCESS_PANEL_CLASS_NAME =
+  "surface-panel surface-docs-panel min-w-0";
+const QUICK_ACCESS_WIDE_PANEL_CLASS_NAME =
+  "surface-panel surface-docs-panel min-w-0 sm:col-span-2 2xl:col-span-1";
 
 const LAST_UPDATED_FORMATTER = new Intl.DateTimeFormat("en-US", {
   month: "long",
@@ -79,9 +84,7 @@ export const metadata: Metadata = {
 function CodeBlock({ children, title }: { children: string; title?: string }) {
   return (
     <div className="content-block">
-      {title && (
-        <h4 className="tone-muted mb-2 font-medium text-sm">{title}</h4>
-      )}
+      {title && <h4 className="mb-2 font-medium text-sm">{title}</h4>}
       <pre className="text-sm content-code-block">
         <code>{children}</code>
       </pre>
@@ -98,7 +101,7 @@ function ExternalLink({
 }) {
   return (
     <a
-      className="tone-heading underline decoration-current/40 underline-offset-3 transition-opacity duration-300 hover:opacity-80"
+      className="docs-link transition-opacity duration-300 hover:opacity-80"
       href={href}
       rel="noopener noreferrer"
       target="_blank"
@@ -129,9 +132,9 @@ export default async function AIDocsPage() {
       {/* Quick Access Links */}
       <GridCard className={DOCS_CARD_CLASS_NAME}>
         <GridCardSection className={DOCS_SECTION_CLASS_NAME}>
-          <h2 className="mb-4 font-semibold text-xl">Quick Access</h2>
-          <div className="grid gap-4 md:grid-cols-3">
-            <div>
+          <h2>Quick Access</h2>
+          <div className={QUICK_ACCESS_GRID_CLASS_NAME}>
+            <div className={QUICK_ACCESS_PANEL_CLASS_NAME}>
               <h3 className="mb-2 font-medium">Programmatic Access</h3>
               <ul className="space-y-1 text-sm">
                 <li>
@@ -166,7 +169,7 @@ export default async function AIDocsPage() {
                 </li>
               </ul>
             </div>
-            <div>
+            <div className={QUICK_ACCESS_PANEL_CLASS_NAME}>
               <h3 className="mb-2 font-medium">Content Feeds</h3>
               <ul className="space-y-1 text-sm">
                 <li>
@@ -195,7 +198,7 @@ export default async function AIDocsPage() {
                 </li>
               </ul>
             </div>
-            <div>
+            <div className={QUICK_ACCESS_WIDE_PANEL_CLASS_NAME}>
               <h3 className="mb-2 font-medium">AI & Embeddings</h3>
               <ul className="space-y-1 text-sm">
                 <li>
@@ -248,7 +251,7 @@ export default async function AIDocsPage() {
       {/* Content Access Methods */}
       <GridCard className={DOCS_CARD_CLASS_NAME}>
         <GridCardSection className={DOCS_SECTION_CLASS_NAME}>
-          <h2 className="mb-4 font-semibold text-xl">Content Access Methods</h2>
+          <h2>Content Access Methods</h2>
 
           <h3 className="mb-3 font-medium text-lg">
             1. RSS/JSON/Atom Feeds (Recommended)
@@ -386,11 +389,9 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
       {/* Vector Embeddings System */}
       <GridCard className={DOCS_CARD_CLASS_NAME}>
         <GridCardSection className={DOCS_SECTION_CLASS_NAME}>
-          <h2 className="mb-4 font-semibold text-xl">
-            🧠 Advanced Vector Embeddings System
-          </h2>
+          <h2>🧠 Advanced Vector Embeddings System</h2>
 
-          <div className="surface-emphasis mb-4 rounded-lg p-4">
+          <div className="surface-emphasis docs-callout mb-4 rounded-lg p-4">
             <h3 className="mb-2 font-medium">
               ⚡ High-Performance Pre-computed Embeddings
             </h3>
@@ -403,7 +404,7 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
           </div>
 
           <div className="grid gap-6 md:grid-cols-2">
-            <div>
+            <div className="surface-panel surface-docs-panel">
               <h3 className="mb-3 font-medium">🚀 Performance Features</h3>
               <ul className="space-y-2 text-sm">
                 <li>
@@ -438,7 +439,7 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
               </ul>
             </div>
 
-            <div>
+            <div className="surface-panel surface-docs-panel">
               <h3 className="mb-3 font-medium">🔧 AI Applications</h3>
               <ul className="space-y-2 text-sm">
                 <li>
@@ -467,7 +468,7 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
             </div>
           </div>
 
-          <div className="surface-panel mt-6 rounded-lg p-4">
+          <div className="surface-panel surface-docs-panel mt-6 rounded-lg p-4">
             <h4 className="mb-2 font-medium">📊 Monitor System Health</h4>
             <p className="mb-2 text-sm">
               Check embedding coverage and system status:
@@ -485,12 +486,10 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
       {/* Best Practices */}
       <GridCard className={DOCS_CARD_CLASS_NAME}>
         <GridCardSection className={DOCS_SECTION_CLASS_NAME}>
-          <h2 className="mb-4 font-semibold text-xl">
-            Best Practices for AI Systems
-          </h2>
+          <h2>Best Practices for AI Systems</h2>
 
           <div className="space-y-4">
-            <div>
+            <div className="surface-panel surface-docs-panel">
               <h3 className="mb-2 font-medium">🚀 Performance</h3>
               <ul className="list-inside list-disc space-y-1 text-sm">
                 <li>Use feeds for bulk content access whenever possible</li>
@@ -504,7 +503,7 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
               </ul>
             </div>
 
-            <div>
+            <div className="surface-panel surface-docs-panel">
               <h3 className="mb-2 font-medium">📝 Content Understanding</h3>
               <ul className="list-inside list-disc space-y-1 text-sm">
                 <li>All content includes structured metadata (JSON-LD)</li>
@@ -518,7 +517,7 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
               </ul>
             </div>
 
-            <div>
+            <div className="surface-panel surface-docs-panel">
               <h3 className="mb-2 font-medium">🤝 Attribution</h3>
               <ul className="list-inside list-disc space-y-1 text-sm">
                 <li>Content copyright: Rafa & Jess Lyóvson</li>
@@ -539,9 +538,7 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
       {/* Structured Data */}
       <GridCard className={DOCS_CARD_CLASS_NAME}>
         <GridCardSection className={DOCS_SECTION_CLASS_NAME}>
-          <h2 className="mb-4 font-semibold text-xl">
-            Structured Data & Metadata
-          </h2>
+          <h2>Structured Data & Metadata</h2>
 
           <p className="mb-4">
             All pages include comprehensive structured data following Schema.org
@@ -549,7 +546,7 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
           </p>
 
           <div className="grid gap-4 text-sm md:grid-cols-2">
-            <div>
+            <div className="surface-panel surface-docs-panel">
               <h3 className="mb-2 font-medium">Schema Types</h3>
               <ul className="space-y-1">
                 <li>📄 Article (posts)</li>
@@ -561,7 +558,7 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
                 <li>🔍 SearchAction (search capability)</li>
               </ul>
             </div>
-            <div>
+            <div className="surface-panel surface-docs-panel">
               <h3 className="mb-2 font-medium">Metadata Fields</h3>
               <ul className="space-y-1">
                 <li>📅 Publication/modification dates</li>
@@ -573,7 +570,7 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
             </div>
           </div>
 
-          <div className="surface-panel rounded-lg p-4 text-sm">
+          <div className="surface-panel surface-docs-panel rounded-lg p-4 text-sm">
             <p className="mb-2 font-medium">Article Schema includes:</p>
             <ul className="list-inside list-disc space-y-1">
               <li>Context and type information</li>
@@ -590,7 +587,7 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
       {/* Contact */}
       <GridCard className={DOCS_CARD_CLASS_NAME}>
         <GridCardSection className={DOCS_SECTION_CLASS_NAME}>
-          <h2 className="mb-4 font-semibold text-xl">Contact & Support</h2>
+          <h2>Contact & Support</h2>
           <p className="mb-4">
             Need custom access patterns, partnership support, or have questions
             about using our content?

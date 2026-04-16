@@ -25,7 +25,7 @@ export const MenuMode = ({
   return (
     <>
       <GridCardNavItem
-        className="col-start-1 col-end-2 row-start-1 row-end-2"
+        className="surface-nav-tile col-start-1 col-end-2 row-start-1 row-end-2"
         href={postsRoute()}
         variant="link"
       >
@@ -33,7 +33,7 @@ export const MenuMode = ({
         <span>Posts</span>
       </GridCardNavItem>
       <GridCardNavItem
-        className="col-start-2 col-end-3 row-start-1 row-end-2"
+        className="surface-nav-tile col-start-2 col-end-3 row-start-1 row-end-2"
         href={notesRoute()}
         variant="link"
       >
@@ -41,7 +41,7 @@ export const MenuMode = ({
         <span>Notes</span>
       </GridCardNavItem>
       <GridCardNavItem
-        className="col-start-3 col-end-4 row-start-1 row-end-2"
+        className="surface-nav-tile col-start-3 col-end-4 row-start-1 row-end-2"
         href={activitiesRoute()}
         variant="link"
       >
@@ -49,7 +49,7 @@ export const MenuMode = ({
         <span>Activities</span>
       </GridCardNavItem>
       <GridCardNavItem
-        className="col-start-1 col-end-2 row-start-2 row-end-3"
+        className="surface-nav-tile col-start-1 col-end-2 row-start-2 row-end-3"
         href={lyovsonRoute("jess")}
         variant="link"
       >
@@ -57,7 +57,7 @@ export const MenuMode = ({
         <span>Jess</span>
       </GridCardNavItem>
       <GridCardNavItem
-        className="col-start-2 col-end-3 row-start-2 row-end-3"
+        className="surface-nav-tile col-start-2 col-end-3 row-start-2 row-end-3"
         href={projectsRoute()}
         variant="link"
       >
@@ -65,7 +65,7 @@ export const MenuMode = ({
         <span>Projects</span>
       </GridCardNavItem>
       <GridCardNavItem
-        className="col-start-3 col-end-4 row-start-2 row-end-3"
+        className="surface-nav-tile col-start-3 col-end-4 row-start-2 row-end-3"
         href={lyovsonRoute("rafa")}
         variant="link"
       >
@@ -73,7 +73,7 @@ export const MenuMode = ({
         <span>Rafa</span>
       </GridCardNavItem>
       <GridCardNavItem
-        className="col-start-2 col-end-3 row-start-3 row-end-4"
+        className="surface-nav-tile col-start-2 col-end-3 row-start-3 row-end-4"
         onClick={() => setMenuMode("hero")}
         variant="button"
       >

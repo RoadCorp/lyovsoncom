@@ -37,7 +37,7 @@ export const GridCardNavItem = ({
 }: GridCardNavItemProps) => {
   if (props.variant === "link") {
     return (
-      <GridCardSection className={cn("group", className)}>
+      <GridCardSection className={cn("group ui-interactive", className)}>
         <AppLink
           className="tone-heading ui-focus-ring ui-group-hover-dim flex h-full w-full flex-col items-center justify-center gap-2"
           href={props.href}

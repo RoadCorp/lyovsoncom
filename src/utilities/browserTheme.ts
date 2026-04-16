@@ -1,6 +1,6 @@
 // Keep these browser chrome colors aligned with the frontend `--background` tokens.
 export const browserTheme = {
-  light: "#e6e7ed",
-  dark: "#1a1b26",
-  manifest: "#1a1b26",
+  light: "#f1f2f4",
+  dark: "#181a1e",
+  manifest: "#181a1e",
 } as const;

@@ -40,7 +40,7 @@ function renderRating(rating: number) {
     >
       {/* Numeric rating */}
       <div className="flex items-baseline gap-0.5">
-        <span className="tone-heading font-bold text-2xl leading-none">
+        <span className="review-score-value font-bold text-2xl leading-none">
           {rating}
         </span>
         <span className="tone-muted text-xs">/{RATING_MAX}</span>
@@ -51,14 +51,14 @@ function renderRating(rating: number) {
           {buildStarKeys("full-top", fullTopRow).map((starKey) => (
             <Star
               aria-hidden="true"
-              className="tone-heading h-3 w-3 fill-current"
+              className="review-score-star h-3 w-3 fill-current"
               key={starKey}
             />
           ))}
           {buildStarKeys("empty-top", emptyTopRow).map((starKey) => (
             <Star
               aria-hidden="true"
-              className="tone-muted h-3 w-3 opacity-30"
+              className="review-score-star-empty h-3 w-3 opacity-35"
               key={starKey}
             />
           ))}
@@ -67,14 +67,14 @@ function renderRating(rating: number) {
           {buildStarKeys("full-bottom", fullBottomRow).map((starKey) => (
             <Star
               aria-hidden="true"
-              className="tone-heading h-3 w-3 fill-current"
+              className="review-score-star h-3 w-3 fill-current"
               key={starKey}
             />
           ))}
           {buildStarKeys("empty-bottom", emptyBottomRow).map((starKey) => (
             <Star
               aria-hidden="true"
-              className="tone-muted h-3 w-3 opacity-30"
+              className="review-score-star-empty h-3 w-3 opacity-35"
               key={starKey}
             />
           ))}
@@ -110,7 +110,7 @@ export function GridCardActivityReview({
       {/* Top section - Note (styled as quote) */}
       <GridCardSection
         className={cn(
-          "col-start-1 col-end-4 row-start-1 row-end-3 flex h-full flex-col overflow-hidden"
+          "review-note-panel col-start-1 col-end-4 row-start-1 row-end-3 flex h-full flex-col overflow-hidden"
         )}
       >
         {hasNote ? (
@@ -118,11 +118,11 @@ export function GridCardActivityReview({
             {/* Opening quote mark */}
             <Quote
               aria-hidden="true"
-              className="tone-muted absolute top-3 left-4 h-5 w-5 rotate-180 opacity-40"
+              className="review-quote-mark absolute top-3 left-4 h-5 w-5 rotate-180 opacity-60"
             />
             <p
               className={cn(
-                "tone-heading overflow-hidden text-pretty break-words pr-6 pl-4 text-left text-[15px] italic leading-relaxed",
+                "review-note-copy overflow-hidden text-pretty break-words pr-6 pl-4 text-left text-[15px] italic leading-relaxed",
                 "whitespace-pre-line tracking-[-0.01em]"
               )}
             >
@@ -140,7 +140,7 @@ export function GridCardActivityReview({
           </div>
         ) : (
           <div className="flex h-full items-center justify-center px-6 py-6">
-            <p className="tone-muted text-sm italic">No note</p>
+            <p className="review-note-empty text-sm italic">No note</p>
           </div>
         )}
       </GridCardSection>
@@ -148,7 +148,7 @@ export function GridCardActivityReview({
       {/* Bottom section - Left: User, Right: Rating */}
       <GridCardSection
         className={
-          "col-start-1 col-end-2 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1"
+          "surface-rail-panel col-start-1 col-end-2 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1"
         }
       >
         {username ? (
@@ -177,7 +177,7 @@ export function GridCardActivityReview({
 
       <GridCardSection
         className={
-          "col-start-2 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center"
+          "surface-title-stage col-start-2 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center"
         }
       >
         {rating !== null && renderRating(rating)}

@@ -8,14 +8,16 @@ export const SearchMode = ({ onClose }: { onClose: () => void }) => {
     <>
       <SiteTitleSection />
       <GridCardNavItem
-        className={"col-start-1 col-end-2 row-start-3 row-end-4"}
+        className={
+          "surface-nav-tile col-start-1 col-end-2 row-start-3 row-end-4"
+        }
         onClick={onClose}
         variant="button"
       >
         <X className="h-7 w-7" />
         <span>Close</span>
       </GridCardNavItem>
-      <SearchInput className="col-start-2 col-end-4 row-start-3 row-end-4" />
+      <SearchInput className="surface-nav-tile col-start-2 col-end-4 row-start-3 row-end-4" />
     </>
   );
 };

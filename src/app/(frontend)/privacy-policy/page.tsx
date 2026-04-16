@@ -20,10 +20,10 @@ export default async function PrivacyPolicy() {
       interactive={false}
     >
       <GridCardSection className="col-span-3 row-span-3 p-6">
-        <article className="content-prose">
+        <article className="docs-shell content-prose">
           <h1>Privacy Policy for Lyovson.com</h1>
 
-          <section className="surface-panel">
+          <section className="surface-panel surface-docs-panel">
             <p className="tone-muted text-sm">
               <strong>Effective Date:</strong> March 19, 2024
               <br />

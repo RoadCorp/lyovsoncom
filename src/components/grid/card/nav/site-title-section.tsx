@@ -5,10 +5,14 @@ import { GridCardSection } from "../section";
 
 export const SiteTitleSection = () => {
   return (
-    <GridCardSection className={"col-start-1 col-end-4 row-start-1 row-end-3"}>
+    <GridCardSection
+      className={
+        "surface-nav-stage col-start-1 col-end-4 row-start-1 row-end-3"
+      }
+    >
       <AppLink
         className={
-          "relative flex h-full flex-col items-center justify-center transition-transform duration-300 hover:scale-105"
+          "ui-focus-ring relative flex h-full flex-col items-center justify-center transition-transform duration-300 hover:scale-[1.02]"
         }
         href={homeRoute()}
         pendingHintClassName="absolute top-4 right-4"

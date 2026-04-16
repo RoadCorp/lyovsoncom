@@ -21,7 +21,7 @@ export function GridCardRelatedNotes({
   className?: string;
 }) {
   return (
-    <GridCard className={cn(className)}>
+    <GridCard className={cn(className)} frameLabel="Related">
       {notes.map((note, index) => {
         if (typeof note === "number") {
           return null;
@@ -52,7 +52,9 @@ export function GridCardRelatedNotes({
             prefetch={false}
           >
             <GridCardSection
-              className={"grid h-full grid-cols-3 grid-rows-1 gap-2"}
+              className={
+                "surface-row grid h-full grid-cols-3 grid-rows-1 gap-2"
+              }
             >
               {/* Icon column */}
               <div className="col-start-1 col-end-2 row-start-1 row-end-2 flex items-center justify-center">

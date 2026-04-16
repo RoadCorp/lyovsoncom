@@ -15,13 +15,13 @@ export const Code: React.FC<Props> = ({ code, language = "" }) => {
   }
 
   return (
-    <div className="surface-panel surface-emphasis relative">
+    <div className="surface-panel surface-emphasis surface-code relative">
       <Highlight code={code} language={language} theme={themes.vsDark}>
         {({ getLineProps, getTokenProps, tokens }) => (
           <pre className="rounded-lg p-6 font-mono text-sm leading-relaxed content-code-shell">
             {/* Language indicator */}
             {language && (
-              <div className="surface-chip absolute top-3 right-15 rounded px-2 py-1 font-medium text-xs">
+              <div className="surface-chip surface-code-chip absolute top-3 right-15 rounded px-2 py-1 font-medium text-xs">
                 {language.toUpperCase()}
               </div>
             )}

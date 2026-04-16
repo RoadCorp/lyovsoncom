@@ -128,7 +128,7 @@ export const GridCardPostFull = ({
           </GridCardSection>
         ) : null}
 
-        <GridCardSection className="col-start-1 col-end-3 row-start-3 row-end-4 flex h-full flex-col justify-center">
+        <GridCardSection className="surface-title-stage col-start-1 col-end-3 row-start-3 row-end-4 flex h-full flex-col justify-center">
           <PostDrillInLink
             className="ui-focus-ring group block"
             href={postHref}
@@ -141,7 +141,7 @@ export const GridCardPostFull = ({
           </PostDrillInLink>
         </GridCardSection>
 
-        <GridCardSection className="col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
+        <GridCardSection className="surface-rail-panel col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
           <PostDrillInLink
             className="ui-focus-ring group block flex flex-col items-center gap-1"
             href={postHref}
@@ -170,7 +170,7 @@ export const GridCardPostFull = ({
           </PostDrillInLink>
         </GridCardSection>
 
-        <GridCardSection className="card-rail-stack card-topic-stack col-start-3 col-end-4 row-start-1 row-end-2">
+        <GridCardSection className="surface-rail-panel card-rail-stack card-topic-stack col-start-3 col-end-4 row-start-1 row-end-2">
           {dedupeRelationItemsById(topics).map((topic, index) => {
             if (typeof topic !== "object" || !topic.slug || !topic.id) {
               return null;
@@ -190,7 +190,7 @@ export const GridCardPostFull = ({
           })}
         </GridCardSection>
 
-        <GridCardSection className="card-rail-stack card-meta-stack col-start-3 col-end-4 row-start-2 row-end-3">
+        <GridCardSection className="surface-rail-panel card-rail-stack card-meta-stack col-start-3 col-end-4 row-start-2 row-end-3">
           {dedupeRelationItemsById(populatedAuthors).map((author, index) => {
             if (!(typeof author === "object" && author.username)) {
               return null;

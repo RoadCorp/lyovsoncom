@@ -12,6 +12,7 @@ interface GridCardBaseProps<T extends ElementType> {
   as?: T;
   children: ReactNode;
   className?: string;
+  frameLabel?: ReactNode;
   interactive?: boolean;
   role?: AriaRole;
   style?: CSSProperties;
@@ -25,6 +26,7 @@ export const GridCard = <T extends ElementType = "div">({
   as,
   children,
   className,
+  frameLabel,
   interactive = false,
   role,
   style,
@@ -46,6 +48,7 @@ export const GridCard = <T extends ElementType = "div">({
   const cardClassName = cn(
     "surface-card rounded-xl",
     "grid gap-[var(--grid-section-gap)] p-[var(--grid-frame-padding)]",
+    frameLabel && "surface-card-framed",
     variant === "default" ? "aspect-square" : "auto-rows-auto grid-cols-1",
     interactive && "ui-interactive",
     className
@@ -58,6 +61,9 @@ export const GridCard = <T extends ElementType = "div">({
       style={{ ...baseStyle, ...style }}
       {...(rest as ComponentPropsWithoutRef<T>)}
     >
+      {frameLabel ? (
+        <div className="surface-card-legend">{frameLabel}</div>
+      ) : null}
       {children}
     </Component>
   );

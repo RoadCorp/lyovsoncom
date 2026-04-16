@@ -94,7 +94,7 @@ export const GridCardReferences = ({
   }
 
   return (
-    <GridCard className={cn(className)}>
+    <GridCard className={cn(className)} frameLabel="References">
       {visibleReferences.map((reference, index) => {
         const IconComponent = referenceTypeIcons[reference.type] ?? LinkIcon;
         const typeLabel = referenceTypeLabels[reference.type] ?? "Reference";
@@ -109,7 +109,7 @@ export const GridCardReferences = ({
 
         const content = (
           <GridCardSection
-            className="grid h-full grid-cols-3 grid-rows-1 gap-2"
+            className="surface-row grid h-full grid-cols-3 grid-rows-1 gap-2"
             flush={true}
           >
             {imageObj ? (

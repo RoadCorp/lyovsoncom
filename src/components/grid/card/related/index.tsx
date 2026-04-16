@@ -39,7 +39,7 @@ export const GridCardRelatedPosts = ({
   );
 
   return (
-    <GridCard className={cn(className)}>
+    <GridCard className={cn(className)} frameLabel="Related">
       {uniquePosts.map((post, index) => {
         const rowClass = `row-start-${index + 1} row-end-${index + 2}`;
         const staggerClass = getStaggerClass(index);
@@ -56,7 +56,9 @@ export const GridCardRelatedPosts = ({
           >
             <PostTransitionBoundary variant="cardShell">
               <GridCardSection
-                className={"grid h-full grid-cols-3 grid-rows-1 gap-2"}
+                className={
+                  "surface-row grid h-full grid-cols-3 grid-rows-1 gap-2"
+                }
                 flush={true}
               >
                 {post.featuredImage ? (

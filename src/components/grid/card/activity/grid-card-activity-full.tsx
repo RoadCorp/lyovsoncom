@@ -182,7 +182,7 @@ export const GridCardActivityFull = ({
         </GridCardSection>
       ) : null}
 
-      <GridCardSection className="col-start-3 col-end-4 row-start-1 row-end-2 flex h-full flex-col justify-center">
+      <GridCardSection className="surface-title-stage col-start-3 col-end-4 row-start-1 row-end-2 flex h-full flex-col justify-center">
         <AppLink
           className="ui-focus-ring group block"
           href={activityHref}
@@ -200,7 +200,7 @@ export const GridCardActivityFull = ({
         </AppLink>
       </GridCardSection>
 
-      <GridCardSection className="card-rail-stack card-meta-stack col-start-3 col-end-4 row-start-2 row-end-3">
+      <GridCardSection className="surface-rail-panel card-rail-stack card-meta-stack col-start-3 col-end-4 row-start-2 row-end-3">
         {participants.map((participant, index) => (
           <AppLink
             aria-label={`View ${participant.name}'s profile`}
@@ -233,7 +233,7 @@ export const GridCardActivityFull = ({
         </div>
       </GridCardSection>
 
-      <GridCardSection className="col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
+      <GridCardSection className="surface-rail-panel col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
         <AppLink
           className="ui-focus-ring group block flex flex-col items-center gap-1"
           href={activityHref}

@@ -20,7 +20,7 @@ export function CopyButton({ code }: { code: string }) {
   return (
     <div className="absolute top-3 right-3">
       <Button
-        className="surface-chip ui-copy-button ui-focus-ring ui-hover-dim ui-interactive flex gap-2 px-2 py-1 font-medium text-xs"
+        className="surface-chip surface-code-chip ui-copy-button ui-focus-ring ui-hover-dim ui-interactive flex gap-2 px-2 py-1 font-medium text-xs"
         onClick={async () => {
           await navigator.clipboard.writeText(code);
           updateCopyStatus();
