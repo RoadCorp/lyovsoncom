@@ -148,9 +148,7 @@ export const GridCardReferences = ({
                   <span className="line-clamp-2">{reference.title}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="surface-chip px-2 py-0.5 text-[11px] uppercase tracking-wide">
-                    {typeLabel}
-                  </span>
+                  <span className="surface-chip surface-tag">{typeLabel}</span>
                 </div>
                 {reference.description && (
                   <p className="tone-muted line-clamp-2 text-xs leading-relaxed">

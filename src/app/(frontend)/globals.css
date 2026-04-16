@@ -511,7 +511,8 @@
     text-wrap: balance;
   }
 
-  .topic-pill {
+  .topic-pill,
+  .surface-tag {
     min-height: var(--grid-topic-pill-min-height);
     padding: var(--grid-topic-pill-padding-block)
       var(--grid-topic-pill-padding-inline);
@@ -522,6 +523,11 @@
     letter-spacing: 0.01em;
     text-wrap: balance;
     white-space: normal;
+  }
+
+  .surface-tag {
+    text-transform: uppercase;
+    white-space: nowrap;
   }
 
   .surface-row {
