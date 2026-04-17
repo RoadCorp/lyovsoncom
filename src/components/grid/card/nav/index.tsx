@@ -50,6 +50,8 @@ interface SearchApiResponse {
   previewItems?: SearchPreviewItem[];
 }
 
+const NAV_SHELL_SCROLL = false;
+
 export const GridCardNav = ({ className }: { className?: string }) => {
   const pathname = usePathname();
   const router = useRouter();
@@ -171,7 +173,9 @@ export const GridCardNav = ({ className }: { className?: string }) => {
       setQuery("");
 
       startSearchTransition(() => {
-        router.push(baseRoute as Route);
+        router.push(baseRoute as Route, {
+          scroll: NAV_SHELL_SCROLL,
+        });
       });
       return;
     }
@@ -198,7 +202,9 @@ export const GridCardNav = ({ className }: { className?: string }) => {
     if (!trimmedQuery) {
       if (isSearchRoute) {
         startSearchTransition(() => {
-          router.push(baseRoute as Route);
+          router.push(baseRoute as Route, {
+            scroll: NAV_SHELL_SCROLL,
+          });
         });
       }
 
@@ -211,6 +217,7 @@ export const GridCardNav = ({ className }: { className?: string }) => {
 
     startSearchTransition(() => {
       router.push(href as Route, {
+        scroll: NAV_SHELL_SCROLL,
         transitionTypes: [transitionTypes.searchSubmit],
       });
     });
