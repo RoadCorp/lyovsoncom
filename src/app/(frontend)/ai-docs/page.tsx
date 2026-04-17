@@ -335,6 +335,9 @@ GET ${SITE_URL}/api/projects?depth=1
 # Search content
 GET ${SITE_URL}/api/search?q=programming&limit=20
 
+# Search within one person scope
+GET ${SITE_URL}/api/search?q=programming&limit=20&scope=rafa
+
 # Get specific post with full depth
 GET ${SITE_URL}/api/posts/[id]?depth=2`}
           </CodeBlock>

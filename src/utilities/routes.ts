@@ -18,6 +18,8 @@ export const transitionTypes = {
   searchSubmit: "search-submit",
 } as const;
 
+export const PRIMARY_LYOVSONS = ["rafa", "jess"] as const;
+
 export type AppTransitionType =
   (typeof transitionTypes)[keyof typeof transitionTypes];
 
@@ -54,6 +56,18 @@ export function getActivityDateSlug(activity: ActivityPathInput): string {
 
 export function homeRoute() {
   return typedRoute("/");
+}
+
+export function aboutRoute() {
+  return typedRoute("/about");
+}
+
+export function amRoute() {
+  return typedRoute("/am");
+}
+
+export function contactRoute() {
+  return typedRoute("/contact");
 }
 
 export function homepageRoute(pageNumber: number) {
@@ -224,9 +238,21 @@ export function searchRoute() {
   return typedRoute("/search");
 }
 
-export function searchHref(query: string) {
+export function lyovsonSearchRoute(username: string) {
+  return typedRoute(`/${username}/search`);
+}
+
+export function searchPageRoute(scopeUsername?: string | null) {
+  return scopeUsername ? lyovsonSearchRoute(scopeUsername) : searchRoute();
+}
+
+export function searchHref(
+  query: string,
+  options?: { scopeUsername?: string | null }
+) {
   const params = new URLSearchParams({ q: query });
-  return `${searchRoute()}?${params.toString()}` as `${Route<"/search">}?${string}`;
+  const route = searchPageRoute(options?.scopeUsername);
+  return `${route}?${params.toString()}` as `${Route<string>}?${string}`;
 }
 
 export function absoluteUrl(path: Route<string> | string) {

@@ -18,7 +18,7 @@ export const ThemeSwitcher = ({ className }: ThemeSwitcherProps) => {
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
       variant="button"
     >
-      <SunMoon className="h-7 w-7" />
+      <SunMoon aria-hidden="true" className="h-7 w-7" />
       <span className="font-medium text-sm">Theme</span>
     </GridCardNavItem>
   );

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { GridCardLyovsonSections, GridCardUser } from "@/components/grid";
+import { GridCardUser } from "@/components/grid";
 import { getLyovsonProfile } from "@/utilities/get-lyovson-profile";
 import { getLyovsonStaticParams } from "./_utilities/staticParams";
 
@@ -33,11 +33,7 @@ export default async function Layout({ children, params }: LayoutProps) {
 
   return (
     <div className={`contents ${fontClass}`}>
-      <GridCardLyovsonSections username={username} />
-      <GridCardUser
-        className="g2:row-start-1 g3:row-start-1 row-start-3 g2:row-end-3 g3:row-end-2 row-end-5"
-        user={lyovson}
-      />
+      <GridCardUser user={lyovson} />
       {children}
     </div>
   );

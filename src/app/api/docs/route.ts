@@ -259,15 +259,17 @@ export async function GET(_request: NextRequest) {
             search: {
               path: "/api/search",
               description:
-                "Semantic search across all content using embeddings",
+                "Semantic search across all content using embeddings, with optional person scoping and preview payloads",
               parameters: {
                 q: "search query (required)",
                 limit: "number of results (optional, defaults to 10)",
-                threshold:
-                  "similarity threshold 0-1 (optional, defaults to 0.7)",
+                scope: "person scope username such as rafa or jess (optional)",
+                preview:
+                  "when true, includes compact previewItems for nav/live-preview UI (optional)",
               },
-              example: `${SITE_URL}/api/search?q=web+development&limit=5`,
-              response: "ranked results with similarity scores",
+              example: `${SITE_URL}/api/search?q=web+development&limit=5&scope=rafa`,
+              response:
+                "ranked results with similarity scores, plus previewItems when preview=true",
               caching: "300s",
             },
           },
@@ -350,6 +352,7 @@ export async function GET(_request: NextRequest) {
           bestPractices: [
             "Start with /api/search for content discovery",
             "Use embeddings similarity scores to rank relevance",
+            "Use scope=rafa or scope=jess when search should stay within one person mode",
             "Filter by topics for focused content areas",
             "Check embedding coverage before bulk operations",
             "Use vector=false parameter when vectors aren't needed",

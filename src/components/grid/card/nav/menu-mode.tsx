@@ -1,85 +1,117 @@
+import type { LucideIcon } from "lucide-react";
 import {
-  Atom,
+  BadgeInfo,
   BriefcaseBusiness,
-  FileText,
-  Flower,
-  Newspaper,
-  Play,
+  Languages,
+  Mail,
+  Search,
+  UserRound,
   X,
 } from "lucide-react";
 import {
-  activitiesRoute,
-  lyovsonRoute,
-  notesRoute,
-  postsRoute,
-  projectsRoute,
+  aboutRoute,
+  amRoute,
+  contactRoute,
+  lyovsonBioRoute,
+  lyovsonContactRoute,
+  lyovsonPortfolioRoute,
 } from "@/utilities/routes";
 import { GridCardNavItem } from "./grid-card-nav-item";
-import type { ManualMenuMode } from "./types";
+import { ThemeSwitcher } from "./theme-switcher";
+import type { ManualMenuMode, NavRouteContext } from "./types";
+
+interface MenuLink {
+  href: string;
+  icon: LucideIcon;
+  label: string;
+}
+
+function getMenuLinks(routeContext: NavRouteContext): MenuLink[] {
+  if (routeContext.mode === "person" && routeContext.username) {
+    return [
+      {
+        href: lyovsonBioRoute(routeContext.username),
+        icon: UserRound,
+        label: "Bio",
+      },
+      {
+        href: lyovsonPortfolioRoute(routeContext.username),
+        icon: BriefcaseBusiness,
+        label: "Portfolio",
+      },
+      {
+        href: lyovsonContactRoute(routeContext.username),
+        icon: Mail,
+        label: "Contact",
+      },
+    ];
+  }
+
+  return [
+    {
+      href: aboutRoute(),
+      icon: BadgeInfo,
+      label: "About",
+    },
+    {
+      href: amRoute(),
+      icon: Languages,
+      label: "AM",
+    },
+    {
+      href: contactRoute(),
+      icon: Mail,
+      label: "Contact",
+    },
+  ];
+}
 
 export const MenuMode = ({
+  openSearch,
+  routeContext,
   setMenuMode,
 }: {
+  openSearch: () => void;
+  routeContext: NavRouteContext;
   setMenuMode: (menuMode: ManualMenuMode) => void;
 }) => {
+  const menuLinks = getMenuLinks(routeContext);
+  const menuClasses = [
+    "surface-nav-tile col-start-1 col-end-2 row-start-2 row-end-3",
+    "surface-nav-tile col-start-2 col-end-3 row-start-2 row-end-3",
+    "surface-nav-tile col-start-3 col-end-4 row-start-2 row-end-3",
+  ] as const;
+
   return (
     <>
+      {menuLinks.map((link, index) => (
+        <GridCardNavItem
+          className={menuClasses[index]}
+          href={link.href}
+          key={link.href}
+          variant="link"
+        >
+          <link.icon aria-hidden="true" className="h-7 w-7" />
+          <span>{link.label}</span>
+        </GridCardNavItem>
+      ))}
       <GridCardNavItem
-        className="surface-nav-tile col-start-1 col-end-2 row-start-1 row-end-2"
-        href={postsRoute()}
-        variant="link"
+        className="surface-nav-tile col-start-1 col-end-2 row-start-3 row-end-4"
+        onClick={openSearch}
+        variant="button"
       >
-        <Newspaper className="h-7 w-7" />
-        <span>Posts</span>
-      </GridCardNavItem>
-      <GridCardNavItem
-        className="surface-nav-tile col-start-2 col-end-3 row-start-1 row-end-2"
-        href={notesRoute()}
-        variant="link"
-      >
-        <FileText className="h-7 w-7" />
-        <span>Notes</span>
-      </GridCardNavItem>
-      <GridCardNavItem
-        className="surface-nav-tile col-start-3 col-end-4 row-start-1 row-end-2"
-        href={activitiesRoute()}
-        variant="link"
-      >
-        <Play className="h-7 w-7" />
-        <span>Activities</span>
-      </GridCardNavItem>
-      <GridCardNavItem
-        className="surface-nav-tile col-start-1 col-end-2 row-start-2 row-end-3"
-        href={lyovsonRoute("jess")}
-        variant="link"
-      >
-        <Flower className="h-7 w-7" />
-        <span>Jess</span>
-      </GridCardNavItem>
-      <GridCardNavItem
-        className="surface-nav-tile col-start-2 col-end-3 row-start-2 row-end-3"
-        href={projectsRoute()}
-        variant="link"
-      >
-        <BriefcaseBusiness className="h-7 w-7" />
-        <span>Projects</span>
-      </GridCardNavItem>
-      <GridCardNavItem
-        className="surface-nav-tile col-start-3 col-end-4 row-start-2 row-end-3"
-        href={lyovsonRoute("rafa")}
-        variant="link"
-      >
-        <Atom className="h-7 w-7" />
-        <span>Rafa</span>
+        <Search aria-hidden="true" className="h-7 w-7" />
+        <span>Search</span>
       </GridCardNavItem>
       <GridCardNavItem
         className="surface-nav-tile col-start-2 col-end-3 row-start-3 row-end-4"
         onClick={() => setMenuMode("hero")}
         variant="button"
       >
-        <X className="h-7 w-7" />
+        <X aria-hidden="true" className="h-7 w-7" />
         <span>Close</span>
       </GridCardNavItem>
+      <ThemeSwitcher />
     </>
   );
 };

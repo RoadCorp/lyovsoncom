@@ -14,6 +14,8 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
     "/admin/*",
     "/playground",
     "/search?*",
+    "/rafa/search?*",
+    "/jess/search?*",
     "/vercel-blob-client-upload-route",
     "/private/*",
     "/temp/*",

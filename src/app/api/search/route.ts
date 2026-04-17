@@ -1,6 +1,10 @@
 import type { NextRequest } from "next/server";
 import { after, NextResponse } from "next/server";
-import { runHybridSearch, SearchInputError } from "@/search/service";
+import {
+  hydrateSearchPreviewItems,
+  runHybridSearch,
+  SearchInputError,
+} from "@/search/service";
 import { getPayloadClient } from "@/utilities/payload-client";
 
 const SEARCH_FAILURE_STATUS = 500;
@@ -29,7 +33,15 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const limit = Number.parseInt(searchParams.get("limit") || "10", 10);
-    const response = await runHybridSearch(query, limit);
+    const scopeUsername = searchParams.get("scope");
+    const previewMode = searchParams.get("preview") === "true";
+    const response = await runHybridSearch(query, {
+      limit,
+      scopeUsername,
+    });
+    const previewItems = previewMode
+      ? await hydrateSearchPreviewItems(response.results)
+      : undefined;
 
     after(async () => {
       const payload = await getPayloadClient();
@@ -38,16 +50,24 @@ export async function GET(request: NextRequest) {
         durationMs: Date.now() - startedAt,
         queryLength: response.query.length,
         resultCount: response.count,
+        previewMode,
+        scopeUsername: scopeUsername || null,
       });
     });
 
-    return NextResponse.json(response, {
-      headers: {
-        "Cache-Control":
-          "public, max-age=300, s-maxage=600, stale-while-revalidate=1800", // Cache 5-10 min, stale up to 30 min
-        "Access-Control-Allow-Origin": "*",
+    return NextResponse.json(
+      {
+        ...response,
+        ...(previewItems ? { previewItems } : {}),
       },
-    });
+      {
+        headers: {
+          "Cache-Control":
+            "public, max-age=300, s-maxage=600, stale-while-revalidate=1800", // Cache 5-10 min, stale up to 30 min
+          "Access-Control-Allow-Origin": "*",
+        },
+      }
+    );
   } catch (error) {
     if (error instanceof SearchInputError) {
       if (error.status >= SEARCH_FAILURE_STATUS) {
@@ -60,6 +80,7 @@ export async function GET(request: NextRequest) {
           query: query ?? "",
           count: 0,
           message: error.message,
+          previewItems: [],
         },
         { status: error.status }
       );
@@ -74,6 +95,7 @@ export async function GET(request: NextRequest) {
         count: 0,
         message: "Search failed",
         error: error instanceof Error ? error.message : "Unknown error",
+        previewItems: [],
       },
       { status: 500 }
     );

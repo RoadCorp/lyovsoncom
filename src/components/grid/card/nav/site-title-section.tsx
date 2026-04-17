@@ -1,9 +1,9 @@
 import { AppLink } from "@/components/AppLink";
 import { Logo } from "@/components/Logo/Logo";
-import { homeRoute, transitionTypes } from "@/utilities/routes";
+import { transitionTypes } from "@/utilities/routes";
 import { GridCardSection } from "../section";
 
-export const SiteTitleSection = () => {
+export const SiteTitleSection = ({ href }: { href: string }) => {
   return (
     <GridCardSection
       className={
@@ -14,7 +14,7 @@ export const SiteTitleSection = () => {
         className={
           "ui-focus-ring relative flex h-full flex-col items-center justify-center transition-transform duration-300 hover:scale-[1.02]"
         }
-        href={homeRoute()}
+        href={href}
         pendingHintClassName="absolute top-4 right-4"
         prefetch={null}
         showPendingHint={true}
