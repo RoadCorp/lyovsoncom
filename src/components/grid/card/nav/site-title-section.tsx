@@ -17,6 +17,7 @@ export const SiteTitleSection = ({ href }: { href: string }) => {
         href={href}
         pendingHintClassName="absolute top-4 right-4"
         prefetch={null}
+        scroll={false}
         showPendingHint={true}
         transitionTypes={[transitionTypes.drillIn]}
       >

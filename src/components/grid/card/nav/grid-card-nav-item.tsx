@@ -43,6 +43,7 @@ export const GridCardNavItem = ({
           href={props.href}
           pendingHintClassName="absolute top-2 right-2"
           prefetch={null}
+          scroll={false}
           showPendingHint={true}
           transitionTypes={[transitionTypes.drillIn]}
         >
