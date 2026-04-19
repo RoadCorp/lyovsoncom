@@ -1,5 +1,6 @@
 import { sql } from "@payloadcms/db-vercel-postgres/drizzle";
 import type { Activity, Note, Post } from "@/payload-types";
+import { getActivityTypeLabel } from "@/utilities/activity-type";
 import {
   publicActivitiesWhere,
   publicNotesWhere,
@@ -23,15 +24,6 @@ import type {
   SearchResponse,
   SearchResult,
 } from "./types";
-
-const ACTIVITY_TYPE_LABELS = {
-  learn: "Learn",
-  listen: "Listened",
-  play: "Played",
-  read: "Read",
-  visit: "Visited",
-  watch: "Watched",
-} as const;
 
 const NOTE_PREVIEW_MAX_CHARS = 96;
 const SEARCH_FAILURE_STATUS = 500;
@@ -570,8 +562,7 @@ function getSearchPreviewItem(
   }
 
   const activityHref = activityRoute(item.data) || activitiesRoute();
-  const activityTypeLabel =
-    ACTIVITY_TYPE_LABELS[item.data.activityType] || item.data.activityType;
+  const activityTypeLabel = getActivityTypeLabel(item.data.activityType);
   const referenceTitle =
     typeof item.data.reference === "object" && item.data.reference?.title
       ? item.data.reference.title

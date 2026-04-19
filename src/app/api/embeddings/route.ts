@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import { getPayload } from "payload";
 import type { Activity, Note, Post, Project, Topic } from "@/payload-types";
 import { getActivityPath } from "@/utilities/activity-path";
+import { getActivityTypeLabel } from "@/utilities/activity-type";
 import { logApiTelemetry } from "@/utilities/api-telemetry";
 import { authorizeEmbeddingMutation } from "@/utilities/embedding-auth";
 import {
@@ -496,15 +497,8 @@ export async function GET(request: NextRequest) {
             ? activity.reference
             : null;
 
-        const activityTypeLabels: Record<string, string> = {
-          read: "Read",
-          watch: "Watched",
-          listen: "Listened",
-          play: "Played",
-        };
-
         const title = referenceObj?.title
-          ? `${activityTypeLabels[activity.activityType] || activity.activityType} ${referenceObj.title}`
+          ? `${getActivityTypeLabel(activity.activityType)} ${referenceObj.title}`
           : "Activity";
 
         embeddings.push({

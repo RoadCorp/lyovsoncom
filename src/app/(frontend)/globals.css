@@ -159,6 +159,7 @@
   --grid-gap: 1rem;
   --grid-card-1x1: var(--grid-unit);
   --grid-card-1x2: calc(var(--grid-unit) * 2 + var(--grid-gap));
+  --grid-card-1x3: calc(var(--grid-unit) * 3 + var(--grid-gap) * 2);
   --grid-card-2x1: calc(var(--grid-unit) * 2 + var(--grid-gap));
   --grid-card-2x2: calc(var(--grid-unit) * 2 + var(--grid-gap));
   --grid-card-size: var(--grid-card-1x1);

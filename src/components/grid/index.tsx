@@ -47,7 +47,14 @@ export const Grid = ({ children }: { children: ReactNode }) => {
 };
 
 export { GridCard, GridCardContent } from "./card";
-export { GridCardActivityFull, GridCardActivityReview } from "./card/activity";
+export {
+  ACTIVITIES_PREVIEW_PAGINATION_CLASS_NAME,
+  GridCardActivitiesPreview,
+  GridCardActivityFull,
+  GridCardActivityReview,
+  HOME_ACTIVITIES_PREVIEW_RAIL_CLASS_NAME,
+  LYOVSON_ACTIVITIES_PREVIEW_RAIL_CLASS_NAME,
+} from "./card/activity";
 export { GridCardEmptyState } from "./card/empty-state";
 export {
   GridCardHero,

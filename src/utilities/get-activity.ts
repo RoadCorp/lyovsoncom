@@ -1,7 +1,12 @@
 import { cacheLife, cacheTag } from "next/cache";
 import type { PaginatedDocs } from "payload";
 import type { Activity } from "@/payload-types";
-import { publicActivitiesWhere } from "@/utilities/content-queries";
+import { ACTIVITY_PREVIEW_LIMIT } from "@/utilities/activity-preview";
+import {
+  lyovsonActivitiesWhere,
+  publicActivitiesWhere,
+} from "@/utilities/content-queries";
+import { getLyovsonProfile } from "@/utilities/get-lyovson-profile";
 import { getPayloadClient } from "@/utilities/payload-client";
 import { getActivityDateSlug } from "@/utilities/routes";
 
@@ -93,6 +98,35 @@ export async function getLatestActivities(
     ...result,
     docs: result.docs as Activity[],
   };
+}
+
+export async function getLatestLyovsonActivities(
+  username: string,
+  limit = ACTIVITY_PREVIEW_LIMIT
+): Promise<Activity[]> {
+  "use cache";
+  cacheTag("activities");
+  cacheTag("lyovsons");
+  cacheTag(`lyovson-${username}`);
+  cacheTag(`lyovson-${username}-activities`);
+  cacheLife("activities");
+
+  const user = await getLyovsonProfile(username);
+  if (!user) {
+    return [];
+  }
+
+  const payload = await getPayloadClient();
+  const result = await payload.find({
+    collection: "activities",
+    depth: 2,
+    limit,
+    overrideAccess: true,
+    sort: "-finishedAt",
+    where: lyovsonActivitiesWhere(user.id),
+  });
+
+  return result.docs as Activity[];
 }
 
 export async function getPaginatedActivities(

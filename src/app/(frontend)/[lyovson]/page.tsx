@@ -1,9 +1,16 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
-import { GridCardEmptyState } from "@/components/grid";
+import {
+  ACTIVITIES_PREVIEW_PAGINATION_CLASS_NAME,
+  GridCardActivitiesPreview,
+  GridCardEmptyState,
+  LYOVSON_ACTIVITIES_PREVIEW_RAIL_CLASS_NAME,
+} from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
+import { ACTIVITY_PREVIEW_LIMIT } from "@/utilities/activity-preview";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
+import { getLatestLyovsonActivities } from "@/utilities/get-activity";
 import { getLyovsonFeed } from "@/utilities/get-lyovson-feed";
 import {
   absoluteUrl,
@@ -25,18 +32,22 @@ interface PageProps {
 export default async function Page({ params }: PageProps) {
   const { lyovson: username } = await params;
 
-  const response = await getLyovsonFeed({
-    username,
-    filter: "posts",
-    page: 1,
-    limit: LYOVSON_ITEMS_PER_PAGE,
-  });
+  const [response, activities] = await Promise.all([
+    getLyovsonFeed({
+      username,
+      filter: "posts",
+      page: 1,
+      limit: LYOVSON_ITEMS_PER_PAGE,
+    }),
+    getLatestLyovsonActivities(username, ACTIVITY_PREVIEW_LIMIT),
+  ]);
 
   if (!response) {
     return notFound();
   }
 
   const { items, totalItems, totalPages, user } = response;
+  const hasActivitiesPreview = activities.length > 0;
 
   const collectionPageSchema = generateCollectionPageSchema({
     name: `${user.name} - Posts`,
@@ -64,8 +75,17 @@ export default async function Page({ params }: PageProps) {
           title="No Posts Yet"
         />
       )}
+      <GridCardActivitiesPreview
+        activities={activities}
+        className={LYOVSON_ACTIVITIES_PREVIEW_RAIL_CLASS_NAME}
+      />
       {totalPages > 1 ? (
         <Pagination
+          className={
+            hasActivitiesPreview
+              ? ACTIVITIES_PREVIEW_PAGINATION_CLASS_NAME
+              : undefined
+          }
           getPageHref={(pageNumber) => lyovsonPageRoute(username, pageNumber)}
           page={1}
           totalPages={totalPages}

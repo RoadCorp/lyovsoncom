@@ -1,9 +1,16 @@
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next/types";
-import { GridCardEmptyState } from "@/components/grid";
+import {
+  ACTIVITIES_PREVIEW_PAGINATION_CLASS_NAME,
+  GridCardActivitiesPreview,
+  GridCardEmptyState,
+  LYOVSON_ACTIVITIES_PREVIEW_RAIL_CLASS_NAME,
+} from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
+import { ACTIVITY_PREVIEW_LIMIT } from "@/utilities/activity-preview";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
+import { getLatestLyovsonActivities } from "@/utilities/get-activity";
 import { getLyovsonFeed } from "@/utilities/get-lyovson-feed";
 import {
   absoluteUrl,
@@ -46,18 +53,22 @@ export default async function Page({ params: paramsPromise }: Args) {
     redirect(lyovsonRoute(username));
   }
 
-  const response = await getLyovsonFeed({
-    username,
-    filter: "posts",
-    page: sanitizedPageNumber,
-    limit: LYOVSON_ITEMS_PER_PAGE,
-  });
+  const [response, activities] = await Promise.all([
+    getLyovsonFeed({
+      username,
+      filter: "posts",
+      page: sanitizedPageNumber,
+      limit: LYOVSON_ITEMS_PER_PAGE,
+    }),
+    getLatestLyovsonActivities(username, ACTIVITY_PREVIEW_LIMIT),
+  ]);
 
   if (!response || sanitizedPageNumber > response.totalPages) {
     return notFound();
   }
 
   const { items, totalItems, totalPages, user } = response;
+  const hasActivitiesPreview = activities.length > 0;
 
   const collectionPageSchema = generateCollectionPageSchema({
     name: `${user.name} - Posts Page ${sanitizedPageNumber}`,
@@ -87,7 +98,16 @@ export default async function Page({ params: paramsPromise }: Args) {
           title="No Results"
         />
       )}
+      <GridCardActivitiesPreview
+        activities={activities}
+        className={LYOVSON_ACTIVITIES_PREVIEW_RAIL_CLASS_NAME}
+      />
       <Pagination
+        className={
+          hasActivitiesPreview
+            ? ACTIVITIES_PREVIEW_PAGINATION_CLASS_NAME
+            : undefined
+        }
         getPageHref={(pageNumberValue) =>
           lyovsonPageRoute(username, pageNumberValue)
         }

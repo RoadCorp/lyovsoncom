@@ -13,7 +13,6 @@ import {
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
-
 import {
   GridCard,
   GridCardActivityReview,
@@ -25,6 +24,7 @@ import RichText from "@/components/RichText";
 import { cn } from "@/lib/utils";
 import type { Activity } from "@/payload-types";
 import { getActivityDateSlug } from "@/utilities/activity-path";
+import { getActivityTypeLabel } from "@/utilities/activity-type";
 import { dedupeRelationItemsById } from "@/utilities/dedupeRelationItemsById";
 import { ensureStaticParams } from "@/utilities/ensureStaticParams";
 import {
@@ -41,22 +41,14 @@ interface Args {
   }>;
 }
 
-const activityTypeLabels: Record<string, string> = {
-  read: "Read",
-  watch: "Watched",
-  listen: "Listened",
-  play: "Played",
-  visit: "Visited",
-};
-
 function getActivityTitle(
   activity: Activity,
   referenceTitle: string | null
 ): string {
   if (referenceTitle) {
-    return `${activityTypeLabels[activity.activityType] || activity.activityType} ${referenceTitle}`;
+    return `${getActivityTypeLabel(activity.activityType)} ${referenceTitle}`;
   }
-  return activityTypeLabels[activity.activityType] || activity.activityType;
+  return getActivityTypeLabel(activity.activityType);
 }
 
 const referenceTypeIcons: Record<string, typeof Book> = {
@@ -145,8 +137,7 @@ export default async function ActivityPage({ params: paramsPromise }: Args) {
 
   // Get reference info for icon
   const referenceType = referenceObj?.type || "other";
-  const activityLabel =
-    activityTypeLabels[activity.activityType] || activity.activityType;
+  const activityLabel = getActivityTypeLabel(activity.activityType);
 
   const participants = getParticipants(activity);
   const finishDateParts = getFinishDateParts(activity);
@@ -319,7 +310,7 @@ export async function generateMetadata({
       : null;
 
   const title = referenceObj?.title
-    ? `${activityTypeLabels[activity.activityType] || activity.activityType} ${referenceObj.title}`
+    ? `${getActivityTypeLabel(activity.activityType)} ${referenceObj.title}`
     : "Activity";
 
   return {

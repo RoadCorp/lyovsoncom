@@ -9,15 +9,8 @@
  */
 
 import type { CollectionBeforeChangeHook, PayloadRequest } from "payload";
+import { getActivityTypeLabel } from "@/utilities/activity-type";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";
-
-const ACTIVITY_TYPE_LABELS: Record<string, string> = {
-  read: "Read",
-  watch: "Watched",
-  listen: "Listened",
-  play: "Played",
-  learn: "Learned",
-};
 
 async function getReferenceTitle(
   reference: unknown,
@@ -66,7 +59,7 @@ export const populateContentTextHook: CollectionBeforeChangeHook = async ({
 
   const referenceTitle = await getReferenceTitle(data.reference, req);
   if (referenceTitle) {
-    const label = ACTIVITY_TYPE_LABELS[data.activityType] || data.activityType;
+    const label = getActivityTypeLabel(data.activityType);
     parts.push(`${label} ${referenceTitle}`);
   }
 

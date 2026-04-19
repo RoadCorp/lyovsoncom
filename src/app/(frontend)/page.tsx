@@ -1,10 +1,17 @@
 import { cacheLife, cacheTag } from "next/cache";
 import type { Metadata } from "next/types";
 import { CollectionArchive } from "@/components/CollectionArchive";
+import {
+  ACTIVITIES_PREVIEW_PAGINATION_CLASS_NAME,
+  GridCardActivitiesPreview,
+  HOME_ACTIVITIES_PREVIEW_RAIL_CLASS_NAME,
+} from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
+import { ACTIVITY_PREVIEW_LIMIT } from "@/utilities/activity-preview";
 import { POSTS_PER_PAGE } from "@/utilities/archive";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
+import { getLatestActivities } from "@/utilities/get-activity";
 import { getLatestPosts } from "@/utilities/get-post";
 import { getServerSideURL } from "@/utilities/getURL";
 import {
@@ -21,8 +28,12 @@ export default async function Page() {
   cacheTag("posts");
   cacheLife("homepage");
 
-  const response = await getLatestPosts(POSTS_PER_PAGE);
-  const { docs, totalDocs, totalPages } = response;
+  const [postResponse, activityResponse] = await Promise.all([
+    getLatestPosts(POSTS_PER_PAGE),
+    getLatestActivities(ACTIVITY_PREVIEW_LIMIT),
+  ]);
+  const { docs, totalDocs, totalPages } = postResponse;
+  const hasActivitiesPreview = activityResponse.docs.length > 0;
 
   const collectionPageSchema = generateCollectionPageSchema({
     name: "Latest Posts",
@@ -40,8 +51,17 @@ export default async function Page() {
       <h1 className="sr-only">Lyóvson.com - Latest Posts</h1>
       <JsonLd data={collectionPageSchema} />
       <CollectionArchive posts={docs} />
+      <GridCardActivitiesPreview
+        activities={activityResponse.docs}
+        className={HOME_ACTIVITIES_PREVIEW_RAIL_CLASS_NAME}
+      />
       {totalPages > 1 ? (
         <Pagination
+          className={
+            hasActivitiesPreview
+              ? ACTIVITIES_PREVIEW_PAGINATION_CLASS_NAME
+              : undefined
+          }
           getPageHref={(pageNumber) => homepageRoute(pageNumber)}
           page={1}
           totalPages={totalPages}

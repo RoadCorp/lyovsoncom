@@ -1,25 +1,9 @@
-import type { LucideIcon } from "lucide-react";
-import {
-  Book,
-  Building2,
-  Calendar,
-  Film,
-  Gamepad2,
-  GraduationCap,
-  Link as LinkIcon,
-  Mic,
-  Music,
-  PenTool,
-  Trophy,
-  User,
-  Video,
-} from "lucide-react";
+import { Calendar, PenTool } from "lucide-react";
 import { ViewTransition } from "react";
 import { AppLink } from "@/components/AppLink";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { Media } from "@/components/Media";
-import type { Activity, Reference } from "@/payload-types";
-import { formatShortDate } from "@/utilities/date";
+import type { Activity } from "@/payload-types";
 import {
   activitiesRoute,
   activityRoute,
@@ -32,6 +16,14 @@ import {
   getActivityMediaTransitionName,
   getActivityTitleTransitionName,
 } from "@/utilities/view-transitions";
+import {
+  getActivityDateMeta,
+  getActivityReference,
+  getActivityReferenceImage,
+  getActivityTypeIcon,
+  getActivityTypeLabel,
+  UNKNOWN_ACTIVITY_REFERENCE_TITLE,
+} from "./shared";
 
 export interface GridCardActivityProps {
   activity: Activity;
@@ -41,52 +33,11 @@ export interface GridCardActivityProps {
 }
 
 const MAX_PARTICIPANT_STAGGER = 6;
-const UNKNOWN_REFERENCE_TITLE = "Unknown";
-
-const activityTypeLabels: Record<Activity["activityType"], string> = {
-  read: "Read",
-  watch: "Watched",
-  listen: "Listened",
-  play: "Played",
-  visit: "Visited",
-  learn: "Learned",
-};
-
-const referenceTypeIcons: Partial<Record<Reference["type"], LucideIcon>> = {
-  book: Book,
-  movie: Film,
-  tvShow: Film,
-  videoGame: Gamepad2,
-  music: Music,
-  podcast: Mic,
-  series: Book,
-  person: User,
-  company: Building2,
-  video: Video,
-  match: Trophy,
-  course: GraduationCap,
-};
 
 interface ParticipantLinkData {
   id: number | string;
   name: string | null | undefined;
   username: string;
-}
-
-function getReferenceObject(activity: Activity): Reference | null {
-  return typeof activity.reference === "object" && activity.reference !== null
-    ? activity.reference
-    : null;
-}
-
-function getReferenceImage(reference: Reference | null) {
-  return reference?.image && typeof reference.image === "object"
-    ? reference.image
-    : null;
-}
-
-function getActivityIcon(type: Reference["type"]): LucideIcon {
-  return referenceTypeIcons[type] ?? LinkIcon;
 }
 
 function getUniqueParticipants(activity: Activity): ParticipantLinkData[] {
@@ -141,12 +92,13 @@ export const GridCardActivityFull = ({
 
   const dateSlug = getActivityDateSlug(activity);
   const activityHref = activityRoute(activity) || activitiesRoute();
-  const referenceObj = getReferenceObject(activity);
-  const referenceTitle = referenceObj?.title ?? UNKNOWN_REFERENCE_TITLE;
-  const referenceType = referenceObj?.type ?? "other";
-  const referenceImage = getReferenceImage(referenceObj);
-  const activityTypeLabel = activityTypeLabels[activityType] ?? activityType;
-  const ActivityIcon = getActivityIcon(referenceType);
+  const referenceObj = getActivityReference(activity);
+  const referenceTitle =
+    referenceObj?.title ?? UNKNOWN_ACTIVITY_REFERENCE_TITLE;
+  const referenceImage = getActivityReferenceImage(referenceObj);
+  const { dateLabel, dateValue } = getActivityDateMeta(activity);
+  const activityTypeLabel = getActivityTypeLabel(activityType);
+  const ActivityIcon = getActivityTypeIcon(activityType);
   const participants = getUniqueParticipants(activity);
 
   const iconClassName = "tone-heading ui-group-hover-dim h-5 w-5";
@@ -218,18 +170,9 @@ export const GridCardActivityFull = ({
 
         <div className="tone-muted flex items-center gap-2 text-xs">
           <Calendar aria-hidden="true" className="h-5 w-5" />
-          <time
-            dateTime={
-              activity.finishedAt ||
-              activity.startedAt ||
-              activity.publishedAt ||
-              undefined
-            }
-          >
-            {formatShortDate(
-              activity.finishedAt || activity.startedAt || activity.publishedAt
-            )}
-          </time>
+          {dateLabel ? (
+            <time dateTime={dateValue ?? undefined}>{dateLabel}</time>
+          ) : null}
         </div>
       </GridCardSection>
 

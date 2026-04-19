@@ -1,6 +1,7 @@
 import { eq } from "@payloadcms/db-vercel-postgres/drizzle";
 import type { PayloadRequest } from "payload";
 import type { Activity, Note, Post } from "@/payload-types";
+import { getActivityTypeLabel } from "@/utilities/activity-type";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";
 import {
   createTextHash,
@@ -259,15 +260,6 @@ export async function generateEmbeddingForNote(
   }
 }
 
-const ACTIVITY_TYPE_LABELS: Record<string, string> = {
-  read: "Read",
-  watch: "Watched",
-  listen: "Listened",
-  play: "Played",
-  visit: "Visited",
-  learn: "Learned",
-};
-
 const REFERENCE_TYPE_LABELS: Record<string, string> = {
   book: "Book",
   movie: "Movie",
@@ -289,8 +281,7 @@ export function buildActivityEmbeddingText(activity: Activity): string {
       ? activity.reference
       : null;
 
-  const activityLabel =
-    ACTIVITY_TYPE_LABELS[activity.activityType] || activity.activityType;
+  const activityLabel = getActivityTypeLabel(activity.activityType);
   const referenceType = referenceObj?.type
     ? REFERENCE_TYPE_LABELS[referenceObj.type] || referenceObj.type
     : null;
