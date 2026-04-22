@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
 
-import { getServerSideURL } from "./getURL";
+import { getDefaultOgImageUrl, siteConfig } from "./site-config";
 
 const defaultOpenGraph: Metadata["openGraph"] = {
   type: "website",
-  description: "The official website of Rafa and Jess Lyóvson.",
+  description: siteConfig.defaultDescription,
   images: [
     {
-      url: `${getServerSideURL()}/og-image.png`,
+      url: getDefaultOgImageUrl(),
     },
   ],
-  siteName: "Lyovson.com",
-  title: "Lyovson.com",
+  siteName: siteConfig.name,
+  title: siteConfig.name,
 };
 
 export const mergeOpenGraph = (

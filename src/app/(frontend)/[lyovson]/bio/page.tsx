@@ -7,10 +7,13 @@ import {
 } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import RichText from "@/components/RichText";
-import type { Media } from "@/payload-types";
-import { generatePersonSchema } from "@/utilities/generate-json-ld";
+import {
+  generatePersonSchema,
+  generateProfilePageSchema,
+} from "@/utilities/generate-json-ld";
 import { getLyovsonProfile } from "@/utilities/get-lyovson-profile";
-import { getServerSideURL } from "@/utilities/getURL";
+import { getLyovsonPersonInput } from "@/utilities/lyovson-person";
+import { absoluteUrl } from "@/utilities/routes";
 import {
   buildLyovsonMetadata,
   buildLyovsonNotFoundMetadata,
@@ -28,34 +31,22 @@ export default async function Page({ params }: PageProps) {
     return notFound();
   }
 
-  const avatarMedia: Media | null =
-    user.avatar && typeof user.avatar === "object"
-      ? (user.avatar as Media)
-      : null;
-
-  const avatarUrl = avatarMedia?.url
-    ? `${getServerSideURL()}${avatarMedia.url}`
-    : undefined;
-
-  const personSchema = generatePersonSchema({
-    name: user.name,
-    username: user.username,
-    bio: user.quote || undefined,
-    avatarUrl,
-    socialLinks: {
-      twitter: user.socialLinks?.find((social) => social.platform === "x")?.url,
-      github: user.socialLinks?.find((social) => social.platform === "github")
-        ?.url,
-      linkedin: user.socialLinks?.find(
-        (social) => social.platform === "linkedin"
-      )?.url,
-    },
-  });
+  const personInput = getLyovsonPersonInput(user);
+  const personSchema = personInput ? generatePersonSchema(personInput) : null;
+  const profilePageSchema = personSchema
+    ? generateProfilePageSchema({
+        person: personSchema,
+        description: user.quote || undefined,
+        url: absoluteUrl(`/${user.username}/bio`),
+      })
+    : null;
 
   return (
     <>
       <h1 className="sr-only">{user.name} bio</h1>
-      <JsonLd data={personSchema} />
+      {personSchema && profilePageSchema ? (
+        <JsonLd data={[personSchema, profilePageSchema]} />
+      ) : null}
 
       {user.bio ? (
         <GridCard

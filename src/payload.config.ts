@@ -48,7 +48,7 @@ export default buildConfig({
     },
     user: Lyovsons.slug,
     meta: {
-      titleSuffix: " — Lyovson.com",
+      titleSuffix: " — Lyóvson.com",
       icons: [
         { rel: "icon", type: "image/x-icon", url: "/favicon.ico" },
         {

@@ -1,4 +1,3 @@
-import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { ActivitiesArchive } from "@/components/ActivitiesArchive";
@@ -7,21 +6,15 @@ import { Pagination } from "@/components/Pagination";
 import { ACTIVITIES_PER_PAGE } from "@/utilities/archive";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getLatestActivities } from "@/utilities/get-activity";
-import { getServerSideURL } from "@/utilities/getURL";
 import {
   absoluteUrl,
   activitiesPageRoute,
   activitiesRoute,
   activityUrl,
 } from "@/utilities/routes";
+import { buildSeoMetadata } from "@/utilities/seo-metadata";
 
 export default async function Page() {
-  "use cache";
-
-  cacheTag("activities");
-  cacheTag("activities-page");
-  cacheLife("activities");
-
   const response = await getLatestActivities(ACTIVITIES_PER_PAGE);
 
   if (!response) {
@@ -61,25 +54,10 @@ export default async function Page() {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL(getServerSideURL()),
-  title: "All Activities & Consumption | Lyóvson.com",
-  description:
-    "Browse reading, watching, listening, and playing activities logged by the Lyóvson family.",
-  alternates: {
-    canonical: activitiesRoute(),
-  },
-  openGraph: {
-    title: "All Activities & Consumption | Lyóvson.com",
+  ...buildSeoMetadata({
+    title: "All Activities & Consumption",
     description:
       "Browse reading, watching, listening, and playing activities logged by the Lyóvson family.",
-    url: activitiesRoute(),
-    siteName: "Lyóvson.com",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "All Activities & Consumption | Lyóvson.com",
-    description:
-      "Browse reading, watching, listening, and playing activities logged by the Lyóvson family.",
-  },
+    canonicalPath: activitiesRoute(),
+  }),
 };

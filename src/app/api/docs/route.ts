@@ -2,6 +2,7 @@ import configPromise from "@payload-config";
 import type { NextRequest } from "next/server";
 import { getPayload } from "payload";
 import { logApiTelemetry } from "@/utilities/api-telemetry";
+import { getCanonicalURL } from "@/utilities/getURL";
 
 export async function GET(_request: NextRequest) {
   const startedAt = Date.now();
@@ -11,8 +12,7 @@ export async function GET(_request: NextRequest) {
   // Additionally, cached functions cannot accept non-serializable parameters like Payload instances
   // Using traditional HTTP caching via Cache-Control headers instead (line 365)
 
-  const SITE_URL =
-    process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
+  const SITE_URL = getCanonicalURL();
 
   try {
     const payload = await getPayload({ config: configPromise });

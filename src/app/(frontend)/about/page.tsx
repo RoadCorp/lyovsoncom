@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { PlaceholderPageCard } from "@/components/PlaceholderPageCard";
-import { getServerSideURL } from "@/utilities/getURL";
+import { buildSeoMetadata } from "@/utilities/seo-metadata";
 
 export default function AboutPage() {
   return (
@@ -14,10 +14,9 @@ export default function AboutPage() {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL(getServerSideURL()),
-  title: "About | Lyóvson.com",
-  description: "About Lyóvson.com and the shared family site it is becoming.",
-  alternates: {
-    canonical: "/about",
-  },
+  ...buildSeoMetadata({
+    title: "About",
+    description: "About Lyóvson.com and the shared family site it is becoming.",
+    canonicalPath: "/about",
+  }),
 };

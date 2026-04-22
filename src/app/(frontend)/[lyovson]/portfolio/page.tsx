@@ -5,7 +5,7 @@ import { GridCardProject } from "@/components/grid/card/project";
 import { JsonLd } from "@/components/JsonLd";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getLyovsonPortfolioProjects } from "@/utilities/get-lyovson-feed";
-import { getServerSideURL } from "@/utilities/getURL";
+import { absoluteUrl } from "@/utilities/routes";
 import {
   buildLyovsonMetadata,
   buildLyovsonNotFoundMetadata,
@@ -28,12 +28,12 @@ export default async function Page({ params }: PageProps) {
   const collectionPageSchema = generateCollectionPageSchema({
     name: `${user.name} - Portfolio`,
     description: `Project portfolio inferred from published work by ${user.name}.`,
-    url: `${getServerSideURL()}/${username}/portfolio`,
+    url: absoluteUrl(`/${username}/portfolio`),
     itemCount: projects.length,
     items: projects
       .filter((project) => project.slug)
       .map((project) => ({
-        url: `${getServerSideURL()}/projects/${project.slug}`,
+        url: absoluteUrl(`/projects/${project.slug}`),
       })),
   });
 

@@ -3,6 +3,7 @@ import type { CollectionConfig } from "payload";
 
 import { anyone } from "@/access/anyone";
 import { authenticated } from "@/access/authenticated";
+import { seoField } from "@/fields/seo";
 import { slugField } from "@/fields/slug";
 
 export const Topics: CollectionConfig = {
@@ -36,6 +37,7 @@ export const Topics: CollectionConfig = {
           "Hex color code (e.g. #FF0000). Leave empty to inherit from parent.",
       },
     },
+    seoField,
     ...slugField("name"),
   ],
   hooks: {

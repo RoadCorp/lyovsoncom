@@ -12,6 +12,7 @@ import {
 } from "@/utilities/archive";
 import { getLyovsonFeedCounts } from "@/utilities/get-lyovson-feed";
 import { getSitemapData } from "@/utilities/get-sitemap-data";
+import { getCanonicalURL } from "@/utilities/getURL";
 
 function getSlugFromRelation(
   relation: unknown,
@@ -182,8 +183,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   cacheTag("lyovsons");
   cacheLife("sitemap");
 
-  const SITE_URL =
-    process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
+  const SITE_URL = getCanonicalURL();
   const now = new Date();
 
   const { posts, projects, topics, notes, activities, lyovsons } =
@@ -294,18 +294,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.8,
-    },
-    {
-      url: `${SITE_URL}/.well-known/ai-resources`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${SITE_URL}/llms.txt`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.9,
     },
     // Note: API endpoints removed from sitemap to prevent crawler-induced database wake-ups
     // API docs are still accessible but not indexed as sitemap entries

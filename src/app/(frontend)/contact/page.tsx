@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { PlaceholderPageCard } from "@/components/PlaceholderPageCard";
-import { getServerSideURL } from "@/utilities/getURL";
+import { buildSeoMetadata } from "@/utilities/seo-metadata";
 
 export default function ContactPage() {
   return (
@@ -14,10 +14,9 @@ export default function ContactPage() {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL(getServerSideURL()),
-  title: "Contact | Lyóvson.com",
-  description: "Contact Lyóvson.com.",
-  alternates: {
-    canonical: "/contact",
-  },
+  ...buildSeoMetadata({
+    title: "Contact",
+    description: "Contact Lyóvson.com.",
+    canonicalPath: "/contact",
+  }),
 };

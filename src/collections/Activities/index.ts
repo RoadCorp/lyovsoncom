@@ -3,6 +3,7 @@ import type { CollectionConfig } from "payload";
 import { authenticated } from "@/access/authenticated";
 import { authenticatedOrPublishedPublic } from "@/access/authenticatedOrPublishedPublic";
 import { richEditorConfig } from "@/fields/lexical-configs";
+import { seoField } from "@/fields/seo";
 import { slugField } from "@/fields/slug";
 import { formatSlug } from "@/fields/slug/formatSlug";
 import { markActivityEmbeddingStaleHook } from "@/utilities/mark-embedding-stale";
@@ -121,6 +122,7 @@ export const Activities: CollectionConfig = {
         description: "Who can see this activity?",
       },
     },
+    seoField,
     {
       type: "tabs",
       tabs: [

@@ -1,18 +1,11 @@
 import type { Metadata } from "next";
-import { getServerSideURL } from "@/utilities/getURL";
+import { buildNotFoundMetadata } from "@/utilities/seo-metadata";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(getServerSideURL()),
-  title: "404: This page could not be found.",
-  description: "The requested page could not be found.",
-  robots: {
-    index: false,
-    follow: false,
-    noarchive: true,
-  },
-  alternates: {
-    canonical: "/",
-  },
+  ...buildNotFoundMetadata({
+    title: "404: This page could not be found.",
+    description: "The requested page could not be found.",
+  }),
 };
 
 export default function GlobalNotFound() {

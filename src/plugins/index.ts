@@ -18,11 +18,14 @@ import { beforeSyncWithSearch } from "@/search/beforeSync";
 import { searchFields } from "@/search/fieldOverrides";
 import { getServerSideURL } from "@/utilities/getURL";
 import { postUrl } from "@/utilities/routes";
+import { getSocialTitle, siteConfig } from "@/utilities/site-config";
 
 const generateTitle: GenerateTitle<Post> = ({ doc }) => {
-  return doc?.title && typeof doc?.project === "object"
-    ? `${doc.title} | ${doc?.project?.name} | Lyovson.com`
-    : "Lyovson.com";
+  if (doc?.title && typeof doc?.project === "object" && doc.project?.name) {
+    return getSocialTitle(`${doc.title} | ${doc.project.name}`);
+  }
+
+  return siteConfig.name;
 };
 
 const generateURL: GenerateURL<Post> = ({ doc }) => {

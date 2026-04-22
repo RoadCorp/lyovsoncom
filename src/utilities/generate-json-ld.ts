@@ -16,9 +16,16 @@ import type {
   CollectionPageSchema,
   OrganizationSchema,
   PersonSchema,
+  ProfilePageSchema,
+  WebSiteSchema,
 } from "@/types/schema";
-import { getServerSideURL } from "./getURL";
+import { getCanonicalURL } from "./getURL";
 import { absoluteUrl, lyovsonRoute } from "./routes";
+import {
+  getSiteEntityAuthorData,
+  getSiteLogoUrl,
+  siteConfig,
+} from "./site-config";
 
 const DEFAULT_IMAGE_HEIGHT = 630;
 const DEFAULT_IMAGE_WIDTH = 1200;
@@ -30,24 +37,53 @@ const DEFAULT_IMAGE_WIDTH = 1200;
 const organizationData: OrganizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "Lyovson.com",
-  url: getServerSideURL(),
+  name: siteConfig.name,
+  url: getCanonicalURL(),
   logo: {
     "@type": "ImageObject",
-    url: absoluteUrl("/logo-black.webp"),
-    width: 600,
-    height: 60,
+    url: getSiteLogoUrl(),
+    width: 512,
+    height: 512,
   },
-  sameAs: ["https://x.com/rafalyovson", "https://github.com/rafalyovson"],
+  sameAs: getSiteEntityAuthorData().flatMap((author) => author.sameAs),
   description:
     "Website and blog of Rafa and Jess Lyóvson featuring writing, projects, and research.",
+};
+
+const websiteData: WebSiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: siteConfig.name,
+  alternateName: [...siteConfig.alternateNames],
+  url: getCanonicalURL(),
+  description: organizationData.description,
+  inLanguage: "en-US",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: `${getCanonicalURL()}/search?q={search_term_string}`,
+    "query-input": "required name=search_term_string",
+  },
+  publisher: organizationData,
+  author: getSiteEntityAuthorData().map((author) =>
+    generatePersonSchema({
+      name: author.name,
+      username: author.username,
+      sameAs: author.sameAs,
+    })
+  ),
 };
 
 /**
  * Parameters for generating an Article schema
  */
 interface ArticleDataParams {
-  authors?: Array<{ name: string; username: string }>;
+  authors?: Array<{
+    avatarUrl?: string;
+    bio?: string;
+    name: string;
+    sameAs?: string[];
+    username: string;
+  }>;
   description?: string;
   imageHeight?: number;
   imageUrl?: string;
@@ -103,17 +139,20 @@ export function generateArticleSchema(data: ArticleDataParams): ArticleSchema {
   const authorSchemas =
     data.authors && data.authors.length > 0
       ? data.authors.map((author) => ({
-          "@context": "https://schema.org" as const,
-          "@type": "Person" as const,
-          name: author.name,
-          url: absoluteUrl(lyovsonRoute(author.username)),
+          ...generatePersonSchema({
+            name: author.name,
+            username: author.username,
+            avatarUrl: author.avatarUrl,
+            bio: author.bio,
+            sameAs: author.sameAs,
+          }),
         }))
       : [
           {
             "@context": "https://schema.org" as const,
             "@type": "Person" as const,
-            name: "Lyovson Team",
-            url: getServerSideURL(),
+            name: "Lyóvson Team",
+            url: getCanonicalURL(),
           },
         ];
 
@@ -147,11 +186,7 @@ interface PersonDataParams {
   expertise?: string[];
   jobTitle?: string;
   name: string;
-  socialLinks?: {
-    twitter?: string;
-    github?: string;
-    linkedin?: string;
-  };
+  sameAs?: string[];
   username: string;
 }
 
@@ -182,17 +217,6 @@ interface PersonDataParams {
  * ```
  */
 export function generatePersonSchema(data: PersonDataParams): PersonSchema {
-  const sameAsLinks: string[] = [];
-  if (data.socialLinks?.twitter) {
-    sameAsLinks.push(data.socialLinks.twitter);
-  }
-  if (data.socialLinks?.github) {
-    sameAsLinks.push(data.socialLinks.github);
-  }
-  if (data.socialLinks?.linkedin) {
-    sameAsLinks.push(data.socialLinks.linkedin);
-  }
-
   return {
     "@context": "https://schema.org",
     "@type": "Person",
@@ -201,8 +225,28 @@ export function generatePersonSchema(data: PersonDataParams): PersonSchema {
     image: data.avatarUrl,
     jobTitle: data.jobTitle,
     description: data.bio,
-    sameAs: sameAsLinks.length > 0 ? sameAsLinks : undefined,
+    sameAs: data.sameAs?.length ? data.sameAs : undefined,
     knowsAbout: data.expertise,
+  };
+}
+
+export function generateProfilePageSchema({
+  description,
+  person,
+  url,
+}: {
+  description?: string;
+  person: PersonSchema;
+  url: string;
+}): ProfilePageSchema {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    name: person.name,
+    description,
+    url,
+    mainEntity: person,
+    inLanguage: "en-US",
   };
 }
 
@@ -325,4 +369,8 @@ export function generateCollectionPageSchema(
  */
 export function getOrganizationSchema(): OrganizationSchema {
   return organizationData;
+}
+
+export function getSiteEntitySchemas(): [WebSiteSchema, OrganizationSchema] {
+  return [websiteData, organizationData];
 }

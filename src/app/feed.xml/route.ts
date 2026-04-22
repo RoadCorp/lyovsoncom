@@ -4,14 +4,14 @@ import type { NextRequest } from "next/server";
 import { getPayload } from "payload";
 import type { Project } from "@/payload-types";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";
+import { getCanonicalURL } from "@/utilities/getURL";
 
 // Note: Removed force-dynamic to allow Next.js ISR caching
 // With weekly publishing, feeds are regenerated only when content changes via revalidateTag()
 // This prevents RSS readers from waking the database on every poll
 
 export async function GET(_request: NextRequest) {
-  const SITE_URL =
-    process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
+  const SITE_URL = getCanonicalURL();
 
   try {
     const payload = await getPayload({ config: configPromise });

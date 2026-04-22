@@ -1,7 +1,7 @@
 import { withPayload } from "@payloadcms/next/withPayload";
 import type { NextConfig } from "next";
-
 import redirects from "./redirects.js";
+import { getRuntimeSiteOrigin } from "./src/utilities/site-config";
 
 // Webpack optimization regexes
 const TAILWIND_REGEX = /[\\/]node_modules[\\/]tailwindcss[\\/]/;
@@ -35,9 +35,7 @@ const IMAGE_SIZES: number[] = [
   1200,
 ];
 
-const NEXT_PUBLIC_SERVER_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
-  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-  : process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000";
+const NEXT_PUBLIC_SERVER_URL = getRuntimeSiteOrigin();
 
 const IS_VERCEL_DEPLOYMENT =
   process.env.VERCEL === "1" ||

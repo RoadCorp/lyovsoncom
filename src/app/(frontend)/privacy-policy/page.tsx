@@ -1,15 +1,9 @@
 import type { Metadata } from "next";
-import { cacheLife, cacheTag } from "next/cache";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { cn } from "@/lib/utils";
-import { getServerSideURL } from "@/utilities/getURL";
+import { buildSeoMetadata } from "@/utilities/seo-metadata";
 
-export default async function PrivacyPolicy() {
-  "use cache";
-  await Promise.resolve();
-  cacheTag("privacy-policy");
-  cacheLife("static"); // Static content changes very rarely
-
+export default function PrivacyPolicy() {
   return (
     <GridCard
       className={cn(
@@ -269,43 +263,29 @@ export default async function PrivacyPolicy() {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL(getServerSideURL()),
-  title: "Privacy Policy | Lyovson.com",
-  description:
-    "Privacy Policy for Lyovson.com - Learn how we collect, use, and protect your personal information. GDPR and CCPA compliant.",
-  keywords: [
-    "privacy policy",
-    "data protection",
-    "GDPR",
-    "CCPA",
-    "personal information",
-    "cookies",
-    "terms",
-  ],
-  alternates: {
-    canonical: "/privacy-policy",
-  },
-  openGraph: {
-    title: "Privacy Policy - Lyovson.com",
+  ...buildSeoMetadata({
+    title: "Privacy Policy",
     description:
-      "Privacy Policy for Lyovson.com - Learn how we collect, use, and protect your personal information.",
-    type: "website",
-    url: "/privacy-policy",
-  },
-  twitter: {
-    card: "summary",
-    title: "Privacy Policy - Lyovson.com",
-    description:
-      "Privacy Policy for Lyovson.com - Data protection and privacy information.",
-    site: "@lyovson",
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-  other: {
-    "document:type": "legal",
-    "document:category": "privacy-policy",
-    "document:last-updated": "2024-03-19",
-  },
+      "Privacy Policy for Lyovson.com - Learn how we collect, use, and protect your personal information. GDPR and CCPA compliant.",
+    canonicalPath: "/privacy-policy",
+    keywords: [
+      "privacy policy",
+      "data protection",
+      "GDPR",
+      "CCPA",
+      "personal information",
+      "cookies",
+      "terms",
+    ],
+    twitterCard: "summary",
+    robots: {
+      index: true,
+      follow: true,
+    },
+    other: {
+      "document:type": "legal",
+      "document:category": "privacy-policy",
+      "document:last-updated": "2024-03-19",
+    },
+  }),
 };

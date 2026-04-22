@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { cacheLife } from "next/cache";
 import { GridCard, GridCardSection } from "@/components/grid";
-import { getServerSideURL } from "@/utilities/getURL";
+import { getCanonicalURL } from "@/utilities/getURL";
+import { buildSeoMetadata } from "@/utilities/seo-metadata";
 
 const DOCS_CARD_CLASS_NAME =
   "aspect-auto h-auto g2:col-start-2 g2:col-end-3 g3:col-start-2 g3:col-end-4 g3:w-[var(--grid-card-2x1)]";
@@ -28,57 +29,31 @@ async function getLastUpdatedLabel() {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL(getServerSideURL()),
-  title: "AI & Bot Access Documentation | Lyóvson.com",
-  description:
-    "Comprehensive guide for AI systems, bots, and crawlers to access and consume content from Lyóvson.com. Includes API endpoints, feeds, and best practices.",
-  keywords: [
-    "AI access",
-    "bot documentation",
-    "API",
-    "RSS feeds",
-    "GraphQL",
-    "crawler friendly",
-    "machine readable",
-  ],
-  alternates: {
-    canonical: "/ai-docs",
-  },
-  openGraph: {
-    siteName: "Lyóvson.com",
+  ...buildSeoMetadata({
     title: "AI & Bot Access Documentation",
     description:
-      "Comprehensive guide for AI systems and bots to access content from Lyóvson.com",
-    type: "website",
-    url: "/ai-docs",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "AI & Bot Access Documentation - Lyóvson.com",
-      },
+      "Comprehensive guide for AI systems, bots, and crawlers to access and consume content from Lyóvson.com. Includes API endpoints, feeds, and best practices.",
+    canonicalPath: "/ai-docs",
+    keywords: [
+      "AI access",
+      "bot documentation",
+      "API",
+      "RSS feeds",
+      "GraphQL",
+      "crawler friendly",
+      "machine readable",
     ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "AI & Bot Access Documentation",
-    description: "Guide for AI systems to access Lyóvson.com content",
-    site: "@lyovson",
-    creator: "@lyovson",
-    images: [
-      {
-        url: "/og-image.png",
-        alt: "AI & Bot Access Documentation - Lyóvson.com",
-        width: 1200,
-        height: 630,
-      },
-    ],
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
+    image: {
+      url: "/og-image.png",
+      width: 1200,
+      height: 630,
+      alt: "AI & Bot Access Documentation",
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+  }),
 };
 
 function CodeBlock({ children, title }: { children: string; title?: string }) {
@@ -112,7 +87,7 @@ function ExternalLink({
 }
 
 export default async function AIDocsPage() {
-  const SITE_URL = getServerSideURL();
+  const SITE_URL = getCanonicalURL();
   const lastUpdated = await getLastUpdatedLabel();
 
   return (

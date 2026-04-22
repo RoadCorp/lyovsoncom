@@ -20,7 +20,6 @@ import { ensureStaticParams } from "@/utilities/ensureStaticParams";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getLatestActivities } from "@/utilities/get-activity";
 import { getPaginatedPosts, getPostCount } from "@/utilities/get-post";
-import { getServerSideURL } from "@/utilities/getURL";
 import {
   getPaginatedArchivePageState,
   isPaginatedArchivePageOutOfRange,
@@ -31,6 +30,10 @@ import {
   homeRoute,
   postUrl,
 } from "@/utilities/routes";
+import {
+  buildNotFoundMetadata,
+  buildSeoMetadata,
+} from "@/utilities/seo-metadata";
 
 interface Args {
   params: Promise<{
@@ -121,17 +124,13 @@ export async function generateMetadata({
   const sanitizedPageNumber = parsePageNumber(pageNumber);
 
   if (sanitizedPageNumber == null || sanitizedPageNumber < 2) {
-    return {
-      title: "Not Found | Lyovson.com",
-      description: "The requested page could not be found",
-    };
+    return buildNotFoundMetadata();
   }
 
-  const title = `Latest Posts - Page ${sanitizedPageNumber} | Lyóvson.com`;
+  const title = `Latest Posts - Page ${sanitizedPageNumber}`;
   const description = `Latest posts archive page ${sanitizedPageNumber} from Lyovson.com.`;
 
-  return {
-    metadataBase: new URL(getServerSideURL()),
+  return buildSeoMetadata({
     title,
     description,
     keywords: [
@@ -148,43 +147,17 @@ export async function generateMetadata({
       "technology",
       "blog",
     ],
-    alternates: {
-      canonical: homepageRoute(sanitizedPageNumber),
-    },
-    openGraph: {
-      siteName: "Lyóvson.com",
-      title,
-      description,
-      type: "website",
-      url: homepageRoute(sanitizedPageNumber),
-      images: [
-        {
-          url: "/og-image.png",
-          width: 1200,
-          height: 630,
-          alt: "Latest Posts | Lyóvson.com",
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      creator: "@lyovson",
-      site: "@lyovson",
-      images: [
-        {
-          url: "/og-image.png",
-          alt: "Latest Posts | Lyóvson.com",
-          width: 1200,
-          height: 630,
-        },
-      ],
+    canonicalPath: homepageRoute(sanitizedPageNumber),
+    image: {
+      url: "/og-image.png",
+      width: 1200,
+      height: 630,
+      alt: "Latest Posts",
     },
     robots: {
       index: sanitizedPageNumber <= MAX_INDEXED_PAGE,
       follow: true,
       noarchive: sanitizedPageNumber > 1,
     },
-  };
+  });
 }

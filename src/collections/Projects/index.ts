@@ -3,6 +3,7 @@ import type { CollectionConfig } from "payload";
 
 import { anyone } from "@/access/anyone";
 import { authenticated } from "@/access/authenticated";
+import { seoField } from "@/fields/seo";
 import { slugField } from "@/fields/slug";
 
 export const Projects: CollectionConfig = {
@@ -52,6 +53,7 @@ export const Projects: CollectionConfig = {
         description: "List of contacts associated with this project.",
       },
     },
+    seoField,
     ...slugField("name"),
   ],
   hooks: {

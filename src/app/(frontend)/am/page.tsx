@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { PlaceholderPageCard } from "@/components/PlaceholderPageCard";
-import { getServerSideURL } from "@/utilities/getURL";
+import { buildSeoMetadata } from "@/utilities/seo-metadata";
 
 export default function AmPage() {
   return (
@@ -14,10 +14,9 @@ export default function AmPage() {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL(getServerSideURL()),
-  title: "AM | Lyóvson.com",
-  description: "Future Armenian articles section on Lyóvson.com.",
-  alternates: {
-    canonical: "/am",
-  },
+  ...buildSeoMetadata({
+    title: "AM",
+    description: "Future Armenian articles section on Lyóvson.com.",
+    canonicalPath: "/am",
+  }),
 };

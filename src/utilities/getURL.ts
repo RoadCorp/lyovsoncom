@@ -1,17 +1,16 @@
 import canUseDOM from "./canUseDOM";
+import { getCanonicalSiteOrigin, getRuntimeSiteOrigin } from "./site-config";
 
 export const getServerSideURL = () => {
-  let url = process.env.NEXT_PUBLIC_SERVER_URL;
+  return getRuntimeSiteOrigin();
+};
 
-  if (!url && process.env.VERCEL_PROJECT_PRODUCTION_URL) {
-    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+export const getCanonicalURL = (path?: string) => {
+  if (!path) {
+    return getCanonicalSiteOrigin();
   }
 
-  if (!url) {
-    url = "http://localhost:3000";
-  }
-
-  return url;
+  return new URL(path, getCanonicalSiteOrigin()).toString();
 };
 
 export const getClientSideURL = () => {

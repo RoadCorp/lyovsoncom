@@ -4,6 +4,7 @@ import type { NextRequest } from "next/server";
 import { getPayload } from "payload";
 import type { Project, Topic } from "@/payload-types";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";
+import { getCanonicalURL } from "@/utilities/getURL";
 
 // Note: Removed force-dynamic to allow Next.js ISR caching
 // With weekly publishing, feeds are regenerated only when content changes via revalidateTag()
@@ -13,8 +14,7 @@ const WORDS_PER_MINUTE = 200;
 
 /* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Feed generation includes multiple formatting, metadata, and fallback branches */
 export async function GET(_request: NextRequest) {
-  const SITE_URL =
-    process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
+  const SITE_URL = getCanonicalURL();
 
   try {
     const payload = await getPayload({ config: configPromise });

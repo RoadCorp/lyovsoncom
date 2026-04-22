@@ -1,15 +1,8 @@
 import type { Metadata } from "next";
-import { cacheLife, cacheTag } from "next/cache";
 import { SkeletonCard, SkeletonGrid } from "@/components/grid/skeleton";
-import { getServerSideURL } from "@/utilities/getURL";
+import { buildSeoMetadata } from "@/utilities/seo-metadata";
 
-export default async function SkeletonPlayground() {
-  "use cache";
-  await Promise.resolve();
-  cacheTag("playground");
-  cacheTag("skeleton-playground");
-  cacheLife("static"); // Static testing page
-
+export default function SkeletonPlayground() {
   return (
     <>
       {/* Single Skeleton Card */}
@@ -35,36 +28,23 @@ export default async function SkeletonPlayground() {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL(getServerSideURL()),
-  title: "Skeleton Loading Demo | Lyovson.com",
-  description:
-    "Interactive demo showcasing skeleton loading components and animations used throughout Lyovson.com. See loading states in action.",
-  keywords: [
-    "skeleton loading",
-    "loading animations",
-    "UI components",
-    "demo",
-    "web development",
-  ],
-  alternates: {
-    canonical: "/playground/skeleton",
-  },
-  openGraph: {
+  ...buildSeoMetadata({
     title: "Skeleton Loading Demo",
     description:
-      "Interactive demo showcasing skeleton loading components and animations.",
-    type: "website",
-    url: "/playground/skeleton",
-  },
-  twitter: {
-    card: "summary",
-    title: "Skeleton Loading Demo",
-    description: "Interactive demo of skeleton loading components.",
-    site: "@lyovson",
-  },
-  robots: {
-    index: false, // Don't index demo/test pages
-    follow: true,
-    noarchive: true,
-  },
+      "Interactive demo showcasing skeleton loading components and animations used throughout Lyovson.com. See loading states in action.",
+    canonicalPath: "/playground/skeleton",
+    keywords: [
+      "skeleton loading",
+      "loading animations",
+      "UI components",
+      "demo",
+      "web development",
+    ],
+    twitterCard: "summary",
+    robots: {
+      index: false,
+      follow: true,
+      noarchive: true,
+    },
+  }),
 };

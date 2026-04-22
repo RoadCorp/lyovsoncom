@@ -9,9 +9,13 @@ import {
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
 import { ACTIVITY_PREVIEW_LIMIT } from "@/utilities/activity-preview";
-import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
+import {
+  generateCollectionPageSchema,
+  generatePersonSchema,
+} from "@/utilities/generate-json-ld";
 import { getLatestLyovsonActivities } from "@/utilities/get-activity";
 import { getLyovsonFeed } from "@/utilities/get-lyovson-feed";
+import { getLyovsonPersonInput } from "@/utilities/lyovson-person";
 import {
   absoluteUrl,
   lyovsonPageRoute,
@@ -48,6 +52,8 @@ export default async function Page({ params }: PageProps) {
 
   const { items, totalItems, totalPages, user } = response;
   const hasActivitiesPreview = activities.length > 0;
+  const personInput = getLyovsonPersonInput(user);
+  const personSchema = personInput ? generatePersonSchema(personInput) : null;
 
   const collectionPageSchema = generateCollectionPageSchema({
     name: `${user.name} - Posts`,
@@ -66,7 +72,13 @@ export default async function Page({ params }: PageProps) {
   return (
     <>
       <h1 className="sr-only">{user.name} posts</h1>
-      <JsonLd data={collectionPageSchema} />
+      <JsonLd
+        data={
+          personSchema
+            ? [collectionPageSchema, personSchema]
+            : collectionPageSchema
+        }
+      />
       {items.length > 0 ? (
         <LyovsonFeedItems items={items} />
       ) : (

@@ -1,9 +1,9 @@
-import { promises as fs } from "node:fs";
+import { access, readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 
 const ROOT = process.cwd();
 
-const requiredMetadataBaseGlobs = ["src/app/(frontend)", "src/app/(payload)"];
+const requiredMetadataDirectories = ["src/app/(frontend)", "src/app/(payload)"];
 
 const requiredCanonicalFiles = [
   "src/app/(frontend)/posts/page.tsx",
@@ -48,22 +48,62 @@ const requiredJsonLdFiles = [
   "src/app/(frontend)/page/[pageNumber]/page.tsx",
 ];
 
-const noindexExcludedFromSitemap = ["/playground"];
+const metadataHelperMarkers = [
+  "metadataBase",
+  "buildLyovsonMetadata(",
+  "buildSeoMetadata(",
+  "buildNotFoundMetadata(",
+  "buildPaginatedArchiveMetadata(",
+];
 
-function readFile(file) {
-  return fs.readFile(path.join(ROOT, file), "utf8");
+const noindexExcludedFromSitemap = [
+  "/playground",
+  ".well-known/ai-resources",
+  "llms.txt",
+];
+
+const brandedTitlePattern =
+  /title:\s*(?:`[^`]*\|\s*Ly(?:ov|óv)son\.com[^`]*`|"[^"]*\|\s*Ly(?:ov|óv)son\.com[^"]*"|'[^']*\|\s*Ly(?:ov|óv)son\.com[^']*')/;
+const brandedTitleVariablePattern = /const title = .*?\|\s*Ly(?:ov|óv)son\.com/;
+
+const apexLiteralPattern = /https:\/\/lyovson\.com/;
+
+const apexCheckTargets = [
+  "src",
+  "next.config.ts",
+  "redirects.js",
+  ".env.local",
+];
+
+function getAbsolutePath(file) {
+  return path.join(ROOT, file);
 }
 
-async function listFilesRecursively(dir) {
-  const entries = await fs.readdir(dir, { withFileTypes: true });
+async function fileExists(file) {
+  try {
+    await access(getAbsolutePath(file));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function readRelativeFile(file) {
+  return readFile(getAbsolutePath(file), "utf8");
+}
+
+async function listFilesRecursively(directory) {
+  const entries = await readdir(directory, { withFileTypes: true });
   const files = [];
 
   for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name);
+    const fullPath = path.join(directory, entry.name);
+
     if (entry.isDirectory()) {
       files.push(...(await listFilesRecursively(fullPath)));
       continue;
     }
+
     files.push(fullPath);
   }
 
@@ -77,29 +117,27 @@ function hasMetadataExport(source) {
   );
 }
 
-async function checkMetadataBase() {
+async function checkMetadataWiring() {
   const issues = [];
 
-  for (const relativeDir of requiredMetadataBaseGlobs) {
-    const absoluteDir = path.join(ROOT, relativeDir);
-    const files = await listFilesRecursively(absoluteDir);
+  for (const relativeDirectory of requiredMetadataDirectories) {
+    const absoluteDirectory = getAbsolutePath(relativeDirectory);
+    const files = await listFilesRecursively(absoluteDirectory);
 
     for (const file of files) {
       if (!(file.endsWith(".ts") || file.endsWith(".tsx"))) {
         continue;
       }
 
-      const source = await fs.readFile(file, "utf8");
+      const source = await readFile(file, "utf8");
+
       if (!hasMetadataExport(source)) {
         continue;
       }
-      const hasMetadataBase =
-        source.includes("metadataBase") ||
-        source.includes("buildLyovsonMetadata(");
 
-      if (!hasMetadataBase) {
+      if (!metadataHelperMarkers.some((marker) => source.includes(marker))) {
         issues.push(
-          `Missing metadataBase in metadata export: ${path.relative(ROOT, file)}`
+          `Missing shared metadata helper or metadataBase in: ${path.relative(ROOT, file)}`
         );
       }
     }
@@ -112,9 +150,10 @@ async function checkCanonicalCoverage() {
   const issues = [];
 
   for (const file of requiredCanonicalFiles) {
-    const source = await readFile(file);
+    const source = await readRelativeFile(file);
+
     if (!source.includes("canonical")) {
-      issues.push(`Missing canonical metadata: ${file}`);
+      issues.push(`Missing canonical metadata wiring: ${file}`);
     }
   }
 
@@ -125,7 +164,7 @@ async function checkJsonLdCoverage() {
   const issues = [];
 
   for (const file of requiredJsonLdFiles) {
-    const source = await readFile(file);
+    const source = await readRelativeFile(file);
     const hasJsonLd = source.includes("JsonLd");
     const hasSchemaGenerator =
       source.includes("generateCollectionPageSchema") ||
@@ -137,17 +176,144 @@ async function checkJsonLdCoverage() {
     }
   }
 
+  const layoutSource = await readRelativeFile("src/app/(frontend)/layout.tsx");
+  if (!layoutSource.includes("getSiteEntitySchemas")) {
+    issues.push(
+      "Site-wide schema should come from getSiteEntitySchemas in the frontend layout."
+    );
+  }
+
+  const schemaSource = await readRelativeFile(
+    "src/utilities/generate-json-ld.ts"
+  );
+  if (!schemaSource.includes("alternateName")) {
+    issues.push("WebSite schema is missing alternateName support.");
+  }
+  if (!schemaSource.includes("ProfilePage")) {
+    issues.push("Structured data helpers are missing ProfilePage support.");
+  }
+
   return issues;
 }
 
 async function checkSitemapExclusions() {
   const issues = [];
-  const source = await readFile("src/app/sitemap.ts");
+  const source = await readRelativeFile("src/app/sitemap.ts");
 
   for (const route of noindexExcludedFromSitemap) {
     if (source.includes(route)) {
-      issues.push(`Noindex/utility route should not be in sitemap: ${route}`);
+      issues.push(`Non-index target should not be in sitemap: ${route}`);
     }
+  }
+
+  return issues;
+}
+
+async function checkBrandedPageTitles() {
+  const issues = [];
+  const files = await listFilesRecursively(
+    getAbsolutePath("src/app/(frontend)")
+  );
+
+  for (const file of files) {
+    if (!(file.endsWith(".ts") || file.endsWith(".tsx"))) {
+      continue;
+    }
+
+    const source = await readFile(file, "utf8");
+
+    if (
+      brandedTitlePattern.test(source) ||
+      brandedTitleVariablePattern.test(source)
+    ) {
+      issues.push(
+        `Page metadata title still includes site branding: ${path.relative(ROOT, file)}`
+      );
+    }
+  }
+
+  return issues;
+}
+
+async function checkApexLiterals() {
+  const issues = [];
+
+  for (const target of apexCheckTargets) {
+    const absoluteTarget = getAbsolutePath(target);
+    const exists = await fileExists(target);
+
+    if (!exists) {
+      continue;
+    }
+
+    const files =
+      path.extname(absoluteTarget) ||
+      path.basename(absoluteTarget).startsWith(".")
+        ? [absoluteTarget]
+        : await listFilesRecursively(absoluteTarget);
+
+    for (const file of files) {
+      const source = await readFile(file, "utf8");
+      if (apexLiteralPattern.test(source)) {
+        issues.push(
+          `Apex host literal found outside canonical config: ${path.relative(ROOT, file)}`
+        );
+      }
+    }
+  }
+
+  return issues;
+}
+
+async function checkLogoAssetAndLlmsRoute() {
+  const issues = [];
+
+  if (!(await fileExists("public/android-chrome-512x512.png"))) {
+    issues.push(
+      "Missing structured-data logo asset: public/android-chrome-512x512.png"
+    );
+  }
+
+  const siteConfigSource = await readRelativeFile(
+    "src/utilities/site-config.ts"
+  );
+  if (siteConfigSource.includes("logo-black.webp")) {
+    issues.push("Site config still references logo-black.webp.");
+  }
+
+  const sourceFiles = await listFilesRecursively(getAbsolutePath("src"));
+  for (const file of sourceFiles) {
+    if (!(file.endsWith(".ts") || file.endsWith(".tsx"))) {
+      continue;
+    }
+
+    const source = await readFile(file, "utf8");
+    if (source.includes("logo-black.webp")) {
+      issues.push(
+        `Found stale logo-black.webp reference in: ${path.relative(ROOT, file)}`
+      );
+    }
+  }
+
+  if (!(await fileExists("src/app/llms.txt/route.ts"))) {
+    issues.push("Missing generated llms.txt route: src/app/llms.txt/route.ts");
+  }
+
+  if (await fileExists("public/llms.txt")) {
+    issues.push(
+      "public/llms.txt should be removed in favor of the route handler."
+    );
+  }
+
+  if (await fileExists("public/site.webmanifest")) {
+    issues.push(
+      "public/site.webmanifest should be removed in favor of src/app/manifest.ts."
+    );
+  }
+
+  const redirectSource = await readRelativeFile("redirects.js");
+  if (!redirectSource.includes('source: "/site.webmanifest"')) {
+    issues.push("Missing compatibility redirect for /site.webmanifest.");
   }
 
   return issues;
@@ -155,10 +321,13 @@ async function checkSitemapExclusions() {
 
 async function main() {
   const checks = await Promise.all([
-    checkMetadataBase(),
+    checkMetadataWiring(),
     checkCanonicalCoverage(),
     checkJsonLdCoverage(),
     checkSitemapExclusions(),
+    checkBrandedPageTitles(),
+    checkApexLiterals(),
+    checkLogoAssetAndLlmsRoute(),
   ]);
 
   const issues = checks.flat();

@@ -2,6 +2,7 @@ import type { CollectionConfig } from "payload";
 import { authenticated } from "@/access/authenticated";
 import { authenticatedOrPublished } from "@/access/authenticatedOrPublished";
 import { richEditorConfig } from "@/fields/lexical-configs";
+import { seoField } from "@/fields/seo";
 import { slugField } from "@/fields/slug";
 import { generatePreviewPath } from "@/utilities/generatePreviewPath";
 import { getServerSideURL } from "@/utilities/getURL";
@@ -68,6 +69,7 @@ export const Posts: CollectionConfig<"posts"> = {
         placeholder: "Write a compelling description...",
       },
     },
+    seoField,
     {
       type: "tabs",
       tabs: [

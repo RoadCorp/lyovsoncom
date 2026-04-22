@@ -6,13 +6,16 @@ import Script from "next/script";
 import type React from "react";
 import { Suspense } from "react";
 import { Grid, GridCardNav, SkeletonCard } from "@/components/grid";
+import { JsonLd } from "@/components/JsonLd";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import { Providers } from "@/providers";
 import { browserTheme } from "@/utilities/browserTheme";
-import { getServerSideURL } from "@/utilities/getURL";
+import { getSiteEntitySchemas } from "@/utilities/generate-json-ld";
+import { getCanonicalURL } from "@/utilities/getURL";
 import { LEGACY_BROWSER_CLEANUP_SCRIPT } from "@/utilities/legacy-browser-cleanup";
 import { mergeOpenGraph } from "@/utilities/mergeOpenGraph";
+import { siteConfig } from "@/utilities/site-config";
 import "./globals.css";
 
 const fontMono = localFont({
@@ -134,58 +137,12 @@ export default async function RootLayout({
             __html: LEGACY_BROWSER_CLEANUP_SCRIPT,
           }}
         />
-        {/* Site-wide Organization Schema */}
-        <script
-          // biome-ignore lint/security/noDangerouslySetInnerHtml: Safe - JSON.stringify on controlled structured data for SEO
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebSite",
-              name: "Lyóvson.com",
-              url: getServerSideURL(),
-              description: "Official website of Rafa and Jess Lyóvson",
-              inLanguage: "en-US",
-              potentialAction: {
-                "@type": "SearchAction",
-                target: `${getServerSideURL()}/search?q={search_term_string}`,
-                "query-input": "required name=search_term_string",
-              },
-              publisher: {
-                "@type": "Organization",
-                name: "Lyóvson.com",
-                url: getServerSideURL(),
-                logo: {
-                  "@type": "ImageObject",
-                  url: `${getServerSideURL()}/logo-black.webp`,
-                  width: 600,
-                  height: 60,
-                },
-                sameAs: [
-                  "https://x.com/rafalyovson",
-                  "https://github.com/rafalyovson",
-                ],
-              },
-              author: [
-                {
-                  "@type": "Person",
-                  name: "Rafa Lyóvson",
-                  url: `${getServerSideURL()}/rafa`,
-                },
-                {
-                  "@type": "Person",
-                  name: "Jess Lyóvson",
-                  url: `${getServerSideURL()}/jess`,
-                },
-              ],
-            }),
-          }}
-          type="application/ld+json"
-        />
         {/* Performance hints */}
         <link href="//vercel.live" rel="dns-prefetch" />
         <link href="//vitals.vercel-insights.com" rel="dns-prefetch" />
       </head>
       <body>
+        <JsonLd data={getSiteEntitySchemas()} />
         <Providers>
           <Grid>
             <Suspense fallback={<SkeletonCard />}>
@@ -232,16 +189,16 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(getServerSideURL()),
+  metadataBase: new URL(getCanonicalURL()),
   title: {
-    default: "Lyóvson.com",
-    template: "%s | Lyóvson.com",
+    default: siteConfig.name,
+    template: `%s | ${siteConfig.name}`,
   },
-  description: "Official website of Rafa and Jess Lyóvson",
-  applicationName: "Lyóvson.com",
+  description: siteConfig.defaultDescription,
+  applicationName: siteConfig.name,
   authors: [
-    { name: "Rafa Lyóvson", url: `${getServerSideURL()}/rafa` },
-    { name: "Jess Lyóvson", url: `${getServerSideURL()}/jess` },
+    { name: "Rafa Lyóvson", url: getCanonicalURL("/rafa") },
+    { name: "Jess Lyóvson", url: getCanonicalURL("/jess") },
   ],
   generator: "Next.js",
   keywords: [
@@ -254,7 +211,7 @@ export const metadata: Metadata = {
   ],
   referrer: "origin-when-cross-origin",
   creator: "Rafa & Jess Lyóvson",
-  publisher: "Lyóvson.com",
+  publisher: siteConfig.name,
   formatDetection: {
     email: false,
     address: false,
@@ -289,32 +246,32 @@ export const metadata: Metadata = {
   ],
   classification: "Blog, Technology, Personal Website",
   category: "Technology",
-  bookmarks: [`${getServerSideURL()}/posts`],
+  bookmarks: [getCanonicalURL("/posts")],
 
   openGraph: mergeOpenGraph({
     type: "website",
     locale: "en_US",
-    url: getServerSideURL(),
-    siteName: "Lyóvson.com",
-    title: "Lyóvson.com",
-    description: "Official website of Rafa and Jess Lyóvson",
+    url: getCanonicalURL(),
+    siteName: siteConfig.name,
+    title: siteConfig.name,
+    description: siteConfig.defaultDescription,
   }),
   twitter: {
     card: "summary_large_image",
-    creator: "@lyovson",
-    site: "@lyovson",
+    creator: siteConfig.socialHandle,
+    site: siteConfig.socialHandle,
   },
   alternates: {
-    canonical: getServerSideURL(),
+    canonical: getCanonicalURL(),
     types: {
       "application/rss+xml": [
-        { url: "/feed.xml", title: "Lyóvson.com RSS Feed" },
+        { url: "/feed.xml", title: `${siteConfig.name} RSS Feed` },
       ],
       "application/feed+json": [
-        { url: "/feed.json", title: "Lyóvson.com JSON Feed" },
+        { url: "/feed.json", title: `${siteConfig.name} JSON Feed` },
       ],
       "application/atom+xml": [
-        { url: "/atom.xml", title: "Lyóvson.com Atom Feed" },
+        { url: "/atom.xml", title: `${siteConfig.name} Atom Feed` },
       ],
     },
   },
@@ -334,10 +291,10 @@ export const metadata: Metadata = {
     "ai-preferred-access": "feeds",
     "ai-content-language": "en",
     "ai-content-topics": "programming,design,philosophy,technology,research",
-    "ai-api-endpoint": `${getServerSideURL()}/api/docs`,
-    "ai-feed-endpoint": `${getServerSideURL()}/feed.json`,
-    "ai-embedding-endpoint": `${getServerSideURL()}/api/embeddings`,
-    "ai-search-endpoint": `${getServerSideURL()}/search`,
+    "ai-api-endpoint": getCanonicalURL("/api/docs"),
+    "ai-feed-endpoint": getCanonicalURL("/feed.json"),
+    "ai-embedding-endpoint": getCanonicalURL("/api/embeddings"),
+    "ai-search-endpoint": getCanonicalURL("/search"),
     "ai-owner": "Rafa & Jess Lyóvson",
     "ai-contact": "hello@lyovson.com",
   },

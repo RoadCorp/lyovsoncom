@@ -19,6 +19,7 @@ import {
   postsRoute,
   postUrl,
 } from "@/utilities/routes";
+import { buildNotFoundMetadata } from "@/utilities/seo-metadata";
 
 interface Args {
   params: Promise<{
@@ -82,14 +83,11 @@ export async function generateMetadata({
   const pageState = getPaginatedArchivePageState(pageNumber);
 
   if (pageState.kind !== "page") {
-    return {
-      title: "Not Found | Lyovson.com",
-      description: "The requested page could not be found",
-    };
+    return buildNotFoundMetadata();
   }
 
   const sanitizedPageNumber = pageState.pageNumber;
-  const title = `Posts Page ${sanitizedPageNumber} | Lyóvson.com`;
+  const title = `Posts Page ${sanitizedPageNumber}`;
   const description = `Posts and articles from Lyovson.com - Page ${sanitizedPageNumber}. Continue browsing our content on programming, design, and technology.`;
 
   return buildPaginatedArchiveMetadata({

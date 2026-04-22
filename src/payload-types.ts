@@ -180,6 +180,23 @@ export interface Post {
    * Brief description for previews and SEO
    */
   description?: string | null;
+  /**
+   * Optional explicit overrides for search and social metadata. Leave blank to use content defaults.
+   */
+  seo?: {
+    /**
+     * Optional raw page title. Do not include site branding here.
+     */
+    title?: string | null;
+    /**
+     * Optional search and social description override for this page.
+     */
+    description?: string | null;
+    /**
+     * Optional social sharing image override. Falls back to the content image or the default OG image.
+     */
+    image?: (number | null) | Media;
+  };
   content: {
     root: {
       type: string;
@@ -662,6 +679,23 @@ export interface Topic {
    * Hex color code (e.g. #FF0000). Leave empty to inherit from parent.
    */
   color?: string | null;
+  /**
+   * Optional explicit overrides for search and social metadata. Leave blank to use content defaults.
+   */
+  seo?: {
+    /**
+     * Optional raw page title. Do not include site branding here.
+     */
+    title?: string | null;
+    /**
+     * Optional search and social description override for this page.
+     */
+    description?: string | null;
+    /**
+     * Optional social sharing image override. Falls back to the content image or the default OG image.
+     */
+    image?: (number | null) | Media;
+  };
   slug?: string | null;
   slugLock?: boolean | null;
   parent?: (number | null) | Topic;
@@ -693,6 +727,23 @@ export interface Project {
    * List of contacts associated with this project.
    */
   contacts?: (number | Contact)[] | null;
+  /**
+   * Optional explicit overrides for search and social metadata. Leave blank to use content defaults.
+   */
+  seo?: {
+    /**
+     * Optional raw page title. Do not include site branding here.
+     */
+    title?: string | null;
+    /**
+     * Optional search and social description override for this page.
+     */
+    description?: string | null;
+    /**
+     * Optional social sharing image override. Falls back to the content image or the default OG image.
+     */
+    image?: (number | null) | Media;
+  };
   slug?: string | null;
   slugLock?: boolean | null;
   updatedAt: string;
@@ -761,6 +812,23 @@ export interface Note {
    * Who can see this note?
    */
   visibility: 'public' | 'private';
+  /**
+   * Optional explicit overrides for search and social metadata. Leave blank to use content defaults.
+   */
+  seo?: {
+    /**
+     * Optional raw page title. Do not include site branding here.
+     */
+    title?: string | null;
+    /**
+     * Optional search and social description override for this page.
+     */
+    description?: string | null;
+    /**
+     * Optional social sharing image override. Falls back to the content image or the default OG image.
+     */
+    image?: (number | null) | Media;
+  };
   content: {
     root: {
       type: string;
@@ -949,6 +1017,23 @@ export interface Activity {
    * Who can see this activity?
    */
   visibility?: ('public' | 'private') | null;
+  /**
+   * Optional explicit overrides for search and social metadata. Leave blank to use content defaults.
+   */
+  seo?: {
+    /**
+     * Optional raw page title. Do not include site branding here.
+     */
+    title?: string | null;
+    /**
+     * Optional search and social description override for this page.
+     */
+    description?: string | null;
+    /**
+     * Optional social sharing image override. Falls back to the content image or the default OG image.
+     */
+    image?: (number | null) | Media;
+  };
   /**
    * General information about this activity
    */
@@ -1472,6 +1557,13 @@ export interface PostsSelect<T extends boolean = true> {
   title?: T;
   featuredImage?: T;
   description?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
   content?: T;
   type?: T;
   rating?: T;
@@ -1595,6 +1687,13 @@ export interface TopicsSelect<T extends boolean = true> {
   name?: T;
   description?: T;
   color?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
   slug?: T;
   slugLock?: T;
   parent?: T;
@@ -1619,6 +1718,13 @@ export interface ProjectsSelect<T extends boolean = true> {
   image?: T;
   resendAudienceId?: T;
   contacts?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
   slug?: T;
   slugLock?: T;
   updatedAt?: T;
@@ -1767,6 +1873,13 @@ export interface ActivitiesSelect<T extends boolean = true> {
   startedAt?: T;
   finishedAt?: T;
   visibility?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
   notes?: T;
   reviews?:
     | T
@@ -1799,6 +1912,13 @@ export interface NotesSelect<T extends boolean = true> {
   type?: T;
   author?: T;
   visibility?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
   content?: T;
   sourceReference?: T;
   quotedPerson?: T;

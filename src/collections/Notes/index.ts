@@ -3,6 +3,7 @@ import type { CollectionConfig } from "payload";
 import { authenticated } from "@/access/authenticated";
 import { authenticatedOrPublishedPublic } from "@/access/authenticatedOrPublishedPublic";
 import { noteEditorConfig } from "@/fields/lexical-configs";
+import { seoField } from "@/fields/seo";
 import { slugField } from "@/fields/slug";
 import { generatePreviewPath } from "@/utilities/generatePreviewPath";
 import { getServerSideURL } from "@/utilities/getURL";
@@ -100,6 +101,7 @@ export const Notes: CollectionConfig = {
         description: "Who can see this note?",
       },
     },
+    seoField,
     {
       type: "tabs",
       tabs: [

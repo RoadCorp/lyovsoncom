@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
 import { browserTheme } from "@/utilities/browserTheme";
-import { getServerSideURL } from "@/utilities/getURL";
+import { getCanonicalURL } from "@/utilities/getURL";
 
 export default function manifest(): MetadataRoute.Manifest {
-  const siteUrl = getServerSideURL();
+  const siteUrl = getCanonicalURL();
 
   return {
     name: "Lyóvson.com - Writing, Projects & Research",

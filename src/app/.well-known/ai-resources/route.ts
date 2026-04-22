@@ -1,8 +1,8 @@
 import type { NextRequest } from "next/server";
+import { getCanonicalURL } from "@/utilities/getURL";
 
 export function GET(_request: NextRequest) {
-  const SITE_URL =
-    process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
+  const SITE_URL = getCanonicalURL();
   const now = new Date();
 
   const aiResources = {

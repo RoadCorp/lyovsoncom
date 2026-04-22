@@ -97,10 +97,20 @@ export type CollectionPageSchema = BaseSchema & {
   inLanguage?: string;
 };
 
+export type ProfilePageSchema = BaseSchema & {
+  "@type": "ProfilePage";
+  name: string;
+  description?: string;
+  url: string;
+  mainEntity: PersonSchema;
+  inLanguage?: string;
+};
+
 // WebSite schema for the entire site
 export type WebSiteSchema = BaseSchema & {
   "@type": "WebSite";
   name: string;
+  alternateName?: string[];
   url: string;
   description?: string;
   inLanguage?: string;
@@ -120,6 +130,7 @@ export type Schema =
   | OrganizationSchema
   | BreadcrumbListSchema
   | CollectionPageSchema
+  | ProfilePageSchema
   | WebSiteSchema;
 
 // Helper type for JSON-LD script tag

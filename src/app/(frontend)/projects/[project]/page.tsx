@@ -5,7 +5,7 @@ import { CollectionArchive } from "@/components/CollectionArchive";
 import { GridCardProjectHero } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
-import type { Project } from "@/payload-types";
+import type { Media, Project } from "@/payload-types";
 import { ensureStaticParams } from "@/utilities/ensureStaticParams";
 import {
   generateBreadcrumbSchema,
@@ -21,11 +21,37 @@ import {
   projectRoute,
   projectsRoute,
 } from "@/utilities/routes";
+import {
+  buildNotFoundMetadata,
+  buildSeoMetadata,
+  DEFAULT_OPEN_GRAPH_IMAGE_HEIGHT,
+  DEFAULT_OPEN_GRAPH_IMAGE_WIDTH,
+} from "@/utilities/seo-metadata";
 
 interface PageProps {
   params: Promise<{
     project: string;
   }>;
+}
+
+type ProjectWithSeo = Project & {
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: Media | number | null;
+  };
+};
+
+function getProjectSeoImage(project: ProjectWithSeo) {
+  if (project.seo?.image && typeof project.seo.image === "object") {
+    return project.seo.image as Media;
+  }
+
+  if (project.image && typeof project.image === "object") {
+    return project.image as Media;
+  }
+
+  return null;
 }
 
 export default async function Page({ params: paramsPromise }: PageProps) {
@@ -87,18 +113,24 @@ export async function generateMetadata({
 
   const project = await getProject(projectSlug);
   if (!project) {
-    return {
-      title: "Project Not Found | Lyóvson.com",
+    return buildNotFoundMetadata({
+      title: "Project Not Found",
       description: "The requested project could not be found",
-    };
+    });
   }
+  const projectWithSeo = project as ProjectWithSeo;
 
   const description =
-    project.description || `Posts and content from the ${project.name} project`;
+    projectWithSeo.seo?.description ||
+    project.description ||
+    `Posts and content from the ${project.name} project`;
+  const title = projectWithSeo.seo?.title || project.name;
+  const seoImage = getProjectSeoImage(projectWithSeo);
 
-  return {
-    title: `${project.name} | Lyóvson.com`,
+  return buildSeoMetadata({
+    title,
     description,
+    canonicalPath: projectRoute(projectSlug),
     keywords: [
       project.name,
       "project",
@@ -107,40 +139,20 @@ export async function generateMetadata({
       "articles",
       "Lyóvson",
     ],
-    alternates: {
-      canonical: projectRoute(projectSlug),
-    },
-    openGraph: {
-      siteName: "Lyóvson.com",
-      title: `${project.name} | Lyóvson.com`,
-      description,
-      type: "website",
-      url: projectRoute(projectSlug),
-      images: [
-        {
+    image: seoImage?.url
+      ? {
+          url: absoluteUrl(seoImage.url),
+          width: seoImage.width || undefined,
+          height: seoImage.height || undefined,
+          alt: title,
+        }
+      : {
           url: "/og-image.png",
-          width: 1200,
-          height: 630,
-          alt: `${project.name} | Lyóvson.com`,
+          width: DEFAULT_OPEN_GRAPH_IMAGE_WIDTH,
+          height: DEFAULT_OPEN_GRAPH_IMAGE_HEIGHT,
+          alt: title,
         },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `${project.name} | Lyóvson.com`,
-      description,
-      site: "@lyovson",
-      creator: "@lyovson",
-      images: [
-        {
-          url: "/og-image.png",
-          alt: `${project.name} | Lyóvson.com`,
-          width: 1200,
-          height: 630,
-        },
-      ],
-    },
-  };
+  });
 }
 
 export async function generateStaticParams() {

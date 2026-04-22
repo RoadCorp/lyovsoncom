@@ -1,6 +1,6 @@
 import type { Metadata } from "next/types";
 import { MAX_INDEXED_PAGE, parsePageNumber } from "@/utilities/archive";
-import { getServerSideURL } from "@/utilities/getURL";
+import { buildSeoMetadata } from "@/utilities/seo-metadata";
 
 export type PaginatedArchivePageState =
   | {
@@ -53,30 +53,15 @@ export function buildPaginatedArchiveMetadata({
   pageNumber,
   title,
 }: BuildPaginatedArchiveMetadataArgs): Metadata {
-  return {
-    metadataBase: new URL(getServerSideURL()),
+  return buildSeoMetadata({
     title,
     description,
-    alternates: {
-      canonical: canonicalPath,
-    },
-    openGraph: {
-      siteName: "Lyóvson.com",
-      title,
-      description,
-      type: "website",
-      url: canonicalPath,
-    },
-    twitter: {
-      card: "summary",
-      title,
-      description,
-      site: "@lyovson",
-    },
+    canonicalPath,
+    twitterCard: "summary",
     robots: {
       index: pageNumber <= MAX_INDEXED_PAGE,
       follow: true,
       noarchive: pageNumber > 1,
     },
-  };
+  });
 }

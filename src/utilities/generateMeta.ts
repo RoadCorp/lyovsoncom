@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import type { Post } from "@/payload-types";
-import { getServerSideURL } from "./getURL";
+import { getCanonicalURL } from "./getURL";
 import { mergeOpenGraph } from "./mergeOpenGraph";
 import { postRoute } from "./routes";
+import { siteConfig } from "./site-config";
 
 interface LegacyMeta {
   meta?: {
@@ -22,13 +23,13 @@ export const generateMeta = (args: { doc: Partial<Post> }): Metadata => {
     postImage !== null &&
     "url" in postImage &&
     postImage.url &&
-    `${getServerSideURL()}${postImage.url}`;
+    `${getCanonicalURL()}${postImage.url}`;
 
-  const title = doc?.title ? `${doc?.title} | Lyovson.com` : "Lyovson.com";
+  const title = doc?.title || siteConfig.name;
   const description = doc?.description || legacyDoc.meta?.description;
 
   return {
-    metadataBase: new URL(getServerSideURL()),
+    metadataBase: new URL(getCanonicalURL()),
     description,
     openGraph: mergeOpenGraph({
       description: description || "",

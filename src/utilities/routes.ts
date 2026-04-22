@@ -1,5 +1,5 @@
 import type { Route } from "next";
-import { getServerSideURL } from "./getURL";
+import { getCanonicalURL } from "./getURL";
 
 interface ActivityPathInput {
   finishedAt?: string | null;
@@ -256,7 +256,7 @@ export function searchHref(
 }
 
 export function absoluteUrl(path: Route<string> | string) {
-  return new URL(String(path), getServerSideURL()).toString();
+  return new URL(String(path), getCanonicalURL()).toString();
 }
 
 export function postReferenceRoute(relationTo: string, slug: string) {

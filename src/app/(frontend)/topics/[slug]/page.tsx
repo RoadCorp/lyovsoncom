@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { CollectionArchive } from "@/components/CollectionArchive";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
+import type { Media, Topic } from "@/payload-types";
 import { ensureStaticParams } from "@/utilities/ensureStaticParams";
 import {
   generateBreadcrumbSchema,
@@ -11,7 +12,6 @@ import {
 } from "@/utilities/generate-json-ld";
 import { getAllTopics, getTopic } from "@/utilities/get-topic";
 import { getTopicPosts } from "@/utilities/get-topic-posts";
-import { getServerSideURL } from "@/utilities/getURL";
 import {
   absoluteUrl,
   homeRoute,
@@ -19,12 +19,24 @@ import {
   topicPageRoute,
   topicRoute,
 } from "@/utilities/routes";
+import {
+  buildNotFoundMetadata,
+  buildSeoMetadata,
+} from "@/utilities/seo-metadata";
 
 interface PageProps {
   params: Promise<{
     slug: string;
   }>;
 }
+
+type TopicWithSeo = Topic & {
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: Media | number | null;
+  };
+};
 
 export async function generateStaticParams() {
   "use cache";
@@ -98,52 +110,39 @@ export async function generateMetadata({
   const topic = await getTopic(slug);
 
   if (!topic) {
-    return {
-      metadataBase: new URL(getServerSideURL()),
-      title: "Topic Not Found | Lyóvson.com",
+    return buildNotFoundMetadata({
+      title: "Topic Not Found",
       description: "The requested topic could not be found",
-    };
+    });
   }
+  const topicWithSeo = topic as TopicWithSeo;
 
-  const topicName = topic.name || slug;
-  const description = topic.description || `Posts about ${topicName}`;
+  const topicName = topicWithSeo.seo?.title || topic.name || slug;
+  const description =
+    topicWithSeo.seo?.description ||
+    topic.description ||
+    `Posts about ${topicName}`;
+  const seoImage =
+    topicWithSeo.seo?.image && typeof topicWithSeo.seo.image === "object"
+      ? (topicWithSeo.seo.image as Media)
+      : null;
 
-  return {
-    metadataBase: new URL(getServerSideURL()),
-    title: `${topicName} | Lyóvson.com`,
+  return buildSeoMetadata({
+    title: topicName,
     description,
-    alternates: {
-      canonical: topicRoute(slug),
-    },
-    openGraph: {
-      siteName: "Lyóvson.com",
-      title: `${topicName} | Lyóvson.com`,
-      description,
-      type: "website",
-      url: topicRoute(slug),
-      images: [
-        {
+    canonicalPath: topicRoute(slug),
+    image: seoImage?.url
+      ? {
+          url: absoluteUrl(seoImage.url),
+          width: seoImage.width || undefined,
+          height: seoImage.height || undefined,
+          alt: topicName,
+        }
+      : {
           url: "/og-image.png",
           width: 1200,
           height: 630,
-          alt: `${topicName} | Lyóvson.com`,
+          alt: topicName,
         },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `${topicName} | Lyóvson.com`,
-      description,
-      creator: "@lyovson",
-      site: "@lyovson",
-      images: [
-        {
-          url: "/og-image.png",
-          alt: `${topicName} | Lyóvson.com`,
-          width: 1200,
-          height: 630,
-        },
-      ],
-    },
-  };
+  });
 }

@@ -14,7 +14,7 @@ import { OptionalErrorBoundary } from "@/components/OptionalErrorBoundary";
 import RichText from "@/components/RichText";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import type { Note, Reference } from "@/payload-types";
+import type { Media, Note, Reference } from "@/payload-types";
 import { ensureStaticParams } from "@/utilities/ensureStaticParams";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";
 import {
@@ -22,8 +22,13 @@ import {
   generateBreadcrumbSchema,
 } from "@/utilities/generate-json-ld";
 import { getNote } from "@/utilities/get-note";
+import { getPersonInputFromUsername } from "@/utilities/lyovson-person";
 import { getPayloadClient } from "@/utilities/payload-client";
 import { absoluteUrl, noteRoute, notesRoute } from "@/utilities/routes";
+import {
+  buildNotFoundMetadata,
+  buildSeoMetadata,
+} from "@/utilities/seo-metadata";
 import {
   frontendViewTransitionClasses,
   getNoteContentTransitionName,
@@ -37,6 +42,14 @@ interface Args {
   }>;
 }
 
+type NoteWithSeo = Note & {
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: Media | number | null;
+  };
+};
+
 export default async function NotePage({ params: paramsPromise }: Args) {
   const { slug } = await paramsPromise;
 
@@ -44,13 +57,24 @@ export default async function NotePage({ params: paramsPromise }: Args) {
   if (!note?.content) {
     return notFound();
   }
+  const noteWithSeo = note as NoteWithSeo;
+  const author = getPersonInputFromUsername(note.author);
+  const seoImage =
+    noteWithSeo.seo?.image && typeof noteWithSeo.seo.image === "object"
+      ? (noteWithSeo.seo.image as Media)
+      : null;
 
   const articleSchema = generateArticleSchema({
-    title: note.title,
+    title: noteWithSeo.seo?.title || note.title,
+    description: noteWithSeo.seo?.description || undefined,
     slug,
     pathPrefix: "/notes",
     publishedAt: note.publishedAt || undefined,
     updatedAt: note.updatedAt || undefined,
+    imageUrl: seoImage?.url ? absoluteUrl(seoImage.url) : undefined,
+    imageWidth: seoImage?.width || undefined,
+    imageHeight: seoImage?.height || undefined,
+    authors: author ? [author] : undefined,
   });
 
   const breadcrumbSchema = generateBreadcrumbSchema([
@@ -259,40 +283,41 @@ export async function generateMetadata({
 
   const note = await getNote(slug);
   if (!note) {
-    return {
-      title: "Not Found | Lyovson.com",
+    return buildNotFoundMetadata({
       description: "The requested note could not be found",
-    };
+    });
   }
+  const noteWithSeo = note as NoteWithSeo;
 
-  const title = note.title;
+  const title = noteWithSeo.seo?.title || note.title;
   const contentText = note.content
     ? extractLexicalText(note.content).trim()
     : "";
   const description =
-    contentText.length > 0
+    noteWithSeo.seo?.description ||
+    (contentText.length > 0
       ? contentText.slice(0, NOTE_META_DESCRIPTION_MAX_LENGTH)
-      : "A note or thought";
+      : "A note or thought");
+  const seoImage =
+    noteWithSeo.seo?.image && typeof noteWithSeo.seo.image === "object"
+      ? (noteWithSeo.seo.image as Media)
+      : null;
 
-  return {
-    title: `${title} | Lyóvson.com`,
+  return buildSeoMetadata({
+    title,
     description,
-    alternates: {
-      canonical: noteRoute(slug),
-    },
-    openGraph: {
-      title: `${title} | Lyóvson.com`,
-      description,
-      url: noteRoute(slug),
-      siteName: "Lyóvson.com",
-      type: "article",
-      publishedTime: note.publishedAt || undefined,
-      modifiedTime: note.updatedAt || undefined,
-    },
-    twitter: {
-      card: "summary",
-      title: `${title} | Lyóvson.com`,
-      description,
-    },
-  };
+    canonicalPath: noteRoute(slug),
+    openGraphType: "article",
+    twitterCard: "summary",
+    publishedTime: note.publishedAt || undefined,
+    modifiedTime: note.updatedAt || undefined,
+    image: seoImage?.url
+      ? {
+          url: absoluteUrl(seoImage.url),
+          width: seoImage.width || undefined,
+          height: seoImage.height || undefined,
+          alt: title,
+        }
+      : undefined,
+  });
 }

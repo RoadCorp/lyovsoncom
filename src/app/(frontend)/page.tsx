@@ -1,4 +1,3 @@
-import { cacheLife, cacheTag } from "next/cache";
 import type { Metadata } from "next/types";
 import { CollectionArchive } from "@/components/CollectionArchive";
 import {
@@ -13,21 +12,15 @@ import { POSTS_PER_PAGE } from "@/utilities/archive";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getLatestActivities } from "@/utilities/get-activity";
 import { getLatestPosts } from "@/utilities/get-post";
-import { getServerSideURL } from "@/utilities/getURL";
 import {
   absoluteUrl,
   homepageRoute,
   homeRoute,
   postUrl,
 } from "@/utilities/routes";
+import { buildSeoMetadata } from "@/utilities/seo-metadata";
 
 export default async function Page() {
-  "use cache";
-
-  cacheTag("homepage");
-  cacheTag("posts");
-  cacheLife("homepage");
-
   const [postResponse, activityResponse] = await Promise.all([
     getLatestPosts(POSTS_PER_PAGE),
     getLatestActivities(ACTIVITY_PREVIEW_LIMIT),
@@ -72,57 +65,30 @@ export default async function Page() {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL(getServerSideURL()),
-  title: "Latest Posts | Lyóvson.com",
-  description:
-    "Latest posts and articles from Lyóvson.com covering programming, design, philosophy, technology, and creative projects by Rafa and Jess Lyóvson.",
-  keywords: [
-    "latest posts",
-    "articles",
-    "Rafa Lyóvson",
-    "Jess Lyóvson",
-    "programming",
-    "writing",
-    "design",
-    "philosophy",
-    "research",
-    "projects",
-    "technology",
-    "blog",
-  ],
-  alternates: {
-    canonical: homeRoute(),
-  },
-  openGraph: {
-    siteName: "Lyóvson.com",
-    title: "Latest Posts | Lyóvson.com",
+  ...buildSeoMetadata({
+    title: "Latest Posts",
     description:
-      "Latest posts and articles from Lyóvson.com covering programming, design, philosophy, technology, and creative projects.",
-    type: "website",
-    url: homeRoute(),
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Latest Posts | Lyóvson.com",
-      },
+      "Latest posts and articles from Lyóvson.com covering programming, design, philosophy, technology, and creative projects by Rafa and Jess Lyóvson.",
+    canonicalPath: homeRoute(),
+    keywords: [
+      "latest posts",
+      "articles",
+      "Rafa Lyóvson",
+      "Jess Lyóvson",
+      "programming",
+      "writing",
+      "design",
+      "philosophy",
+      "research",
+      "projects",
+      "technology",
+      "blog",
     ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Latest Posts | Lyóvson.com",
-    description:
-      "Latest posts and articles from Lyóvson.com covering programming, design, philosophy, and technology.",
-    creator: "@lyovson",
-    site: "@lyovson",
-    images: [
-      {
-        url: "/og-image.png",
-        alt: "Latest Posts | Lyóvson.com",
-        width: 1200,
-        height: 630,
-      },
-    ],
-  },
+    image: {
+      url: "/og-image.png",
+      width: 1200,
+      height: 630,
+      alt: "Latest Posts",
+    },
+  }),
 };

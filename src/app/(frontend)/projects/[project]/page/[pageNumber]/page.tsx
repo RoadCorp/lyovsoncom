@@ -6,7 +6,6 @@ import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
 import {
   getPaginatedStaticParams,
-  MAX_INDEXED_PAGE,
   PROJECT_POSTS_PER_PAGE,
   parsePageNumber,
 } from "@/utilities/archive";
@@ -17,6 +16,7 @@ import {
   getPaginatedProjectPosts,
   getProjectPostCount,
 } from "@/utilities/get-project-posts";
+import { buildPaginatedArchiveMetadata } from "@/utilities/paginated-archive";
 import { getPayloadClient } from "@/utilities/payload-client";
 import {
   absoluteUrl,
@@ -24,6 +24,7 @@ import {
   projectPageRoute,
   projectRoute,
 } from "@/utilities/routes";
+import { buildNotFoundMetadata } from "@/utilities/seo-metadata";
 
 interface Args {
   params: Promise<{
@@ -141,46 +142,25 @@ export async function generateMetadata({
   const sanitizedPageNumber = parsePageNumber(pageNumber);
 
   if (sanitizedPageNumber == null || sanitizedPageNumber < 2) {
-    return {
-      title: "Not Found | Lyovson.com",
-      description: "The requested page could not be found",
-    };
+    return buildNotFoundMetadata();
   }
 
   const project = await getProject(projectSlug);
   if (!project) {
-    return {
-      title: "Project Not Found | Lyovson.com",
+    return buildNotFoundMetadata({
+      title: "Project Not Found",
       description: "The requested project could not be found",
-    };
+    });
   }
 
   const projectName = project.name || projectSlug;
-  const title = `${projectName} Posts Page ${sanitizedPageNumber} | Lyovson.com`;
+  const title = `${projectName} Posts Page ${sanitizedPageNumber}`;
   const description = project.description || `Posts from ${projectName}`;
 
-  return {
-    title,
+  return buildPaginatedArchiveMetadata({
+    canonicalPath: projectPageRoute(projectSlug, sanitizedPageNumber),
     description,
-    alternates: {
-      canonical: projectPageRoute(projectSlug, sanitizedPageNumber),
-    },
-    openGraph: {
-      title,
-      description,
-      type: "website",
-      url: absoluteUrl(projectPageRoute(projectSlug, sanitizedPageNumber)),
-    },
-    twitter: {
-      card: "summary",
-      title,
-      description,
-      site: "@lyovson",
-    },
-    robots: {
-      index: sanitizedPageNumber <= MAX_INDEXED_PAGE,
-      follow: true,
-      noarchive: sanitizedPageNumber > 1,
-    },
-  };
+    pageNumber: sanitizedPageNumber,
+    title,
+  });
 }

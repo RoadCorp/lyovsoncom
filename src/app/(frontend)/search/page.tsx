@@ -2,7 +2,7 @@ import type { Metadata } from "next/types";
 import { Suspense } from "react";
 import { SkeletonCard } from "@/components/grid";
 import { SearchPageContent } from "@/search/page-content";
-import { getServerSideURL } from "@/utilities/getURL";
+import { buildSeoMetadata } from "@/utilities/seo-metadata";
 
 interface Args {
   searchParams: Promise<{
@@ -33,53 +33,26 @@ export async function generateMetadata({
   const normalizedQuery = query?.trim() || "";
 
   const title = normalizedQuery
-    ? `Search results for "${normalizedQuery}" | Lyóvson.com`
-    : "Search | Lyóvson.com";
+    ? `Search results for "${normalizedQuery}"`
+    : "Search";
 
   const description = normalizedQuery
     ? `Find posts, articles, and content related to "${normalizedQuery}" on Lyóvson.com`
     : "Search for posts, articles, and content on Lyóvson.com";
 
-  return {
-    metadataBase: new URL(getServerSideURL()),
+  return buildSeoMetadata({
     title,
     description,
-    alternates: {
-      canonical: "/search",
-    },
-    openGraph: {
-      siteName: "Lyóvson.com",
-      title,
-      description,
-      type: "website",
-      url: "/search",
-      images: [
-        {
-          url: "/og-image.png",
-          width: 1200,
-          height: 630,
-          alt: title,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      creator: "@lyovson",
-      site: "@lyovson",
-      images: [
-        {
-          url: "/og-image.png",
-          alt: title,
-          width: 1200,
-          height: 630,
-        },
-      ],
+    canonicalPath: "/search",
+    image: {
+      url: "/og-image.png",
+      width: 1200,
+      height: 630,
+      alt: title,
     },
     robots: {
       index: !normalizedQuery,
       follow: true,
     },
-  };
+  });
 }

@@ -10,7 +10,7 @@ import {
   GridCardUserSocial,
   SkeletonCard,
 } from "@/components/grid";
-import { getServerSideURL } from "@/utilities/getURL";
+import { buildSeoMetadata } from "@/utilities/seo-metadata";
 
 export default function SuspensePlayground() {
   return (
@@ -45,54 +45,28 @@ async function Playground() {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL(getServerSideURL()),
-  title: "Playground - Interactive Demos | Lyóvson.com",
-  description:
-    "Explore interactive demos, experiments, and test features on the Lyóvson.com playground. Try out new components and functionality.",
-  keywords: [
-    "playground",
-    "interactive demos",
-    "experiments",
-    "test features",
-    "web development",
-  ],
-  alternates: {
-    canonical: "/playground",
-  },
-  openGraph: {
-    siteName: "Lyóvson.com",
+  ...buildSeoMetadata({
     title: "Playground - Interactive Demos",
     description:
-      "Explore interactive demos, experiments, and test features on the Lyóvson.com playground.",
-    type: "website",
-    url: "/playground",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Playground - Interactive Demos - Lyóvson.com",
-      },
+      "Explore interactive demos, experiments, and test features on the Lyóvson.com playground. Try out new components and functionality.",
+    canonicalPath: "/playground",
+    keywords: [
+      "playground",
+      "interactive demos",
+      "experiments",
+      "test features",
+      "web development",
     ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Playground - Interactive Demos",
-    description: "Explore interactive demos and experiments on Lyóvson.com.",
-    creator: "@lyovson",
-    site: "@lyovson",
-    images: [
-      {
-        url: "/og-image.png",
-        alt: "Playground - Interactive Demos - Lyóvson.com",
-        width: 1200,
-        height: 630,
-      },
-    ],
-  },
-  robots: {
-    index: false,
-    follow: false,
-    noarchive: true,
-  },
+    image: {
+      url: "/og-image.png",
+      width: 1200,
+      height: 630,
+      alt: "Playground - Interactive Demos",
+    },
+    robots: {
+      index: false,
+      follow: false,
+      noarchive: true,
+    },
+  }),
 };

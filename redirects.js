@@ -19,6 +19,11 @@ const redirects = () => {
       permanent: false,
     },
     {
+      source: "/site.webmanifest",
+      destination: "/manifest.webmanifest",
+      permanent: true,
+    },
+    {
       source: "/api/confirm-subscription",
       destination: "/",
       permanent: false,

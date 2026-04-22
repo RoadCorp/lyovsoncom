@@ -22,7 +22,7 @@ import {
 import { JsonLd } from "@/components/JsonLd";
 import RichText from "@/components/RichText";
 import { cn } from "@/lib/utils";
-import type { Activity } from "@/payload-types";
+import type { Activity, Lyovson, Media } from "@/payload-types";
 import { getActivityDateSlug } from "@/utilities/activity-path";
 import { getActivityTypeLabel } from "@/utilities/activity-type";
 import { dedupeRelationItemsById } from "@/utilities/dedupeRelationItemsById";
@@ -32,7 +32,12 @@ import {
   generateBreadcrumbSchema,
 } from "@/utilities/generate-json-ld";
 import { getActivityByDateAndSlug } from "@/utilities/get-activity";
-import { getServerSideURL } from "@/utilities/getURL";
+import { getLyovsonPersonInput } from "@/utilities/lyovson-person";
+import { absoluteUrl, activitiesRoute, homeRoute } from "@/utilities/routes";
+import {
+  buildNotFoundMetadata,
+  buildSeoMetadata,
+} from "@/utilities/seo-metadata";
 
 interface Args {
   params: Promise<{
@@ -40,6 +45,14 @@ interface Args {
     slug: string;
   }>;
 }
+
+type ActivityWithSeo = Activity & {
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: Media | number | null;
+  };
+};
 
 function getActivityTitle(
   activity: Activity,
@@ -110,26 +123,47 @@ export default async function ActivityPage({ params: paramsPromise }: Args) {
   if (!activity) {
     return notFound();
   }
+  const activityWithSeo = activity as ActivityWithSeo;
 
   const referenceObj =
     typeof activity.reference === "object" && activity.reference !== null
       ? activity.reference
       : null;
 
-  const pageTitle = getActivityTitle(activity, referenceObj?.title || null);
+  const pageTitle =
+    activityWithSeo.seo?.title ||
+    getActivityTitle(activity, referenceObj?.title || null);
   const reviews = getReviews(activity);
+  const seoImage =
+    activityWithSeo.seo?.image && typeof activityWithSeo.seo.image === "object"
+      ? (activityWithSeo.seo.image as Media)
+      : null;
 
   const articleSchema = generateArticleSchema({
     title: pageTitle || "Activity",
+    description:
+      activityWithSeo.seo?.description ||
+      `Activity: ${pageTitle || "Activity"}`,
     slug: fullPath,
     pathPrefix: "/activities",
     publishedAt: activity.publishedAt || undefined,
     updatedAt: activity.updatedAt || undefined,
+    imageUrl: seoImage?.url ? absoluteUrl(seoImage.url) : undefined,
+    imageWidth: seoImage?.width || undefined,
+    imageHeight: seoImage?.height || undefined,
+    authors:
+      activity.participants
+        ?.map((participant) =>
+          typeof participant === "object" && participant !== null
+            ? getLyovsonPersonInput(participant as Lyovson)
+            : null
+        )
+        .filter((participant) => participant !== null) || undefined,
   });
 
   const breadcrumbSchema = generateBreadcrumbSchema([
-    { name: "Home", url: getServerSideURL() },
-    { name: "Activities", url: `${getServerSideURL()}/activities` },
+    { name: "Home", url: absoluteUrl(homeRoute()) },
+    { name: "Activities", url: absoluteUrl(activitiesRoute()) },
     {
       name: pageTitle || "Activity",
     },
@@ -297,42 +331,43 @@ export async function generateMetadata({
 
   const activity = await getActivityByDateAndSlug(date, slug);
   if (!activity) {
-    return {
-      metadataBase: new URL(getServerSideURL()),
-      title: "Not Found | Lyovson.com",
+    return buildNotFoundMetadata({
       description: "The requested activity could not be found",
-    };
+    });
   }
+  const activityWithSeo = activity as ActivityWithSeo;
 
   const referenceObj =
     typeof activity.reference === "object" && activity.reference !== null
       ? activity.reference
       : null;
 
-  const title = referenceObj?.title
-    ? `${getActivityTypeLabel(activity.activityType)} ${referenceObj.title}`
-    : "Activity";
+  const title =
+    activityWithSeo.seo?.title ||
+    (referenceObj?.title
+      ? `${getActivityTypeLabel(activity.activityType)} ${referenceObj.title}`
+      : "Activity");
+  const description = activityWithSeo.seo?.description || `Activity: ${title}`;
+  const seoImage =
+    activityWithSeo.seo?.image && typeof activityWithSeo.seo.image === "object"
+      ? (activityWithSeo.seo.image as Media)
+      : null;
 
-  return {
-    metadataBase: new URL(getServerSideURL()),
-    title: `${title} | Lyóvson.com`,
-    description: `Activity: ${title}`,
-    alternates: {
-      canonical: `/activities/${fullPath}`,
-    },
-    openGraph: {
-      title: `${title} | Lyóvson.com`,
-      description: `Activity: ${title}`,
-      url: `${getServerSideURL()}/activities/${fullPath}`,
-      siteName: "Lyóvson.com",
-      type: "article",
-      publishedTime: activity.publishedAt || undefined,
-      modifiedTime: activity.updatedAt || undefined,
-    },
-    twitter: {
-      card: "summary",
-      title: `${title} | Lyóvson.com`,
-      description: `Activity: ${title}`,
-    },
-  };
+  return buildSeoMetadata({
+    title,
+    description,
+    canonicalPath: `/activities/${fullPath}`,
+    openGraphType: "article",
+    twitterCard: "summary",
+    publishedTime: activity.publishedAt || undefined,
+    modifiedTime: activity.updatedAt || undefined,
+    image: seoImage?.url
+      ? {
+          url: absoluteUrl(seoImage.url),
+          width: seoImage.width || undefined,
+          height: seoImage.height || undefined,
+          alt: title,
+        }
+      : undefined,
+  });
 }

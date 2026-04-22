@@ -6,7 +6,6 @@ import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
 import {
   getPaginatedStaticParams,
-  MAX_INDEXED_PAGE,
   parsePageNumber,
   TOPIC_POSTS_PER_PAGE,
 } from "@/utilities/archive";
@@ -17,12 +16,14 @@ import {
   getPaginatedTopicPosts,
   getTopicPostCount,
 } from "@/utilities/get-topic-posts";
+import { buildPaginatedArchiveMetadata } from "@/utilities/paginated-archive";
 import {
   absoluteUrl,
   postRoute,
   topicPageRoute,
   topicRoute,
 } from "@/utilities/routes";
+import { buildNotFoundMetadata } from "@/utilities/seo-metadata";
 
 interface Args {
   params: Promise<{
@@ -133,49 +134,27 @@ export async function generateMetadata({
   const sanitizedPageNumber = parsePageNumber(pageNumber);
 
   if (sanitizedPageNumber == null || sanitizedPageNumber < 2) {
-    return {
-      title: "Not Found | Lyovson.com",
-      description: "The requested page could not be found",
-    };
+    return buildNotFoundMetadata();
   }
 
   const topic = await getTopic(slug);
   if (!topic) {
-    return {
-      title: "Topic Not Found | Lyovson.com",
+    return buildNotFoundMetadata({
+      title: "Topic Not Found",
       description: "The requested topic could not be found",
-    };
+    });
   }
 
   const topicName = topic.name || slug;
   const description =
     topic.description ||
     `Posts about ${topicName} - page ${sanitizedPageNumber}`;
-  const title = `${topicName} - Page ${sanitizedPageNumber} | Lyóvson.com`;
+  const title = `${topicName} - Page ${sanitizedPageNumber}`;
 
-  return {
-    title,
+  return buildPaginatedArchiveMetadata({
+    canonicalPath: topicPageRoute(slug, sanitizedPageNumber),
     description,
-    alternates: {
-      canonical: topicPageRoute(slug, sanitizedPageNumber),
-    },
-    openGraph: {
-      siteName: "Lyóvson.com",
-      title,
-      description,
-      type: "website",
-      url: absoluteUrl(topicPageRoute(slug, sanitizedPageNumber)),
-    },
-    twitter: {
-      card: "summary",
-      title,
-      description,
-      site: "@lyovson",
-    },
-    robots: {
-      index: sanitizedPageNumber <= MAX_INDEXED_PAGE,
-      follow: true,
-      noarchive: sanitizedPageNumber > 1,
-    },
-  };
+    pageNumber: sanitizedPageNumber,
+    title,
+  });
 }
