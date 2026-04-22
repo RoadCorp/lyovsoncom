@@ -49,15 +49,18 @@ type PostWithLegacyMeta = Post & {
 };
 
 function getPostKeywords(post: Post) {
-  return post.topics
-    ?.map((topic) => {
-      if (typeof topic === "object" && topic !== null) {
-        return topic.name || topic.slug || "";
-      }
+  const keywords =
+    post.topics
+      ?.map((topic) => {
+        if (typeof topic === "object" && topic !== null) {
+          return topic.name || topic.slug || "";
+        }
 
-      return "";
-    })
-    .filter(Boolean);
+        return "";
+      })
+      .filter(Boolean) || [];
+
+  return [...new Set(keywords)];
 }
 
 function getPostMetaImage(post: PostWithLegacyMeta) {
@@ -126,6 +129,7 @@ export default async function PostPage({ params: paramsPromise }: Args) {
       ? (post.featuredImage as Media)
       : null;
   const imageUrl = postImage?.url ? absoluteUrl(postImage.url) : undefined;
+  const keywords = getPostKeywords(post);
 
   const articleSchema = generateArticleSchema({
     title: post.seo?.title || post.title,
@@ -144,15 +148,7 @@ export default async function PostPage({ params: paramsPromise }: Args) {
             : null
         )
         .filter((author) => author !== null) || undefined,
-    keywords: post.topics
-      ?.map((topic) => {
-        if (typeof topic === "object" && topic !== null) {
-          return topic.name || topic.slug || "";
-        }
-
-        return "";
-      })
-      .filter(Boolean),
+    keywords,
   });
 
   const breadcrumbSchema = generateBreadcrumbSchema([

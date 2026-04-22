@@ -12,7 +12,10 @@ import {
   generateProfilePageSchema,
 } from "@/utilities/generate-json-ld";
 import { getLyovsonProfile } from "@/utilities/get-lyovson-profile";
-import { getLyovsonPersonInput } from "@/utilities/lyovson-person";
+import {
+  getLyovsonDisplayName,
+  getLyovsonPersonInput,
+} from "@/utilities/lyovson-person";
 import { absoluteUrl } from "@/utilities/routes";
 import {
   buildLyovsonMetadata,
@@ -31,6 +34,7 @@ export default async function Page({ params }: PageProps) {
     return notFound();
   }
 
+  const displayName = getLyovsonDisplayName(user, username);
   const personInput = getLyovsonPersonInput(user);
   const personSchema = personInput ? generatePersonSchema(personInput) : null;
   const profilePageSchema = personSchema
@@ -43,7 +47,7 @@ export default async function Page({ params }: PageProps) {
 
   return (
     <>
-      <h1 className="sr-only">{user.name} bio</h1>
+      <h1 className="sr-only">{displayName} bio</h1>
       {personSchema && profilePageSchema ? (
         <JsonLd data={[personSchema, profilePageSchema]} />
       ) : null}
@@ -64,7 +68,7 @@ export default async function Page({ params }: PageProps) {
         </GridCard>
       ) : (
         <GridCardEmptyState
-          description={`A full bio for ${user.name} has not been published yet.`}
+          description={`A full bio for ${displayName} has not been published yet.`}
           title="Bio Coming Soon"
         />
       )}
@@ -82,7 +86,7 @@ export async function generateMetadata({
     return buildLyovsonNotFoundMetadata();
   }
 
-  const name = user.name || username;
+  const name = getLyovsonDisplayName(user, username);
   const description = user.quote || `Read ${name}'s biography.`;
   const title = `${name} Bio`;
 

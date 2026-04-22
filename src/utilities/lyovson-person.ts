@@ -31,6 +31,15 @@ export function getLyovsonSameAs(person: PersonRecord) {
   return knownAuthor ? [...knownAuthor.sameAs] : undefined;
 }
 
+export function getLyovsonDisplayName(
+  person: PersonRecord,
+  fallbackName?: string | null
+) {
+  const knownAuthor = person?.username ? getKnownAuthor(person.username) : null;
+
+  return knownAuthor?.name || person?.name || fallbackName || "Lyovson";
+}
+
 export function getLyovsonPersonInput(person: PersonRecord) {
   const username = person?.username || null;
 
@@ -38,10 +47,8 @@ export function getLyovsonPersonInput(person: PersonRecord) {
     return null;
   }
 
-  const knownAuthor = getKnownAuthor(username);
-
   return {
-    name: person?.name || knownAuthor?.name || username,
+    name: getLyovsonDisplayName(person, username),
     username,
     avatarUrl: getLyovsonAvatarUrl(person),
     bio: person?.quote || undefined,

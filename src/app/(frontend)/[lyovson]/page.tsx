@@ -15,7 +15,10 @@ import {
 } from "@/utilities/generate-json-ld";
 import { getLatestLyovsonActivities } from "@/utilities/get-activity";
 import { getLyovsonFeed } from "@/utilities/get-lyovson-feed";
-import { getLyovsonPersonInput } from "@/utilities/lyovson-person";
+import {
+  getLyovsonDisplayName,
+  getLyovsonPersonInput,
+} from "@/utilities/lyovson-person";
 import {
   absoluteUrl,
   lyovsonPageRoute,
@@ -52,12 +55,13 @@ export default async function Page({ params }: PageProps) {
 
   const { items, totalItems, totalPages, user } = response;
   const hasActivitiesPreview = activities.length > 0;
+  const displayName = getLyovsonDisplayName(user, username);
   const personInput = getLyovsonPersonInput(user);
   const personSchema = personInput ? generatePersonSchema(personInput) : null;
 
   const collectionPageSchema = generateCollectionPageSchema({
-    name: `${user.name} - Posts`,
-    description: `Published posts by ${user.name}.`,
+    name: `${displayName} - Posts`,
+    description: `Published posts by ${displayName}.`,
     url: absoluteUrl(lyovsonRoute(username)),
     itemCount: totalItems,
     items: items
@@ -71,7 +75,7 @@ export default async function Page({ params }: PageProps) {
 
   return (
     <>
-      <h1 className="sr-only">{user.name} posts</h1>
+      <h1 className="sr-only">{displayName} posts</h1>
       <JsonLd
         data={
           personSchema
@@ -83,7 +87,7 @@ export default async function Page({ params }: PageProps) {
         <LyovsonFeedItems items={items} />
       ) : (
         <GridCardEmptyState
-          description={`No published posts found for ${user.name} yet.`}
+          description={`No published posts found for ${displayName} yet.`}
           title="No Posts Yet"
         />
       )}
@@ -123,7 +127,7 @@ export async function generateMetadata({
     return buildLyovsonNotFoundMetadata();
   }
 
-  const name = response.user.name || username;
+  const name = getLyovsonDisplayName(response.user, username);
   const description = `Browse published posts by ${name}.`;
 
   return buildLyovsonMetadata({

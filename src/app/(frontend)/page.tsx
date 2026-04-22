@@ -19,6 +19,9 @@ import {
   postUrl,
 } from "@/utilities/routes";
 import { buildSeoMetadata } from "@/utilities/seo-metadata";
+import { getSocialTitle } from "@/utilities/site-config";
+
+const HOME_TITLE = "Latest Posts";
 
 export default async function Page() {
   const [postResponse, activityResponse] = await Promise.all([
@@ -29,7 +32,7 @@ export default async function Page() {
   const hasActivitiesPreview = activityResponse.docs.length > 0;
 
   const collectionPageSchema = generateCollectionPageSchema({
-    name: "Latest Posts",
+    name: HOME_TITLE,
     description:
       "Latest posts and articles from Lyovson.com covering programming, design, philosophy, technology, and creative projects.",
     url: absoluteUrl(homeRoute()),
@@ -66,7 +69,7 @@ export default async function Page() {
 
 export const metadata: Metadata = {
   ...buildSeoMetadata({
-    title: "Latest Posts",
+    title: HOME_TITLE,
     description:
       "Latest posts and articles from Lyóvson.com covering programming, design, philosophy, technology, and creative projects by Rafa and Jess Lyóvson.",
     canonicalPath: homeRoute(),
@@ -91,4 +94,7 @@ export const metadata: Metadata = {
       alt: "Latest Posts",
     },
   }),
+  title: {
+    absolute: getSocialTitle(HOME_TITLE),
+  },
 };
