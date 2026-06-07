@@ -1,5 +1,10 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import {
+  getRequestUserAgent,
+  isHostileProbePath,
+  shouldBlockExpensiveBotRequest,
+} from "@/utilities/request-guards";
 
 function isLocalHost(host: string | null) {
   if (!host) {
@@ -21,6 +26,22 @@ function isHtmlNavigation(request: NextRequest) {
 }
 
 export function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const userAgent = getRequestUserAgent(request.headers);
+
+  if (
+    isHostileProbePath(pathname) ||
+    shouldBlockExpensiveBotRequest(pathname, userAgent)
+  ) {
+    return new NextResponse("Forbidden", {
+      status: 403,
+      headers: {
+        "Cache-Control": "no-store",
+        "X-Robots-Tag": "noindex, nofollow, noarchive",
+      },
+    });
+  }
+
   const response = NextResponse.next();
 
   if (isLocalHost(request.headers.get("host")) && isHtmlNavigation(request)) {
@@ -33,5 +54,14 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|api|.*\\..*).*)"],
+  matcher: [
+    "/api/:path*",
+    "/_next/image",
+    "/.env",
+    "/:path*/.env",
+    "/.git/:path*",
+    "/wp-:path*",
+    "/xmlrpc.php",
+    "/((?!_next/static|.*\\.(?:avif|css|gif|ico|jpg|jpeg|js|json|map|png|svg|txt|webmanifest|webp|woff|woff2)$).*)",
+  ],
 };
