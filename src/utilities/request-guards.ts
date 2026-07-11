@@ -14,7 +14,7 @@ const EXPENSIVE_PUBLIC_PATH_PATTERN =
   /^\/($|activities(?:\/|$)|ai-docs(?:\/|$)|api(?:\/|$)|jess(?:\/|$)|notes(?:\/|$)|page(?:\/|$)|posts(?:\/|$)|projects(?:\/|$)|rafa(?:\/|$)|topics(?:\/|$)|_next\/image(?:\?|$))/;
 
 const HOSTILE_PROBE_PATH_PATTERN =
-  /^\/(?:(?:[^/]+\/)*\.env(?:$|[./_-].*)|(?:[^/]+\/)*[^/]+\.php$|\.git(?:\/|$)|wp-(?:admin|content|includes|login)(?:\/|\.php|$)|wordpress(?:\/|$)|server-status(?:\/|$))/;
+  /^\/(?:(?:[^/]+\/)*\.env(?:$|[./_-].*)|(?:[^/]+\/)*[^/]+\.(?:php[0-9]*|phtml|phar|py)(?:$|[/?])|(?:[^/]+\/)*[^/]+\.(?:dat|bak|backup|old|orig|save|sql|sqlite|db|zip|tar|tgz|gz|rar|7z|log|ini|conf)(?:$|[/?])|\.git(?:\/|$)|wp-(?:admin|content|includes|login)(?:\/|\.php|$)|wordpress(?:\/|$)|server-status(?:\/|$)|actuator(?:\/|$))/;
 
 export function getRequestUserAgent(headers: Headers) {
   return headers.get("user-agent") || "";
