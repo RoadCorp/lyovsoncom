@@ -84,3 +84,14 @@ Implementation follows the installed Next.js view-transition documentation and t
 A follow-up frame-by-frame check of the Siri + Gemini article exposed a gap in the original keyframe-only checks: the shared image/title moved correctly but were covered by the entering hero snapshot. They disappeared near the end, then reappeared when the snapshot overlay was removed.
 
 The fix gives retained cards and shared detail snapshots explicit stacking order above page/card reveals. Both media snapshots fill the same interpolated frame, with matching clipping and additive blending so the image does not dim or show mismatched bottom edges as its aspect ratio changes. Geometry, timing, focus, and reduced-motion behavior remain intact. Verification now compares paused transition frames with the settled page, in addition to checking animation keyframes.
+
+## Related handoff corrections — September 5, 2026
+
+The broader paused-frame review found two additional issues:
+
+- Menu/search changes briefly darkened the unchanged navigation shell. Shared content/title/navigation fades now use matching 180ms timing and isolated additive blending. Standalone exits retain 120ms timing. The sampled unchanged shell pixel now stays RGB 26/33/41 through 0, 70, 140, and 279ms and settlement; previously it dropped to 21/28/36 at 70ms.
+- The moving pagination highlight covered the current page numeral because its snapshot sat above the anchored pager. The highlight and numeral now travel together in one snapshot, with `aria-current="page"` on that same element.
+
+The follow-up checks include actual paused snapshots for projects, activities, notes, related notes, menu/search modes, section navigation, changing and empty search results, both pagination directions, and the persistent author profile. Compare visible content with the settled page rather than relying solely on animation keyframes; keyframes alone did not detect either layering defect.
+
+Verification of these corrections: 68 tests pass; type checking and the 173-route production build pass with schema push disabled; lint has zero errors and the existing 43 warnings. Rebuilt desktop/dark and 390px mobile/light pagination frames keep the current numeral visible, including both directions. The desktop page-2 numeral crop's final-frame difference from the settled page fell from 11.226 to 0.017 per RGB channel (0–255 scale). Search query Back/Forward restoration, rapid menu changes, author profile anchoring, real Escape focus restoration, and zero-duration reduced motion pass. No view-transition readiness errors or horizontal overflow were recorded in the sampled flows. Browser coverage remains Chromium.

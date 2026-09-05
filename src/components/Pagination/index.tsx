@@ -178,30 +178,33 @@ export function Pagination({
                     update="vt-control"
                   >
                     <span
-                      aria-hidden="true"
-                      className="surface-emphasis pointer-events-none absolute inset-0 rounded-[inherit]"
-                    />
+                      aria-current="page"
+                      className="surface-emphasis pointer-events-none absolute inset-0 flex items-center justify-center rounded-[inherit]"
+                    >
+                      {cell.label}
+                    </span>
                   </ViewTransition>
                 ) : null}
-                {cell.disabled ? (
-                  renderDisabledCell(cell)
-                ) : (
-                  <AppLink
-                    aria-label={cell.ariaLabel}
-                    className="relative flex h-full w-full items-center justify-center"
-                    href={getPageHref(cell.target)}
-                    pendingHintClassName="absolute right-2 top-2"
-                    prefetch={null}
-                    showPendingHint
-                    transitionTypes={[
-                      cell.target < page
-                        ? transitionTypes.paginationPrev
-                        : transitionTypes.paginationNext,
-                    ]}
-                  >
-                    {cell.label}
-                  </AppLink>
-                )}
+                {!cell.isCurrent &&
+                  (cell.disabled ? (
+                    renderDisabledCell(cell)
+                  ) : (
+                    <AppLink
+                      aria-label={cell.ariaLabel}
+                      className="relative flex h-full w-full items-center justify-center"
+                      href={getPageHref(cell.target)}
+                      pendingHintClassName="absolute right-2 top-2"
+                      prefetch={null}
+                      showPendingHint
+                      transitionTypes={[
+                        cell.target < page
+                          ? transitionTypes.paginationPrev
+                          : transitionTypes.paginationNext,
+                      ]}
+                    >
+                      {cell.label}
+                    </AppLink>
+                  ))}
               </GridCardSection>
             );
           })}

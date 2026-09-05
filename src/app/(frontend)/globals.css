@@ -2192,12 +2192,34 @@
   animation: vt-fade-in var(--vt-content-duration) ease-out both;
 }
 
-::view-transition-old(.vt-exit),
+::view-transition-old(.vt-exit) {
+  animation: vt-fade-out var(--vt-exit-duration) ease-out both;
+}
+
+/* Paired fades must stay complementary so unchanged surfaces do not dim. */
 ::view-transition-old(.vt-content),
 ::view-transition-old(.vt-nav),
 ::view-transition-old(.vt-share-title),
 ::view-transition-old(.vt-share-content) {
-  animation: vt-fade-out var(--vt-exit-duration) ease-out both;
+  animation: vt-fade-out var(--vt-content-duration) ease-out both;
+}
+
+::view-transition-image-pair(.vt-content),
+::view-transition-image-pair(.vt-nav),
+::view-transition-image-pair(.vt-share-title),
+::view-transition-image-pair(.vt-share-content) {
+  isolation: isolate;
+}
+
+::view-transition-old(.vt-content),
+::view-transition-new(.vt-content),
+::view-transition-old(.vt-nav),
+::view-transition-new(.vt-nav),
+::view-transition-old(.vt-share-title),
+::view-transition-new(.vt-share-title),
+::view-transition-old(.vt-share-content),
+::view-transition-new(.vt-share-content) {
+  mix-blend-mode: plus-lighter;
 }
 
 /* Keep full-page/text snapshots at their natural geometry. Only named cards,
