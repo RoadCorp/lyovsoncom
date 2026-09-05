@@ -1,5 +1,5 @@
 "use client";
-import { Highlight, themes } from "prism-react-renderer";
+import { Highlight, type PrismTheme } from "prism-react-renderer";
 import type React from "react";
 
 import { CopyButton } from "./CopyButton";
@@ -9,6 +9,36 @@ interface Props {
   language?: string;
 }
 
+const codeTheme: PrismTheme = {
+  plain: { color: "var(--text-1)" },
+  styles: [
+    {
+      types: ["comment", "prolog", "doctype", "cdata"],
+      style: { color: "var(--syntax-comment)" },
+    },
+    {
+      types: ["keyword", "atrule", "tag", "selector"],
+      style: { color: "var(--syntax-keyword)" },
+    },
+    {
+      types: ["string", "char", "attr-value", "regex", "inserted"],
+      style: { color: "var(--syntax-string)" },
+    },
+    {
+      types: ["number", "boolean", "constant", "symbol", "deleted"],
+      style: { color: "var(--syntax-number)" },
+    },
+    {
+      types: ["function", "class-name", "builtin", "attr-name"],
+      style: { color: "var(--syntax-function)" },
+    },
+    {
+      types: ["punctuation", "operator"],
+      style: { color: "var(--syntax-punctuation)" },
+    },
+  ],
+};
+
 export const Code: React.FC<Props> = ({ code, language = "" }) => {
   if (!code) {
     return null;
@@ -16,7 +46,7 @@ export const Code: React.FC<Props> = ({ code, language = "" }) => {
 
   return (
     <div className="surface-panel surface-emphasis surface-code relative">
-      <Highlight code={code} language={language} theme={themes.vsDark}>
+      <Highlight code={code} language={language} theme={codeTheme}>
         {({ getLineProps, getTokenProps, tokens }) => (
           <pre className="rounded-lg p-6 font-mono text-sm leading-relaxed content-code-shell">
             {/* Language indicator */}
@@ -29,7 +59,7 @@ export const Code: React.FC<Props> = ({ code, language = "" }) => {
             {tokens.map((line, i) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: Syntax highlighting tokens are static and ordered
               <div key={i} {...getLineProps({ className: "table-row", line })}>
-                <span className="tone-muted table-cell min-w-[3rem] select-none pr-4 text-right opacity-50">
+                <span className="tone-muted table-cell min-w-[3rem] select-none pr-4 text-right">
                   {i + 1}
                 </span>
                 <span className="table-cell">

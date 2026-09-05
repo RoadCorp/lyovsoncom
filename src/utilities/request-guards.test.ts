@@ -35,14 +35,12 @@ describe("request guards", () => {
     expect(isHostileProbePath(pathname)).toBe(true);
   });
 
-  it.each([
-    "/",
-    "/posts/bye-bye-apple-tv",
-    "/topics/media",
-    "/feed.xml",
-  ])("does not classify normal public path as a hostile probe: %s", (pathname) => {
-    expect(isHostileProbePath(pathname)).toBe(false);
-  });
+  it.each(["/", "/posts/bye-bye-apple-tv", "/topics/media", "/feed.xml"])(
+    "does not classify normal public path as a hostile probe: %s",
+    (pathname) => {
+      expect(isHostileProbePath(pathname)).toBe(false);
+    }
+  );
 
   it("blocks AI crawlers on expensive public paths without blocking search crawlers", () => {
     expect(shouldBlockExpensiveBotRequest("/posts/example", "GPTBot")).toBe(

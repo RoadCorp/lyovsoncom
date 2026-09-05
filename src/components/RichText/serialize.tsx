@@ -312,7 +312,7 @@ function renderElementNode(
 
       return (
         <CMSLink
-          className="transition-colors duration-300 hover:opacity-90"
+          className="transition-colors duration-300"
           key={key}
           newTab={Boolean(node.fields.newTab)}
           reference={isInternalLink ? node.fields.doc : null}

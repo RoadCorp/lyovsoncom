@@ -93,7 +93,7 @@ export default async function NotePage({ params: paramsPromise }: Args) {
   } as const;
 
   return (
-    <>
+    <ViewTransition key={slug} {...frontendViewTransitionClasses.page}>
       <JsonLd data={articleSchema} />
       <JsonLd data={breadcrumbSchema} />
 
@@ -113,7 +113,7 @@ export default async function NotePage({ params: paramsPromise }: Args) {
             {...frontendViewTransitionClasses.sharedContent}
           >
             {isQuoteNote ? (
-              <article className="note-stage reveal-stagger-3" dir="auto">
+              <article className="note-stage" dir="auto">
                 <span aria-hidden="true" className="note-quote-mark">
                   &ldquo;
                 </span>
@@ -125,10 +125,7 @@ export default async function NotePage({ params: paramsPromise }: Args) {
                 ) : null}
               </article>
             ) : (
-              <article
-                className="note-thought-stage reveal-stagger-3"
-                dir="auto"
-              >
+              <article className="note-thought-stage" dir="auto">
                 <RichText
                   className="note-thought-prose"
                   {...noteRichTextProps}
@@ -169,7 +166,7 @@ export default async function NotePage({ params: paramsPromise }: Args) {
           </OptionalErrorBoundary>
         </div>
       </aside>
-    </>
+    </ViewTransition>
   );
 }
 

@@ -1,38 +1,41 @@
 import type { NextRequest } from "next/server";
-import { after, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import {
   hydrateSearchPreviewItems,
   runHybridSearch,
   SearchInputError,
 } from "@/search/service";
-import { getPayloadClient } from "@/utilities/payload-client";
-
-const SEARCH_FAILURE_STATUS = 500;
-
-function logSearchRouteFailure(
-  startedAt: number,
-  query: string | null,
-  error: unknown
-) {
-  after(async () => {
-    const payload = await getPayloadClient();
-    payload.logger.error({
-      msg: "api.search.failed",
-      durationMs: Date.now() - startedAt,
-      query,
-      queryLength: query?.length ?? 0,
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
-  });
-}
+import {
+  getRequestUserAgent,
+  shouldBlockExpensiveBotRequest,
+} from "@/utilities/request-guards";
 
 export async function GET(request: NextRequest) {
-  const startedAt = Date.now();
   const query = request.nextUrl.searchParams.get("q");
+  const userAgent = getRequestUserAgent(request.headers);
+
+  if (shouldBlockExpensiveBotRequest(request.nextUrl.pathname, userAgent)) {
+    return NextResponse.json(
+      {
+        results: [],
+        query: query ?? "",
+        count: 0,
+        message: "Search is not available to automated crawlers.",
+        previewItems: [],
+      },
+      {
+        status: 403,
+        headers: {
+          "Cache-Control": "no-store",
+          "X-Robots-Tag": "noindex, nofollow",
+        },
+      }
+    );
+  }
 
   try {
     const searchParams = request.nextUrl.searchParams;
-    const limit = Number.parseInt(searchParams.get("limit") || "10", 10);
+    const limit = Number(searchParams.get("limit") ?? "10");
     const scopeUsername = searchParams.get("scope");
     const previewMode = searchParams.get("preview") === "true";
     const response = await runHybridSearch(query, {
@@ -42,18 +45,6 @@ export async function GET(request: NextRequest) {
     const previewItems = previewMode
       ? await hydrateSearchPreviewItems(response.results)
       : undefined;
-
-    after(async () => {
-      const payload = await getPayloadClient();
-      payload.logger.info({
-        msg: "api.search.completed",
-        durationMs: Date.now() - startedAt,
-        queryLength: response.query.length,
-        resultCount: response.count,
-        previewMode,
-        scopeUsername: scopeUsername || null,
-      });
-    });
 
     return NextResponse.json(
       {
@@ -70,10 +61,6 @@ export async function GET(request: NextRequest) {
     );
   } catch (error) {
     if (error instanceof SearchInputError) {
-      if (error.status >= SEARCH_FAILURE_STATUS) {
-        logSearchRouteFailure(startedAt, query, error);
-      }
-
       return NextResponse.json(
         {
           results: [],
@@ -85,8 +72,6 @@ export async function GET(request: NextRequest) {
         { status: error.status }
       );
     }
-
-    logSearchRouteFailure(startedAt, query, error);
 
     return NextResponse.json(
       {

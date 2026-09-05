@@ -1,9 +1,9 @@
 import type React from "react";
 import { ArchiveItems, toArchiveItems } from "@/components/ArchiveItems";
-import type { Post } from "@/payload-types";
+import type { PostSummary } from "@/utilities/post-summary";
 
 export interface Props {
-  posts: Post[];
+  posts: PostSummary[];
 }
 
 export const CollectionArchive: React.FC<Props> = (props) => {

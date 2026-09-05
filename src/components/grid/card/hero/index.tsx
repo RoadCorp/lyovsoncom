@@ -3,6 +3,7 @@ import { ViewTransition } from "react";
 import { AppLink } from "@/components/AppLink";
 import { GridCard } from "@/components/grid";
 import { Media } from "@/components/Media";
+import { CARD_FULL_IMAGE_SIZE } from "@/components/Media/image-sizes";
 import { PostTransitionBoundary } from "@/components/post-transitions/PostTransitionBoundary";
 import { TopicPill } from "@/components/TopicPill";
 import { cn } from "@/lib/utils";
@@ -14,6 +15,8 @@ import {
   frontendViewTransitionClasses,
   getActivityMediaTransitionName,
   getActivityTitleTransitionName,
+  getNoteMetaTransitionName,
+  getNoteTitleTransitionName,
 } from "@/utilities/view-transitions";
 import { GridCardSection } from "../section";
 
@@ -64,6 +67,7 @@ export const GridCardHero = ({
                 pictureClassName="h-full"
                 priority={true}
                 resource={post.featuredImage}
+                size={CARD_FULL_IMAGE_SIZE}
               />
             </PostTransitionBoundary>
           </GridCardSection>
@@ -109,57 +113,77 @@ export const GridCardHeroNote = ({
       )}
     >
       <GridCardSection className="surface-title-stage col-start-1 col-end-4 row-start-1 row-end-3 flex h-full flex-col items-center justify-center px-6 py-6">
-        <h1 className="tone-heading text-center font-bold text-2xl">
-          {note.title}
-        </h1>
+        <ViewTransition
+          name={getNoteTitleTransitionName(note.slug || String(note.id))}
+          {...frontendViewTransitionClasses.sharedTitle}
+        >
+          <h1 className="tone-heading text-center font-bold text-2xl">
+            {note.title}
+          </h1>
+        </ViewTransition>
       </GridCardSection>
 
-      <GridCardSection className="surface-rail-panel card-rail-stack card-topic-stack col-start-1 col-end-2 row-start-3 row-end-4 h-full">
-        {dedupeRelationItemsById(note.topics).map((topic) => {
-          if (typeof topic !== "object" || !topic.slug || !topic.id) {
-            return null;
-          }
+      <ViewTransition
+        name={getNoteMetaTransitionName(note.slug || String(note.id), "topics")}
+        {...frontendViewTransitionClasses.sharedMeta}
+      >
+        <GridCardSection className="surface-rail-panel card-rail-stack card-topic-stack col-start-1 col-end-2 row-start-3 row-end-4 h-full">
+          {dedupeRelationItemsById(note.topics).map((topic) => {
+            if (typeof topic !== "object" || !topic.slug || !topic.id) {
+              return null;
+            }
 
-          return (
-            <AppLink
-              aria-label={`View notes about ${topic.name}`}
-              className="w-full"
-              href={topicRoute(topic.slug)}
-              key={topic.id}
-              prefetch={false}
-            >
-              <TopicPill>{topic.name}</TopicPill>
-            </AppLink>
-          );
-        })}
-      </GridCardSection>
+            return (
+              <AppLink
+                aria-label={`View notes about ${topic.name}`}
+                className="w-full"
+                href={topicRoute(topic.slug)}
+                key={topic.id}
+                prefetch={false}
+              >
+                <TopicPill>{topic.name}</TopicPill>
+              </AppLink>
+            );
+          })}
+        </GridCardSection>
+      </ViewTransition>
 
-      <GridCardSection className="surface-rail-panel card-rail-stack card-meta-stack col-start-2 col-end-3 row-start-3 row-end-4">
-        {note.author ? (
-          <div className="tone-muted flex items-center gap-2 text-xs capitalize">
-            <PenTool aria-hidden="true" className="h-5 w-5" />
-            <span className="font-medium">{note.author}</span>
-          </div>
-        ) : null}
+      <ViewTransition
+        name={getNoteMetaTransitionName(note.slug || String(note.id), "byline")}
+        {...frontendViewTransitionClasses.sharedMeta}
+      >
+        <GridCardSection className="surface-rail-panel card-rail-stack card-meta-stack col-start-2 col-end-3 row-start-3 row-end-4">
+          {note.author ? (
+            <div className="tone-muted flex items-center gap-2 text-xs capitalize">
+              <PenTool aria-hidden="true" className="h-5 w-5" />
+              <span className="font-medium">{note.author}</span>
+            </div>
+          ) : null}
 
-        {note.publishedAt ? (
-          <div className="tone-muted flex items-center gap-2 text-xs">
-            <Calendar aria-hidden="true" className="h-5 w-5" />
-            <time dateTime={note.publishedAt}>
-              {formatShortDate(note.publishedAt)}
-            </time>
-          </div>
-        ) : null}
-      </GridCardSection>
+          {note.publishedAt ? (
+            <div className="tone-muted flex items-center gap-2 text-xs">
+              <Calendar aria-hidden="true" className="h-5 w-5" />
+              <time dateTime={note.publishedAt}>
+                {formatShortDate(note.publishedAt)}
+              </time>
+            </div>
+          ) : null}
+        </GridCardSection>
+      </ViewTransition>
 
-      <GridCardSection className="surface-rail-panel col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
-        {isQuoteType ? (
-          <Quote aria-hidden="true" className="tone-heading h-5 w-5" />
-        ) : (
-          <Brain aria-hidden="true" className="tone-heading h-5 w-5" />
-        )}
-        <span className="tone-muted text-xs capitalize">{typeLabel}</span>
-      </GridCardSection>
+      <ViewTransition
+        name={getNoteMetaTransitionName(note.slug || String(note.id), "type")}
+        {...frontendViewTransitionClasses.sharedMeta}
+      >
+        <GridCardSection className="surface-rail-panel col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
+          {isQuoteType ? (
+            <Quote aria-hidden="true" className="tone-heading h-5 w-5" />
+          ) : (
+            <Brain aria-hidden="true" className="tone-heading h-5 w-5" />
+          )}
+          <span className="tone-muted text-xs capitalize">{typeLabel}</span>
+        </GridCardSection>
+      </ViewTransition>
     </GridCard>
   );
 };
@@ -217,6 +241,7 @@ export const GridCardHeroActivity = ({
               pictureClassName="h-full"
               priority={true}
               resource={referenceImage}
+              size={CARD_FULL_IMAGE_SIZE}
             />
           </ViewTransition>
         </GridCardSection>

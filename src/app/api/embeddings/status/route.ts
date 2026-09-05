@@ -3,6 +3,11 @@ import type { NextRequest } from "next/server";
 import { getPayload } from "payload";
 import { logApiTelemetry } from "@/utilities/api-telemetry";
 import {
+  authorizeEmbeddingMutation,
+  getEmbeddingUnauthorizedResponse,
+  hasEmbeddingAuthHint,
+} from "@/utilities/embedding-auth";
+import {
   EMBEDDING_MODEL,
   EMBEDDING_VECTOR_DIMENSIONS,
 } from "@/utilities/generate-embedding";
@@ -32,8 +37,6 @@ interface EmbeddingCoverage {
 }
 
 const PERCENT_MULTIPLIER = 100;
-const PUBLIC_QUERY_EMBEDDINGS_ENABLED =
-  process.env.ENABLE_PUBLIC_QUERY_EMBEDDINGS === "true";
 
 function asEmbeddingDoc(value: unknown): EmbeddingDoc | null {
   if (!value || typeof value !== "object") {
@@ -212,7 +215,7 @@ function buildStatus(
       openaiConfigured: !!process.env.OPENAI_API_KEY,
       preferredModel: process.env.OPENAI_API_KEY ? EMBEDDING_MODEL : null,
       dimensions: EMBEDDING_VECTOR_DIMENSIONS,
-      queryEmbeddingPublic: PUBLIC_QUERY_EMBEDDINGS_ENABLED,
+      queryEmbeddingPublic: false,
       pgvectorEnabled: true,
       collectionsSupported: ["posts", "notes", "activities"],
     },
@@ -288,15 +291,13 @@ function addRecommendations(status: ReturnType<typeof buildStatus>) {
     });
   }
 
-  if (!PUBLIC_QUERY_EMBEDDINGS_ENABLED) {
-    status.recommendations.push({
-      type: "info",
-      message:
-        "Public query embedding endpoint is disabled to reduce compute cost",
-      action:
-        "Set ENABLE_PUBLIC_QUERY_EMBEDDINGS=true only if public on-demand query vectors are required",
-    });
-  }
+  status.recommendations.push({
+    type: "info",
+    message:
+      "Public query embedding endpoint is disabled to reduce compute cost",
+    action:
+      "Use admin authentication or CRON_SECRET for embedding maintenance.",
+  });
 
   if (status.statistics.overallCoveragePercentage === PERCENT_MULTIPLIER) {
     status.recommendations.push({
@@ -319,13 +320,23 @@ function addRecommendations(status: ReturnType<typeof buildStatus>) {
   }
 }
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   const startedAt = Date.now();
   const SITE_URL =
     process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
 
   try {
+    if (!hasEmbeddingAuthHint(request)) {
+      return getEmbeddingUnauthorizedResponse();
+    }
+
     const payload = await getPayload({ config: configPromise });
+    const authResult = await authorizeEmbeddingMutation(request, payload);
+
+    if (!authResult.authorized) {
+      return getEmbeddingUnauthorizedResponse(authResult.reason);
+    }
+
     const [coverage, models] = await Promise.all([
       getEmbeddingCoverage(payload),
       getEmbeddingModelStats(payload),

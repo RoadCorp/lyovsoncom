@@ -14,6 +14,7 @@ import {
 
 import { GridCard, GridCardSection } from "@/components/grid";
 import { Media } from "@/components/Media";
+import { CARD_THUMBNAIL_IMAGE_SIZE } from "@/components/Media/image-sizes";
 import { cn } from "@/lib/utils";
 import type { Reference } from "@/payload-types";
 
@@ -118,6 +119,7 @@ export const GridCardReferences = ({
                 imgClassName="object-cover h-full"
                 pictureClassName="row-start-1 row-end-2 col-start-1 col-end-2 h-full"
                 resource={imageObj}
+                size={CARD_THUMBNAIL_IMAGE_SIZE}
               />
             ) : (
               <div className="col-start-1 col-end-2 row-start-1 row-end-2 flex h-full items-center justify-center">

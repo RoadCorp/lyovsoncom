@@ -3,6 +3,7 @@ import type { PaginatedDocs } from "payload";
 import type { Post } from "@/payload-types";
 import { publishedPostsWhere } from "@/utilities/content-queries";
 import { getPayloadClient } from "@/utilities/payload-client";
+import { type PostSummary, postSummarySelect } from "@/utilities/post-summary";
 
 export async function getPost(slug: string): Promise<Post | null> {
   "use cache";
@@ -60,7 +61,9 @@ export async function getPostByProjectAndSlug(
   return (response.docs[0] as Post) || null;
 }
 
-export async function getLatestPosts(limit = 12): Promise<PaginatedDocs<Post>> {
+export async function getLatestPosts(
+  limit = 12
+): Promise<PaginatedDocs<PostSummary>> {
   "use cache";
   cacheTag("posts");
   cacheTag("homepage");
@@ -69,22 +72,20 @@ export async function getLatestPosts(limit = 12): Promise<PaginatedDocs<Post>> {
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "posts",
+    select: postSummarySelect,
     depth: 2,
     limit,
     sort: "-publishedAt",
     where: publishedPostsWhere(),
   });
 
-  return {
-    ...result,
-    docs: result.docs as Post[],
-  };
+  return result;
 }
 
 export async function getPaginatedPosts(
   pageNumber: number,
   limit = 12
-): Promise<PaginatedDocs<Post>> {
+): Promise<PaginatedDocs<PostSummary>> {
   "use cache";
   cacheTag("posts");
   cacheTag(`posts-page-${pageNumber}`);
@@ -93,6 +94,7 @@ export async function getPaginatedPosts(
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "posts",
+    select: postSummarySelect,
     depth: 2,
     limit,
     page: pageNumber,
@@ -100,10 +102,7 @@ export async function getPaginatedPosts(
     where: publishedPostsWhere(),
   });
 
-  return {
-    ...result,
-    docs: result.docs as Post[],
-  };
+  return result;
 }
 
 export async function getPostCount() {

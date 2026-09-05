@@ -29,17 +29,21 @@ export const SearchInput = ({
         </Label>
         <Input
           aria-busy={isPending}
+          autoComplete="off"
           autoFocus
           id="nav-search"
+          maxLength={500}
+          name="q"
           onChange={(event) => setValue(event.target.value)}
           placeholder="Search"
+          type="search"
           value={value}
         />
         <Button
           aria-busy={isPending}
           aria-label="Submit search"
           className="rounded-lg"
-          disabled={isPending}
+          disabled={isPending || !value.trim()}
           title="Submit search"
           type="submit"
         >

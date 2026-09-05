@@ -68,8 +68,12 @@ export function validateSearchInput(query: string | null, limit: number) {
     throw new SearchInputError("No search query provided");
   }
 
-  if (limit < MIN_SEARCH_LIMIT || limit > MAX_SEARCH_LIMIT) {
-    throw new SearchInputError("Limit must be between 1 and 50");
+  if (
+    !Number.isInteger(limit) ||
+    limit < MIN_SEARCH_LIMIT ||
+    limit > MAX_SEARCH_LIMIT
+  ) {
+    throw new SearchInputError("Limit must be an integer between 1 and 50");
   }
 
   return query.trim();

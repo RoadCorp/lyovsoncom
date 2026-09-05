@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { Suspense } from "react";
 import { SkeletonCard } from "@/components/grid";
+import { LoadingTransition } from "@/components/LoadingTransition";
 import { SearchPageContent } from "@/search/page-content";
 import { getLyovsonProfile } from "@/utilities/get-lyovson-profile";
 import {
@@ -24,7 +25,13 @@ export default function SuspendedLyovsonSearchPage({
   searchParams,
 }: PageProps) {
   return (
-    <Suspense fallback={<SkeletonCard />}>
+    <Suspense
+      fallback={
+        <LoadingTransition>
+          <SkeletonCard />
+        </LoadingTransition>
+      }
+    >
       <LyovsonSearchPage params={params} searchParams={searchParams} />
     </Suspense>
   );

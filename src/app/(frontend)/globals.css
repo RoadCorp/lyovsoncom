@@ -15,80 +15,82 @@
   ---break---
 */
 
+/* Warm ivory and blue ink by day; slate and pearl by night.
+   Mix in Oklab to keep neutral surfaces from picking up intermediate hues. */
 :root {
   --radius: 0.75rem;
 
-  --paper: oklch(0.965 0.019 92);
-  --paper-warm: oklch(0.908 0.028 82);
-  --foam: oklch(0.988 0.01 205);
-  --ink: oklch(0.34 0.063 255);
-  --wave-blue: oklch(0.473 0.085 248);
-  --river-blue: oklch(0.79 0.041 222);
-  --cedar-gold: oklch(0.79 0.066 72);
-  --boat-coral: oklch(0.745 0.055 46);
-  --lichen-green: oklch(0.67 0.06 152);
-  --seal-red: oklch(0.58 0.089 28);
-  --storm-gray: oklch(0.56 0.015 244);
+  --paper: oklch(0.97 0.011 85);
+  --paper-warm: oklch(0.927 0.018 85);
+  --foam: oklch(0.99 0.004 85);
+  --ink: oklch(0.3 0.045 250);
+  --wave-blue: oklch(0.44 0.075 248);
+  --river-blue: oklch(0.77 0.045 230);
+  --cedar-gold: oklch(0.76 0.085 75);
+  --boat-coral: oklch(0.69 0.1 38);
+  --lichen-green: oklch(0.49 0.073 150);
+  --seal-red: oklch(0.49 0.135 28);
+  --storm-gray: oklch(0.49 0.018 250);
 
-  --background: color-mix(in oklch, var(--paper) 90%, var(--paper-warm) 10%);
-  --foreground: color-mix(in oklch, var(--ink) 88%, var(--storm-gray) 12%);
+  --background: var(--paper);
+  --foreground: var(--ink);
 
-  --card: color-mix(in oklch, var(--foam) 72%, var(--paper) 28%);
+  --card: var(--foam);
   --card-foreground: var(--foreground);
-  --popover: color-mix(in oklch, var(--foam) 80%, var(--paper) 20%);
+  --popover: var(--foam);
   --popover-foreground: var(--foreground);
 
-  --primary: color-mix(in oklch, var(--ink) 68%, var(--wave-blue) 32%);
+  --primary: color-mix(in oklab, var(--ink) 68%, var(--wave-blue) 32%);
   --primary-foreground: var(--foam);
-  --secondary: color-mix(in oklch, var(--paper) 70%, var(--paper-warm) 30%);
+  --secondary: var(--surface-3);
   --secondary-foreground: var(--foreground);
-  --accent: color-mix(in oklch, var(--foam) 58%, var(--river-blue) 42%);
+  --accent: var(--surface-accent);
   --accent-foreground: var(--foreground);
-  --muted: color-mix(in oklch, var(--paper) 78%, var(--foam) 22%);
-  --muted-foreground: color-mix(
-    in oklch,
-    var(--ink) 62%,
-    var(--storm-gray) 38%
-  );
+  --muted: var(--surface-2);
+  --muted-foreground: var(--text-3);
   --destructive: var(--seal-red);
   --destructive-foreground: var(--foam);
-  --border: color-mix(in oklch, var(--paper-warm) 56%, var(--storm-gray) 44%);
-  --input: color-mix(in oklch, var(--paper-warm) 48%, var(--storm-gray) 52%);
-  --ring: oklch(0.62 0.07 244 / 0.34);
+  --border: oklch(0.84 0.012 85);
+  --input: oklch(0.6 0.025 250);
+  --ring: var(--accent-link);
   --ring-offset: var(--background);
 
-  --accent-rail: color-mix(in oklch, var(--ink) 60%, var(--wave-blue) 40%);
+  --accent-rail: color-mix(in oklab, var(--ink) 60%, var(--wave-blue) 40%);
   --accent-meta: color-mix(
-    in oklch,
-    var(--river-blue) 72%,
-    var(--wave-blue) 28%
+    in oklab,
+    var(--wave-blue) 70%,
+    var(--river-blue) 30%
   );
-  --accent-link: color-mix(
-    in oklch,
-    var(--wave-blue) 58%,
-    var(--river-blue) 42%
-  );
+  --accent-link: var(--wave-blue);
   --accent-code: color-mix(
-    in oklch,
-    var(--river-blue) 64%,
-    var(--wave-blue) 36%
+    in oklab,
+    var(--wave-blue) 80%,
+    var(--river-blue) 20%
   );
-  --accent-quote: color-mix(in oklch, var(--ink) 82%, var(--wave-blue) 18%);
+  --accent-quote: color-mix(in oklab, var(--ink) 82%, var(--wave-blue) 18%);
   --accent-callout: color-mix(
-    in oklch,
+    in oklab,
     var(--cedar-gold) 72%,
     var(--boat-coral) 28%
   );
   --accent-success: var(--lichen-green);
   --accent-error: var(--seal-red);
+  --accent-score: oklch(0.49 0.1 75);
+
+  --syntax-comment: oklch(0.44 0.018 250);
+  --syntax-keyword: var(--accent-link);
+  --syntax-string: var(--success);
+  --syntax-number: var(--warning);
+  --syntax-function: var(--accent-link);
+  --syntax-punctuation: var(--text-2);
 
   --success: var(--accent-success);
   --success-foreground: var(--primary-foreground);
-  --warning: var(--cedar-gold);
+  --warning: oklch(0.49 0.1 75);
   --warning-foreground: var(--primary-foreground);
   --error: var(--accent-error);
   --error-foreground: var(--primary-foreground);
-  --info: var(--river-blue);
+  --info: var(--wave-blue);
   --info-foreground: var(--primary-foreground);
 
   --chart-1: var(--wave-blue);
@@ -98,55 +100,54 @@
   --chart-5: var(--ink);
   --chart-6: var(--seal-red);
 
-  --sidebar: color-mix(in oklch, var(--ink) 88%, black 12%);
+  --sidebar: color-mix(in oklab, var(--ink) 88%, black 12%);
   --sidebar-foreground: color-mix(
-    in oklch,
+    in oklab,
     var(--foam) 82%,
     var(--river-blue) 18%
   );
   --sidebar-primary: color-mix(
-    in oklch,
+    in oklab,
     var(--river-blue) 68%,
     var(--wave-blue) 32%
   );
-  --sidebar-primary-foreground: color-mix(in oklch, var(--ink) 82%, black 18%);
-  --sidebar-accent: color-mix(in oklch, var(--ink) 82%, var(--wave-blue) 18%);
+  --sidebar-primary-foreground: color-mix(in oklab, var(--ink) 82%, black 18%);
+  --sidebar-accent: color-mix(in oklab, var(--ink) 82%, var(--wave-blue) 18%);
   --sidebar-accent-foreground: var(--foam);
-  --sidebar-border: color-mix(in oklch, var(--ink) 64%, var(--wave-blue) 36%);
+  --sidebar-border: color-mix(in oklab, var(--ink) 64%, var(--wave-blue) 36%);
   --sidebar-ring: var(--ring);
 
   --surface-1: var(--card);
-  --surface-2: color-mix(in oklch, var(--paper) 76%, var(--paper-warm) 24%);
-  --surface-3: color-mix(in oklch, var(--surface-2) 88%, var(--river-blue) 12%);
+  --surface-2: var(--paper);
+  --surface-3: color-mix(in oklab, var(--foam) 86%, var(--river-blue) 14%);
   --surface-accent: color-mix(
-    in oklch,
+    in oklab,
     var(--surface-2) 90%,
     var(--accent-rail) 10%
   );
   --surface-emphasis: color-mix(
-    in oklch,
+    in oklab,
     var(--surface-2) 84%,
     var(--accent-callout) 16%
   );
-  --line-1: color-mix(in oklch, var(--border) 88%, var(--accent-rail) 12%);
+  --line-1: var(--border);
   --text-1: var(--foreground);
-  --text-2: color-mix(in oklch, var(--foreground) 76%, var(--storm-gray) 24%);
-  --text-3: color-mix(in oklch, var(--foreground) 56%, var(--paper-warm) 44%);
+  --text-2: color-mix(in oklab, var(--ink) 75%, var(--storm-gray) 25%);
+  --text-3: oklch(0.5 0.022 250);
 
-  --page-ambient-1: color-mix(in oklch, var(--wave-blue) 10%, transparent);
-  --page-ambient-2: color-mix(in oklch, var(--river-blue) 8%, transparent);
-  --page-ambient-3: color-mix(in oklch, var(--cedar-gold) 5%, transparent);
-  --page-ambient-4: color-mix(in oklch, var(--paper-warm) 14%, transparent);
+  --page-ambient-1: color-mix(in oklab, var(--wave-blue) 10%, transparent);
+  --page-ambient-2: color-mix(in oklab, var(--river-blue) 8%, transparent);
+  --page-ambient-3: color-mix(in oklab, var(--cedar-gold) 5%, transparent);
+  --page-ambient-4: color-mix(in oklab, var(--paper-warm) 14%, transparent);
 
   --shadow-surface:
-    0 12px 28px color-mix(in oklch, var(--ink) 10%, transparent),
-    0 2px 5px color-mix(in oklch, var(--ink) 4%, transparent);
+    0 4px 12px color-mix(in oklab, var(--ink) 5%, transparent),
+    0 1px 2px color-mix(in oklab, var(--ink) 4%, transparent);
   --shadow-surface-strong:
-    0 16px 34px color-mix(in oklch, var(--ink) 14%, transparent),
-    0 5px 12px color-mix(in oklch, var(--ink) 6%, transparent);
-  --shadow-emboss:
-    inset 0 1px 0 color-mix(in oklch, var(--foam) 78%, transparent),
-    inset 0 -1px 0 color-mix(in oklch, var(--ink) 4%, transparent);
+    0 10px 24px color-mix(in oklab, var(--ink) 8%, transparent),
+    0 2px 5px color-mix(in oklab, var(--ink) 4%, transparent);
+  --shadow-emboss: inset 0 1px 0
+    color-mix(in oklab, var(--foam) 65%, transparent);
   --focus-ring: 0 0 0 2px var(--ring-offset), 0 0 0 4px var(--ring);
 
   --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -155,7 +156,8 @@
   --duration-medium: 180ms;
   --duration-slow: 260ms;
 
-  --grid-unit: 400px;
+  /* Cards fit the grid's content box on mobile and keep 400px desktop units. */
+  --grid-unit: min(400px, 100cqw);
   --grid-gap: 1rem;
   --grid-card-1x1: var(--grid-unit);
   --grid-card-1x2: calc(var(--grid-unit) * 2 + var(--grid-gap));
@@ -169,7 +171,7 @@
   --grid-section-gap: 0.625rem;
   --grid-section-padding: 1.125rem;
   --frame-label-accent: color-mix(
-    in oklch,
+    in oklab,
     var(--accent-rail) 42%,
     var(--text-2) 58%
   );
@@ -191,73 +193,67 @@
 */
 
 .dark {
-  --paper: oklch(0.31 0.018 84);
-  --paper-warm: oklch(0.38 0.026 74);
-  --foam: oklch(0.93 0.013 215);
-  --ink: oklch(0.47 0.075 252);
-  --wave-blue: oklch(0.58 0.09 246);
-  --river-blue: oklch(0.79 0.046 223);
+  --paper: oklch(0.3 0.02 250);
+  --paper-warm: oklch(0.36 0.025 250);
+  --foam: oklch(0.925 0.01 85);
+  --ink: oklch(0.47 0.065 250);
+  --wave-blue: oklch(0.68 0.08 240);
+  --river-blue: oklch(0.8 0.055 230);
   --cedar-gold: oklch(0.76 0.07 72);
   --boat-coral: oklch(0.69 0.056 45);
-  --lichen-green: oklch(0.71 0.058 152);
-  --seal-red: oklch(0.64 0.093 28);
-  --storm-gray: oklch(0.5 0.018 244);
+  --lichen-green: oklch(0.76 0.075 150);
+  --seal-red: oklch(0.73 0.12 28);
+  --storm-gray: oklch(0.6 0.02 250);
 
-  --background: color-mix(in oklch, black 78%, var(--ink) 22%);
-  --foreground: color-mix(in oklch, var(--foam) 86%, var(--paper-warm) 14%);
+  --background: oklch(0.18 0.018 250);
+  --foreground: var(--foam);
 
-  --card: color-mix(in oklch, var(--background) 74%, var(--paper) 26%);
+  --card: var(--surface-1);
   --card-foreground: var(--foreground);
-  --popover: color-mix(in oklch, var(--background) 82%, var(--paper) 18%);
+  --popover: oklch(0.29 0.022 250);
   --popover-foreground: var(--foreground);
 
-  --primary: color-mix(in oklch, var(--wave-blue) 70%, var(--ink) 30%);
-  --primary-foreground: color-mix(in oklch, var(--background) 88%, black 12%);
-  --secondary: color-mix(in oklch, var(--background) 62%, var(--paper) 38%);
+  --primary: oklch(0.78 0.065 230);
+  --primary-foreground: var(--background);
+  --secondary: var(--surface-3);
   --secondary-foreground: var(--foreground);
-  --accent: color-mix(in oklch, var(--background) 46%, var(--river-blue) 54%);
+  --accent: var(--surface-accent);
   --accent-foreground: var(--foreground);
-  --muted: color-mix(in oklch, var(--background) 58%, var(--paper) 42%);
-  --muted-foreground: color-mix(
-    in oklch,
-    var(--foreground) 74%,
-    var(--storm-gray) 26%
-  );
+  --muted: var(--surface-2);
+  --muted-foreground: var(--text-3);
   --destructive: var(--seal-red);
   --destructive-foreground: color-mix(
-    in oklch,
+    in oklab,
     var(--background) 88%,
     black 12%
   );
-  --border: color-mix(in oklch, var(--storm-gray) 62%, var(--paper) 38%);
-  --input: color-mix(in oklch, var(--storm-gray) 72%, var(--paper) 28%);
-  --ring: oklch(0.74 0.044 223 / 0.38);
+  --border: oklch(0.37 0.025 250);
+  --input: oklch(0.58 0.025 250);
+  --ring: var(--accent-link);
   --ring-offset: var(--background);
 
-  --accent-rail: color-mix(in oklch, var(--ink) 58%, var(--wave-blue) 42%);
+  --accent-rail: color-mix(in oklab, var(--ink) 58%, var(--wave-blue) 42%);
   --accent-meta: color-mix(
-    in oklch,
+    in oklab,
     var(--river-blue) 66%,
     var(--wave-blue) 34%
   );
-  --accent-link: color-mix(
-    in oklch,
-    var(--wave-blue) 48%,
-    var(--river-blue) 52%
-  );
+  --accent-link: var(--river-blue);
   --accent-code: color-mix(
-    in oklch,
+    in oklab,
     var(--river-blue) 72%,
     var(--wave-blue) 28%
   );
-  --accent-quote: color-mix(in oklch, var(--ink) 76%, var(--wave-blue) 24%);
+  --accent-quote: color-mix(in oklab, var(--river-blue) 65%, var(--foam) 35%);
   --accent-callout: color-mix(
-    in oklch,
+    in oklab,
     var(--cedar-gold) 68%,
     var(--boat-coral) 32%
   );
   --accent-success: var(--lichen-green);
   --accent-error: var(--seal-red);
+  --accent-score: var(--cedar-gold);
+  --syntax-comment: oklch(0.78 0.016 250);
 
   --success: var(--accent-success);
   --success-foreground: var(--primary-foreground);
@@ -275,69 +271,65 @@
   --chart-5: var(--foam);
   --chart-6: var(--error);
 
-  --sidebar: color-mix(in oklch, black 82%, var(--ink) 18%);
+  --sidebar: color-mix(in oklab, black 82%, var(--ink) 18%);
   --sidebar-foreground: color-mix(
-    in oklch,
+    in oklab,
     var(--foam) 80%,
     var(--river-blue) 20%
   );
   --sidebar-primary: color-mix(
-    in oklch,
+    in oklab,
     var(--river-blue) 60%,
     var(--wave-blue) 40%
   );
   --sidebar-primary-foreground: color-mix(
-    in oklch,
+    in oklab,
     var(--background) 84%,
     black 16%
   );
   --sidebar-accent: color-mix(
-    in oklch,
+    in oklab,
     var(--background) 60%,
     var(--wave-blue) 40%
   );
   --sidebar-accent-foreground: var(--foreground);
   --sidebar-border: color-mix(
-    in oklch,
+    in oklab,
     var(--storm-gray) 60%,
     var(--wave-blue) 40%
   );
   --sidebar-ring: var(--ring);
 
-  --surface-1: color-mix(in oklch, var(--background) 76%, var(--paper) 24%);
-  --surface-2: color-mix(in oklch, var(--background) 58%, var(--paper) 42%);
-  --surface-3: color-mix(in oklch, var(--surface-2) 90%, var(--wave-blue) 10%);
+  --surface-1: oklch(0.22 0.018 250);
+  --surface-2: oklch(0.245 0.02 250);
+  --surface-3: oklch(0.28 0.024 250);
   --surface-accent: color-mix(
-    in oklch,
+    in oklab,
     var(--surface-2) 88%,
     var(--accent-rail) 12%
   );
   --surface-emphasis: color-mix(
-    in oklch,
+    in oklab,
     var(--surface-2) 84%,
     var(--accent-callout) 16%
   );
-  --line-1: color-mix(in oklch, var(--border) 88%, var(--accent-rail) 12%);
+  --line-1: var(--border);
   --text-1: var(--foreground);
-  --text-2: color-mix(in oklch, var(--foreground) 78%, var(--storm-gray) 22%);
-  --text-3: color-mix(in oklch, var(--foreground) 58%, var(--paper-warm) 42%);
+  --text-2: oklch(0.79 0.016 250);
+  --text-3: oklch(0.68 0.022 250);
 
-  --page-ambient-1: color-mix(in oklch, var(--wave-blue) 10%, transparent);
-  --page-ambient-2: color-mix(in oklch, var(--river-blue) 7%, transparent);
-  --page-ambient-3: color-mix(in oklch, var(--cedar-gold) 4%, transparent);
-  --page-ambient-4: color-mix(in oklch, var(--paper) 10%, transparent);
+  --page-ambient-1: color-mix(in oklab, var(--wave-blue) 10%, transparent);
+  --page-ambient-2: color-mix(in oklab, var(--river-blue) 7%, transparent);
+  --page-ambient-3: color-mix(in oklab, var(--cedar-gold) 4%, transparent);
+  --page-ambient-4: color-mix(in oklab, var(--paper) 10%, transparent);
 
-  --shadow-surface:
-    0 14px 34px color-mix(in oklch, black 34%, transparent),
-    0 3px 8px color-mix(in oklch, black 20%, transparent);
+  --shadow-surface: 0 4px 12px rgb(0 0 0 / 0.16), 0 1px 2px rgb(0 0 0 / 0.12);
   --shadow-surface-strong:
-    0 18px 42px color-mix(in oklch, black 44%, transparent),
-    0 6px 14px color-mix(in oklch, black 26%, transparent);
-  --shadow-emboss:
-    inset 0 1px 0 color-mix(in oklch, var(--foam) 7%, transparent),
-    inset 0 -1px 0 color-mix(in oklch, black 22%, transparent);
+    0 10px 28px rgb(0 0 0 / 0.24), 0 2px 6px rgb(0 0 0 / 0.16);
+  --shadow-emboss: inset 0 1px 0
+    color-mix(in oklab, var(--foam) 4%, transparent);
   --frame-label-accent: color-mix(
-    in oklch,
+    in oklab,
     var(--accent-rail) 40%,
     var(--text-2) 60%
   );
@@ -464,16 +456,16 @@
       ),
       linear-gradient(
         115deg,
-        color-mix(in oklch, var(--paper-warm) 10%, transparent),
+        color-mix(in oklab, var(--paper-warm) 10%, transparent),
         transparent 24%,
-        color-mix(in oklch, var(--paper-warm) 8%, transparent) 52%,
+        color-mix(in oklab, var(--paper-warm) 8%, transparent) 52%,
         transparent 100%
       ),
       linear-gradient(
         180deg,
-        color-mix(in oklch, var(--foam) 68%, var(--paper) 32%),
-        color-mix(in oklch, var(--background) 96%, var(--paper-warm) 4%) 30%,
-        color-mix(in oklch, var(--background) 99%, var(--surface-1) 1%) 64%,
+        color-mix(in oklab, var(--foam) 68%, var(--paper) 32%),
+        color-mix(in oklab, var(--background) 96%, var(--paper-warm) 4%) 30%,
+        color-mix(in oklab, var(--background) 99%, var(--surface-1) 1%) 64%,
         var(--background)
       );
   }
@@ -502,16 +494,16 @@
       ),
       linear-gradient(
         135deg,
-        color-mix(in oklch, var(--paper) 10%, transparent),
+        color-mix(in oklab, var(--paper) 10%, transparent),
         transparent 28%,
-        color-mix(in oklch, var(--paper-warm) 8%, transparent) 70%,
+        color-mix(in oklab, var(--paper-warm) 8%, transparent) 70%,
         transparent 100%
       ),
       linear-gradient(
         180deg,
-        color-mix(in oklch, var(--background) 84%, black 16%),
-        color-mix(in oklch, var(--background) 92%, var(--surface-1) 8%) 26%,
-        color-mix(in oklch, var(--background) 96%, var(--paper) 4%) 60%,
+        color-mix(in oklab, var(--background) 84%, black 16%),
+        color-mix(in oklab, var(--background) 92%, var(--surface-1) 8%) 26%,
+        color-mix(in oklab, var(--background) 96%, var(--paper) 4%) 60%,
         var(--background)
       );
   }
@@ -520,12 +512,12 @@
     background:
       radial-gradient(
         56rem 28rem at 50% -12%,
-        color-mix(in oklch, var(--page-ambient-4) 78%, transparent),
+        color-mix(in oklab, var(--page-ambient-4) 78%, transparent),
         transparent 78%
       ),
       radial-gradient(
         28rem 22rem at 50% 100%,
-        color-mix(in oklch, var(--page-ambient-1) 46%, transparent),
+        color-mix(in oklab, var(--page-ambient-1) 46%, transparent),
         transparent 82%
       );
   }
@@ -580,9 +572,9 @@
     overflow: clip;
     background: linear-gradient(
       168deg,
-      color-mix(in oklch, var(--surface-1) 99%, white 1%),
-      color-mix(in oklch, var(--surface-1) 96%, var(--surface-2) 4%) 42%,
-      color-mix(in oklch, var(--surface-1) 95%, var(--surface-3) 5%) 82%,
+      color-mix(in oklab, var(--surface-1) 99%, white 1%),
+      color-mix(in oklab, var(--surface-1) 96%, var(--surface-2) 4%) 42%,
+      color-mix(in oklab, var(--surface-1) 95%, var(--surface-3) 5%) 82%,
       var(--surface-1)
     );
     border-radius: var(--radius);
@@ -612,7 +604,7 @@
     font-weight: 700;
     line-height: 1;
     color: color-mix(
-      in oklch,
+      in oklab,
       var(--frame-label-accent) 56%,
       var(--text-2) 44%
     );
@@ -623,11 +615,11 @@
     pointer-events: none;
     background: linear-gradient(
       180deg,
-      color-mix(in oklch, var(--surface-1) 97%, white 3%),
-      color-mix(in oklch, var(--surface-1) 96%, var(--background) 4%)
+      color-mix(in oklab, var(--surface-1) 97%, white 3%),
+      color-mix(in oklab, var(--surface-1) 96%, var(--background) 4%)
     );
     border-color: color-mix(
-      in oklch,
+      in oklab,
       var(--line-1) 84%,
       var(--frame-label-accent) 16%
     );
@@ -636,39 +628,39 @@
     border-radius: 999px;
     box-shadow:
       0 0 0 0.22rem
-      color-mix(in oklch, var(--background) 98%, var(--frame-label-accent) 2%),
-      0 0.5rem 0.95rem -0.9rem color-mix(in oklch, black 8%, transparent);
+      color-mix(in oklab, var(--background) 98%, var(--frame-label-accent) 2%),
+      0 0.5rem 0.95rem -0.9rem color-mix(in oklab, black 8%, transparent);
     transform: translate(-50%, -56%);
   }
 
   .dark .surface-card-legend {
     color: color-mix(
-      in oklch,
+      in oklab,
       var(--frame-label-accent) 58%,
       var(--text-2) 42%
     );
     background: linear-gradient(
       180deg,
-      color-mix(in oklch, var(--surface-1) 92%, white 8%),
-      color-mix(in oklch, var(--surface-1) 95%, var(--background) 5%)
+      color-mix(in oklab, var(--surface-1) 92%, white 8%),
+      color-mix(in oklab, var(--surface-1) 95%, var(--background) 5%)
     );
     border-color: color-mix(
-      in oklch,
+      in oklab,
       var(--line-1) 82%,
       var(--frame-label-accent) 18%
     );
     box-shadow:
       0 0 0 0.22rem
-      color-mix(in oklch, var(--background) 97%, var(--frame-label-accent) 3%),
-      0 0.55rem 1rem -0.9rem color-mix(in oklch, black 18%, transparent);
+      color-mix(in oklab, var(--background) 97%, var(--frame-label-accent) 3%),
+      0 0.55rem 1rem -0.9rem color-mix(in oklab, black 18%, transparent);
   }
 
   .dark .surface-card {
     background: linear-gradient(
       168deg,
-      color-mix(in oklch, var(--surface-1) 96%, white 4%),
-      color-mix(in oklch, var(--surface-1) 94%, var(--surface-2) 6%) 42%,
-      color-mix(in oklch, var(--surface-1) 92%, var(--surface-3) 8%) 82%,
+      color-mix(in oklab, var(--surface-1) 96%, white 4%),
+      color-mix(in oklab, var(--surface-1) 94%, var(--surface-2) 6%) 42%,
+      color-mix(in oklab, var(--surface-1) 92%, var(--surface-3) 8%) 82%,
       var(--surface-1)
     );
   }
@@ -678,8 +670,8 @@
     overflow: clip;
     background: linear-gradient(
       160deg,
-      color-mix(in oklch, var(--surface-1) 94%, var(--surface-3) 6%),
-      color-mix(in oklch, var(--surface-1) 98%, var(--accent-meta) 2%) 62%,
+      color-mix(in oklab, var(--surface-1) 94%, var(--surface-3) 6%),
+      color-mix(in oklab, var(--surface-1) 98%, var(--accent-meta) 2%) 62%,
       var(--surface-1)
     );
     border-radius: var(--radius);
@@ -692,23 +684,13 @@
     overflow: clip;
     background: linear-gradient(
       165deg,
-      color-mix(in oklch, var(--surface-2) 98%, white 2%),
-      color-mix(in oklch, var(--surface-2) 95%, var(--surface-3) 5%) 58%,
-      color-mix(in oklch, var(--surface-2) 92%, var(--surface-3) 8%) 100%,
+      color-mix(in oklab, var(--surface-2) 98%, white 2%),
+      color-mix(in oklab, var(--surface-2) 95%, var(--surface-3) 5%) 58%,
+      color-mix(in oklab, var(--surface-2) 92%, var(--surface-3) 8%) 100%,
       var(--surface-2)
     );
     border-radius: calc(var(--radius) - 2px);
     isolation: isolate;
-  }
-
-  .dark .surface-panel {
-    background: linear-gradient(
-      165deg,
-      color-mix(in oklch, var(--surface-2) 94%, white 6%),
-      color-mix(in oklch, var(--surface-2) 92%, var(--surface-3) 8%) 58%,
-      color-mix(in oklch, var(--surface-2) 88%, var(--surface-3) 12%) 100%,
-      var(--surface-2)
-    );
   }
 
   .card-title {
@@ -718,18 +700,18 @@
 
   .surface-title-stage {
     --tone-muted-color: color-mix(
-      in oklch,
+      in oklab,
       var(--text-3) 74%,
       var(--accent-meta) 26%
     );
     background: linear-gradient(
       160deg,
-      color-mix(in oklch, var(--surface-2) 98%, var(--accent-rail) 2%),
-      color-mix(in oklch, var(--surface-2) 95%, var(--surface-3) 5%) 54%,
-      color-mix(in oklch, var(--surface-2) 97%, var(--accent-meta) 3%)
+      color-mix(in oklab, var(--surface-2) 98%, var(--accent-rail) 2%),
+      color-mix(in oklab, var(--surface-2) 95%, var(--surface-3) 5%) 54%,
+      color-mix(in oklab, var(--surface-2) 97%, var(--accent-meta) 3%)
     );
     border-color: color-mix(
-      in oklch,
+      in oklab,
       var(--line-1) 80%,
       var(--accent-rail) 20%
     );
@@ -738,39 +720,39 @@
 
   .surface-title-stage .card-title,
   .surface-title-stage :is(h1, h2, h3) {
-    color: color-mix(in oklch, var(--text-1) 94%, var(--accent-rail) 6%);
+    color: color-mix(in oklab, var(--text-1) 94%, var(--accent-rail) 6%);
     letter-spacing: -0.02em;
   }
 
   .surface-rail-panel {
     --tone-muted-color: color-mix(
-      in oklch,
+      in oklab,
       var(--text-2) 74%,
       var(--accent-meta) 26%
     );
     --ui-meta-color: color-mix(
-      in oklch,
+      in oklab,
       var(--text-2) 74%,
       var(--accent-meta) 26%
     );
     --ui-meta-icon-color: color-mix(
-      in oklch,
+      in oklab,
       var(--accent-meta) 64%,
       var(--text-2) 36%
     );
     --ui-meta-hover-color: color-mix(
-      in oklch,
+      in oklab,
       var(--text-1) 80%,
       var(--accent-link) 20%
     );
     background: linear-gradient(
       170deg,
-      color-mix(in oklch, var(--surface-3) 95%, var(--accent-meta) 5%),
-      color-mix(in oklch, var(--surface-2) 96%, var(--surface-3) 4%) 52%,
-      color-mix(in oklch, var(--surface-2) 98%, var(--accent-code) 2%)
+      color-mix(in oklab, var(--surface-3) 95%, var(--accent-meta) 5%),
+      color-mix(in oklab, var(--surface-2) 96%, var(--surface-3) 4%) 52%,
+      color-mix(in oklab, var(--surface-2) 98%, var(--accent-code) 2%)
     );
     border-color: color-mix(
-      in oklch,
+      in oklab,
       var(--line-1) 78%,
       var(--accent-meta) 22%
     );
@@ -780,17 +762,17 @@
     background:
       radial-gradient(
         120% 110% at 50% 0%,
-        color-mix(in oklch, var(--accent-code) 5%, transparent),
+        color-mix(in oklab, var(--accent-code) 5%, transparent),
         transparent 56%
       ),
       linear-gradient(
         158deg,
-        color-mix(in oklch, var(--surface-2) 96%, var(--accent-rail) 4%),
-        color-mix(in oklch, var(--surface-2) 94%, var(--surface-3) 6%) 54%,
-        color-mix(in oklch, var(--surface-2) 98%, var(--accent-quote) 2%)
+        color-mix(in oklab, var(--surface-2) 96%, var(--accent-rail) 4%),
+        color-mix(in oklab, var(--surface-2) 94%, var(--surface-3) 6%) 54%,
+        color-mix(in oklab, var(--surface-2) 98%, var(--accent-quote) 2%)
       );
     border-color: color-mix(
-      in oklch,
+      in oklab,
       var(--line-1) 80%,
       var(--accent-rail) 20%
     );
@@ -798,40 +780,88 @@
   }
 
   .surface-nav-stage .tone-heading {
-    color: color-mix(in oklch, var(--text-1) 94%, var(--accent-rail) 6%);
+    color: color-mix(in oklab, var(--text-1) 94%, var(--accent-rail) 6%);
     letter-spacing: -0.02em;
   }
 
   .surface-nav-tile {
     background: linear-gradient(
       165deg,
-      color-mix(in oklch, var(--surface-3) 96%, var(--accent-meta) 4%),
-      color-mix(in oklch, var(--surface-2) 98%, var(--surface-3) 2%) 58%,
-      color-mix(in oklch, var(--surface-2) 99%, var(--accent-code) 1%)
+      color-mix(in oklab, var(--surface-3) 96%, var(--accent-meta) 4%),
+      color-mix(in oklab, var(--surface-2) 98%, var(--surface-3) 2%) 58%,
+      color-mix(in oklab, var(--surface-2) 99%, var(--accent-code) 1%)
     );
     border-color: color-mix(
-      in oklch,
+      in oklab,
       var(--line-1) 76%,
       var(--accent-meta) 24%
     );
   }
 
-  .surface-nav-tile :is(svg, .tone-heading) {
-    color: color-mix(in oklch, var(--accent-meta) 46%, var(--text-1) 54%);
+  .surface-nav-tile :where(.nav-tile-content) > svg {
+    color: color-mix(in oklab, var(--accent-meta) 46%, var(--text-1) 54%);
   }
 
   .surface-nav-tile span {
-    color: color-mix(in oklch, var(--text-2) 78%, var(--accent-meta) 22%);
+    color: color-mix(in oklab, var(--text-2) 78%, var(--accent-meta) 22%);
+  }
+
+  .nav-tile-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    transition: transform var(--duration-medium) var(--ease-snappy);
+  }
+
+  .nav-crest {
+    transition: transform var(--duration-slow) var(--ease-snappy);
+  }
+
+  /* Fade a fixed highlight instead of repainting animated shadows or gradients. */
+  .surface-nav-tile,
+  .surface-title-stage {
+    position: relative;
+  }
+
+  .surface-nav-tile::before,
+  .surface-title-stage::before,
+  .ui-interactive > .surface-row::before {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    content: "";
+    background: linear-gradient(
+      145deg,
+      color-mix(in oklab, var(--accent-link) 8%, transparent),
+      transparent 70%
+    );
+    border: 1px solid color-mix(in oklab, var(--accent-link) 30%, transparent);
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity var(--duration-medium) var(--ease-standard);
+  }
+
+  .surface-nav-tile.ui-interactive:not(:disabled):is(
+    :active,
+    :focus-visible,
+    :has(:focus-visible)
+  )::before,
+  .surface-title-stage:has(:focus-visible)::before,
+  .ui-interactive:focus-visible > .surface-row::before {
+    opacity: 1;
   }
 
   .surface-emphasis {
     background: linear-gradient(
       142deg,
-      color-mix(in oklch, var(--surface-emphasis) 92%, var(--surface-1) 8%),
-      color-mix(in oklch, var(--accent-callout) 6%, var(--surface-accent) 94%)
+      color-mix(in oklab, var(--surface-emphasis) 92%, var(--surface-1) 8%),
+      color-mix(in oklab, var(--accent-callout) 6%, var(--surface-accent) 94%)
     );
     border-color: color-mix(
-      in oklch,
+      in oklab,
       var(--line-1) 76%,
       var(--accent-callout) 24%
     );
@@ -847,11 +877,11 @@
     color: var(--text-1);
     background: linear-gradient(
       180deg,
-      color-mix(in oklch, var(--surface-3) 88%, var(--accent-meta) 12%),
-      color-mix(in oklch, var(--surface-2) 96%, var(--accent-rail) 4%)
+      color-mix(in oklab, var(--surface-3) 88%, var(--accent-meta) 12%),
+      color-mix(in oklab, var(--surface-2) 96%, var(--accent-rail) 4%)
     );
     border-color: color-mix(
-      in oklch,
+      in oklab,
       var(--line-1) 72%,
       var(--accent-meta) 28%
     );
@@ -860,8 +890,7 @@
       border-color var(--duration-medium) var(--ease-standard),
       background-color var(--duration-medium) var(--ease-standard),
       color var(--duration-medium) var(--ease-standard),
-      transform var(--duration-medium) var(--ease-standard),
-      box-shadow var(--duration-medium) var(--ease-standard);
+      transform var(--duration-medium) var(--ease-standard);
   }
 
   .card-rail-stack {
@@ -903,7 +932,7 @@
     font-size: 0.6rem;
     font-weight: 700;
     line-height: 1.15;
-    color: color-mix(in oklch, var(--text-1) 76%, var(--accent-meta) 24%);
+    color: color-mix(in oklab, var(--text-1) 76%, var(--accent-meta) 24%);
     text-align: center;
     letter-spacing: 0.03em;
     text-wrap: balance;
@@ -911,7 +940,7 @@
   }
 
   .surface-tag {
-    color: color-mix(in oklch, var(--text-1) 72%, var(--accent-code) 28%);
+    color: color-mix(in oklab, var(--text-1) 72%, var(--accent-code) 28%);
     text-transform: uppercase;
     white-space: nowrap;
   }
@@ -920,15 +949,14 @@
     position: relative;
     background: linear-gradient(
       160deg,
-      color-mix(in oklch, var(--surface-2) 95%, var(--surface-3) 5%),
-      color-mix(in oklch, var(--surface-2) 97%, var(--accent-meta) 3%)
+      color-mix(in oklab, var(--surface-2) 95%, var(--surface-3) 5%),
+      color-mix(in oklab, var(--surface-2) 97%, var(--accent-meta) 3%)
     );
     border-radius: calc(var(--radius) - 2px);
     transition:
       border-color var(--duration-medium) var(--ease-standard),
       background-color var(--duration-medium) var(--ease-standard),
-      transform var(--duration-medium) var(--ease-standard),
-      box-shadow var(--duration-medium) var(--ease-standard);
+      transform var(--duration-medium) var(--ease-standard);
   }
 
   .surface-caption {
@@ -937,8 +965,8 @@
     margin-top: 0;
     background: linear-gradient(
       180deg,
-      color-mix(in oklch, var(--surface-2) 94%, var(--accent-meta) 6%),
-      color-mix(in oklch, var(--surface-2) 98%, var(--accent-rail) 2%)
+      color-mix(in oklab, var(--surface-2) 94%, var(--accent-meta) 6%),
+      color-mix(in oklab, var(--surface-2) 98%, var(--accent-rail) 2%)
     );
     border-radius: calc(var(--radius) - 2px);
   }
@@ -947,7 +975,7 @@
     width: 100%;
     font-size: 0.875rem;
     font-style: italic;
-    color: color-mix(in oklch, var(--text-3) 86%, var(--accent-meta) 14%);
+    color: color-mix(in oklab, var(--text-3) 86%, var(--accent-meta) 14%);
     text-align: center;
     word-break: break-word;
   }
@@ -955,8 +983,8 @@
   .surface-thumb {
     background: linear-gradient(
       180deg,
-      color-mix(in oklch, var(--surface-3) 95%, var(--accent-rail) 5%),
-      color-mix(in oklch, var(--surface-3) 99%, var(--accent-meta) 1%)
+      color-mix(in oklab, var(--surface-3) 95%, var(--accent-rail) 5%),
+      color-mix(in oklab, var(--surface-3) 99%, var(--accent-meta) 1%)
     );
     border-radius: calc(var(--radius) - 4px);
   }
@@ -964,8 +992,8 @@
   .surface-alert {
     background: linear-gradient(
       140deg,
-      color-mix(in oklch, var(--surface-2) 94%, var(--accent-callout) 6%),
-      color-mix(in oklch, var(--surface-1) 97%, var(--accent-rail) 3%)
+      color-mix(in oklab, var(--surface-2) 94%, var(--accent-callout) 6%),
+      color-mix(in oklab, var(--surface-1) 97%, var(--accent-rail) 3%)
     );
     border-width: 1px;
     border-radius: calc(var(--radius) + 2px);
@@ -974,12 +1002,12 @@
   .surface-alert-icon {
     background: linear-gradient(
       180deg,
-      color-mix(in oklch, var(--surface-2) 58%, currentColor 42%),
-      color-mix(in oklch, var(--surface-1) 76%, currentColor 24%)
+      color-mix(in oklab, var(--surface-2) 58%, currentColor 42%),
+      color-mix(in oklab, var(--surface-1) 76%, currentColor 24%)
     );
-    border-color: color-mix(in oklch, var(--line-1) 48%, currentColor 52%);
+    border-color: color-mix(in oklab, var(--line-1) 48%, currentColor 52%);
     box-shadow:
-      0 0 0 1px color-mix(in oklch, currentColor 18%, transparent),
+      0 0 0 1px color-mix(in oklab, currentColor 18%, transparent),
       var(--shadow-surface),
       var(--shadow-emboss);
   }
@@ -987,38 +1015,38 @@
   .surface-alert-info {
     background: linear-gradient(
       135deg,
-      color-mix(in oklch, var(--info) 14%, var(--surface-2)),
-      color-mix(in oklch, var(--surface-1) 92%, var(--info) 8%)
+      color-mix(in oklab, var(--info) 14%, var(--surface-2)),
+      color-mix(in oklab, var(--surface-1) 92%, var(--info) 8%)
     );
-    border-color: color-mix(in oklch, var(--line-1) 68%, var(--info) 32%);
+    border-color: color-mix(in oklab, var(--line-1) 68%, var(--info) 32%);
   }
 
   .surface-alert-success {
     background: linear-gradient(
       135deg,
-      color-mix(in oklch, var(--success) 14%, var(--surface-2)),
-      color-mix(in oklch, var(--surface-1) 92%, var(--success) 8%)
+      color-mix(in oklab, var(--success) 14%, var(--surface-2)),
+      color-mix(in oklab, var(--surface-1) 92%, var(--success) 8%)
     );
-    border-color: color-mix(in oklch, var(--line-1) 68%, var(--success) 32%);
+    border-color: color-mix(in oklab, var(--line-1) 68%, var(--success) 32%);
   }
 
   .surface-alert-warning {
     background: linear-gradient(
       135deg,
-      color-mix(in oklch, var(--warning) 16%, var(--surface-2)),
-      color-mix(in oklch, var(--surface-1) 90%, var(--warning) 10%)
+      color-mix(in oklab, var(--warning) 16%, var(--surface-2)),
+      color-mix(in oklab, var(--surface-1) 90%, var(--warning) 10%)
     );
-    border-color: color-mix(in oklch, var(--line-1) 66%, var(--warning) 34%);
+    border-color: color-mix(in oklab, var(--line-1) 66%, var(--warning) 34%);
   }
 
   .surface-alert-error {
     background: linear-gradient(
       135deg,
-      color-mix(in oklch, var(--destructive) 16%, var(--surface-2)),
-      color-mix(in oklch, var(--surface-1) 90%, var(--destructive) 10%)
+      color-mix(in oklab, var(--destructive) 16%, var(--surface-2)),
+      color-mix(in oklab, var(--surface-1) 90%, var(--destructive) 10%)
     );
     border-color: color-mix(
-      in oklch,
+      in oklab,
       var(--line-1) 66%,
       var(--destructive) 34%
     );
@@ -1028,7 +1056,7 @@
   .surface-card-loading {
     background: linear-gradient(
       180deg,
-      color-mix(in oklch, var(--surface-2) 92%, white 8%),
+      color-mix(in oklab, var(--surface-2) 92%, white 8%),
       var(--surface-1)
     );
   }
@@ -1038,7 +1066,8 @@
   }
 
   .ui-focus-ring:focus-visible {
-    outline: 2px solid transparent;
+    outline: 2px solid var(--accent-link);
+    outline-offset: 2px;
     box-shadow: var(--focus-ring);
   }
 
@@ -1047,37 +1076,35 @@
       transform var(--duration-medium) var(--ease-standard),
       border-color var(--duration-medium) var(--ease-standard),
       background-color var(--duration-medium) var(--ease-standard),
-      color var(--duration-medium) var(--ease-standard),
-      box-shadow var(--duration-medium) var(--ease-standard);
+      color var(--duration-medium) var(--ease-standard);
   }
 
-  .ui-interactive:active {
-    transform: scale(0.992);
-  }
-
-  @media (hover: hover) {
+  @media (hover: hover) and (pointer: fine) {
     .ui-interactive.surface-card:hover,
     .ui-interactive.surface-block:hover,
-    .ui-interactive.surface-panel:hover,
+    .ui-interactive.surface-panel:not(.surface-nav-tile):hover,
     .ui-interactive.surface-row:hover,
     .ui-interactive.surface-emphasis:hover {
       border-color: color-mix(
-        in oklch,
+        in oklab,
         var(--line-1) 72%,
         var(--accent-link) 28%
       );
-      box-shadow: var(--shadow-surface), var(--shadow-emboss);
-      transform: translateY(-1px);
     }
 
     .ui-interactive.surface-chip:hover {
       color: var(--text-1);
       border-color: color-mix(
-        in oklch,
+        in oklab,
         var(--line-1) 58%,
         var(--accent-link) 42%
       );
-      transform: translateY(-1px);
+    }
+
+    .surface-nav-tile.ui-interactive:not(:disabled):hover::before,
+    .surface-title-stage:has(a:hover)::before,
+    .ui-interactive:hover > .surface-row::before {
+      opacity: 1;
     }
   }
 
@@ -1115,19 +1142,18 @@
     color: var(--text-1);
     background: linear-gradient(
       160deg,
-      color-mix(in oklch, var(--surface-2) 92%, var(--accent-callout) 8%),
-      color-mix(in oklch, var(--surface-2) 98%, var(--accent-rail) 2%)
+      color-mix(in oklab, var(--surface-2) 92%, var(--accent-callout) 8%),
+      color-mix(in oklab, var(--surface-2) 98%, var(--accent-rail) 2%)
     );
     border: 1px solid
-      color-mix(in oklch, var(--line-1) 78%, var(--accent-callout) 22%);
+      color-mix(in oklab, var(--line-1) 78%, var(--accent-callout) 22%);
     border-radius: calc(var(--radius) - 4px);
     box-shadow: var(--shadow-surface), var(--shadow-emboss);
     transition:
       transform var(--duration-medium) var(--ease-standard),
       border-color var(--duration-medium) var(--ease-standard),
       background-color var(--duration-medium) var(--ease-standard),
-      color var(--duration-medium) var(--ease-standard),
-      box-shadow var(--duration-medium) var(--ease-standard);
+      color var(--duration-medium) var(--ease-standard);
   }
 
   .ui-meta-link {
@@ -1137,7 +1163,7 @@
     min-width: 0;
     color: var(
       --ui-meta-color,
-      color-mix(in oklch, var(--text-2) 76%, var(--accent-meta) 24%)
+      color-mix(in oklab, var(--text-2) 76%, var(--accent-meta) 24%)
     );
     border-radius: calc(var(--radius) - 6px);
     transition:
@@ -1149,7 +1175,7 @@
     flex-shrink: 0;
     color: var(
       --ui-meta-icon-color,
-      color-mix(in oklch, var(--accent-meta) 66%, var(--text-2) 34%)
+      color-mix(in oklab, var(--accent-meta) 66%, var(--text-2) 34%)
     );
   }
 
@@ -1169,44 +1195,40 @@
     color: var(--text-1);
     background: linear-gradient(
       160deg,
-      color-mix(in oklch, var(--surface-2) 92%, var(--accent-rail) 8%),
-      color-mix(in oklch, var(--surface-2) 98%, var(--accent-meta) 2%)
+      color-mix(in oklab, var(--surface-2) 92%, var(--accent-rail) 8%),
+      color-mix(in oklab, var(--surface-2) 98%, var(--accent-meta) 2%)
     );
     border: 1px solid
-      color-mix(in oklch, var(--line-1) 76%, var(--accent-rail) 24%);
+      color-mix(in oklab, var(--line-1) 76%, var(--accent-rail) 24%);
     border-radius: 999px;
     box-shadow: var(--shadow-surface), var(--shadow-emboss);
     transition:
       transform var(--duration-medium) var(--ease-standard),
       border-color var(--duration-medium) var(--ease-standard),
       background-color var(--duration-medium) var(--ease-standard),
-      color var(--duration-medium) var(--ease-standard),
-      box-shadow var(--duration-medium) var(--ease-standard);
+      color var(--duration-medium) var(--ease-standard);
   }
 
   .ui-copy-button {
     border-radius: calc(var(--radius) - 6px);
   }
 
-  @media (hover: hover) {
+  @media (hover: hover) and (pointer: fine) {
     .ui-inline-action:hover,
     .ui-action-button:hover {
       color: var(--text-1);
       border-color: color-mix(
-        in oklch,
+        in oklab,
         var(--line-1) 64%,
         var(--accent-link) 36%
       );
-      box-shadow: var(--shadow-surface), var(--shadow-emboss);
-      transform: translateY(-1px);
     }
 
     .ui-meta-link:hover {
       color: var(
         --ui-meta-hover-color,
-        color-mix(in oklch, var(--text-1) 66%, var(--accent-link) 34%)
+        color-mix(in oklab, var(--text-1) 66%, var(--accent-link) 34%)
       );
-      transform: translateX(1px);
     }
   }
 
@@ -1215,17 +1237,14 @@
     overflow: hidden;
     background: linear-gradient(
       160deg,
-      color-mix(in oklch, var(--surface-3) 94%, var(--accent-meta) 6%),
-      color-mix(in oklch, var(--surface-3) 98%, var(--accent-rail) 2%)
+      color-mix(in oklab, var(--surface-3) 94%, var(--accent-meta) 6%),
+      color-mix(in oklab, var(--surface-3) 98%, var(--accent-rail) 2%)
     );
     border: 1px solid
-      color-mix(in oklch, var(--line-1) 76%, var(--accent-meta) 24%);
+      color-mix(in oklab, var(--line-1) 76%, var(--accent-meta) 24%);
     border-radius: calc(var(--radius) - 4px);
     box-shadow: var(--shadow-surface), var(--shadow-emboss);
-    transition:
-      transform var(--duration-medium) var(--ease-standard),
-      border-color var(--duration-medium) var(--ease-standard),
-      box-shadow var(--duration-medium) var(--ease-standard);
+    transition: border-color var(--duration-medium) var(--ease-standard);
   }
 
   .media-frame img,
@@ -1238,24 +1257,15 @@
     border-radius: inherit;
   }
 
-  @media (hover: hover) {
-    .group:hover .media-frame,
-    .ui-hover-group:hover .media-frame {
-      border-color: color-mix(
-        in oklch,
-        var(--line-1) 68%,
-        var(--accent-link) 32%
-      );
-      box-shadow: var(--shadow-surface), var(--shadow-emboss);
-      transform: scale(1.01);
-    }
+  .media-frame img {
+    transition: transform var(--duration-slow) var(--ease-standard);
   }
 
   .media-overlay {
     background: linear-gradient(
       180deg,
-      color-mix(in oklch, var(--accent-rail) 7%, transparent),
-      color-mix(in oklch, var(--accent-code) 12%, black 16%)
+      color-mix(in oklab, var(--accent-rail) 7%, transparent),
+      color-mix(in oklab, var(--accent-code) 12%, black 16%)
     );
     opacity: 0;
     transition: opacity var(--duration-medium) var(--ease-standard);
@@ -1277,17 +1287,16 @@
     height: 5rem;
     background: linear-gradient(
       165deg,
-      color-mix(in oklch, var(--surface-1) 92%, var(--accent-code) 8%),
-      color-mix(in oklch, var(--surface-1) 97%, var(--accent-rail) 3%)
+      color-mix(in oklab, var(--surface-1) 92%, var(--accent-code) 8%),
+      color-mix(in oklab, var(--surface-1) 97%, var(--accent-rail) 3%)
     );
     border: 1px solid
-      color-mix(in oklch, var(--line-1) 70%, var(--accent-code) 30%);
+      color-mix(in oklab, var(--line-1) 70%, var(--accent-code) 30%);
     border-radius: 999px;
     box-shadow: var(--shadow-surface-strong), var(--shadow-emboss);
     transition:
       transform var(--duration-medium) var(--ease-standard),
-      border-color var(--duration-medium) var(--ease-standard),
-      box-shadow var(--duration-medium) var(--ease-standard);
+      border-color var(--duration-medium) var(--ease-standard);
   }
 
   .media-play-icon {
@@ -1297,13 +1306,13 @@
     border-top: 12px solid transparent;
     border-bottom: 12px solid transparent;
     border-left: 18px solid
-      color-mix(in oklch, var(--text-1) 64%, var(--accent-code) 36%);
+      color-mix(in oklab, var(--text-1) 64%, var(--accent-code) 36%);
   }
 
   .media-play-halo {
     box-shadow:
-      0 0 0 1px color-mix(in oklch, var(--accent-code) 12%, transparent),
-      0 0 24px color-mix(in oklch, var(--accent-code) 10%, transparent);
+      0 0 0 1px color-mix(in oklab, var(--accent-code) 12%, transparent),
+      0 0 24px color-mix(in oklab, var(--accent-code) 10%, transparent);
     opacity: 0;
     transition: opacity var(--duration-medium) var(--ease-standard);
   }
@@ -1313,11 +1322,10 @@
   .ui-hover-group:hover .media-play-button,
   .ui-hover-group:focus-visible .media-play-button {
     border-color: color-mix(
-      in oklch,
+      in oklab,
       var(--line-1) 62%,
       var(--accent-code) 38%
     );
-    transform: scale(1.05);
   }
 
   .group:hover .media-play-halo,
@@ -1327,10 +1335,61 @@
     opacity: 1;
   }
 
+  /* Keep hit areas and shared-transition frames still; move their contents. */
+  @media (hover: hover) and (pointer: fine) and (
+      prefers-reduced-motion: no-preference
+    ) {
+    .surface-nav-tile.ui-interactive:not(:disabled):hover .nav-tile-content {
+      transform: translateY(-2px);
+    }
+
+    .surface-nav-tile.ui-interactive:not(:disabled):active .nav-tile-content {
+      transform: translateY(0) scale(0.97);
+      transition-duration: var(--duration-fast);
+    }
+
+    .ui-crest-link:hover .nav-crest {
+      transform: translateY(-2px);
+    }
+
+    .ui-interactive:not(.surface-nav-tile):is(
+        .surface-card,
+        .surface-block,
+        .surface-panel,
+        .surface-row,
+        .surface-emphasis,
+        .surface-chip
+      ):hover,
+    .ui-inline-action:hover,
+    .ui-action-button:not(:disabled):hover {
+      transform: translateY(-1px);
+    }
+
+    .ui-meta-link:hover {
+      transform: translateX(1px);
+    }
+
+    .ui-interactive:not(.surface-nav-tile):not(:disabled):active,
+    .ui-inline-action:active,
+    .ui-action-button:not(:disabled):active {
+      transform: scale(0.992);
+    }
+
+    .group:hover .media-frame img,
+    .ui-hover-group:hover .media-frame img {
+      transform: scale(1.025);
+    }
+
+    .group:hover .media-play-button,
+    .ui-hover-group:hover .media-play-button {
+      transform: scale(1.04);
+    }
+  }
+
   .content-prose {
     font-size: 1.02rem;
     line-height: 1.75;
-    color: color-mix(in oklch, var(--text-2) 90%, var(--text-1) 10%);
+    color: color-mix(in oklab, var(--text-2) 90%, var(--text-1) 10%);
   }
 
   :where(.content-prose > * + *) {
@@ -1345,7 +1404,7 @@
   .content-prose h6 {
     font-weight: 600;
     line-height: 1.25;
-    color: color-mix(in oklch, var(--text-1) 92%, var(--accent-rail) 8%);
+    color: color-mix(in oklab, var(--text-1) 92%, var(--accent-rail) 8%);
     letter-spacing: -0.015em;
     text-wrap: balance;
   }
@@ -1360,7 +1419,7 @@
     margin-top: 1.8rem;
     font-size: clamp(1.4rem, 2.8vw, 1.8rem);
     border-bottom: 1px solid
-      color-mix(in oklch, var(--line-1) 84%, var(--accent-rail) 16%);
+      color-mix(in oklab, var(--line-1) 84%, var(--accent-rail) 16%);
   }
 
   .content-prose h3 {
@@ -1370,16 +1429,16 @@
 
   .content-prose p,
   .content-prose li {
-    color: color-mix(in oklch, var(--text-2) 92%, var(--text-1) 8%);
+    color: color-mix(in oklab, var(--text-2) 92%, var(--text-1) 8%);
   }
 
   .content-prose li::marker {
-    color: color-mix(in oklch, var(--accent-meta) 68%, var(--text-3) 32%);
+    color: color-mix(in oklab, var(--accent-meta) 68%, var(--text-3) 32%);
   }
 
   .content-prose strong {
     font-weight: 600;
-    color: color-mix(in oklch, var(--text-1) 94%, var(--accent-rail) 6%);
+    color: color-mix(in oklab, var(--text-1) 94%, var(--accent-rail) 6%);
   }
 
   .content-prose a {
@@ -1387,7 +1446,7 @@
     text-decoration: underline;
     text-decoration-thickness: 0.08em;
     text-decoration-color: color-mix(
-      in oklch,
+      in oklab,
       var(--accent-link) 58%,
       transparent
     );
@@ -1398,7 +1457,7 @@
   }
 
   .content-prose a:hover {
-    color: color-mix(in oklch, var(--accent-link) 68%, var(--accent-code) 32%);
+    color: color-mix(in oklab, var(--accent-link) 68%, var(--accent-code) 32%);
     text-decoration-color: currentColor;
   }
 
@@ -1426,13 +1485,13 @@
     color: var(--text-2);
     background: linear-gradient(
       155deg,
-      color-mix(in oklch, var(--surface-2) 92%, var(--accent-quote) 8%),
-      color-mix(in oklch, var(--surface-2) 98%, var(--accent-meta) 2%)
+      color-mix(in oklab, var(--surface-2) 92%, var(--accent-quote) 8%),
+      color-mix(in oklab, var(--surface-2) 98%, var(--accent-meta) 2%)
     );
     border: 1px solid
-      color-mix(in oklch, var(--line-1) 76%, var(--accent-quote) 24%);
+      color-mix(in oklab, var(--line-1) 76%, var(--accent-quote) 24%);
     border-left: 3px solid
-      color-mix(in oklch, var(--accent-quote) 52%, var(--accent-rail) 48%);
+      color-mix(in oklab, var(--accent-quote) 52%, var(--accent-rail) 48%);
     border-radius: calc(var(--radius) - 2px);
     box-shadow: var(--shadow-surface), var(--shadow-emboss);
   }
@@ -1440,7 +1499,7 @@
   .content-prose hr {
     margin: 1.8rem 0;
     border-color: color-mix(
-      in oklch,
+      in oklab,
       var(--line-1) 86%,
       var(--accent-rail) 14%
     );
@@ -1456,14 +1515,14 @@
   .content-inline-code {
     padding: 0.12em 0.42em;
     font-size: 0.9em;
-    color: color-mix(in oklch, var(--text-1) 72%, var(--accent-code) 28%);
+    color: color-mix(in oklab, var(--text-1) 72%, var(--accent-code) 28%);
     background: linear-gradient(
       180deg,
-      color-mix(in oklch, var(--surface-3) 86%, var(--accent-code) 14%),
-      color-mix(in oklch, var(--surface-3) 96%, var(--accent-rail) 4%)
+      color-mix(in oklab, var(--surface-3) 86%, var(--accent-code) 14%),
+      color-mix(in oklab, var(--surface-3) 96%, var(--accent-rail) 4%)
     );
     border: 1px solid
-      color-mix(in oklch, var(--line-1) 72%, var(--accent-code) 28%);
+      color-mix(in oklab, var(--line-1) 72%, var(--accent-code) 28%);
     border-radius: calc(var(--radius) - 6px);
   }
 
@@ -1475,22 +1534,23 @@
     color: var(--text-1);
     background: linear-gradient(
       162deg,
-      color-mix(in oklch, var(--surface-3) 84%, var(--accent-code) 16%),
-      color-mix(in oklch, var(--surface-3) 95%, var(--accent-rail) 5%)
+      color-mix(in oklab, var(--surface-3) 84%, var(--accent-code) 16%),
+      color-mix(in oklab, var(--surface-3) 95%, var(--accent-rail) 5%)
     );
     border: 1px solid
-      color-mix(in oklch, var(--line-1) 66%, var(--accent-code) 34%);
+      color-mix(in oklab, var(--line-1) 66%, var(--accent-code) 34%);
     border-radius: calc(var(--radius) - 2px);
     box-shadow: var(--shadow-surface), var(--shadow-emboss);
   }
 
   .content-code-shell {
+    --tone-muted-color: var(--syntax-comment);
     overflow-x: auto;
     color: var(--text-1);
     background: linear-gradient(
       162deg,
-      color-mix(in oklch, var(--surface-3) 82%, var(--accent-code) 18%),
-      color-mix(in oklch, var(--surface-3) 95%, var(--accent-rail) 5%)
+      color-mix(in oklab, var(--surface-3) 96%, var(--accent-code) 4%),
+      var(--surface-2)
     );
     border-radius: calc(var(--radius) - 2px);
   }
@@ -1498,25 +1558,25 @@
   .surface-code {
     background: linear-gradient(
       155deg,
-      color-mix(in oklch, var(--surface-emphasis) 88%, var(--accent-code) 12%),
-      color-mix(in oklch, var(--surface-2) 96%, var(--accent-rail) 4%)
+      color-mix(in oklab, var(--surface-emphasis) 88%, var(--accent-code) 12%),
+      color-mix(in oklab, var(--surface-2) 96%, var(--accent-rail) 4%)
     );
     border-color: color-mix(
-      in oklch,
+      in oklab,
       var(--line-1) 68%,
       var(--accent-code) 32%
     );
   }
 
   .surface-code-chip {
-    color: color-mix(in oklch, var(--text-1) 64%, var(--accent-code) 36%);
+    color: color-mix(in oklab, var(--text-1) 64%, var(--accent-code) 36%);
     background: linear-gradient(
       180deg,
-      color-mix(in oklch, var(--surface-3) 82%, var(--accent-code) 18%),
-      color-mix(in oklch, var(--surface-2) 96%, var(--accent-rail) 4%)
+      color-mix(in oklab, var(--surface-3) 82%, var(--accent-code) 18%),
+      color-mix(in oklab, var(--surface-2) 96%, var(--accent-rail) 4%)
     );
     border-color: color-mix(
-      in oklch,
+      in oklab,
       var(--line-1) 68%,
       var(--accent-code) 32%
     );
@@ -1525,26 +1585,26 @@
   .surface-quote {
     background: linear-gradient(
       150deg,
-      color-mix(in oklch, var(--surface-2) 90%, var(--accent-quote) 10%),
-      color-mix(in oklch, var(--surface-2) 97%, var(--accent-meta) 3%)
+      color-mix(in oklab, var(--surface-2) 90%, var(--accent-quote) 10%),
+      color-mix(in oklab, var(--surface-2) 97%, var(--accent-meta) 3%)
     );
     border-color: color-mix(
-      in oklch,
+      in oklab,
       var(--line-1) 72%,
       var(--accent-quote) 28%
     );
   }
 
   .quote-block-mark {
-    color: color-mix(in oklch, var(--accent-quote) 74%, var(--text-3) 26%);
+    color: color-mix(in oklab, var(--accent-quote) 74%, var(--text-3) 26%);
   }
 
   .quote-block-body {
-    color: color-mix(in oklch, var(--text-1) 66%, var(--accent-quote) 34%);
+    color: color-mix(in oklab, var(--text-1) 66%, var(--accent-quote) 34%);
   }
 
   .quote-block-attribution {
-    color: color-mix(in oklch, var(--text-3) 72%, var(--accent-quote) 28%);
+    color: color-mix(in oklab, var(--text-3) 72%, var(--accent-quote) 28%);
   }
 
   .content-block {
@@ -1559,7 +1619,7 @@
   .content-fade-bottom {
     background: linear-gradient(
       to top,
-      color-mix(in oklch, var(--surface-1) 98%, transparent),
+      color-mix(in oklab, var(--surface-1) 98%, transparent),
       transparent
     );
   }
@@ -1567,50 +1627,50 @@
   .xpost-embed .react-tweet-theme {
     --tweet-container-margin: 0 !important;
     --tweet-border: 1px solid
-      color-mix(in oklch, var(--line-1) 52%, var(--accent-meta) 48%);
+      color-mix(in oklab, var(--line-1) 52%, var(--accent-meta) 48%);
     --tweet-font-color: var(--text-1);
     --tweet-font-color-secondary: var(--text-3);
     --tweet-bg-color: color-mix(
-      in oklch,
+      in oklab,
       var(--surface-2) 96%,
       var(--accent-rail) 4%
     );
     --tweet-bg-color-hover: color-mix(
-      in oklch,
+      in oklab,
       var(--surface-2) 92%,
       var(--accent-meta) 8%
     );
     --tweet-quoted-bg-color-hover: color-mix(
-      in oklch,
+      in oklab,
       var(--surface-3) 94%,
       var(--accent-quote) 6%
     );
     --tweet-color-blue-primary: var(--accent-link);
     --tweet-color-blue-primary-hover: color-mix(
-      in oklch,
+      in oklab,
       var(--accent-link) 76%,
       var(--accent-code) 24%
     );
     --tweet-color-blue-secondary: var(--accent-code);
     --tweet-color-blue-secondary-hover: color-mix(
-      in oklch,
+      in oklab,
       var(--accent-code) 12%,
       transparent
     );
     --tweet-color-red-primary: var(--accent-error);
     --tweet-color-red-primary-hover: color-mix(
-      in oklch,
+      in oklab,
       var(--accent-error) 12%,
       transparent
     );
     --tweet-color-green-primary: var(--accent-success);
     --tweet-color-green-primary-hover: color-mix(
-      in oklch,
+      in oklab,
       var(--accent-success) 12%,
       transparent
     );
     --tweet-twitter-icon-color: color-mix(
-      in oklch,
+      in oklab,
       var(--accent-link) 56%,
       var(--text-1) 44%
     );
@@ -1637,7 +1697,7 @@
     font-family: var(--font-serif);
     font-size: clamp(3.05rem, 6.5vw, 4.3rem);
     line-height: 0.8;
-    color: color-mix(in oklch, var(--accent-quote) 46%, transparent);
+    color: color-mix(in oklab, var(--accent-quote) 46%, transparent);
     pointer-events: none;
     user-select: none;
   }
@@ -1658,11 +1718,12 @@
   }
 
   .note-quote-prose p,
+  /* biome-ignore lint/style/noDescendingSpecificity: Typography does not override the earlier .content-prose li + li spacing. */
   .note-quote-prose li {
     font-size: clamp(1.1rem, 1.3vw + 0.8rem, 1.45rem);
     font-style: italic;
     line-height: 1.8;
-    color: color-mix(in oklch, var(--text-1) 72%, var(--accent-quote) 28%);
+    color: color-mix(in oklab, var(--text-1) 72%, var(--accent-quote) 28%);
     letter-spacing: -0.012em;
     text-wrap: pretty;
   }
@@ -1691,7 +1752,7 @@
     font-size: 0.9rem;
     font-style: normal;
     font-weight: 500;
-    color: color-mix(in oklch, var(--text-3) 72%, var(--accent-quote) 28%);
+    color: color-mix(in oklab, var(--text-3) 72%, var(--accent-quote) 28%);
     text-align: right;
     letter-spacing: 0.035em;
     white-space: normal;
@@ -1714,11 +1775,12 @@
     font-size: clamp(1.18rem, 0.95vw + 0.96rem, 1.46rem);
     font-weight: 500;
     line-height: 1.72;
-    color: color-mix(in oklch, var(--text-1) 88%, var(--accent-rail) 12%);
+    color: color-mix(in oklab, var(--text-1) 88%, var(--accent-rail) 12%);
     letter-spacing: -0.014em;
   }
 
   .note-thought-prose p,
+  /* biome-ignore lint/style/noDescendingSpecificity: Typography does not override the earlier .content-prose li + li spacing. */
   .note-thought-prose li {
     font-size: clamp(1.03rem, 0.43vw + 0.94rem, 1.18rem);
     line-height: 1.86;
@@ -1748,35 +1810,35 @@
 
   .docs-shell h1,
   .docs-shell h2 {
-    color: color-mix(in oklch, var(--text-1) 92%, var(--accent-rail) 8%);
+    color: color-mix(in oklab, var(--text-1) 92%, var(--accent-rail) 8%);
     letter-spacing: -0.018em;
   }
 
   .docs-shell h2 {
     padding-bottom: 0.5rem;
     border-bottom: 1px solid
-      color-mix(in oklch, var(--line-1) 82%, var(--accent-rail) 18%);
+      color-mix(in oklab, var(--line-1) 82%, var(--accent-rail) 18%);
   }
 
   .docs-shell h3 {
-    color: color-mix(in oklch, var(--text-1) 88%, var(--accent-code) 12%);
+    color: color-mix(in oklab, var(--text-1) 88%, var(--accent-code) 12%);
   }
 
   .docs-shell h4 {
-    color: color-mix(in oklch, var(--text-3) 76%, var(--accent-meta) 24%);
+    color: color-mix(in oklab, var(--text-3) 76%, var(--accent-meta) 24%);
     letter-spacing: 0.01em;
   }
 
   .docs-shell strong {
-    color: color-mix(in oklch, var(--text-1) 94%, var(--accent-rail) 6%);
+    color: color-mix(in oklab, var(--text-1) 94%, var(--accent-rail) 6%);
   }
 
   .docs-shell .tone-heading {
-    color: color-mix(in oklch, var(--text-1) 86%, var(--accent-code) 14%);
+    color: color-mix(in oklab, var(--text-1) 86%, var(--accent-code) 14%);
   }
 
   .docs-shell .tone-muted {
-    color: color-mix(in oklch, var(--text-3) 82%, var(--accent-meta) 18%);
+    color: color-mix(in oklab, var(--text-3) 82%, var(--accent-meta) 18%);
   }
 
   .docs-shell ul,
@@ -1789,7 +1851,7 @@
   }
 
   .docs-shell li::marker {
-    color: color-mix(in oklch, var(--accent-meta) 68%, var(--text-3) 32%);
+    color: color-mix(in oklab, var(--accent-meta) 68%, var(--text-3) 32%);
   }
 
   .docs-link {
@@ -1797,7 +1859,7 @@
     text-decoration: underline;
     text-decoration-thickness: 0.08em;
     text-decoration-color: color-mix(
-      in oklch,
+      in oklab,
       var(--accent-link) 56%,
       transparent
     );
@@ -1809,19 +1871,19 @@
   }
 
   .docs-link:hover {
-    color: color-mix(in oklch, var(--accent-link) 64%, var(--accent-code) 36%);
+    color: color-mix(in oklab, var(--accent-link) 64%, var(--accent-code) 36%);
     text-decoration-color: currentColor;
   }
 
   .surface-docs-panel {
     background: linear-gradient(
       160deg,
-      color-mix(in oklch, var(--surface-2) 96%, var(--surface-3) 4%),
-      color-mix(in oklch, var(--surface-2) 98%, var(--accent-meta) 2%) 56%,
-      color-mix(in oklch, var(--surface-2) 99%, var(--accent-code) 1%)
+      color-mix(in oklab, var(--surface-2) 96%, var(--surface-3) 4%),
+      color-mix(in oklab, var(--surface-2) 98%, var(--accent-meta) 2%) 56%,
+      color-mix(in oklab, var(--surface-2) 99%, var(--accent-code) 1%)
     );
     border-color: color-mix(
-      in oklch,
+      in oklab,
       var(--line-1) 76%,
       var(--accent-link) 24%
     );
@@ -1829,7 +1891,7 @@
 
   .docs-callout {
     border-color: color-mix(
-      in oklch,
+      in oklab,
       var(--line-1) 70%,
       var(--accent-callout) 30%
     );
@@ -1838,30 +1900,30 @@
   .review-note-panel {
     background: linear-gradient(
       155deg,
-      color-mix(in oklch, var(--surface-2) 90%, var(--accent-quote) 10%),
-      color-mix(in oklch, var(--surface-2) 97%, var(--accent-rail) 3%)
+      color-mix(in oklab, var(--surface-2) 90%, var(--accent-quote) 10%),
+      color-mix(in oklab, var(--surface-2) 97%, var(--accent-rail) 3%)
     );
   }
 
   .review-quote-mark {
-    color: color-mix(in oklch, var(--accent-quote) 58%, transparent);
+    color: color-mix(in oklab, var(--accent-quote) 58%, transparent);
   }
 
   .review-note-copy {
-    color: color-mix(in oklch, var(--text-1) 74%, var(--accent-quote) 26%);
+    color: color-mix(in oklab, var(--text-1) 74%, var(--accent-quote) 26%);
   }
 
   .review-note-empty {
-    color: color-mix(in oklch, var(--text-3) 82%, var(--accent-quote) 18%);
+    color: color-mix(in oklab, var(--text-3) 82%, var(--accent-quote) 18%);
   }
 
   .review-score-value,
   .review-score-star {
-    color: color-mix(in oklch, var(--accent-callout) 72%, var(--text-1) 28%);
+    color: color-mix(in oklab, var(--accent-score) 72%, var(--text-1) 28%);
   }
 
   .review-score-star-empty {
-    color: color-mix(in oklch, var(--text-3) 82%, var(--accent-callout) 18%);
+    color: color-mix(in oklab, var(--text-3) 82%, var(--accent-callout) 18%);
   }
 
   .reveal-stagger-1,
@@ -1872,7 +1934,7 @@
   .reveal-stagger-6,
   .reveal-stagger-7,
   .reveal-stagger-8 {
-    animation: reveal-up 0.34s var(--ease-snappy) both;
+    animation: reveal-up 0.34s var(--ease-snappy) backwards;
   }
 
   .reveal-stagger-1 {
@@ -1911,22 +1973,26 @@
     animation: none;
   }
 
-  @media (hover: none), (pointer: coarse) {
-    .ui-interactive:active {
-      transform: none;
+  @container (max-width: 400px) {
+    .surface-card {
+      --grid-frame-padding: 0.5rem;
+      --grid-section-gap: 0.5rem;
+      --grid-section-padding: 0.5rem;
+      --grid-rail-padding-block: 0.3125rem;
+      --grid-rail-padding-inline: 0.375rem;
+      --grid-meta-gap: 0.25rem;
+      --grid-topic-gap: 0.25rem;
+      --grid-topic-pill-min-height: 1.125rem;
+      --grid-topic-pill-padding-block: 0.125rem;
+      --grid-topic-pill-padding-inline: 0.25rem;
     }
 
-    .ui-interactive.surface-card:hover,
-    .ui-interactive.surface-block:hover,
-    .ui-interactive.surface-panel:hover,
-    .ui-interactive.surface-row:hover,
-    .ui-interactive.surface-emphasis:hover,
-    .ui-inline-action:hover,
-    .ui-action-button:hover,
-    .ui-meta-link:hover,
-    .surface-chip:hover,
-    .media-frame:hover {
-      transform: none;
+    .card-meta-stack svg[aria-hidden="true"] {
+      display: none;
+    }
+
+    .surface-nav-tile > svg {
+      flex-shrink: 0;
     }
   }
 
@@ -2068,7 +2134,10 @@
     .ui-inline-action,
     .ui-action-button,
     .ui-meta-link,
+    .nav-tile-content,
+    .nav-crest,
     .media-frame,
+    .media-frame img,
     .media-overlay,
     .media-play-button,
     .media-play-halo,
@@ -2091,98 +2160,106 @@
   }
 }
 
-::view-transition-old(.vt-enter),
-::view-transition-old(.vt-exit) {
+/* Shared geometry carries identity; local text changes stay brief and readable. */
+:root {
+  --vt-move-duration: 280ms;
+  --vt-content-duration: 180ms;
+  --vt-exit-duration: 120ms;
+  --vt-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --vt-page-offset: 18px;
+}
+
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-group(*) {
+  animation-duration: var(--vt-move-duration);
+  animation-timing-function: var(--vt-ease);
+}
+
+::view-transition-old(*),
+::view-transition-new(*) {
+  animation-duration: var(--vt-content-duration);
+  animation-timing-function: var(--vt-ease);
+}
+
+::view-transition-new(.vt-enter),
+::view-transition-new(.vt-content),
+::view-transition-new(.vt-nav),
+::view-transition-new(.vt-share-title),
+::view-transition-new(.vt-share-content) {
+  animation: vt-fade-in var(--vt-content-duration) ease-out both;
+}
+
+::view-transition-old(.vt-exit),
+::view-transition-old(.vt-content),
+::view-transition-old(.vt-nav),
+::view-transition-old(.vt-share-title),
+::view-transition-old(.vt-share-content) {
+  animation: vt-fade-out var(--vt-exit-duration) ease-out both;
+}
+
+/* Keep full-page/text snapshots at their natural geometry. Only named cards,
+   media, titles, and small controls interpolate position and size. */
+::view-transition-group(.vt-content),
+::view-transition-group(.vt-nav),
+::view-transition-group(.vt-share-content),
+::view-transition-group(.vt-anchor) {
   animation: none;
 }
 
-::view-transition-new(.vt-enter) {
-  animation-name: vt-fade-in;
-  animation-duration: 220ms;
-  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+::view-transition-old(.vt-anchor) {
+  display: none;
 }
 
-::view-transition-old(.vt-exit) {
-  animation-name: vt-fade-out;
-  animation-duration: 180ms;
-  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-::view-transition-group(.vt-pagination-next),
-::view-transition-group(.vt-pagination-prev),
-::view-transition-old(.vt-pagination-next),
-::view-transition-old(.vt-pagination-prev),
-::view-transition-new(.vt-pagination-next),
-::view-transition-new(.vt-pagination-prev) {
-  animation-duration: 200ms;
-  animation-timing-function: cubic-bezier(0.24, 0.72, 0.24, 1);
+::view-transition-new(.vt-anchor) {
+  animation: none;
 }
 
 ::view-transition-group(.vt-share-media),
-::view-transition-old(.vt-share-media),
-::view-transition-new(.vt-share-media) {
-  animation-duration: 260ms;
-  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-::view-transition-old(.vt-share-media) {
-  animation-name: vt-shared-out;
-}
-
-::view-transition-new(.vt-share-media) {
-  animation-name: vt-shared-in;
-}
-
-::view-transition-group(.vt-share-post-media),
-::view-transition-old(.vt-share-post-media),
-::view-transition-new(.vt-share-post-media) {
-  animation: none;
-}
-
 ::view-transition-group(.vt-share-title),
-::view-transition-old(.vt-share-title),
-::view-transition-new(.vt-share-title),
-::view-transition-group(.vt-share-content),
-::view-transition-old(.vt-share-content),
-::view-transition-new(.vt-share-content) {
-  animation-duration: 240ms;
-  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+::view-transition-group(.vt-card) {
+  animation-duration: var(--vt-move-duration);
 }
 
-::view-transition-old(.vt-share-title),
-::view-transition-old(.vt-share-content) {
-  animation-name: vt-fade-out;
+/* Preserve image coverage while snapshots exchange; never disable group motion. */
+::view-transition-old(.vt-share-media) {
+  animation: vt-fade-out var(--vt-move-duration) var(--vt-ease) both;
 }
 
-::view-transition-new(.vt-share-title),
-::view-transition-new(.vt-share-content) {
-  animation-name: vt-fade-in;
+::view-transition-new(.vt-share-media) {
+  animation: vt-fade-in var(--vt-move-duration) var(--vt-ease) both;
 }
 
-::view-transition-group(.vt-share-post-title),
-::view-transition-old(.vt-share-post-title),
-::view-transition-new(.vt-share-post-title) {
-  animation: none;
+::view-transition-group(.vt-control) {
+  animation-duration: var(--vt-content-duration);
 }
 
-::view-transition-group(.vt-post-card-exit),
-::view-transition-old(.vt-post-card-exit),
-::view-transition-group(.vt-post-hero-enter),
-::view-transition-new(.vt-post-hero-enter),
-::view-transition-group(.vt-post-dek-enter),
-::view-transition-new(.vt-post-dek-enter),
-::view-transition-group(.vt-post-body-enter),
-::view-transition-new(.vt-post-body-enter),
-::view-transition-group(.vt-post-rail-enter),
-::view-transition-new(.vt-post-rail-enter) {
-  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+::view-transition-old(.vt-pagination-next) {
+  --vt-direction: -1;
+  animation: vt-page-out var(--vt-content-duration) var(--vt-ease) both;
+}
+
+::view-transition-new(.vt-pagination-next) {
+  --vt-direction: 1;
+  animation: vt-page-in var(--vt-content-duration) var(--vt-ease) both;
+}
+
+::view-transition-old(.vt-pagination-prev) {
+  --vt-direction: 1;
+  animation: vt-page-out var(--vt-content-duration) var(--vt-ease) both;
+}
+
+::view-transition-new(.vt-pagination-prev) {
+  --vt-direction: -1;
+  animation: vt-page-in var(--vt-content-duration) var(--vt-ease) both;
 }
 
 @keyframes vt-fade-in {
   from {
     opacity: 0;
   }
-
   to {
     opacity: 1;
   }
@@ -2192,204 +2269,48 @@
   from {
     opacity: 1;
   }
-
   to {
     opacity: 0;
   }
 }
 
-@keyframes vt-shared-in {
-  from {
-    opacity: 0.84;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes vt-shared-out {
-  from {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0.84;
-  }
-}
-
-@keyframes vt-post-card-out {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  to {
-    opacity: 0.92;
-    transform: translateY(-8px) scale(0.992);
-  }
-}
-
-@keyframes vt-post-hero-in {
-  from {
-    opacity: 0.94;
-    transform: translateY(12px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes vt-post-dek-in {
+@keyframes vt-page-in {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateX(calc(var(--vt-direction) * var(--vt-page-offset)));
   }
-
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0);
   }
 }
 
-@keyframes vt-post-body-in {
+@keyframes vt-page-out {
   from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-
-  to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0);
   }
-}
-
-@keyframes vt-post-rail-in {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-
   to {
-    opacity: 1;
-    transform: translateY(0);
+    opacity: 0;
+    transform: translateX(calc(var(--vt-direction) * var(--vt-page-offset)));
   }
 }
 
-::view-transition-group(.vt-post-card-exit),
-::view-transition-old(.vt-post-card-exit) {
-  animation-duration: 220ms;
+@media (max-width: 639px) {
+  :root {
+    --vt-move-duration: 220ms;
+    --vt-page-offset: 10px;
+  }
 }
 
-::view-transition-old(.vt-post-card-exit) {
-  animation-name: vt-post-card-out;
-}
-
-::view-transition-new(.vt-post-card-exit) {
-  animation: none;
-}
-
-::view-transition-group(.vt-post-hero-enter),
-::view-transition-new(.vt-post-hero-enter) {
-  animation-duration: 260ms;
-}
-
-::view-transition-old(.vt-post-hero-enter) {
-  animation: none;
-}
-
-::view-transition-new(.vt-post-hero-enter) {
-  animation-name: vt-post-hero-in;
-}
-
-::view-transition-group(.vt-post-dek-enter),
-::view-transition-new(.vt-post-dek-enter) {
-  animation-duration: 220ms;
-}
-
-::view-transition-old(.vt-post-dek-enter) {
-  animation: none;
-}
-
-::view-transition-new(.vt-post-dek-enter) {
-  animation-name: vt-post-dek-in;
-  animation-delay: 40ms;
-  animation-fill-mode: both;
-}
-
-::view-transition-group(.vt-post-body-enter),
-::view-transition-new(.vt-post-body-enter) {
-  animation-duration: 240ms;
-}
-
-::view-transition-old(.vt-post-body-enter) {
-  animation: none;
-}
-
-::view-transition-new(.vt-post-body-enter) {
-  animation-name: vt-post-body-in;
-  animation-delay: 70ms;
-  animation-fill-mode: both;
-}
-
-::view-transition-group(.vt-post-rail-enter),
-::view-transition-new(.vt-post-rail-enter) {
-  animation-duration: 220ms;
-}
-
-::view-transition-old(.vt-post-rail-enter) {
-  animation: none;
-}
-
-::view-transition-new(.vt-post-rail-enter) {
-  animation-name: vt-post-rail-in;
-  animation-delay: 110ms;
-  animation-fill-mode: both;
-}
-
+/* Include unnamed browser/root snapshots and future transition classes. */
 @media (prefers-reduced-motion: reduce) {
-  ::view-transition-group(.vt-pagination-next),
-  ::view-transition-group(.vt-pagination-prev),
-  ::view-transition-old(.vt-pagination-next),
-  ::view-transition-old(.vt-pagination-prev),
-  ::view-transition-new(.vt-pagination-next),
-  ::view-transition-new(.vt-pagination-prev),
-  ::view-transition-group(.vt-share-media),
-  ::view-transition-old(.vt-share-media),
-  ::view-transition-new(.vt-share-media),
-  ::view-transition-group(.vt-share-post-media),
-  ::view-transition-old(.vt-share-post-media),
-  ::view-transition-new(.vt-share-post-media),
-  ::view-transition-group(.vt-share-title),
-  ::view-transition-old(.vt-share-title),
-  ::view-transition-new(.vt-share-title),
-  ::view-transition-group(.vt-share-post-title),
-  ::view-transition-old(.vt-share-post-title),
-  ::view-transition-new(.vt-share-post-title),
-  ::view-transition-group(.vt-share-content),
-  ::view-transition-old(.vt-share-content),
-  ::view-transition-new(.vt-share-content),
-  ::view-transition-group(.vt-post-card-exit),
-  ::view-transition-old(.vt-post-card-exit),
-  ::view-transition-new(.vt-post-card-exit),
-  ::view-transition-group(.vt-post-hero-enter),
-  ::view-transition-old(.vt-post-hero-enter),
-  ::view-transition-new(.vt-post-hero-enter),
-  ::view-transition-group(.vt-post-dek-enter),
-  ::view-transition-old(.vt-post-dek-enter),
-  ::view-transition-new(.vt-post-dek-enter),
-  ::view-transition-group(.vt-post-body-enter),
-  ::view-transition-old(.vt-post-body-enter),
-  ::view-transition-new(.vt-post-body-enter),
-  ::view-transition-group(.vt-post-rail-enter),
-  ::view-transition-old(.vt-post-rail-enter),
-  ::view-transition-new(.vt-post-rail-enter),
-  ::view-transition-old(.vt-enter),
-  ::view-transition-new(.vt-enter),
-  ::view-transition-old(.vt-exit) {
-    animation-duration: 1ms !important;
+  ::view-transition-group(*),
+  ::view-transition-image-pair(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
   }
 }
 

@@ -95,6 +95,7 @@ export const HeroMode = ({
       />
       <GridCardNavItem
         className="surface-nav-tile col-start-2 col-end-3 row-start-3 row-end-4"
+        id="nav-menu-trigger"
         onClick={() => {
           setMenuMode("menu");
         }}

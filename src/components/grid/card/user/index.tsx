@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { ViewTransition } from "react";
 import { GridCard, GridCardNavItem, GridCardSection } from "@/components/grid";
 import { cn } from "@/lib/utils";
 import type { Lyovson, Media } from "@/payload-types";
@@ -39,80 +40,90 @@ export const GridCardUser = ({ user, className }: Props) => {
   ];
 
   return (
-    <GridCard
-      className={cn(
-        "col-start-1 col-end-2 row-start-2 row-end-4 h-[var(--grid-card-1x2)] w-[var(--grid-card-1x1)] [--grid-internal-rows:6]",
-        "g2:col-start-2 g2:col-end-3 g2:row-start-1 g2:row-end-3",
-        "g3:col-start-2 g3:col-end-4 g3:row-start-1 g3:row-end-2 g3:h-[var(--grid-card-1x1)] g3:w-[var(--grid-card-2x1)] g3:[--grid-internal-cols:6] g3:[--grid-internal-rows:3]",
-        "g4:self-start",
-        className
-      )}
+    <ViewTransition
+      default="none"
+      enter="vt-enter"
+      exit="vt-exit"
+      key={user?.id ?? "unknown"}
+      name={`author-profile-${user?.id ?? "unknown"}`}
+      share="vt-anchor"
+      update="vt-anchor"
     >
-      <GridCardSection
+      <GridCard
         className={cn(
-          "col-start-1 col-end-4 row-start-1 row-end-4",
-          "g3:col-start-1 g3:col-end-4 g3:row-start-1 g3:row-end-4"
+          "col-start-1 col-end-2 row-start-2 row-end-4 h-[var(--grid-card-1x2)] w-[var(--grid-card-1x1)] [--grid-internal-rows:6]",
+          "g2:col-start-2 g2:col-end-3 g2:row-start-1 g2:row-end-3",
+          "g3:col-start-2 g3:col-end-4 g3:row-start-1 g3:row-end-2 g3:h-[var(--grid-card-1x1)] g3:w-[var(--grid-card-2x1)] g3:[--grid-internal-cols:6] g3:[--grid-internal-rows:3]",
+          "g4:self-start",
+          className
         )}
       >
-        <Image
-          alt={avatarData.alt}
-          className="h-full w-full rounded-md object-cover"
-          height={400}
-          priority={true}
-          src={avatarData.url}
-          width={400}
-        />
-      </GridCardSection>
-
-      <GridCardSection
-        className={cn(
-          "col-start-1 col-end-4 row-start-4 row-end-6 flex h-full flex-col items-center justify-center px-4 md:px-8",
-          "g3:col-start-4 g3:col-end-7 g3:row-start-1 g3:row-end-3"
-        )}
-      >
-        <div className="mx-auto w-full max-w-3xl space-y-4">
-          <h1
-            className={
-              "tone-heading text-center font-bold text-2xl md:text-3xl lg:text-4xl"
-            }
-          >
-            {userName}
-          </h1>
-          {userQuote && (
-            <p className={"tone-muted text-center text-base leading-relaxed"}>
-              {userQuote}
-            </p>
+        <GridCardSection
+          className={cn(
+            "col-start-1 col-end-4 row-start-1 row-end-4",
+            "g3:col-start-1 g3:col-end-4 g3:row-start-1 g3:row-end-4"
           )}
-        </div>
-      </GridCardSection>
+        >
+          <Image
+            alt={avatarData.alt}
+            className="h-full w-full rounded-md object-cover"
+            height={400}
+            priority={true}
+            src={avatarData.url}
+            width={400}
+          />
+        </GridCardSection>
 
-      {socialLinks.map((link, index) => {
-        const iconConfig = SOCIAL_ICON_MAP[link.platform];
-        if (!iconConfig) {
-          return null;
-        }
-
-        const IconComponent = iconConfig.icon;
-
-        return (
-          <GridCardNavItem
-            className={cn(gridPositions[index])}
-            key={link.url}
-            variant="static"
-          >
-            <a
-              aria-label={`${userName} on ${iconConfig.label}`}
-              className="ui-focus-ring ui-hover-dim tone-heading flex flex-col items-center justify-center gap-2"
-              href={link.url}
-              rel="noopener"
-              target="_blank"
+        <GridCardSection
+          className={cn(
+            "col-start-1 col-end-4 row-start-4 row-end-6 flex h-full flex-col items-center justify-center px-4 md:px-8",
+            "g3:col-start-4 g3:col-end-7 g3:row-start-1 g3:row-end-3"
+          )}
+        >
+          <div className="mx-auto w-full max-w-3xl space-y-4">
+            <h1
+              className={
+                "tone-heading text-center font-bold text-2xl md:text-3xl lg:text-4xl"
+              }
             >
-              <IconComponent className="text-current" size={24} />
-              <span className="text-sm">{iconConfig.label}</span>
-            </a>
-          </GridCardNavItem>
-        );
-      })}
-    </GridCard>
+              {userName}
+            </h1>
+            {userQuote && (
+              <p className={"tone-muted text-center text-base leading-relaxed"}>
+                {userQuote}
+              </p>
+            )}
+          </div>
+        </GridCardSection>
+
+        {socialLinks.map((link, index) => {
+          const iconConfig = SOCIAL_ICON_MAP[link.platform];
+          if (!iconConfig) {
+            return null;
+          }
+
+          const IconComponent = iconConfig.icon;
+
+          return (
+            <GridCardNavItem
+              className={cn(gridPositions[index])}
+              key={link.url}
+              variant="static"
+            >
+              <a
+                aria-label={`${userName} on ${iconConfig.label}`}
+                className="ui-focus-ring ui-hover-dim tone-heading flex flex-col items-center justify-center gap-2"
+                href={link.url}
+                rel="noopener"
+                target="_blank"
+              >
+                <IconComponent className="text-current" size={24} />
+                <span className="text-sm">{iconConfig.label}</span>
+              </a>
+            </GridCardNavItem>
+          );
+        })}
+      </GridCard>
+    </ViewTransition>
   );
 };

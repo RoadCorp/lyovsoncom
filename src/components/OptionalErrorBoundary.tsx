@@ -1,7 +1,7 @@
 "use client";
 
 import type { ErrorInfo } from "next/error";
-import { unstable_catchError } from "next/error";
+import { catchError } from "next/error";
 import type { ReactNode } from "react";
 
 function OptionalErrorBoundaryImpl(
@@ -9,7 +9,7 @@ function OptionalErrorBoundaryImpl(
     children: ReactNode;
     title?: string;
   },
-  { unstable_retry }: ErrorInfo
+  { retry }: ErrorInfo
 ) {
   const title = props.title || "Unable to load this section right now.";
 
@@ -18,7 +18,7 @@ function OptionalErrorBoundaryImpl(
       <p className="tone-muted text-sm">{title}</p>
       <button
         className="ui-action-button ui-focus-ring ui-interactive"
-        onClick={() => unstable_retry()}
+        onClick={retry}
         type="button"
       >
         Retry
@@ -27,6 +27,4 @@ function OptionalErrorBoundaryImpl(
   );
 }
 
-export const OptionalErrorBoundary = unstable_catchError(
-  OptionalErrorBoundaryImpl
-);
+export const OptionalErrorBoundary = catchError(OptionalErrorBoundaryImpl);

@@ -2,10 +2,17 @@
 
 import type { Route } from "next";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState, useTransition } from "react";
-import { GridCard } from "@/components/grid";
+import {
+  addTransitionType,
+  startTransition,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+  ViewTransition,
+} from "react";
+import { GridCard } from "@/components/grid/card";
 import { cn } from "@/lib/utils";
-import type { SearchPreviewItem } from "@/search/types";
 import {
   homeRoute,
   lyovsonRoute,
@@ -13,17 +20,15 @@ import {
   searchHref,
   transitionTypes,
 } from "@/utilities/routes";
-import { useDebounce } from "@/utilities/useDebounce";
 import { HeroMode } from "./hero-mode";
 import { MenuMode } from "./menu-mode";
 import { SearchMode } from "./search-mode";
 import type { ManualMenuMode, MenuModeType, NavRouteContext } from "./types";
 
-const SEARCH_PREVIEW_DEBOUNCE_MS = 200;
 const PRIMARY_LYOVSON_SET = new Set<string>(PRIMARY_LYOVSONS);
 
 function getNavRouteContext(pathname: string): NavRouteContext {
-  const firstSegment = pathname.split("/").filter(Boolean).at(0)?.toLowerCase();
+  const firstSegment = pathname.split("/").find(Boolean)?.toLowerCase();
 
   if (!(firstSegment && PRIMARY_LYOVSON_SET.has(firstSegment))) {
     return {
@@ -46,10 +51,6 @@ function getBaseRoute(routeContext: NavRouteContext) {
   return homeRoute();
 }
 
-interface SearchApiResponse {
-  previewItems?: SearchPreviewItem[];
-}
-
 const NAV_SHELL_SCROLL = false;
 
 export const GridCardNav = ({ className }: { className?: string }) => {
@@ -64,134 +65,84 @@ export const GridCardNav = ({ className }: { className?: string }) => {
     (routeContext.mode === "person" &&
       routeContext.username !== null &&
       pathname === `/${routeContext.username}/search`);
-  const [menuMode, setMenuMode] = useState<ManualMenuMode>("hero");
-  const [showSearch, setShowSearch] = useState(
-    isSearchRoute || Boolean(activeQuery)
-  );
-  const [query, setQuery] = useState(activeQuery);
-  const [previewItems, setPreviewItems] = useState<SearchPreviewItem[]>([]);
-  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+  const [navigationMode, setNavigationMode] = useState<{
+    pathname: string;
+    mode: MenuModeType;
+  }>({ pathname, mode: "hero" });
+  const queryKey = `${pathname}?${activeQuery}`;
+  const [searchInput, setSearchInput] = useState({
+    queryKey,
+    value: activeQuery,
+  });
+  // Reset only when the URL changes, including revisiting an earlier query.
+  // A render-time adjustment avoids an extra effect commit during the animation.
+  if (searchInput.queryKey !== queryKey) {
+    setSearchInput({ queryKey, value: activeQuery });
+  }
+  const query =
+    searchInput.queryKey === queryKey ? searchInput.value : activeQuery;
+  const setQuery = (value: string) => setSearchInput({ queryKey, value });
   const [isSubmitting, startSearchTransition] = useTransition();
-  const previousPathnameRef = useRef(pathname);
-  const debouncedQuery = useDebounce(query.trim(), SEARCH_PREVIEW_DEBOUNCE_MS);
+  const restoreSearchFocusRef = useRef(false);
+  const restoreMenuFocusRef = useRef(false);
+  const localMode =
+    navigationMode.pathname === pathname ? navigationMode.mode : "hero";
+  const renderMode = isSearchRoute ? "search" : localMode;
 
   useEffect(() => {
-    setQuery(activeQuery);
-  }, [activeQuery]);
-
-  useEffect(() => {
-    if (isSearchRoute || Boolean(activeQuery)) {
-      setShowSearch(true);
-    }
-  }, [activeQuery, isSearchRoute]);
-
-  useEffect(() => {
-    if (previousPathnameRef.current === pathname) {
+    if (renderMode === "search") {
       return;
     }
 
-    previousPathnameRef.current = pathname;
-    setMenuMode("hero");
-    setPreviewItems([]);
-
-    if (!isSearchRoute) {
-      setShowSearch(false);
+    if (restoreSearchFocusRef.current) {
+      restoreSearchFocusRef.current = false;
+      document.getElementById("nav-search-trigger")?.focus();
+    } else if (restoreMenuFocusRef.current) {
+      restoreMenuFocusRef.current = false;
+      document
+        .getElementById(
+          renderMode === "menu" ? "nav-first-link" : "nav-menu-trigger"
+        )
+        ?.focus();
     }
-  }, [isSearchRoute, pathname]);
+  }, [renderMode]);
 
-  useEffect(() => {
-    if (!(showSearch || isSearchRoute)) {
-      setPreviewItems([]);
-      setIsPreviewLoading(false);
-      return;
-    }
-
-    if (!debouncedQuery) {
-      setPreviewItems([]);
-      setIsPreviewLoading(false);
-      return;
-    }
-
-    const controller = new AbortController();
-    const params = new URLSearchParams({
-      limit: "2",
-      preview: "true",
-      q: debouncedQuery,
+  const changeMenuMode = (mode: ManualMenuMode) => {
+    restoreMenuFocusRef.current = true;
+    startTransition(() => {
+      addTransitionType(transitionTypes.navMode);
+      setNavigationMode({ pathname, mode });
     });
-
-    if (routeContext.username) {
-      params.set("scope", routeContext.username);
-    }
-
-    setIsPreviewLoading(true);
-    setPreviewItems([]);
-
-    const loadPreview = async () => {
-      try {
-        const response = await fetch(`/api/search?${params.toString()}`, {
-          signal: controller.signal,
-        });
-
-        if (!response.ok) {
-          setPreviewItems([]);
-          return;
-        }
-
-        const data = (await response.json()) as SearchApiResponse;
-        setPreviewItems(
-          Array.isArray(data.previewItems) ? data.previewItems : []
-        );
-      } catch (error) {
-        if (error instanceof DOMException && error.name === "AbortError") {
-          return;
-        }
-
-        setPreviewItems([]);
-      } finally {
-        if (!controller.signal.aborted) {
-          setIsPreviewLoading(false);
-        }
-      }
-    };
-
-    loadPreview().catch(() => undefined);
-
-    return () => {
-      controller.abort();
-    };
-  }, [debouncedQuery, isSearchRoute, routeContext.username, showSearch]);
-
-  const renderMode: MenuModeType =
-    isSearchRoute || showSearch ? "search" : menuMode;
+  };
 
   const closeSearch = () => {
-    setPreviewItems([]);
-
-    if (isSearchRoute || Boolean(activeQuery)) {
-      setShowSearch(false);
-      setMenuMode("hero");
-      setQuery("");
-
+    restoreSearchFocusRef.current = true;
+    if (isSearchRoute) {
       startSearchTransition(() => {
+        setNavigationMode({ pathname: String(baseRoute), mode: "menu" });
+        setQuery("");
         router.push(baseRoute as Route, {
           scroll: NAV_SHELL_SCROLL,
+          transitionTypes: [transitionTypes.section],
         });
       });
       return;
     }
-
-    setQuery("");
-    setShowSearch(false);
-    setMenuMode("menu");
+    startTransition(() => {
+      addTransitionType(transitionTypes.navMode);
+      setNavigationMode({ pathname, mode: "menu" });
+      setQuery("");
+    });
   };
 
   const openSearch = () => {
-    if (!(isSearchRoute || activeQuery)) {
-      setQuery("");
-      setPreviewItems([]);
-    }
-
-    setShowSearch(true);
+    startTransition(() => {
+      addTransitionType(transitionTypes.navMode);
+      if (!isSearchRoute) {
+        setQuery("");
+      }
+      setNavigationMode({ pathname, mode: "search" });
+    });
   };
 
   const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -223,49 +174,62 @@ export const GridCardNav = ({ className }: { className?: string }) => {
     });
   };
 
-  const handlePreviewNavigate = () => {
-    setPreviewItems([]);
-    setShowSearch(false);
-    setMenuMode("hero");
-  };
-
   return (
-    <GridCard
-      className={cn(
-        "col-start-1 col-end-2 row-start-1 row-end-2 self-start",
-        className
-      )}
+    <ViewTransition
+      default="none"
+      name="site-navigation"
+      update={{
+        default: "vt-anchor",
+        [transitionTypes.navMode]: "vt-nav",
+        [transitionTypes.section]: "vt-nav",
+      }}
     >
-      {
+      <GridCard
+        aria-label="Main navigation"
+        as="nav"
+        className={cn(
+          "col-start-1 col-end-2 row-start-1 row-end-2 self-start",
+          className
+        )}
+        onKeyDown={(event) => {
+          if (event.key === "Escape" && renderMode === "search") {
+            event.preventDefault();
+            closeSearch();
+          } else if (event.key === "Escape" && renderMode === "menu") {
+            event.preventDefault();
+            changeMenuMode("hero");
+          }
+        }}
+      >
         {
-          hero: (
-            <HeroMode
-              logoHref={baseRoute}
-              routeContext={routeContext}
-              setMenuMode={setMenuMode}
-            />
-          ),
-          menu: (
-            <MenuMode
-              openSearch={openSearch}
-              routeContext={routeContext}
-              setMenuMode={setMenuMode}
-            />
-          ),
-          search: (
-            <SearchMode
-              isPending={isSubmitting || isPreviewLoading}
-              onClose={closeSearch}
-              onPreviewNavigate={handlePreviewNavigate}
-              onSubmit={handleSearchSubmit}
-              previewItems={previewItems}
-              query={query}
-              setQuery={setQuery}
-            />
-          ),
-        }[renderMode]
-      }
-    </GridCard>
+          {
+            hero: (
+              <HeroMode
+                logoHref={baseRoute}
+                routeContext={routeContext}
+                setMenuMode={changeMenuMode}
+              />
+            ),
+            menu: (
+              <MenuMode
+                openSearch={openSearch}
+                routeContext={routeContext}
+                setMenuMode={changeMenuMode}
+              />
+            ),
+            search: (
+              <SearchMode
+                isPending={isSubmitting}
+                onClose={closeSearch}
+                onSubmit={handleSearchSubmit}
+                query={query}
+                setQuery={setQuery}
+              />
+            ),
+          }[renderMode]
+        }
+      </GridCard>
+    </ViewTransition>
   );
 };
 

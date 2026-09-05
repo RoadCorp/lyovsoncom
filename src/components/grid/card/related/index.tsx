@@ -1,18 +1,13 @@
 import { GridCard, GridCardSection } from "@/components/grid";
 import { Media } from "@/components/Media";
+import { CARD_THUMBNAIL_IMAGE_SIZE } from "@/components/Media/image-sizes";
 import { PostDrillInLink } from "@/components/post-transitions/PostDrillInLink";
 import { PostTransitionBoundary } from "@/components/post-transitions/PostTransitionBoundary";
 import { cn } from "@/lib/utils";
 import type { Post } from "@/payload-types";
 import { postRoute } from "@/utilities/routes";
 
-const MAX_STAGGER_INDEX = 6;
-
 export { GridCardRelatedNotes } from "./grid-card-related-notes";
-
-function getStaggerClass(index: number): string {
-  return `reveal-stagger-${Math.min(index + 1, MAX_STAGGER_INDEX)}`;
-}
 
 function isUniquePostWithSlug(
   post: number | Post,
@@ -42,14 +37,12 @@ export const GridCardRelatedPosts = ({
     <GridCard className={cn(className)} frameLabel="Related">
       {uniquePosts.map((post, index) => {
         const rowClass = `row-start-${index + 1} row-end-${index + 2}`;
-        const staggerClass = getStaggerClass(index);
         return (
           <PostDrillInLink
             aria-label={`Read related post: ${post.title}`}
             className={cn(
               "ui-focus-ring group ui-interactive col-start-1 col-end-4",
-              rowClass,
-              staggerClass
+              rowClass
             )}
             href={postRoute(post.slug)}
             key={post.id}
@@ -68,6 +61,7 @@ export const GridCardRelatedPosts = ({
                       imgClassName="object-cover h-full"
                       pictureClassName="row-start-1 row-end-2 col-start-1 col-end-2 h-full"
                       resource={post.featuredImage}
+                      size={CARD_THUMBNAIL_IMAGE_SIZE}
                     />
                   </PostTransitionBoundary>
                 ) : null}

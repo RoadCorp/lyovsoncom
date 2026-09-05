@@ -2,7 +2,9 @@ import { Calendar, PenTool } from "lucide-react";
 import { ViewTransition } from "react";
 import { AppLink } from "@/components/AppLink";
 import { GridCard, GridCardSection } from "@/components/grid";
+import { IntentLink } from "@/components/IntentLink";
 import { Media } from "@/components/Media";
+import { CARD_COVER_IMAGE_SIZE } from "@/components/Media/image-sizes";
 import type { Activity } from "@/payload-types";
 import {
   activitiesRoute,
@@ -31,8 +33,6 @@ export interface GridCardActivityProps {
   loading?: "lazy" | "eager";
   priority?: boolean;
 }
-
-const MAX_PARTICIPANT_STAGGER = 6;
 
 interface ParticipantLinkData {
   id: number | string;
@@ -75,10 +75,6 @@ function getUniqueParticipants(activity: Activity): ParticipantLinkData[] {
   return [...uniqueParticipants.values()];
 }
 
-function getParticipantStaggerClass(index: number): string {
-  return `reveal-stagger-${Math.min(index + 1, MAX_PARTICIPANT_STAGGER)}`;
-}
-
 export const GridCardActivityFull = ({
   activity,
   className,
@@ -110,11 +106,10 @@ export const GridCardActivityFull = ({
           className="col-start-1 col-end-3 row-start-1 row-end-4"
           flush={true}
         >
-          <AppLink
+          <IntentLink
             aria-label={`View activity: ${activityTypeLabel} ${referenceTitle}`}
             className="group block h-full overflow-hidden rounded-lg"
             href={activityHref}
-            prefetch={false}
             transitionTypes={[transitionTypes.drillIn]}
           >
             <ViewTransition
@@ -126,19 +121,19 @@ export const GridCardActivityFull = ({
                 imgClassName="h-full w-full object-cover"
                 pictureClassName="h-full w-full"
                 resource={referenceImage}
+                size={CARD_COVER_IMAGE_SIZE}
                 {...(loading ? { loading } : {})}
                 {...(priority ? { priority } : {})}
               />
             </ViewTransition>
-          </AppLink>
+          </IntentLink>
         </GridCardSection>
       ) : null}
 
       <GridCardSection className="surface-title-stage col-start-3 col-end-4 row-start-1 row-end-2 flex h-full flex-col justify-center">
-        <AppLink
+        <IntentLink
           className="ui-focus-ring group block"
           href={activityHref}
-          prefetch={false}
           transitionTypes={[transitionTypes.drillIn]}
         >
           <ViewTransition
@@ -149,14 +144,14 @@ export const GridCardActivityFull = ({
               {referenceTitle}
             </h2>
           </ViewTransition>
-        </AppLink>
+        </IntentLink>
       </GridCardSection>
 
       <GridCardSection className="surface-rail-panel card-rail-stack card-meta-stack col-start-3 col-end-4 row-start-2 row-end-3">
-        {participants.map((participant, index) => (
+        {participants.map((participant) => (
           <AppLink
             aria-label={`View ${participant.name}'s profile`}
-            className={`ui-meta-link ui-focus-ring ui-interactive ${getParticipantStaggerClass(index)}`}
+            className={"ui-meta-link ui-focus-ring ui-interactive"}
             href={lyovsonRoute(participant.username)}
             key={participant.id}
             prefetch={false}
@@ -177,17 +172,16 @@ export const GridCardActivityFull = ({
       </GridCardSection>
 
       <GridCardSection className="surface-rail-panel col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
-        <AppLink
+        <IntentLink
           className="ui-focus-ring group block flex flex-col items-center gap-1"
           href={activityHref}
-          prefetch={false}
           transitionTypes={[transitionTypes.drillIn]}
         >
           <ActivityIcon aria-hidden="true" className={iconClassName} />
           <span className="tone-muted text-xs capitalize">
             {activityTypeLabel}
           </span>
-        </AppLink>
+        </IntentLink>
       </GridCardSection>
     </GridCard>
   );

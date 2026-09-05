@@ -1,12 +1,12 @@
 import { cacheLife, cacheTag } from "next/cache";
 import type { PaginatedDocs } from "payload";
-import type { Post } from "@/payload-types";
 import { projectPostsWhere } from "@/utilities/content-queries";
 import { getPayloadClient } from "@/utilities/payload-client";
+import { type PostSummary, postSummarySelect } from "@/utilities/post-summary";
 
 export async function getProjectPosts(
   slug: string
-): Promise<PaginatedDocs<Post> | null> {
+): Promise<PaginatedDocs<PostSummary> | null> {
   "use cache";
   cacheTag("posts");
   cacheTag("projects");
@@ -33,6 +33,7 @@ export async function getProjectPosts(
 
   const result = await payload.find({
     collection: "posts",
+    select: postSummarySelect,
     depth: 2,
     limit: 25,
     where: projectPostsWhere(projectId),
@@ -40,17 +41,14 @@ export async function getProjectPosts(
     overrideAccess: true,
   });
 
-  return {
-    ...result,
-    docs: result.docs as Post[],
-  };
+  return result;
 }
 
 export async function getPaginatedProjectPosts(
   slug: string,
   pageNumber: number,
   limit = 25
-): Promise<PaginatedDocs<Post> | null> {
+): Promise<PaginatedDocs<PostSummary> | null> {
   "use cache";
   cacheTag("posts");
   cacheTag("projects");
@@ -78,6 +76,7 @@ export async function getPaginatedProjectPosts(
 
   const result = await payload.find({
     collection: "posts",
+    select: postSummarySelect,
     depth: 2,
     limit,
     page: pageNumber,
@@ -86,10 +85,7 @@ export async function getPaginatedProjectPosts(
     overrideAccess: true,
   });
 
-  return {
-    ...result,
-    docs: result.docs as Post[],
-  };
+  return result;
 }
 
 export async function getProjectPostCount(

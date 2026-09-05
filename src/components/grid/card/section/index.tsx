@@ -30,8 +30,8 @@ function getSectionClassName(
   return cn(
     "surface-panel",
     flush && "p-0",
-    "ui-focus-ring focus-visible:outline-none",
-    isInteractive && "ui-interactive cursor-pointer active:scale-[0.98]",
+    "ui-focus-ring",
+    isInteractive && "ui-interactive cursor-pointer",
     className
   );
 }

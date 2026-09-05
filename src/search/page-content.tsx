@@ -1,3 +1,4 @@
+import { ViewTransition } from "react";
 import { ArchiveItems } from "@/components/ArchiveItems";
 import { GridCardEmptyState } from "@/components/grid";
 import {
@@ -66,7 +67,7 @@ function getScopeText(
   return scopeLabel || scopeUsername;
 }
 
-export async function SearchPageContent({
+async function SearchResults({
   query,
   scopeLabel,
   scopeUsername,
@@ -161,4 +162,21 @@ export async function SearchPageContent({
       />
     );
   }
+}
+
+export function SearchPageContent(props: SearchPageContentProps) {
+  const resultKey = `${props.scopeUsername || "global"}:${props.query?.trim() || ""}`;
+  return (
+    <ViewTransition
+      default="none"
+      enter="vt-enter"
+      exit="vt-exit"
+      key={resultKey}
+      name="search-results"
+      share="vt-content"
+      update="vt-content"
+    >
+      <SearchResults {...props} />
+    </ViewTransition>
+  );
 }

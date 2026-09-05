@@ -5,7 +5,11 @@ import type { Activity, Note, Post, Project, Topic } from "@/payload-types";
 import { getActivityPath } from "@/utilities/activity-path";
 import { getActivityTypeLabel } from "@/utilities/activity-type";
 import { logApiTelemetry } from "@/utilities/api-telemetry";
-import { authorizeEmbeddingMutation } from "@/utilities/embedding-auth";
+import {
+  authorizeEmbeddingMutation,
+  getEmbeddingUnauthorizedResponse,
+  hasEmbeddingAuthHint,
+} from "@/utilities/embedding-auth";
 import {
   EMBEDDING_VECTOR_DIMENSIONS,
   generateEmbedding,
@@ -19,8 +23,6 @@ type ItemWithEmbedding = (Post | Note | Activity | Project) & {
 };
 
 const MAX_EMBEDDINGS_LIMIT = 100;
-const PUBLIC_QUERY_EMBEDDINGS_ENABLED =
-  process.env.ENABLE_PUBLIC_QUERY_EMBEDDINGS === "true";
 
 /* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Legacy endpoint supports query, item, and bulk embedding modes */
 export async function GET(request: NextRequest) {
@@ -30,7 +32,7 @@ export async function GET(request: NextRequest) {
   const id = searchParams.get("id"); // specific item ID
   const query = searchParams.get("q"); // text query to embed
   const includeContent = searchParams.get("content") === "true";
-  const includeVector = searchParams.get("vector") !== "false"; // Include vector by default
+  const includeVector = searchParams.get("vector") === "true";
   const limit = Math.min(
     Number.parseInt(searchParams.get("limit") || "50", 10),
     MAX_EMBEDDINGS_LIMIT
@@ -40,26 +42,19 @@ export async function GET(request: NextRequest) {
     process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
 
   try {
+    if (!hasEmbeddingAuthHint(request)) {
+      return getEmbeddingUnauthorizedResponse();
+    }
+
     const payload = await getPayload({ config: configPromise });
+    const authResult = await authorizeEmbeddingMutation(request, payload);
+
+    if (!authResult.authorized) {
+      return getEmbeddingUnauthorizedResponse(authResult.reason);
+    }
 
     // Handle text query embedding - generate on-demand
     if (query) {
-      if (!PUBLIC_QUERY_EMBEDDINGS_ENABLED) {
-        const authResult = await authorizeEmbeddingMutation(request, payload);
-        if (!authResult.authorized) {
-          return new Response(
-            JSON.stringify({
-              error:
-                "Query embedding is disabled for public access. Use admin auth or valid CRON_SECRET.",
-            }),
-            {
-              status: 403,
-              headers: { "Content-Type": "application/json; charset=utf-8" },
-            }
-          );
-        }
-      }
-
       const { vector, model, dimensions } = await generateEmbedding(query);
       logApiTelemetry({
         route: "api.embeddings.query.completed",
@@ -553,7 +548,7 @@ export async function GET(request: NextRequest) {
         coverage:
           "Only items with pre-computed embeddings are included in bulk requests",
         onDemand:
-          "Use POST /api/embeddings/sync for batch generation; query mode is auth-gated unless explicitly enabled",
+          "Use POST /api/embeddings/sync for batch generation; query mode requires admin auth or CRON_SECRET",
       },
     };
 

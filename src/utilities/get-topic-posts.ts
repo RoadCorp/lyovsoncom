@@ -1,14 +1,14 @@
 import { cacheLife, cacheTag } from "next/cache";
 import type { PaginatedDocs } from "payload";
-import type { Post } from "@/payload-types";
 import { topicPostsWhere } from "@/utilities/content-queries";
 import { getPayloadClient } from "@/utilities/payload-client";
+import { type PostSummary, postSummarySelect } from "@/utilities/post-summary";
 
 const DEFAULT_TOPIC_PAGE_SIZE = 25;
 
 export function getTopicPosts(
   slug: string
-): Promise<PaginatedDocs<Post> | null> {
+): Promise<PaginatedDocs<PostSummary> | null> {
   return getPaginatedTopicPosts(slug, 1, DEFAULT_TOPIC_PAGE_SIZE);
 }
 
@@ -16,7 +16,7 @@ export async function getPaginatedTopicPosts(
   slug: string,
   pageNumber: number,
   limit = DEFAULT_TOPIC_PAGE_SIZE
-): Promise<PaginatedDocs<Post> | null> {
+): Promise<PaginatedDocs<PostSummary> | null> {
   "use cache";
   cacheTag("posts");
   cacheTag("topics");
@@ -44,6 +44,7 @@ export async function getPaginatedTopicPosts(
 
   const result = await payload.find({
     collection: "posts",
+    select: postSummarySelect,
     depth: 2,
     limit,
     page: pageNumber,
@@ -52,10 +53,7 @@ export async function getPaginatedTopicPosts(
     overrideAccess: true,
   });
 
-  return {
-    ...result,
-    docs: result.docs as Post[],
-  };
+  return result;
 }
 
 export async function getTopicPostCount(slug: string): Promise<number | null> {

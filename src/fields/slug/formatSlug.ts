@@ -39,8 +39,6 @@ function getFallbackData({
       return fallbackValue;
     }
   }
-
-  return;
 }
 
 export const formatSlugHook =

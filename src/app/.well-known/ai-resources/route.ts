@@ -33,56 +33,16 @@ export function GET(_request: NextRequest) {
         contentIncluded: "full-text",
       },
 
-      // API endpoints
-      api: {
-        graphql: {
-          endpoint: `${SITE_URL}/api/graphql`,
-          documentation: `${SITE_URL}/api/graphql-playground`,
-          authentication: "optional",
-          capabilities: ["queries", "filtering", "sorting", "relationships"],
-        },
-        rest: {
-          baseUrl: `${SITE_URL}/api`,
-          authentication: "optional",
-          collections: [
-            "posts",
-            "projects",
-            "topics",
-            "media",
-            "search",
-            "embeddings",
-          ],
-          capabilities: ["pagination", "filtering", "sorting", "depth-control"],
-        },
-        embeddings: {
-          endpoint: `${SITE_URL}/api/embeddings`,
-          collections: {
-            posts: `${SITE_URL}/api/embeddings/posts/{id}`,
-            notes: `${SITE_URL}/api/embeddings/notes/{id}`,
-            activities: `${SITE_URL}/api/embeddings/activities/{id}`,
-          },
-          authentication: "not-required",
-          model: "text-embedding-3-small or fallback",
-          dimensions: "1536 or 384",
-          capabilities: [
-            "semantic-search",
-            "similarity-analysis",
-            "content-clustering",
-          ],
-          usage: [
-            "query-text",
-            "bulk-posts-notes-activities",
-            "individual-items",
-            "collection-specific",
-          ],
-        },
+      apiPolicy: {
+        publicCrawlerAccess: "not-supported",
+        message:
+          "REST, GraphQL, search, media proxy, and embedding endpoints are not crawler access surfaces. Use feeds, sitemap, and canonical public pages.",
       },
 
       // Search capabilities
       search: {
         endpoint: `${SITE_URL}/search`,
-        api: `${SITE_URL}/api/search`,
-        type: "full-text",
+        type: "human-facing",
         scope: "all-content",
       },
 
@@ -94,23 +54,22 @@ export function GET(_request: NextRequest) {
 
     // Documentation for AI systems
     documentation: {
-      human: `${SITE_URL}/ai-docs`,
-      machine: `${SITE_URL}/api/docs`,
       llmsTxt: `${SITE_URL}/llms.txt`,
-      specification: "openapi-3.1.0",
+      robots: `${SITE_URL}/robots.txt`,
+      sitemap: `${SITE_URL}/sitemap.xml`,
     },
 
     // Rate limits and usage guidelines
     usage: {
       rateLimit: {
         feeds: "No hard public limit (subject to platform and abuse controls)",
-        api: "No hard public limit (subject to platform and abuse controls)",
+        api: "Not a public crawler access surface",
       },
       bestPractices: [
         "Use feeds for bulk content access",
         "Respect Cache-Control headers",
         "Include descriptive User-Agent",
-        "Contact for high-volume usage",
+        "Contact before high-volume usage",
       ],
       contact: "hello@lyovson.com",
     },
@@ -151,9 +110,11 @@ export function GET(_request: NextRequest) {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
       "Cache-Control": "public, max-age=86400, s-maxage=86400", // Cache for 24 hours
+      "Vercel-CDN-Cache-Control": "max-age=86400",
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET",
       "Access-Control-Allow-Headers": "Content-Type",
+      "X-Robots-Tag": "noindex, nofollow",
     },
   });
 }

@@ -1,9 +1,10 @@
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
-import type { ReactNode } from "react";
+import { type ReactNode, ViewTransition } from "react";
 import { AppLink } from "@/components/AppLink";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { cn } from "@/lib/utils";
 import { transitionTypes } from "@/utilities/routes";
+import { getArchiveCardTransitionName } from "@/utilities/view-transitions";
 
 interface PaginationProps {
   className?: string;
@@ -65,7 +66,10 @@ function buildWindow(page: number, totalPages: number): Array<number | null> {
 function renderDisabledCell(cell: GridCell) {
   if (typeof cell.label === "number") {
     return (
-      <span aria-current={cell.isCurrent ? "page" : undefined}>
+      <span
+        aria-current={cell.isCurrent ? "page" : undefined}
+        className="relative"
+      >
         {cell.label}
       </span>
     );
@@ -129,58 +133,80 @@ export function Pagination({
   ];
 
   return (
-    <div className={cn("mx-auto flex justify-center", className)}>
-      <GridCard interactive={false}>
-        {gridCells.map((cell, index) => {
-          const isNumeric = typeof cell.label === "number";
-          const positionClass = cellPositions[index];
+    <ViewTransition
+      default="none"
+      name={getArchiveCardTransitionName("pagination", getPageHref(1))}
+      share="vt-anchor"
+      update="vt-anchor"
+    >
+      <div className={cn("mx-auto flex justify-center", className)}>
+        <GridCard interactive={false}>
+          {gridCells.map((cell, index) => {
+            const isNumeric = typeof cell.label === "number";
+            const positionClass = cellPositions[index];
 
-          if (!cell.label) {
+            if (!cell.label) {
+              return (
+                <GridCardSection
+                  aria-hidden="true"
+                  className={positionClass}
+                  key={cell.key}
+                >
+                  <div />
+                </GridCardSection>
+              );
+            }
+
             return (
               <GridCardSection
-                aria-hidden="true"
-                className={positionClass}
+                className={cn(
+                  positionClass,
+                  "relative flex h-full w-full items-center justify-center text-lg",
+                  isNumeric && "font-semibold",
+                  cell.disabled && !cell.isCurrent && "opacity-45"
+                )}
                 key={cell.key}
               >
-                <div />
+                {cell.isCurrent ? (
+                  <ViewTransition
+                    default="none"
+                    name={getArchiveCardTransitionName(
+                      "pagination-active",
+                      getPageHref(1)
+                    )}
+                    share="vt-control"
+                    update="vt-control"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="surface-emphasis pointer-events-none absolute inset-0 rounded-[inherit]"
+                    />
+                  </ViewTransition>
+                ) : null}
+                {cell.disabled ? (
+                  renderDisabledCell(cell)
+                ) : (
+                  <AppLink
+                    aria-label={cell.ariaLabel}
+                    className="relative flex h-full w-full items-center justify-center"
+                    href={getPageHref(cell.target)}
+                    pendingHintClassName="absolute right-2 top-2"
+                    prefetch={null}
+                    showPendingHint
+                    transitionTypes={[
+                      cell.target < page
+                        ? transitionTypes.paginationPrev
+                        : transitionTypes.paginationNext,
+                    ]}
+                  >
+                    {cell.label}
+                  </AppLink>
+                )}
               </GridCardSection>
             );
-          }
-
-          return (
-            <GridCardSection
-              className={cn(
-                positionClass,
-                "flex h-full w-full items-center justify-center text-lg",
-                isNumeric && "font-semibold",
-                cell.isCurrent && "surface-emphasis",
-                cell.disabled && !cell.isCurrent && "opacity-45"
-              )}
-              key={cell.key}
-            >
-              {cell.disabled ? (
-                renderDisabledCell(cell)
-              ) : (
-                <AppLink
-                  aria-label={cell.ariaLabel}
-                  className="relative flex h-full w-full items-center justify-center"
-                  href={getPageHref(cell.target)}
-                  pendingHintClassName="absolute right-2 top-2"
-                  prefetch={null}
-                  showPendingHint
-                  transitionTypes={[
-                    cell.target < page
-                      ? transitionTypes.paginationPrev
-                      : transitionTypes.paginationNext,
-                  ]}
-                >
-                  {cell.label}
-                </AppLink>
-              )}
-            </GridCardSection>
-          );
-        })}
-      </GridCard>
-    </div>
+          })}
+        </GridCard>
+      </div>
+    </ViewTransition>
   );
 }

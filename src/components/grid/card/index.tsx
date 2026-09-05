@@ -46,7 +46,7 @@ export const GridCard = <T extends ElementType = "div">({
       : {};
 
   const cardClassName = cn(
-    "surface-card rounded-xl",
+    "surface-card w-full min-w-0 rounded-xl",
     "grid gap-[var(--grid-section-gap)] p-[var(--grid-frame-padding)]",
     frameLabel && "surface-card-framed",
     variant === "default" ? "aspect-square" : "auto-rows-auto grid-cols-1",

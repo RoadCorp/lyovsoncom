@@ -13,6 +13,7 @@ import {
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
+import { ViewTransition } from "react";
 import {
   GridCard,
   GridCardActivityReview,
@@ -38,6 +39,8 @@ import {
   buildNotFoundMetadata,
   buildSeoMetadata,
 } from "@/utilities/seo-metadata";
+
+import { frontendViewTransitionClasses } from "@/utilities/view-transitions";
 
 interface Args {
   params: Promise<{
@@ -177,7 +180,7 @@ export default async function ActivityPage({ params: paramsPromise }: Args) {
   const finishDateParts = getFinishDateParts(activity);
 
   return (
-    <>
+    <ViewTransition key={activity.id} {...frontendViewTransitionClasses.page}>
       <JsonLd data={articleSchema} />
       <JsonLd data={breadcrumbSchema} />
 
@@ -197,7 +200,7 @@ export default async function ActivityPage({ params: paramsPromise }: Args) {
           {activity.notes ? (
             <div className="flex h-full w-full items-center justify-center text-center">
               <RichText
-                className="reveal-stagger-1 text-sm"
+                className="text-sm"
                 content={activity.notes}
                 enableGutter={false}
                 enableProse={true}
@@ -278,7 +281,7 @@ export default async function ActivityPage({ params: paramsPromise }: Args) {
           />
         );
       })}
-    </>
+    </ViewTransition>
   );
 }
 

@@ -14,9 +14,24 @@
       "!!**/src/utilities/migrate-*.ts"
     ]
   },
+  "assist": {
+    "actions": {
+      "source": {
+        // Preserve intentional grouping when upgrading Ultracite's presets.
+        "useSortedKeys": "off",
+        "useSortedPackageJson": "off",
+        "useSortedSelectionSet": "off",
+        "useSortedTypeFields": "off"
+      }
+    }
+  },
   "linter": {
     "rules": {
       "style": {
+        // Keep the existing expression and callback style.
+        "noIncrementDecrement": "off",
+        "useConsistentArrowReturn": "off",
+        "useDestructuring": "off",
         "noMagicNumbers": "warn",
         "useFilenamingConvention": "off",
         "noNonNullAssertion": "warn",
@@ -25,6 +40,8 @@
         "useConsistentTypeDefinitions": "warn"
       },
       "suspicious": {
+        // Existing nullish guards intentionally match both null and undefined.
+        "noEqualsToNull": "off",
         "noExplicitAny": "warn",
         "noArrayIndexKey": "warn",
         "noBitwiseOperators": "off",
@@ -33,19 +50,22 @@
         "useAwait": "warn",
         "noEvolvingTypes": "warn",
         "noImplicitAnyLet": "warn",
-        "noDocumentCookie": "warn"
-      },
-      "nursery": {
+        "noDocumentCookie": "warn",
         "noShadow": "warn",
         "noUnnecessaryConditions": "warn"
       },
       "complexity": {
+        "noUselessCatchBinding": "off",
         "noExcessiveCognitiveComplexity": "warn",
         "noCommaOperator": "off",
         "noForEach": "warn",
         "noBannedTypes": "warn"
       },
       "performance": {
+        // Sequential CMS operations preserve order and avoid request bursts.
+        "noAwaitInLoops": "off",
+        // Callback allocation alone does not establish a React performance issue.
+        "noJsxPropsBind": "off",
         "noBarrelFile": "off",
         "useTopLevelRegex": "warn",
         "noNamespaceImport": "warn"

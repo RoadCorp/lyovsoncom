@@ -12,7 +12,10 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
   const HOSTNAME = new URL(SITE_URL).host;
   const sharedDisallowRules = [
     "/api/*",
+    "/api/media/*",
     "/admin/*",
+    "/ai-docs",
+    "/.well-known/ai-resources",
     "/playground",
     "/search?*",
     "/rafa/search?*",
@@ -42,7 +45,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
         disallow: sharedDisallowRules,
         crawlDelay: 1,
       },
-      // AI and research bots - explicitly welcome with full access
+      // AI and research bots may use cached discovery/feed surfaces only.
       {
         userAgent: [
           "GPTBot",
@@ -50,28 +53,30 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
           "Google-Extended",
           "CCBot",
           "ChatGPT-User",
+          "FacebookBot",
           "Claude-Web",
           "ClaudeBot",
+          "meta-externalagent",
           "PerplexityBot",
           "YouBot",
+          "Bytespider",
           "Applebot-Extended",
         ],
         allow: [
-          "/",
-          "/api/docs",
-          "/api/graphql",
           "/feed.xml",
           "/feed.json",
           "/atom.xml",
-          "/.well-known/ai-resources",
           "/llms.txt",
+          "/robots.txt",
+          "/sitemap.xml",
         ],
-        disallow: sharedDisallowRules,
+        disallow: ["/", ...sharedDisallowRules],
       },
       // Social media crawlers
       {
         userAgent: ["facebookexternalhit", "Twitterbot", "LinkedInBot"],
-        allow: ["/", "/api/media/*"],
+        allow: "/",
+        disallow: sharedDisallowRules,
         crawlDelay: 2,
       },
       // Research and academic crawlers

@@ -5,7 +5,6 @@ import { getRuntimeSiteOrigin } from "./src/utilities/site-config";
 
 // Webpack optimization regexes
 const TAILWIND_REGEX = /[\\/]node_modules[\\/]tailwindcss[\\/]/;
-const MOTION_REGEX = /[\\/]node_modules[\\/]motion[\\/]/;
 
 // Image quality presets for Next.js Image Optimization
 /* biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit quality breakpoints */
@@ -36,6 +35,15 @@ const IMAGE_SIZES: number[] = [
 ];
 
 const NEXT_PUBLIC_SERVER_URL = getRuntimeSiteOrigin();
+const VERCEL_BLOB_STORE_ID = process.env.BLOB_READ_WRITE_TOKEN?.match(
+  /^vercel_blob_rw_([a-z\d]+)_[a-z\d]+$/i
+)?.[1]?.toLowerCase();
+const VERCEL_BLOB_HOST = VERCEL_BLOB_STORE_ID
+  ? `${VERCEL_BLOB_STORE_ID}.public.blob.vercel-storage.com`
+  : null;
+const VERCEL_BLOB_CSP_SOURCE = VERCEL_BLOB_HOST
+  ? `https://${VERCEL_BLOB_HOST}`
+  : null;
 
 const IS_VERCEL_DEPLOYMENT =
   process.env.VERCEL === "1" ||
@@ -67,6 +75,14 @@ const nextConfig: NextConfig = {
         hostname: "localhost",
         protocol: "http",
       },
+      ...(VERCEL_BLOB_HOST
+        ? [
+            {
+              hostname: VERCEL_BLOB_HOST,
+              protocol: "https" as const,
+            },
+          ]
+        : []),
     ],
     // Add quality configuration to fix Next.js 16 warnings
     qualities: IMAGE_QUALITIES,
@@ -90,9 +106,19 @@ const nextConfig: NextConfig = {
       "font-src 'self' fonts.gstatic.com data:",
       // Added cdn.syndication.twimg.com, pbs.twimg.com, abs.twimg.com for react-tweet
       // Kept media.tenor.com for video sources (GIF optimization)
-      "img-src 'self' data: blob: *.vercel-insights.com *.google-analytics.com *.googletagmanager.com pbs.twimg.com abs.twimg.com *.twimg.com media.tenor.com",
+      [
+        "img-src 'self' data: blob: *.vercel-insights.com *.google-analytics.com *.googletagmanager.com pbs.twimg.com abs.twimg.com *.twimg.com media.tenor.com",
+        VERCEL_BLOB_CSP_SOURCE,
+      ]
+        .filter(Boolean)
+        .join(" "),
       // Kept media.tenor.com for MP4/WebM videos (GIF optimization)
-      "media-src 'self' blob: video.twimg.com media.tenor.com",
+      [
+        "media-src 'self' blob: video.twimg.com media.tenor.com",
+        VERCEL_BLOB_CSP_SOURCE,
+      ]
+        .filter(Boolean)
+        .join(" "),
       // Added cdn.syndication.twimg.com for react-tweet API
       "connect-src 'self' *.vercel-insights.com *.google-analytics.com *.googletagmanager.com cdn.syndication.twimg.com vitals.vercel-insights.com",
       // Removed platform.twitter.com and tenor.com - no longer needed (eliminated iframes)
@@ -258,7 +284,6 @@ const nextConfig: NextConfig = {
 
     // Enable Turbopack file system caching for faster builds (stores compiler artifacts between runs)
     turbopackFileSystemCacheForDev: true,
-    viewTransition: true,
   },
   // Turbopack is now the default bundler for both dev and prod in Next.js 16
   turbopack: {
@@ -275,12 +300,6 @@ const nextConfig: NextConfig = {
           name: "tailwind",
           chunks: "all",
           priority: 30,
-        },
-        motion: {
-          test: MOTION_REGEX,
-          name: "motion",
-          chunks: "all",
-          priority: 25,
         },
       };
     }

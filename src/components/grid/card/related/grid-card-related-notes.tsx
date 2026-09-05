@@ -1,17 +1,17 @@
 import { Brain, Quote } from "lucide-react";
-import { AppLink } from "@/components/AppLink";
+import { ViewTransition } from "react";
 import { GridCard, GridCardSection } from "@/components/grid";
+import { IntentLink } from "@/components/IntentLink";
 import { cn } from "@/lib/utils";
 import type { Note } from "@/payload-types";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";
-import { noteRoute } from "@/utilities/routes";
+import { noteRoute, transitionTypes } from "@/utilities/routes";
+import {
+  frontendViewTransitionClasses,
+  getNoteTitleTransitionName,
+} from "@/utilities/view-transitions";
 
 const RELATED_NOTE_EXCERPT_MAX = 80;
-const MAX_STAGGER_INDEX = 6;
-
-function getStaggerClass(index: number): string {
-  return `reveal-stagger-${Math.min(index + 1, MAX_STAGGER_INDEX)}`;
-}
 
 export function GridCardRelatedNotes({
   notes,
@@ -20,13 +20,18 @@ export function GridCardRelatedNotes({
   notes: (number | Note)[];
   className?: string;
 }) {
+  const seen = new Set<string>();
+  const uniqueNotes = notes.filter((note): note is Note & { slug: string } => {
+    if (typeof note === "number" || !note.slug || seen.has(note.slug)) {
+      return false;
+    }
+    seen.add(note.slug);
+    return true;
+  });
+
   return (
     <GridCard className={cn(className)} frameLabel="Related">
-      {notes.map((note, index) => {
-        if (typeof note === "number") {
-          return null;
-        }
-
+      {uniqueNotes.map((note, index) => {
         const isQuote = note.type === "quote";
         const fullText = note.content
           ? extractLexicalText(note.content).trim()
@@ -37,19 +42,17 @@ export function GridCardRelatedNotes({
           : fullText;
 
         const rowClass = `row-start-${index + 1} row-end-${index + 2}`;
-        const staggerClass = getStaggerClass(index);
 
         return (
-          <AppLink
+          <IntentLink
             aria-label={`Read related note: ${note.title}`}
             className={cn(
               "ui-focus-ring group ui-interactive col-start-1 col-end-4",
-              rowClass,
-              staggerClass
+              rowClass
             )}
             href={noteRoute(note.slug || "unknown")}
             key={note.id}
-            prefetch={false}
+            transitionTypes={[transitionTypes.drillIn]}
           >
             <GridCardSection
               className={
@@ -72,9 +75,14 @@ export function GridCardRelatedNotes({
               </div>
               {/* Content column */}
               <div className="col-start-2 col-end-4 row-start-1 row-end-2 flex flex-col justify-center gap-1">
-                <h2 className="tone-heading ui-group-hover-dim font-medium text-sm">
-                  {note.title}
-                </h2>
+                <ViewTransition
+                  name={getNoteTitleTransitionName(note.slug)}
+                  {...frontendViewTransitionClasses.sharedTitle}
+                >
+                  <h2 className="tone-heading ui-group-hover-dim font-medium text-sm">
+                    {note.title}
+                  </h2>
+                </ViewTransition>
                 {excerpt && (
                   <p className="tone-muted line-clamp-2 text-xs">
                     {excerpt}
@@ -83,7 +91,7 @@ export function GridCardRelatedNotes({
                 )}
               </div>
             </GridCardSection>
-          </AppLink>
+          </IntentLink>
         );
       })}
     </GridCard>

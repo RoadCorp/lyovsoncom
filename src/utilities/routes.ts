@@ -12,6 +12,8 @@ export const UNKNOWN_ACTIVITY_DATE_SLUG = "unknown";
 
 export const transitionTypes = {
   drillIn: "drill-in",
+  section: "section",
+  navMode: "nav-mode",
   postDrillIn: "post-drill-in",
   paginationNext: "pagination-next",
   paginationPrev: "pagination-prev",

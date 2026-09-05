@@ -8,6 +8,7 @@ import { GridCardSection } from "../section";
 interface GridCardNavItemBaseProps {
   children: ReactNode;
   className?: string;
+  id?: string;
 }
 
 type GridCardNavItemLinkProps = GridCardNavItemBaseProps & {
@@ -39,15 +40,16 @@ export const GridCardNavItem = ({
     return (
       <GridCardSection className={cn("group ui-interactive", className)}>
         <AppLink
-          className="tone-heading ui-focus-ring ui-group-hover-dim flex h-full w-full flex-col items-center justify-center gap-2"
+          className="tone-heading ui-focus-ring flex h-full w-full items-center justify-center"
           href={props.href}
+          id={props.id}
           pendingHintClassName="absolute top-2 right-2"
           prefetch={null}
           scroll={false}
           showPendingHint={true}
-          transitionTypes={[transitionTypes.drillIn]}
+          transitionTypes={[transitionTypes.section]}
         >
-          {children}
+          <span className="nav-tile-content">{children}</span>
         </AppLink>
       </GridCardSection>
     );
@@ -61,10 +63,11 @@ export const GridCardNavItem = ({
           className
         )}
         disabled={props.disabled}
+        id={props.id}
         mode="button"
         onClick={props.onClick}
       >
-        {children}
+        <span className="nav-tile-content">{children}</span>
       </GridCardSection>
     );
   }

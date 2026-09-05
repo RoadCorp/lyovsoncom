@@ -5,6 +5,11 @@ import type { PayloadRequest } from "payload";
 import { getPayload } from "payload";
 import { logApiTelemetry } from "@/utilities/api-telemetry";
 import {
+  authorizeEmbeddingMutation,
+  getEmbeddingUnauthorizedResponse,
+  hasEmbeddingAuthHint,
+} from "@/utilities/embedding-auth";
+import {
   generateEmbeddingForActivity,
   generateEmbeddingForNote,
   generateEmbeddingForPost,
@@ -25,7 +30,16 @@ interface EmbeddingResult {
 export async function POST(request: NextRequest) {
   const startedAt = Date.now();
   try {
+    if (!hasEmbeddingAuthHint(request)) {
+      return getEmbeddingUnauthorizedResponse();
+    }
+
     const payload = await getPayload({ config: configPromise });
+    const authResult = await authorizeEmbeddingMutation(request, payload);
+
+    if (!authResult.authorized) {
+      return getEmbeddingUnauthorizedResponse(authResult.reason);
+    }
 
     // Parse request body
     let body: RegenerateEmbeddingBody | null = null;
@@ -67,39 +81,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Authentication check
-    // Allow authenticated admins or requests with valid CRON_SECRET
-    const authHeader = request.headers.get("authorization");
-    const cronSecret = authHeader?.replace("Bearer ", "");
-    const hasValidSecret = cronSecret && cronSecret === process.env.CRON_SECRET;
-
     // Create a mock request object for the helper functions
-    // In a real Payload request context, req.user would be available
-    // For API routes, we'll use the payload instance directly
     const mockReq = {
       payload,
-      user: null, // Will be set if authenticated via Payload session
     } as unknown as PayloadRequest;
-
-    // Try to get authenticated user from Payload session
-    // This allows calling from Payload admin UI
-    try {
-      const { user } = await payload.auth({ headers: request.headers });
-      if (user) {
-        mockReq.user = user;
-      }
-    } catch {
-      // Not authenticated via Payload session, check CRON_SECRET
-      if (!hasValidSecret) {
-        return NextResponse.json(
-          {
-            error:
-              "Unauthorized. Requires admin authentication or valid CRON_SECRET",
-          },
-          { status: 401 }
-        );
-      }
-    }
 
     // Fetch document to get current embedding info
     const doc = await payload.findByID({

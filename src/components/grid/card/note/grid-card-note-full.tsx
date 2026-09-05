@@ -2,6 +2,7 @@ import { Brain, Calendar, PenTool, Quote } from "lucide-react";
 import { ViewTransition } from "react";
 import { AppLink } from "@/components/AppLink";
 import { GridCard, GridCardSection } from "@/components/grid";
+import { IntentLink } from "@/components/IntentLink";
 import { TopicPill } from "@/components/TopicPill";
 import type { Note, Topic } from "@/payload-types";
 import { formatShortDate } from "@/utilities/date";
@@ -13,11 +14,11 @@ import { noteRoute, topicRoute, transitionTypes } from "@/utilities/routes";
 import {
   frontendViewTransitionClasses,
   getNoteContentTransitionName,
+  getNoteMetaTransitionName,
 } from "@/utilities/view-transitions";
 
 const QUOTE_PREVIEW_MAX_CHARS = 360;
 const THOUGHT_PREVIEW_MAX_CHARS = 520;
-const MAX_TOPIC_STAGGER = 6;
 const UNKNOWN_NOTE_SLUG = "unknown";
 const QUOTE_TRUNCATION_MASK_CLASS =
   "[-webkit-mask-image:linear-gradient(to_bottom,black_72%,transparent)] [mask-image:linear-gradient(to_bottom,black_72%,transparent)]";
@@ -108,10 +109,6 @@ function getUniqueTopics(topics: Note["topics"]): Topic[] {
   return [...uniqueTopics.values()];
 }
 
-function getTopicStaggerClass(index: number): string {
-  return `reveal-stagger-${Math.min(index + 1, MAX_TOPIC_STAGGER)}`;
-}
-
 function NoteQuoteContent({
   attribution,
   excerpt,
@@ -191,10 +188,9 @@ function NoteContentPreview({
   slug: string;
 }) {
   return (
-    <AppLink
+    <IntentLink
       className="ui-focus-ring group block h-full"
       href={noteUrl}
-      prefetch={false}
       transitionTypes={[transitionTypes.drillIn]}
     >
       <ViewTransition
@@ -216,7 +212,7 @@ function NoteContentPreview({
           />
         )}
       </ViewTransition>
-    </AppLink>
+    </IntentLink>
   );
 }
 
@@ -254,63 +250,77 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
         />
       </GridCardSection>
 
-      <GridCardSection className="surface-rail-panel card-rail-stack card-topic-stack col-start-1 col-end-2 row-start-3 row-end-4 h-full">
-        {uniqueTopics.map((topic, index) => {
-          if (!topic.slug) {
-            return null;
-          }
+      <ViewTransition
+        name={getNoteMetaTransitionName(noteSlug, "topics")}
+        {...frontendViewTransitionClasses.sharedMeta}
+      >
+        <GridCardSection className="surface-rail-panel card-rail-stack card-topic-stack col-start-1 col-end-2 row-start-3 row-end-4 h-full">
+          {uniqueTopics.map((topic) => {
+            if (!topic.slug) {
+              return null;
+            }
 
-          return (
-            <AppLink
-              aria-label={`View notes about ${topic.name}`}
-              className={`w-full ${getTopicStaggerClass(index)}`}
-              href={topicRoute(topic.slug)}
-              key={topic.id}
-              prefetch={false}
-            >
-              <TopicPill>{topic.name}</TopicPill>
-            </AppLink>
-          );
-        })}
-      </GridCardSection>
+            return (
+              <AppLink
+                aria-label={`View notes about ${topic.name}`}
+                className={"w-full"}
+                href={topicRoute(topic.slug)}
+                key={topic.id}
+                prefetch={false}
+              >
+                <TopicPill>{topic.name}</TopicPill>
+              </AppLink>
+            );
+          })}
+        </GridCardSection>
+      </ViewTransition>
 
-      <GridCardSection className="surface-rail-panel card-rail-stack card-meta-stack col-start-2 col-end-3 row-start-3 row-end-4">
-        {author ? (
-          <div className="tone-muted flex items-center gap-2 text-xs capitalize">
-            <PenTool aria-hidden="true" className="h-5 w-5" />
-            <span className="font-medium">{author}</span>
+      <ViewTransition
+        name={getNoteMetaTransitionName(noteSlug, "byline")}
+        {...frontendViewTransitionClasses.sharedMeta}
+      >
+        <GridCardSection className="surface-rail-panel card-rail-stack card-meta-stack col-start-2 col-end-3 row-start-3 row-end-4">
+          {author ? (
+            <div className="tone-muted flex items-center gap-2 text-xs capitalize">
+              <PenTool aria-hidden="true" className="h-5 w-5" />
+              <span className="font-medium">{author}</span>
+            </div>
+          ) : null}
+
+          <div className="tone-muted flex items-center gap-2 text-xs">
+            <Calendar aria-hidden="true" className="h-5 w-5" />
+            <time dateTime={publishedAt || undefined}>
+              {formatShortDate(publishedAt)}
+            </time>
           </div>
-        ) : null}
+        </GridCardSection>
+      </ViewTransition>
 
-        <div className="tone-muted flex items-center gap-2 text-xs">
-          <Calendar aria-hidden="true" className="h-5 w-5" />
-          <time dateTime={publishedAt || undefined}>
-            {formatShortDate(publishedAt)}
-          </time>
-        </div>
-      </GridCardSection>
-
-      <GridCardSection className="surface-rail-panel col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
-        <AppLink
-          className="ui-focus-ring group block flex flex-col items-center gap-1"
-          href={noteUrl}
-          prefetch={false}
-          transitionTypes={[transitionTypes.drillIn]}
-        >
-          {isQuoteType ? (
-            <Quote
-              aria-hidden="true"
-              className="tone-heading ui-group-hover-dim h-5 w-5"
-            />
-          ) : (
-            <Brain
-              aria-hidden="true"
-              className="tone-heading ui-group-hover-dim h-5 w-5"
-            />
-          )}
-          <span className="tone-muted text-xs capitalize">{typeLabel}</span>
-        </AppLink>
-      </GridCardSection>
+      <ViewTransition
+        name={getNoteMetaTransitionName(noteSlug, "type")}
+        {...frontendViewTransitionClasses.sharedMeta}
+      >
+        <GridCardSection className="surface-rail-panel col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
+          <IntentLink
+            className="ui-focus-ring group block flex flex-col items-center gap-1"
+            href={noteUrl}
+            transitionTypes={[transitionTypes.drillIn]}
+          >
+            {isQuoteType ? (
+              <Quote
+                aria-hidden="true"
+                className="tone-heading ui-group-hover-dim h-5 w-5"
+              />
+            ) : (
+              <Brain
+                aria-hidden="true"
+                className="tone-heading ui-group-hover-dim h-5 w-5"
+              />
+            )}
+            <span className="tone-muted text-xs capitalize">{typeLabel}</span>
+          </IntentLink>
+        </GridCardSection>
+      </ViewTransition>
     </GridCard>
   );
 };

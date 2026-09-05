@@ -1,13 +1,11 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import { draftMode } from "next/headers";
 import Script from "next/script";
 import type React from "react";
 import { Suspense } from "react";
 import { Grid, GridCardNav, SkeletonCard } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
-import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import { Providers } from "@/providers";
 import { browserTheme } from "@/utilities/browserTheme";
@@ -78,7 +76,7 @@ const fontSerif = localFont({
     "Times",
     "serif",
   ],
-  preload: true,
+  preload: false,
 });
 
 const fontSans = localFont({
@@ -115,14 +113,11 @@ const fontSans = localFont({
   preload: true,
 });
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Draft mode check - enables preview functionality
-  await draftMode();
-
   return (
     <html
       className={cn(fontMono.variable, fontSerif.variable, fontSans.variable)}
@@ -151,7 +146,6 @@ export default async function RootLayout({
 
             {children}
           </Grid>
-          <Toaster />
         </Providers>
         <Analytics />
       </body>
@@ -285,16 +279,12 @@ export const metadata: Metadata = {
     "mobile-web-app-capable": "yes",
     HandheldFriendly: "true",
     MobileOptimized: "320",
-    // AI-specific meta tags
     "ai-content-license": "attribution-required",
     "ai-content-type": "blog-articles",
     "ai-preferred-access": "feeds",
     "ai-content-language": "en",
     "ai-content-topics": "programming,design,philosophy,technology,research",
-    "ai-api-endpoint": getCanonicalURL("/api/docs"),
     "ai-feed-endpoint": getCanonicalURL("/feed.json"),
-    "ai-embedding-endpoint": getCanonicalURL("/api/embeddings"),
-    "ai-search-endpoint": getCanonicalURL("/search"),
     "ai-owner": "Rafa & Jess Lyóvson",
     "ai-contact": "hello@lyovson.com",
   },

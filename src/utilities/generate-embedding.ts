@@ -167,7 +167,8 @@ export async function generateEmbedding(text: string): Promise<{
     };
   } catch (error) {
     throw new Error(
-      `Failed to generate embedding: ${error instanceof Error ? error.message : String(error)}`
+      `Failed to generate embedding: ${error instanceof Error ? error.message : String(error)}`,
+      { cause: error }
     );
   }
 }

@@ -4,7 +4,11 @@ import { NextResponse } from "next/server";
 import type { PayloadRequest } from "payload";
 import { getPayload } from "payload";
 import { logApiTelemetry } from "@/utilities/api-telemetry";
-import { authorizeEmbeddingMutation } from "@/utilities/embedding-auth";
+import {
+  authorizeEmbeddingMutation,
+  getEmbeddingUnauthorizedResponse,
+  hasEmbeddingAuthHint,
+} from "@/utilities/embedding-auth";
 import {
   EMBEDDING_MODEL,
   EMBEDDING_VECTOR_DIMENSIONS,
@@ -105,14 +109,15 @@ function buildCollectionSummary(): CollectionSummary {
 export async function POST(request: NextRequest) {
   const startedAt = Date.now();
   try {
+    if (!hasEmbeddingAuthHint(request)) {
+      return getEmbeddingUnauthorizedResponse();
+    }
+
     const payload = await getPayload({ config: configPromise });
     const authResult = await authorizeEmbeddingMutation(request, payload);
 
     if (!authResult.authorized) {
-      return NextResponse.json(
-        { error: authResult.reason || "Unauthorized" },
-        { status: 401 }
-      );
+      return getEmbeddingUnauthorizedResponse(authResult.reason);
     }
 
     let body: SyncBody = {};

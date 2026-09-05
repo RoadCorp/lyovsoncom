@@ -108,8 +108,6 @@ function getPostOtherMetadata(post: Post, keywords: string[] | undefined) {
     "ai-content-type": "article",
     "ai-content-license": "attribution-required",
     "ai-content-language": "en",
-    "ai-api-url": absoluteUrl(`/api/posts/${post.id}`),
-    "ai-embedding-url": absoluteUrl(`/api/embeddings/posts/${post.id}`),
     ...(projectSlug ? { "ai-project": projectSlug } : {}),
     ...(keywords?.length ? { "ai-topics": keywords.join(",") } : {}),
     ...(aiAuthors ? { "ai-authors": aiAuthors } : {}),
@@ -174,7 +172,7 @@ export default async function PostPage({ params: paramsPromise }: Args) {
         >
           <GridCardSection className="col-span-3 row-span-3 p-6">
             <RichText
-              className="reveal-stagger-3 h-full"
+              className="h-full"
               content={post.content}
               enableGutter={false}
               enableProse={true}

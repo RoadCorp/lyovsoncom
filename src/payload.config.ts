@@ -105,7 +105,8 @@ export default buildConfig({
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
   db: vercelPostgresAdapter({
-    push: true, // Enable schema push - custom columns are now protected via afterSchemaInit
+    // Read-only previews can opt out of development schema synchronization.
+    push: process.env.PAYLOAD_DB_PUSH !== "false",
     pool: {
       connectionString: process.env.POSTGRES_URL || "",
       // Optimized settings for faster schema introspection
@@ -234,7 +235,9 @@ export default buildConfig({
     ...plugins,
     vercelBlobStorage({
       collections: {
-        media: true,
+        media: {
+          disablePayloadAccessControl: true,
+        },
       },
       token: process.env.BLOB_READ_WRITE_TOKEN || "",
     }),

@@ -1,22 +1,14 @@
-import {
-  BriefcaseBusiness,
-  Calendar,
-  Camera,
-  FileText,
-  Mic,
-  PenTool,
-  Star,
-  Video,
-} from "lucide-react";
+import { BriefcaseBusiness, Calendar, PenTool } from "lucide-react";
 import { AppLink } from "@/components/AppLink";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { Media } from "@/components/Media";
+import { CARD_COVER_IMAGE_SIZE } from "@/components/Media/image-sizes";
 import { PostDrillInLink } from "@/components/post-transitions/PostDrillInLink";
 import { PostTransitionBoundary } from "@/components/post-transitions/PostTransitionBoundary";
 import { TopicPill } from "@/components/TopicPill";
-import type { Post } from "@/payload-types";
 import { formatShortDate } from "@/utilities/date";
 import { dedupeRelationItemsById } from "@/utilities/dedupeRelationItemsById";
+import type { PostSummary } from "@/utilities/post-summary";
 import {
   lyovsonRoute,
   postRoute,
@@ -24,12 +16,10 @@ import {
   topicRoute,
 } from "@/utilities/routes";
 
-const MAX_STAGGER_INDEX = 6;
-
 export interface GridCardPostProps {
   className?: string;
   loading?: "lazy" | "eager";
-  post: Post;
+  post: PostSummary;
   priority?: boolean;
 }
 
@@ -43,11 +33,9 @@ interface ProjectLinkData {
   label: string;
 }
 
-function getStaggerClass(index: number): string {
-  return `reveal-stagger-${Math.min(index + 1, MAX_STAGGER_INDEX)}`;
-}
-
-function getProjectLinkData(project: Post["project"]): ProjectLinkData | null {
+function getProjectLinkData(
+  project: PostSummary["project"]
+): ProjectLinkData | null {
   if (!project) {
     return null;
   }
@@ -99,7 +87,6 @@ export const GridCardPostFull = ({
   const postHref = postRoute(slug);
   const postType = type || "article";
   const projectLink = getProjectLinkData(project);
-  const iconClassName = "tone-heading ui-group-hover-dim h-5 w-5";
 
   return (
     <PostTransitionBoundary variant="cardShell">
@@ -120,6 +107,7 @@ export const GridCardPostFull = ({
                   imgClassName="h-full object-cover"
                   pictureClassName="h-full"
                   resource={featuredImage}
+                  size={CARD_COVER_IMAGE_SIZE}
                   {...(loading ? { loading } : {})}
                   {...(priority ? { priority } : {})}
                 />
@@ -128,11 +116,14 @@ export const GridCardPostFull = ({
           </GridCardSection>
         ) : null}
 
-        <GridCardSection className="surface-title-stage col-start-1 col-end-3 row-start-3 row-end-4 flex h-full flex-col justify-center">
+        <GridCardSection className="surface-title-stage col-start-1 col-end-4 row-start-3 row-end-4 flex h-full flex-col justify-center">
           <PostDrillInLink
-            className="ui-focus-ring group block"
+            className="ui-focus-ring group flex h-full flex-col items-center justify-center gap-2"
             href={postHref}
           >
+            <span className="tone-muted font-mono text-[0.65rem] uppercase tracking-[0.16em]">
+              {postType}
+            </span>
             <PostTransitionBoundary slug={slug} variant="title">
               <h2 className="card-title tone-heading ui-group-hover-dim text-center font-bold text-xl">
                 {title}
@@ -141,37 +132,8 @@ export const GridCardPostFull = ({
           </PostDrillInLink>
         </GridCardSection>
 
-        <GridCardSection className="surface-rail-panel col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
-          <PostDrillInLink
-            className="ui-focus-ring group block flex flex-col items-center gap-1"
-            href={postHref}
-          >
-            {postType === "article" ? (
-              <FileText aria-hidden="true" className={iconClassName} />
-            ) : null}
-            {postType === "review" ? (
-              <Star aria-hidden="true" className={iconClassName} />
-            ) : null}
-            {postType === "video" ? (
-              <Video aria-hidden="true" className={iconClassName} />
-            ) : null}
-            {postType === "podcast" ? (
-              <Mic aria-hidden="true" className={iconClassName} />
-            ) : null}
-            {postType === "photo" ? (
-              <Camera aria-hidden="true" className={iconClassName} />
-            ) : null}
-            {["article", "review", "video", "podcast", "photo"].includes(
-              postType
-            ) ? null : (
-              <FileText aria-hidden="true" className={iconClassName} />
-            )}
-            <span className="tone-muted text-xs capitalize">{postType}</span>
-          </PostDrillInLink>
-        </GridCardSection>
-
         <GridCardSection className="surface-rail-panel card-rail-stack card-topic-stack col-start-3 col-end-4 row-start-1 row-end-2">
-          {dedupeRelationItemsById(topics).map((topic, index) => {
+          {dedupeRelationItemsById(topics).map((topic) => {
             if (typeof topic !== "object" || !topic.slug || !topic.id) {
               return null;
             }
@@ -179,7 +141,7 @@ export const GridCardPostFull = ({
             return (
               <AppLink
                 aria-label={`View posts about ${topic.name}`}
-                className={`w-full ${getStaggerClass(index)}`}
+                className={"w-full"}
                 href={topicRoute(topic.slug)}
                 key={topic.id}
                 prefetch={false}
@@ -191,7 +153,7 @@ export const GridCardPostFull = ({
         </GridCardSection>
 
         <GridCardSection className="surface-rail-panel card-rail-stack card-meta-stack col-start-3 col-end-4 row-start-2 row-end-3">
-          {dedupeRelationItemsById(populatedAuthors).map((author, index) => {
+          {dedupeRelationItemsById(populatedAuthors).map((author) => {
             if (!(typeof author === "object" && author.username)) {
               return null;
             }
@@ -199,14 +161,14 @@ export const GridCardPostFull = ({
             return (
               <AppLink
                 aria-label={`View ${author.name}'s profile`}
-                className={`ui-meta-link ui-focus-ring ui-interactive ${getStaggerClass(index)}`}
+                className={"ui-meta-link ui-focus-ring ui-interactive"}
                 href={lyovsonRoute(author.username)}
                 key={author.id}
                 prefetch={false}
               >
                 <PenTool aria-hidden="true" className="h-5 w-5" />
                 <span className="font-medium text-xs">
-                  {author.name?.replace(" Lyovson", "")}
+                  {author.name?.split(" ").at(0)}
                 </span>
               </AppLink>
             );

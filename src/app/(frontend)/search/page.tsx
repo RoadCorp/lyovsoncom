@@ -1,6 +1,7 @@
 import type { Metadata } from "next/types";
 import { Suspense } from "react";
 import { SkeletonCard } from "@/components/grid";
+import { LoadingTransition } from "@/components/LoadingTransition";
 import { SearchPageContent } from "@/search/page-content";
 import { buildSeoMetadata } from "@/utilities/seo-metadata";
 
@@ -14,7 +15,13 @@ export default function SuspendedSearchPage({
   searchParams: searchParamsPromise,
 }: Args) {
   return (
-    <Suspense fallback={<SkeletonCard />}>
+    <Suspense
+      fallback={
+        <LoadingTransition>
+          <SkeletonCard />
+        </LoadingTransition>
+      }
+    >
       <SearchPage searchParams={searchParamsPromise} />
     </Suspense>
   );

@@ -4,7 +4,11 @@ import { getPayload } from "payload";
 import type { Activity } from "@/payload-types";
 import { getActivityPath } from "@/utilities/activity-path";
 import { getActivityTypeLabel } from "@/utilities/activity-type";
-import { authorizeEmbeddingMutation } from "@/utilities/embedding-auth";
+import {
+  authorizeEmbeddingMutation,
+  getEmbeddingUnauthorizedResponse,
+  hasEmbeddingAuthHint,
+} from "@/utilities/embedding-auth";
 import {
   createTextHash,
   EMBEDDING_VECTOR_DIMENSIONS,
@@ -42,22 +46,15 @@ export async function GET(
     process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
 
   try {
-    const payload = await getPayload({ config: configPromise });
+    if (!hasEmbeddingAuthHint(request)) {
+      return getEmbeddingUnauthorizedResponse();
+    }
 
-    if (regenerate) {
-      const authResult = await authorizeEmbeddingMutation(request, payload);
-      if (!authResult.authorized) {
-        return new Response(
-          JSON.stringify({
-            error: authResult.reason || "Unauthorized",
-            id: Number.parseInt(id, 10),
-          }),
-          {
-            status: 401,
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-      }
+    const payload = await getPayload({ config: configPromise });
+    const authResult = await authorizeEmbeddingMutation(request, payload);
+
+    if (!authResult.authorized) {
+      return getEmbeddingUnauthorizedResponse(authResult.reason);
     }
 
     const activity = await payload.findByID({
@@ -302,6 +299,10 @@ export async function POST(
   const { id: _id } = await paramsPromise;
 
   try {
+    if (!hasEmbeddingAuthHint(request)) {
+      return getEmbeddingUnauthorizedResponse();
+    }
+
     const body = await request.json();
     const { action = "regenerate" } = body;
 
@@ -309,15 +310,7 @@ export async function POST(
       const payload = await getPayload({ config: configPromise });
       const authResult = await authorizeEmbeddingMutation(request, payload);
       if (!authResult.authorized) {
-        return new Response(
-          JSON.stringify({
-            error: authResult.reason || "Unauthorized",
-          }),
-          {
-            status: 401,
-            headers: { "Content-Type": "application/json" },
-          }
-        );
+        return getEmbeddingUnauthorizedResponse(authResult.reason);
       }
 
       // Redirect to GET with regenerate=true

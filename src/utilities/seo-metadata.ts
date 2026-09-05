@@ -61,7 +61,7 @@ function normalizeImage(image: SeoImageInput | null | undefined) {
 
 function normalizeKeywords(keywords: string[] | string | undefined) {
   if (!keywords) {
-    return undefined;
+    return;
   }
 
   return Array.isArray(keywords) ? keywords.join(", ") : keywords;

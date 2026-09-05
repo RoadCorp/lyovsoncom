@@ -2,6 +2,7 @@ import { cacheLife, cacheTag } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next/types";
 import { CollectionArchive } from "@/components/CollectionArchive";
+import { GridCardProjectHero } from "@/components/grid/card/project";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
 import {
@@ -121,6 +122,8 @@ export default async function Page({ params: paramsPromise }: Args) {
   return (
     <>
       <JsonLd data={collectionPageSchema} />
+      <h1 className="sr-only">{projectName}</h1>
+      <GridCardProjectHero project={project} />
       <CollectionArchive posts={posts} />
       {totalPages > 1 && page ? (
         <Pagination

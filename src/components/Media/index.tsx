@@ -17,7 +17,7 @@ export const Media: React.FC<Props> = (props) => {
       {...(htmlElement === null
         ? {}
         : {
-            className: cn(className, "contents"),
+            className: cn("contents", className),
           })}
     >
       {isVideo ? <VideoMedia {...props} /> : <ImageMedia {...props} />}
