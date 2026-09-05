@@ -78,3 +78,9 @@ Fully cached browser Back navigation can restore immediately without starting a 
 Motion was verified in Chromium; this is not a claim of Safari/Firefox animation parity. Unsupported browsers retain normal navigation. Sparse project pagination was checked in source/build; actual directional pagination was exercised with activity pages. Error handling was inspected without creating server failures.
 
 Implementation follows the installed Next.js view-transition documentation and the [React ViewTransition reference](https://react.dev/reference/react/ViewTransition). The central policy lives in `src/utilities/view-transitions.ts` and the view-transition section of `src/app/(frontend)/globals.css`.
+
+## Image handoff correction — September 5, 2026
+
+A follow-up frame-by-frame check of the Siri + Gemini article exposed a gap in the original keyframe-only checks: the shared image/title moved correctly but were covered by the entering hero snapshot. They disappeared near the end, then reappeared when the snapshot overlay was removed.
+
+The fix gives retained cards and shared detail snapshots explicit stacking order above page/card reveals. Both media snapshots fill the same interpolated frame, with matching clipping and additive blending so the image does not dim or show mismatched bottom edges as its aspect ratio changes. Geometry, timing, focus, and reduced-motion behavior remain intact. Verification now compares paused transition frames with the settled page, in addition to checking animation keyframes.

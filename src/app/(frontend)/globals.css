@@ -2223,7 +2223,35 @@
   animation-duration: var(--vt-move-duration);
 }
 
-/* Preserve image coverage while snapshots exchange; never disable group motion. */
+/* Snapshot groups are siblings, even for nested React boundaries. Keep retained
+   cards above page reveals and their shared details above incoming card shells. */
+::view-transition-group(.vt-card) {
+  z-index: 1;
+}
+
+::view-transition-group(.vt-share-media),
+::view-transition-group(.vt-share-title),
+::view-transition-group(.vt-share-content),
+::view-transition-group(.vt-control) {
+  z-index: 2;
+}
+
+/* Both snapshots must fill the moving frame as its aspect ratio changes.
+   Restore additive blending lost when overriding the browser's animation list. */
+::view-transition-image-pair(.vt-share-media) {
+  overflow: clip;
+  border-radius: calc(var(--radius) - 4px);
+  isolation: isolate;
+}
+
+::view-transition-old(.vt-share-media),
+::view-transition-new(.vt-share-media) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  mix-blend-mode: plus-lighter;
+}
+
 ::view-transition-old(.vt-share-media) {
   animation: vt-fade-out var(--vt-move-duration) var(--vt-ease) both;
 }
