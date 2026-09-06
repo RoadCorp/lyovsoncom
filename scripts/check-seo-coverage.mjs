@@ -68,12 +68,7 @@ const brandedTitleVariablePattern = /const title = .*?\|\s*Ly(?:ov|óv)son\.com/
 
 const apexLiteralPattern = /https:\/\/lyovson\.com/;
 
-const apexCheckTargets = [
-  "src",
-  "next.config.ts",
-  "redirects.js",
-  ".env.local",
-];
+const apexCheckTargets = ["src", "next.config.ts", "redirects.js"];
 
 function getAbsolutePath(file) {
   return path.join(ROOT, file);

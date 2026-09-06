@@ -49,9 +49,9 @@ export function getActivityDateSlug(activity: ActivityPathInput): string {
     return UNKNOWN_ACTIVITY_DATE_SLUG;
   }
 
-  const month = String(dateObject.getMonth() + 1).padStart(2, "0");
-  const day = String(dateObject.getDate()).padStart(2, "0");
-  const year = String(dateObject.getFullYear()).slice(-2);
+  const month = String(dateObject.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(dateObject.getUTCDate()).padStart(2, "0");
+  const year = String(dateObject.getUTCFullYear()).slice(-2);
 
   return `${month}-${day}-${year}`;
 }

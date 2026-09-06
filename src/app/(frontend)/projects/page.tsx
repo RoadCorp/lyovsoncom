@@ -1,3 +1,5 @@
+export const prefetch = "partial";
+
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { GridCardProject } from "@/components/grid/card/project";

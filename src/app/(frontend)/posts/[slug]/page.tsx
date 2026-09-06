@@ -1,3 +1,6 @@
+import { PublicPageBoundary } from "@/components/PublicPageBoundary";
+export const prefetch = "partial";
+
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
@@ -23,6 +26,7 @@ import {
   generateBreadcrumbSchema,
 } from "@/utilities/generate-json-ld";
 import { getPost } from "@/utilities/get-post";
+import { getRelatedPosts } from "@/utilities/get-related-content";
 import { getLyovsonPersonInput } from "@/utilities/lyovson-person";
 import { getPayloadClient } from "@/utilities/payload-client";
 import { absoluteUrl, postRoute, postsRoute } from "@/utilities/routes";
@@ -114,7 +118,7 @@ function getPostOtherMetadata(post: Post, keywords: string[] | undefined) {
   };
 }
 
-export default async function PostPage({ params: paramsPromise }: Args) {
+async function PostPageContent({ params: paramsPromise }: Args) {
   const { slug } = await paramsPromise;
 
   const post = await getPost(slug);
@@ -228,21 +232,10 @@ async function RecommendedPosts({
     return null;
   }
 
-  const payload = await getPayloadClient();
-  const posts = await payload.find({
-    collection: "posts",
-    depth: 1,
-    limit: recommendedIds.length,
-    where: {
-      ...publishedPostsWhere(),
-      id: {
-        in: recommendedIds,
-      },
-    },
-  });
+  const posts = await getRelatedPosts(recommendedIds);
 
   const seenSlugs = new Set<string>();
-  const docs = (posts.docs as Post[]).filter((post) => {
+  const docs = posts.filter((post) => {
     if (post.id === currentPostId) {
       return false;
     }
@@ -339,4 +332,12 @@ export async function generateMetadata({
       : undefined,
     other: getPostOtherMetadata(post, keywords),
   });
+}
+
+export default function PostPage(props: Args) {
+  return (
+    <PublicPageBoundary detail>
+      <PostPageContent {...props} />
+    </PublicPageBoundary>
+  );
 }

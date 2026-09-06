@@ -3,6 +3,7 @@ import type { PaginatedDocs } from "payload";
 import type { Note } from "@/payload-types";
 import { publicNotesWhere } from "@/utilities/content-queries";
 import { getPayloadClient } from "@/utilities/payload-client";
+import { publicContentSelect } from "@/utilities/public-content-select";
 
 export async function getNote(slug: string): Promise<Note | null> {
   "use cache";
@@ -13,6 +14,7 @@ export async function getNote(slug: string): Promise<Note | null> {
   const payload = await getPayloadClient();
   const response = await payload.find({
     collection: "notes",
+    select: publicContentSelect,
     where: {
       ...publicNotesWhere(),
       slug: {
@@ -35,6 +37,7 @@ export async function getLatestNotes(limit = 12): Promise<PaginatedDocs<Note>> {
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "notes",
+    select: publicContentSelect,
     depth: 2,
     limit,
     overrideAccess: false,
@@ -60,6 +63,7 @@ export async function getPaginatedNotes(
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "notes",
+    select: publicContentSelect,
     depth: 2,
     limit,
     page: pageNumber,

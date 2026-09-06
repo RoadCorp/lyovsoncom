@@ -1,15 +1,16 @@
-import type { Activity, Note, Post } from "@/payload-types";
+import type { Activity, Note } from "@/payload-types";
+import type { PostSummary } from "@/utilities/post-summary";
 import { activityUrl, noteUrl, postUrl } from "@/utilities/routes";
 
 export type MixedFeedItem =
   | { type: "activity"; data: Activity; timestamp: number }
   | { type: "note"; data: Note; timestamp: number }
-  | { type: "post"; data: Post; timestamp: number };
+  | { type: "post"; data: PostSummary; timestamp: number };
 
 type MixedFeedInput =
   | { type: "activity"; data: Activity }
   | { type: "note"; data: Note }
-  | { type: "post"; data: Post };
+  | { type: "post"; data: PostSummary };
 
 export function getMixedFeedTimestamp(item: MixedFeedInput): number {
   let dateValue = "";
@@ -29,7 +30,9 @@ export function getMixedFeedTimestamp(item: MixedFeedInput): number {
   return Date.parse(dateValue) || 0;
 }
 
-export function mapPostsToMixedFeedItems(posts: Post[]): MixedFeedItem[] {
+export function mapPostsToMixedFeedItems(
+  posts: PostSummary[]
+): MixedFeedItem[] {
   return posts.map((post) => ({
     type: "post",
     data: post,

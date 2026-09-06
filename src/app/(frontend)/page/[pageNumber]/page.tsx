@@ -1,3 +1,6 @@
+import { PublicPageBoundary } from "@/components/PublicPageBoundary";
+export const prefetch = "partial";
+
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next/types";
@@ -58,7 +61,7 @@ export async function generateStaticParams() {
   );
 }
 
-export default async function Page({ params: paramsPromise }: Args) {
+async function PageContent({ params: paramsPromise }: Args) {
   const { pageNumber } = await paramsPromise;
   const pageState = getPaginatedArchivePageState(pageNumber);
 
@@ -160,4 +163,12 @@ export async function generateMetadata({
       noarchive: sanitizedPageNumber > 1,
     },
   });
+}
+
+export default function Page(props: Args) {
+  return (
+    <PublicPageBoundary>
+      <PageContent {...props} />
+    </PublicPageBoundary>
+  );
 }

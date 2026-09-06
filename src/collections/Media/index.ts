@@ -6,9 +6,9 @@ import {
   lexicalEditor,
 } from "@payloadcms/richtext-lexical";
 import type { CollectionConfig } from "payload";
-
 import { anyone } from "@/access/anyone";
 import { authenticated } from "@/access/authenticated";
+import { revalidatePublicDependencies } from "@/utilities/revalidate-public-content";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -44,6 +44,24 @@ export const Media: CollectionConfig = {
       }),
     },
   ],
+  hooks: {
+    afterChange: [
+      ({ doc, context }) => {
+        if (!context?.skipRevalidation) {
+          revalidatePublicDependencies();
+        }
+        return doc;
+      },
+    ],
+    afterDelete: [
+      ({ doc, context }) => {
+        if (!context?.skipRevalidation) {
+          revalidatePublicDependencies();
+        }
+        return doc;
+      },
+    ],
+  },
   upload: {
     // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
     staticDir: path.resolve(dirname, "../../public/media"),

@@ -1,7 +1,7 @@
 "use client";
 
 import { LoaderCircle, SearchIcon } from "lucide-react";
-import type React from "react";
+import { type FormEvent, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,10 +17,20 @@ export const SearchInput = ({
 }: {
   className?: string;
   isPending?: boolean;
-  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
   setValue: (value: string) => void;
   value: string;
 }) => {
+  const [ready, setReady] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    setReady(true);
+  }, []);
+  useEffect(() => {
+    if (ready) {
+      inputRef.current?.focus();
+    }
+  }, [ready]);
   return (
     <GridCardNavItem className={cn(className)} variant="static">
       <form className="flex items-center gap-2" onSubmit={onSubmit}>
@@ -30,12 +40,13 @@ export const SearchInput = ({
         <Input
           aria-busy={isPending}
           autoComplete="off"
-          autoFocus
+          disabled={!ready}
           id="nav-search"
           maxLength={500}
           name="q"
           onChange={(event) => setValue(event.target.value)}
           placeholder="Search"
+          ref={inputRef}
           type="search"
           value={value}
         />
@@ -54,6 +65,9 @@ export const SearchInput = ({
           )}
         </Button>
       </form>
+      <span className="sr-only" role="status">
+        {isPending ? "Searching…" : ""}
+      </span>
     </GridCardNavItem>
   );
 };

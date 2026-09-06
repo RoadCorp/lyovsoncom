@@ -1,6 +1,8 @@
 import type { CollectionAfterReadHook } from "payload";
 import type { Lyovson } from "@/payload-types";
 
+type PublicAuthor = Pick<Lyovson, "id" | "name" | "username">;
+
 // The `lyovson` collection has access control locked so that lyovsons are not publicly accessible
 // This means that we need to populate the authors manually here to protect lyovson privacy
 // GraphQL will not return mutated lyovson data that differs from the underlying schema
@@ -11,7 +13,7 @@ export const populateAuthors: CollectionAfterReadHook = async ({
   req: { payload },
 }) => {
   if (doc?.authors) {
-    const authorDocs: Lyovson[] = [];
+    const authorDocs: PublicAuthor[] = [];
     const processedIds = new Set<string | number>();
 
     for (const author of doc.authors) {
@@ -24,16 +26,20 @@ export const populateAuthors: CollectionAfterReadHook = async ({
 
       processedIds.add(authorId);
 
-      const authorDoc = await payload.findByID({
-        id: authorId,
-        collection: "lyovsons",
-        depth: 0,
-        req,
-        overrideAccess: true,
-      });
+      const authorDoc =
+        typeof author === "object" && author.name && author.username
+          ? author
+          : await payload.findByID({
+              id: authorId,
+              collection: "lyovsons",
+              depth: 0,
+              select: { name: true, username: true },
+              req,
+              overrideAccess: true,
+            });
 
       if (authorDoc) {
-        authorDocs.push(authorDoc as Lyovson);
+        authorDocs.push(authorDoc as PublicAuthor);
       }
     }
 

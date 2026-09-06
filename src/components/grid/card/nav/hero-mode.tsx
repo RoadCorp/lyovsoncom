@@ -75,10 +75,12 @@ function getHeroLinks(routeContext: NavRouteContext): {
 }
 
 export const HeroMode = ({
+  disabled = false,
   logoHref,
   routeContext,
   setMenuMode,
 }: {
+  disabled?: boolean;
   logoHref: string;
   routeContext: NavRouteContext;
   setMenuMode: (menuMode: ManualMenuMode) => void;
@@ -95,6 +97,7 @@ export const HeroMode = ({
       />
       <GridCardNavItem
         className="surface-nav-tile col-start-2 col-end-3 row-start-3 row-end-4"
+        disabled={disabled}
         id="nav-menu-trigger"
         onClick={() => {
           setMenuMode("menu");

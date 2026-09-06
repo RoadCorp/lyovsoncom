@@ -1,3 +1,6 @@
+import { PublicPageBoundary } from "@/components/PublicPageBoundary";
+export const prefetch = "partial";
+
 import {
   Book,
   Building2,
@@ -118,7 +121,7 @@ function getReviews(activity: Activity) {
   });
 }
 
-export default async function ActivityPage({ params: paramsPromise }: Args) {
+async function ActivityPageContent({ params: paramsPromise }: Args) {
   const { date, slug } = await paramsPromise;
   const fullPath = `${date}/${slug}`;
 
@@ -373,4 +376,12 @@ export async function generateMetadata({
         }
       : undefined,
   });
+}
+
+export default function ActivityPage(props: Args) {
+  return (
+    <PublicPageBoundary detail>
+      <ActivityPageContent {...props} />
+    </PublicPageBoundary>
+  );
 }

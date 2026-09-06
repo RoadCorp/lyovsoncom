@@ -4,6 +4,7 @@ import type { Route } from "next";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   addTransitionType,
+  Suspense,
   startTransition,
   useEffect,
   useRef,
@@ -53,13 +54,51 @@ function getBaseRoute(routeContext: NavRouteContext) {
 
 const NAV_SHELL_SCROLL = false;
 
-export const GridCardNav = ({ className }: { className?: string }) => {
+export const GridCardNav = ({ className }: { className?: string }) => (
+  <Suspense
+    fallback={
+      <Navigation
+        activeQuery=""
+        className={className}
+        interactive={false}
+        pathname="/"
+      />
+    }
+  >
+    <RouteNavigation className={className} />
+  </Suspense>
+);
+
+function RouteNavigation({ className }: { className?: string }) {
   const pathname = usePathname();
-  const router = useRouter();
   const searchParams = useSearchParams();
+  return (
+    <Navigation
+      activeQuery={searchParams.get("q")?.trim() || ""}
+      className={className}
+      pathname={pathname}
+    />
+  );
+}
+
+function Navigation({
+  className,
+  pathname,
+  activeQuery,
+  interactive = true,
+}: {
+  className?: string;
+  pathname: string;
+  activeQuery: string;
+  interactive?: boolean;
+}) {
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    setReady(true);
+  }, []);
+  const router = useRouter();
   const routeContext = getNavRouteContext(pathname);
   const baseRoute = getBaseRoute(routeContext);
-  const activeQuery = searchParams.get("q")?.trim() || "";
   const isSearchRoute =
     pathname === "/search" ||
     (routeContext.mode === "person" &&
@@ -191,7 +230,7 @@ export const GridCardNav = ({ className }: { className?: string }) => {
           "col-start-1 col-end-2 row-start-1 row-end-2 self-start",
           className
         )}
-        onKeyDown={(event) => {
+        onKeyDownCapture={(event) => {
           if (event.key === "Escape" && renderMode === "search") {
             event.preventDefault();
             closeSearch();
@@ -205,6 +244,7 @@ export const GridCardNav = ({ className }: { className?: string }) => {
           {
             hero: (
               <HeroMode
+                disabled={!(interactive && ready)}
                 logoHref={baseRoute}
                 routeContext={routeContext}
                 setMenuMode={changeMenuMode}
@@ -231,6 +271,6 @@ export const GridCardNav = ({ className }: { className?: string }) => {
       </GridCard>
     </ViewTransition>
   );
-};
+}
 
 export { GridCardNavItem } from "./grid-card-nav-item";

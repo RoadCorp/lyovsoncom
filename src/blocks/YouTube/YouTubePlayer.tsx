@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import type React from "react";
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { normalizeAspectRatio } from "@/utilities/aspectRatio";
 
 const PlayButton = () => (
@@ -36,6 +36,7 @@ export const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
   aspectRatio = "16:9",
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
+  useLayoutEffect(() => () => setIsLoaded(false), []);
   const [thumbnailVariantIndex, setThumbnailVariantIndex] = useState(0);
   const normalizedAspectRatio = normalizeAspectRatio(aspectRatio || "16:9");
   const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/${THUMBNAIL_VARIANTS[thumbnailVariantIndex]}.jpg`;

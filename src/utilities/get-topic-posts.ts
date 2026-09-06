@@ -1,6 +1,7 @@
 import { cacheLife, cacheTag } from "next/cache";
 import type { PaginatedDocs } from "payload";
 import { topicPostsWhere } from "@/utilities/content-queries";
+import { getTopic } from "@/utilities/get-topic";
 import { getPayloadClient } from "@/utilities/payload-client";
 import { type PostSummary, postSummarySelect } from "@/utilities/post-summary";
 
@@ -26,17 +27,9 @@ export async function getPaginatedTopicPosts(
 
   const payload = await getPayloadClient();
 
-  const topic = await payload.find({
-    collection: "topics",
-    where: {
-      slug: {
-        equals: slug,
-      },
-    },
-    limit: 1,
-  });
+  const topic = await getTopic(slug);
 
-  const topicId = topic.docs[0]?.id;
+  const topicId = topic?.id;
 
   if (!topicId) {
     return null;
@@ -66,17 +59,9 @@ export async function getTopicPostCount(slug: string): Promise<number | null> {
 
   const payload = await getPayloadClient();
 
-  const topic = await payload.find({
-    collection: "topics",
-    where: {
-      slug: {
-        equals: slug,
-      },
-    },
-    limit: 1,
-  });
+  const topic = await getTopic(slug);
 
-  const topicId = topic.docs[0]?.id;
+  const topicId = topic?.id;
   if (!topicId) {
     return null;
   }

@@ -25,7 +25,7 @@ export function IntentLink({
         setShouldPrefetch(true);
         onTouchStart?.(event);
       }}
-      prefetch={shouldPrefetch}
+      prefetch={shouldPrefetch ? true : null}
     />
   );
 }

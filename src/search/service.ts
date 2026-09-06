@@ -1,4 +1,5 @@
 import { sql } from "@payloadcms/db-vercel-postgres/drizzle";
+import { cache } from "react";
 import type { Activity, Note, Post } from "@/payload-types";
 import { getActivityTypeLabel } from "@/utilities/activity-type";
 import {
@@ -418,6 +419,13 @@ async function runGlobalHybridSearch(
   };
 }
 
+const runSearchForRequest = cache(
+  (query: string, limit: number, scope: string | null) =>
+    scope
+      ? runScopedHybridSearch(query, limit, scope)
+      : runGlobalHybridSearch(query, limit)
+);
+
 export function runHybridSearch(
   rawQuery: string | null,
   { limit, scopeUsername }: SearchOptions
@@ -425,11 +433,7 @@ export function runHybridSearch(
   const query = validateSearchInput(rawQuery, limit);
   const normalizedScope = scopeUsername?.trim().toLowerCase() || null;
 
-  if (normalizedScope) {
-    return runScopedHybridSearch(query, limit, normalizedScope);
-  }
-
-  return runGlobalHybridSearch(query, limit);
+  return runSearchForRequest(query, limit, normalizedScope);
 }
 
 export async function hydrateSearchResults(results: SearchResult[]) {

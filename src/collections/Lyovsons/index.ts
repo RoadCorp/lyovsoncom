@@ -1,8 +1,8 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
-
 import { authenticated } from "@/access/authenticated";
 import { bioEditorConfig } from "@/fields/lexical-configs";
+import { revalidatePublicDependencies } from "@/utilities/revalidate-public-content";
 
 export const Lyovsons: CollectionConfig = {
   slug: "lyovsons",
@@ -146,7 +146,7 @@ export const Lyovsons: CollectionConfig = {
           req.payload.logger.info(`Updating cache for author: ${doc.username}`);
 
           // Revalidate lyovson-related cache tags
-          revalidateTag("lyovsons", { expire: 0 });
+          revalidatePublicDependencies();
           revalidateTag(`lyovson-${doc.username}`, { expire: 0 });
           revalidateTag("posts", { expire: 0 }); // Posts may reference this author
           revalidateTag("sitemap", { expire: 0 });
@@ -164,7 +164,7 @@ export const Lyovsons: CollectionConfig = {
           );
 
           // Revalidate lyovson-related cache tags
-          revalidateTag("lyovsons", { expire: 0 });
+          revalidatePublicDependencies();
           revalidateTag(`lyovson-${doc.username}`, { expire: 0 });
           revalidateTag("posts", { expire: 0 }); // Posts may reference this author
           revalidateTag("sitemap", { expire: 0 });

@@ -31,6 +31,9 @@ function SearchEmptyState({
   return (
     <>
       <h1 className="sr-only">{heading}</h1>
+      <p className="sr-only" role="status">
+        {title}. {description}
+      </p>
       <GridCardEmptyState description={description} title={title} />
     </>
   );
@@ -131,6 +134,9 @@ async function SearchResults({
     return (
       <>
         <h1 className="sr-only">{headingText}</h1>
+        <p className="sr-only" role="status">
+          {sortedItems.length} results for {normalizedQuery} in {scopeText}.
+        </p>
         <ArchiveItems items={sortedItems} />
       </>
     );

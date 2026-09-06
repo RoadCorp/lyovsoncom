@@ -1,3 +1,6 @@
+import { PublicPageBoundary } from "@/components/PublicPageBoundary";
+export const prefetch = "partial";
+
 import { Mail } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -17,7 +20,7 @@ interface PageProps {
 const PUBLIC_EMAIL = "hello@lyovson.com";
 const MAX_CONTACT_LINKS = 3;
 
-export default async function Page({ params }: PageProps) {
+async function PageContent({ params }: PageProps) {
   const { lyovson: username } = await params;
   const user = await getLyovsonProfile(username);
 
@@ -106,4 +109,12 @@ export async function generateMetadata({
     description,
     canonicalPath: `/${username}/contact`,
   });
+}
+
+export default function Page(props: PageProps) {
+  return (
+    <PublicPageBoundary>
+      <PageContent {...props} />
+    </PublicPageBoundary>
+  );
 }

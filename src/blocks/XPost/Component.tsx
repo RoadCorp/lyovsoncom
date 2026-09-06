@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { EmbeddedTweet, TweetNotFound } from "react-tweet";
 import type { Tweet } from "react-tweet/api";
 import { fetchTweet } from "react-tweet/api";
@@ -83,7 +84,7 @@ function getXPostFallbackError(
  * - Zero client-side JavaScript overhead
  * - SEO-friendly with static HTML content
  */
-export async function XPostBlock({ postId, caption }: XPostBlockType) {
+async function XPostContent({ postId, caption }: XPostBlockType) {
   if (!postId) {
     return null;
   }
@@ -136,5 +137,29 @@ export async function XPostBlock({ postId, caption }: XPostBlockType) {
         </CardFooter>
       )}
     </Card>
+  );
+}
+
+export function XPostBlock(props: XPostBlockType) {
+  if (!props.postId) {
+    return null;
+  }
+  return (
+    <Suspense
+      fallback={
+        <Card className="surface-block p-6 content-block">
+          <p role="status">Loading X post…</p>
+          <a
+            href={`https://x.com/i/status/${props.postId}`}
+            rel="noopener"
+            target="_blank"
+          >
+            View on X
+          </a>
+        </Card>
+      }
+    >
+      <XPostContent {...props} />
+    </Suspense>
   );
 }

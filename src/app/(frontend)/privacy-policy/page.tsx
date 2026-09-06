@@ -1,3 +1,5 @@
+export const prefetch = "partial";
+
 import type { Metadata } from "next";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { cn } from "@/lib/utils";

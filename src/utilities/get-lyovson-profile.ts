@@ -1,10 +1,25 @@
 import { cacheLife, cacheTag } from "next/cache";
-import type { Lyovson } from "@/payload-types";
+import type { Lyovson, LyovsonsSelect } from "@/payload-types";
 import { getPayloadClient } from "@/utilities/payload-client";
+
+export const publicProfileSelect = {
+  name: true,
+  username: true,
+  avatar: true,
+  font: true,
+  quote: true,
+  bio: true,
+  socialLinks: true,
+} as const satisfies LyovsonsSelect;
+
+export type PublicProfile = Pick<
+  Lyovson,
+  "id" | keyof typeof publicProfileSelect
+>;
 
 export async function getLyovsonProfile(
   username: string
-): Promise<Lyovson | null> {
+): Promise<PublicProfile | null> {
   "use cache";
   cacheTag("lyovsons");
   cacheTag(`lyovson-${username}`);
@@ -14,6 +29,8 @@ export async function getLyovsonProfile(
 
   const result = await payload.find({
     collection: "lyovsons",
+    select: publicProfileSelect,
+    pagination: false,
     where: {
       username: {
         equals: username,
@@ -23,5 +40,5 @@ export async function getLyovsonProfile(
     overrideAccess: true,
   });
 
-  return (result.docs[0] as Lyovson) || null;
+  return result.docs[0] || null;
 }

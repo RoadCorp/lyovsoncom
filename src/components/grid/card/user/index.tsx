@@ -2,14 +2,16 @@ import Image from "next/image";
 import { ViewTransition } from "react";
 import { GridCard, GridCardNavItem, GridCardSection } from "@/components/grid";
 import { cn } from "@/lib/utils";
-import type { Lyovson, Media } from "@/payload-types";
+import type { Media } from "@/payload-types";
 import { SOCIAL_ICON_MAP } from "@/utilities/social-icons";
 
 const MAX_SOCIAL_LINKS = 3;
 
+import type { PublicProfile } from "@/utilities/get-lyovson-profile";
+
 interface Props {
   className?: string;
-  user?: Lyovson;
+  user?: PublicProfile;
 }
 
 interface AvatarData {

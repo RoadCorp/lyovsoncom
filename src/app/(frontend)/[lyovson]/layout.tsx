@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { GridCardUser } from "@/components/grid";
+import { ProfileSkeleton } from "@/components/grid/skeleton/profile-skeleton";
 import { getLyovsonProfile } from "@/utilities/get-lyovson-profile";
 import { getLyovsonStaticParams } from "./_utilities/staticParams";
 
@@ -20,7 +22,7 @@ export async function generateStaticParams() {
   return getLyovsonStaticParams();
 }
 
-export default async function Layout({ children, params }: LayoutProps) {
+async function AuthorLayout({ children, params }: LayoutProps) {
   const { lyovson: username } = await params;
 
   const lyovson = await getLyovsonProfile(username);
@@ -36,5 +38,20 @@ export default async function Layout({ children, params }: LayoutProps) {
       <GridCardUser user={lyovson} />
       {children}
     </div>
+  );
+}
+
+export default function Layout(props: LayoutProps) {
+  return (
+    <Suspense
+      fallback={
+        <>
+          <ProfileSkeleton />
+          {props.children}
+        </>
+      }
+    >
+      <AuthorLayout {...props} />
+    </Suspense>
   );
 }

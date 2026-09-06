@@ -276,6 +276,7 @@ const nextConfig: NextConfig = {
     browserToTerminal: true,
   },
   experimental: {
+    exposeTestingApiInProductionBuild: process.env.NEXT_TEST_MODE === "1",
     appNewScrollHandler: true,
     cachedNavigations: true,
     // Needed when using multiple root layouts so unmatched routes don't fall back

@@ -1,8 +1,8 @@
 import type { CollectionConfig } from "payload";
-
 import { anyone } from "@/access/anyone";
 import { authenticated } from "@/access/authenticated";
 import { slugField } from "@/fields/slug";
+import { revalidatePublicDependencies } from "@/utilities/revalidate-public-content";
 
 export const References: CollectionConfig = {
   slug: "references",
@@ -678,9 +678,19 @@ export const References: CollectionConfig = {
   ],
   hooks: {
     afterChange: [
-      ({ doc, req }) => {
-        req.payload.logger.info(`Revalidating reference: ${doc.slug}`);
-        // TODO: Add revalidation logic for references when we have reference pages
+      ({ doc, context }) => {
+        if (!context?.skipRevalidation) {
+          revalidatePublicDependencies();
+        }
+        return doc;
+      },
+    ],
+    afterDelete: [
+      ({ doc, context }) => {
+        if (!context?.skipRevalidation) {
+          revalidatePublicDependencies();
+        }
+        return doc;
       },
     ],
   },

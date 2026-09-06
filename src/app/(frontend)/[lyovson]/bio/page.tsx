@@ -1,3 +1,6 @@
+import { PublicPageBoundary } from "@/components/PublicPageBoundary";
+export const prefetch = "partial";
+
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import {
@@ -26,7 +29,7 @@ interface PageProps {
   params: Promise<{ lyovson: string }>;
 }
 
-export default async function Page({ params }: PageProps) {
+async function PageContent({ params }: PageProps) {
   const { lyovson: username } = await params;
   const user = await getLyovsonProfile(username);
 
@@ -101,4 +104,12 @@ export async function generateMetadata({
       username,
     },
   });
+}
+
+export default function Page(props: PageProps) {
+  return (
+    <PublicPageBoundary>
+      <PageContent {...props} />
+    </PublicPageBoundary>
+  );
 }

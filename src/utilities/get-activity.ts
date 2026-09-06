@@ -8,6 +8,7 @@ import {
 } from "@/utilities/content-queries";
 import { getLyovsonProfile } from "@/utilities/get-lyovson-profile";
 import { getPayloadClient } from "@/utilities/payload-client";
+import { publicContentSelect } from "@/utilities/public-content-select";
 import { getActivityDateSlug } from "@/utilities/routes";
 
 export async function getActivity(slug: string): Promise<Activity | null> {
@@ -19,6 +20,7 @@ export async function getActivity(slug: string): Promise<Activity | null> {
   const payload = await getPayloadClient();
   const response = await payload.find({
     collection: "activities",
+    select: publicContentSelect,
     // Keep participant relation data available for public activity cards.
     // Lyovson read access is private, so relation population needs overrideAccess.
     overrideAccess: true,
@@ -54,6 +56,7 @@ export async function getActivityByDateAndSlug(
   const payload = await getPayloadClient();
   const response = await payload.find({
     collection: "activities",
+    select: publicContentSelect,
     // Keep participant relation data available for public activity cards.
     // Lyovson read access is private, so relation population needs overrideAccess.
     overrideAccess: true,
@@ -85,6 +88,7 @@ export async function getLatestActivities(
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "activities",
+    select: publicContentSelect,
     depth: 2,
     limit,
     // Keep participant relation data available for public activity cards.
@@ -119,6 +123,7 @@ export async function getLatestLyovsonActivities(
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "activities",
+    select: publicContentSelect,
     depth: 2,
     limit,
     overrideAccess: true,
@@ -141,6 +146,7 @@ export async function getPaginatedActivities(
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "activities",
+    select: publicContentSelect,
     depth: 2,
     limit,
     page: pageNumber,

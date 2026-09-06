@@ -1,3 +1,6 @@
+import { PublicPageBoundary } from "@/components/PublicPageBoundary";
+export const prefetch = "partial";
+
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next/types";
 import {
@@ -41,7 +44,7 @@ export async function generateStaticParams() {
   return getLyovsonPaginatedStaticParams("posts");
 }
 
-export default async function Page({ params: paramsPromise }: Args) {
+async function PageContent({ params: paramsPromise }: Args) {
   const { lyovson: username, pageNumber } = await paramsPromise;
   const sanitizedPageNumber = getValidPageNumber(pageNumber);
 
@@ -159,4 +162,12 @@ export async function generateMetadata({
       noarchive: true,
     },
   });
+}
+
+export default function Page(props: Args) {
+  return (
+    <PublicPageBoundary>
+      <PageContent {...props} />
+    </PublicPageBoundary>
+  );
 }

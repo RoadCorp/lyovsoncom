@@ -1,3 +1,5 @@
+export const prefetch = "partial";
+
 import type { Metadata } from "next/types";
 import { Suspense } from "react";
 import { SkeletonCard } from "@/components/grid";

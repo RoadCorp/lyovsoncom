@@ -1,6 +1,7 @@
 import { cacheLife, cacheTag } from "next/cache";
 import type { PaginatedDocs } from "payload";
 import { projectPostsWhere } from "@/utilities/content-queries";
+import { getProject } from "@/utilities/get-project";
 import { getPayloadClient } from "@/utilities/payload-client";
 import { type PostSummary, postSummarySelect } from "@/utilities/post-summary";
 
@@ -15,21 +16,13 @@ export async function getProjectPosts(
 
   const payload = await getPayloadClient();
 
-  const project = await payload.find({
-    collection: "projects",
-    where: {
-      slug: {
-        equals: slug,
-      },
-    },
-    limit: 1,
-  });
+  const project = await getProject(slug);
 
-  if (!project?.docs?.[0]) {
+  if (!project) {
     return null;
   }
 
-  const projectId = project.docs[0].id;
+  const projectId = project.id;
 
   const result = await payload.find({
     collection: "posts",
@@ -58,21 +51,13 @@ export async function getPaginatedProjectPosts(
 
   const payload = await getPayloadClient();
 
-  const project = await payload.find({
-    collection: "projects",
-    where: {
-      slug: {
-        equals: slug,
-      },
-    },
-    limit: 1,
-  });
+  const project = await getProject(slug);
 
-  if (!project?.docs?.[0]) {
+  if (!project) {
     return null;
   }
 
-  const projectId = project.docs[0].id;
+  const projectId = project.id;
 
   const result = await payload.find({
     collection: "posts",
@@ -100,17 +85,9 @@ export async function getProjectPostCount(
 
   const payload = await getPayloadClient();
 
-  const project = await payload.find({
-    collection: "projects",
-    where: {
-      slug: {
-        equals: slug,
-      },
-    },
-    limit: 1,
-  });
+  const project = await getProject(slug);
 
-  const projectId = project.docs[0]?.id;
+  const projectId = project?.id;
   if (!projectId) {
     return null;
   }

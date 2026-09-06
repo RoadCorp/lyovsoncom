@@ -1,3 +1,5 @@
+export const prefetch = "partial";
+
 import type { Metadata } from "next";
 import { cacheLife } from "next/cache";
 import type { ReactNode } from "react";

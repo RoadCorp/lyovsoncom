@@ -4,15 +4,15 @@ import { CARD_THUMBNAIL_IMAGE_SIZE } from "@/components/Media/image-sizes";
 import { PostDrillInLink } from "@/components/post-transitions/PostDrillInLink";
 import { PostTransitionBoundary } from "@/components/post-transitions/PostTransitionBoundary";
 import { cn } from "@/lib/utils";
-import type { Post } from "@/payload-types";
+import type { PostSummary } from "@/utilities/post-summary";
 import { postRoute } from "@/utilities/routes";
 
 export { GridCardRelatedNotes } from "./grid-card-related-notes";
 
 function isUniquePostWithSlug(
-  post: number | Post,
+  post: number | PostSummary,
   seenSlugs: Set<string>
-): post is Post & { slug: string } {
+): post is PostSummary & { slug: string } {
   if (typeof post === "number" || !post.slug || seenSlugs.has(post.slug)) {
     return false;
   }
@@ -25,7 +25,7 @@ export const GridCardRelatedPosts = ({
   posts,
   className,
 }: {
-  posts: (number | Post)[];
+  posts: (number | PostSummary)[];
   className?: string;
 }) => {
   const seenSlugs = new Set<string>();

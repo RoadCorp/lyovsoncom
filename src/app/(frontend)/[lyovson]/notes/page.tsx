@@ -1,3 +1,6 @@
+import { PublicPageBoundary } from "@/components/PublicPageBoundary";
+export const prefetch = "partial";
+
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { GridCardEmptyState } from "@/components/grid";
@@ -22,7 +25,7 @@ interface PageProps {
   params: Promise<{ lyovson: string }>;
 }
 
-export default async function Page({ params }: PageProps) {
+async function PageContent({ params }: PageProps) {
   const { lyovson: username } = await params;
 
   const response = await getLyovsonFeed({
@@ -100,4 +103,12 @@ export async function generateMetadata({
     description: `Browse public notes by ${name}.`,
     canonicalPath: lyovsonNotesRoute(username),
   });
+}
+
+export default function Page(props: PageProps) {
+  return (
+    <PublicPageBoundary>
+      <PageContent {...props} />
+    </PublicPageBoundary>
+  );
 }

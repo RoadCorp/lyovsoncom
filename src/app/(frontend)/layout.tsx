@@ -3,8 +3,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import Script from "next/script";
 import type React from "react";
-import { Suspense } from "react";
-import { Grid, GridCardNav, SkeletonCard } from "@/components/grid";
+import { Grid, GridCardNav } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import { cn } from "@/lib/utils";
 import { Providers } from "@/providers";
@@ -140,9 +139,7 @@ export default function RootLayout({
         <JsonLd data={getSiteEntitySchemas()} />
         <Providers>
           <Grid>
-            <Suspense fallback={<SkeletonCard />}>
-              <GridCardNav />
-            </Suspense>
+            <GridCardNav />
 
             {children}
           </Grid>

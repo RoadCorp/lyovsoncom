@@ -9,6 +9,7 @@ export const postSummarySelect = {
   topics: true,
   project: true,
   publishedAt: true,
+  createdAt: true,
   authors: true,
   populatedAuthors: true,
 } as const satisfies PostsSelect;

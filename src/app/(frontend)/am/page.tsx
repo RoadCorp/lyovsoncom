@@ -1,3 +1,5 @@
+export const prefetch = "partial";
+
 import type { Metadata } from "next";
 import { PlaceholderPageCard } from "@/components/PlaceholderPageCard";
 import { buildSeoMetadata } from "@/utilities/seo-metadata";

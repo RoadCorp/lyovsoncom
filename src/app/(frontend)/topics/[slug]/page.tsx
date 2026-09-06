@@ -1,3 +1,6 @@
+import { PublicPageBoundary } from "@/components/PublicPageBoundary";
+export const prefetch = "partial";
+
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
@@ -54,7 +57,7 @@ export async function generateStaticParams() {
   );
 }
 
-export default async function Page({ params: paramsPromise }: PageProps) {
+async function PageContent({ params: paramsPromise }: PageProps) {
   const { slug } = await paramsPromise;
 
   const topic = await getTopic(slug);
@@ -145,4 +148,12 @@ export async function generateMetadata({
           alt: topicName,
         },
   });
+}
+
+export default function Page(props: PageProps) {
+  return (
+    <PublicPageBoundary>
+      <PageContent {...props} />
+    </PublicPageBoundary>
+  );
 }

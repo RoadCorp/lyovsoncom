@@ -1,7 +1,7 @@
 {
   "name": "lyovsoncom",
   "version": "3.0.0",
-  "description": "The official website of Rafa and Jess Lyóvson",
+  "description": "The official website of Rafa and Jess Ly\u00f3vson",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -17,7 +17,10 @@
     "seo:check": "node scripts/check-seo-coverage.mjs",
     "reinstall": "cross-env NODE_OPTIONS=--no-deprecation rm -rf node_modules && rm pnpm-lock.yaml && pnpm --ignore-workspace install",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:browser": "playwright test",
+    "preview:experience:build": "node scripts/public-experience-preview.mjs build",
+    "preview:experience": "node scripts/public-experience-preview.mjs start"
   },
   "dependencies": {
     "@ai-sdk/openai": "^4.0.58",
@@ -76,6 +79,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.12",
+    "@next/playwright": "16.3.4",
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@tailwindcss/typography": "^0.5.20",
     "@types/escape-html": "^1.0.4",

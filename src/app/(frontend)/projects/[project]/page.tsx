@@ -1,3 +1,6 @@
+import { PublicPageBoundary } from "@/components/PublicPageBoundary";
+export const prefetch = "partial";
+
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
@@ -54,7 +57,7 @@ function getProjectSeoImage(project: ProjectWithSeo) {
   return null;
 }
 
-export default async function Page({ params: paramsPromise }: PageProps) {
+async function PageContent({ params: paramsPromise }: PageProps) {
   const { project: projectSlug } = await paramsPromise;
 
   const project = await getProject(projectSlug);
@@ -176,5 +179,13 @@ export async function generateStaticParams() {
         project: slug as string,
       })),
     { project: "__placeholder__" }
+  );
+}
+
+export default function Page(props: PageProps) {
+  return (
+    <PublicPageBoundary>
+      <PageContent {...props} />
+    </PublicPageBoundary>
   );
 }

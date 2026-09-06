@@ -57,7 +57,10 @@ export const LazyVideo = ({
 
     observer.observe(videoElement);
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      videoElement.pause();
+    };
   }, []);
 
   return (
@@ -72,6 +75,7 @@ export const LazyVideo = ({
       muted
       playsInline
       poster={poster}
+      preload="none"
       ref={videoRef}
       style={{ aspectRatio }}
     >

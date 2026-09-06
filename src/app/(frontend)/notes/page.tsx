@@ -1,3 +1,5 @@
+export const prefetch = "partial";
+
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { JsonLd } from "@/components/JsonLd";

@@ -1,9 +1,9 @@
 import { GridCard, GridCardSection } from "@/components/grid";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function SkeletonCard() {
+export function SkeletonCard({ className = "" }: { className?: string }) {
   return (
-    <GridCard className="surface-card-loading">
+    <GridCard className={`surface-card-loading ${className}`}>
       {/* Image placeholder - takes up first two rows and columns */}
       <GridCardSection
         className={"col-start-1 col-end-3 row-start-1 row-end-3"}

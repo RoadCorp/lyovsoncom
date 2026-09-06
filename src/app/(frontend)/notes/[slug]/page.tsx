@@ -1,3 +1,6 @@
+import { PublicPageBoundary } from "@/components/PublicPageBoundary";
+export const prefetch = "partial";
+
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
@@ -22,6 +25,7 @@ import {
   generateBreadcrumbSchema,
 } from "@/utilities/generate-json-ld";
 import { getNote } from "@/utilities/get-note";
+import { getRelatedNotes } from "@/utilities/get-related-content";
 import { getPersonInputFromUsername } from "@/utilities/lyovson-person";
 import { getPayloadClient } from "@/utilities/payload-client";
 import { absoluteUrl, noteRoute, notesRoute } from "@/utilities/routes";
@@ -50,7 +54,7 @@ type NoteWithSeo = Note & {
   };
 };
 
-export default async function NotePage({ params: paramsPromise }: Args) {
+async function NotePageContent({ params: paramsPromise }: Args) {
   const { slug } = await paramsPromise;
 
   const note = await getNote(slug);
@@ -175,19 +179,7 @@ async function RelatedNotes({ recommendedIds }: { recommendedIds?: number[] }) {
     return null;
   }
 
-  const payload = await getPayloadClient();
-  const notes = await payload.find({
-    collection: "notes",
-    depth: 1,
-    limit: recommendedIds.length,
-    where: {
-      id: {
-        in: recommendedIds,
-      },
-    },
-  });
-
-  const docs = notes.docs as Note[];
+  const docs = await getRelatedNotes(recommendedIds);
   if (docs.length === 0) {
     return null;
   }
@@ -317,4 +309,12 @@ export async function generateMetadata({
         }
       : undefined,
   });
+}
+
+export default function NotePage(props: Args) {
+  return (
+    <PublicPageBoundary detail>
+      <NotePageContent {...props} />
+    </PublicPageBoundary>
+  );
 }
