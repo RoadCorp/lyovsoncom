@@ -45,9 +45,7 @@ const activityTypeIcons: Record<Activity["activityType"], LucideIcon> = {
 };
 
 export function getActivityReference(activity: Activity): Reference | null {
-  return typeof activity.reference === "object" && activity.reference !== null
-    ? activity.reference
-    : null;
+  return typeof activity.reference === "object" ? activity.reference : null;
 }
 
 export function getActivityReferenceImage(reference: Reference | null) {

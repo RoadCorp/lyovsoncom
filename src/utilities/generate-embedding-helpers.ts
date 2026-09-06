@@ -15,7 +15,7 @@ import { getSimilarPosts } from "@/utilities/get-similar-posts";
 const RECOMMENDATION_LIMIT = 3;
 
 export function buildPostEmbeddingText(post: Post): string {
-  const contentText = post.content ? extractLexicalText(post.content) : "";
+  const contentText = extractLexicalText(post.content);
   const topicNames = post.topics
     ?.filter(
       (t): t is Exclude<typeof t, number> => typeof t === "object" && t !== null
@@ -40,7 +40,7 @@ export function buildPostEmbeddingText(post: Post): string {
 }
 
 export function buildNoteEmbeddingText(note: Note): string {
-  const contentText = note.content ? extractLexicalText(note.content) : "";
+  const contentText = extractLexicalText(note.content);
   const noteTypeLabel = note.type === "quote" ? "Quote" : "Thought";
   const topicNames = note.topics
     ?.filter(
@@ -277,9 +277,7 @@ const REFERENCE_TYPE_LABELS: Record<string, string> = {
 
 export function buildActivityEmbeddingText(activity: Activity): string {
   const referenceObj =
-    typeof activity.reference === "object" && activity.reference !== null
-      ? activity.reference
-      : null;
+    typeof activity.reference === "object" ? activity.reference : null;
 
   const activityLabel = getActivityTypeLabel(activity.activityType);
   const referenceType = referenceObj?.type

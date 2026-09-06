@@ -86,7 +86,6 @@ export async function regenerateEmbeddingForPost(postId: number) {
       throw new Error(`Post ${postId} is not published`);
     }
 
-    // Use the helper function
     const mockReq = {
       payload,
       user: null,
@@ -190,10 +189,3 @@ export async function embeddingSystemHealthCheck() {
     };
   }
 }
-
-// Usage examples:
-// console.log(await getEmbeddingStats())
-// console.log(await getPostsNeedingEmbeddings(10))
-// console.log(await regenerateEmbeddingForPost(1))
-// console.log(await bulkGenerateEmbeddings(5))
-// console.log(await embeddingSystemHealthCheck())

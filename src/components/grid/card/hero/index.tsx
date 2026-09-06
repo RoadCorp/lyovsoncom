@@ -198,9 +198,7 @@ export const GridCardHeroActivity = ({
   title: string;
 }) => {
   const referenceObj =
-    typeof activity.reference === "object" && activity.reference !== null
-      ? activity.reference
-      : null;
+    typeof activity.reference === "object" ? activity.reference : null;
 
   const referenceImage =
     referenceObj?.image && typeof referenceObj.image === "object"

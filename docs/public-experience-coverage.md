@@ -1,5 +1,6 @@
 # Public experience coverage
 
+The later [test coverage review](test-coverage.md) describes the current suite; counts below record the earlier implementation verification.
 Date: September 6, 2026. Baseline: `655c07e67a2bd6fc1eb2e4e7cb638e26ddaa2b01`.
 
 Notion: [Page and component coverage](https://app.notion.com/p/3d3a881304bb81cdbfd8f9636e399893).
@@ -110,20 +111,18 @@ Every TSX module below has one package assignment. “Server-compatible” means
 
 ## Complete component-module inventory
 
-150 modules: 142 public/shared/utility/dormant modules and 8 admin-only modules excluded. The baseline had 146 modules; four implementation modules were added. The 53 UI primitive files remain individually assigned. Supporting non-TSX files and public data helpers follow in the next section.
+Unused template components and UI primitives were removed during the September 6 code cleanup. This inventory lists the retained modules. Supporting non-TSX files and public data helpers follow in the next section.
 
 | Module | Package | Direct declaration |
 | --- | --- | --- |
 | `src/blocks/Banner/Component.tsx` | C09 | server-compatible / helper |
 | `src/blocks/Code/Code.tsx` | C09 | server-compatible; server tokenization |
-| `src/blocks/Code/Component.client.tsx` | C09 | server-compatible; compatibility re-export |
 | `src/blocks/Code/Component.tsx` | C09 | server-compatible / helper |
 | `src/blocks/Code/CopyButton.tsx` | C09 | client |
 | `src/blocks/GIF/Component.tsx` | C08 | server-compatible / helper |
 | `src/blocks/GIF/GifPicker.tsx` | C15 | client |
 | `src/blocks/MediaBlock/Component.tsx` | C08 | server-compatible / helper |
 | `src/blocks/Quote/Component.tsx` | C09 | server-compatible / helper |
-| `src/blocks/RenderBlocks.tsx` | C12 | server-compatible / helper |
 | `src/blocks/XPost/Component.tsx` | C08 | server-compatible / helper |
 | `src/blocks/YouTube/Component.tsx` | C08 | server-compatible / helper |
 | `src/blocks/YouTube/YouTubePlayer.tsx` | C08 | client |
@@ -137,7 +136,6 @@ Every TSX module below has one package assignment. “Server-compatible” means
 | `src/components/LazyVideo/index.tsx` | C08 | client |
 | `src/components/Link/index.tsx` | C01 | server-compatible / helper |
 | `src/components/LinkedInIcon.tsx` | C07 | server-compatible / helper |
-| `src/components/LivePreviewListener/index.tsx` | C12 | client |
 | `src/components/LoadingTransition.tsx` | C10 | server-compatible / helper |
 | `src/components/Logo/Logo.tsx` | C11 | server-compatible / helper |
 | `src/components/Media/ImageMedia/index.tsx` | C08 | server-compatible / helper |
@@ -148,9 +146,7 @@ Every TSX module below has one package assignment. “Server-compatible” means
 | `src/components/PublicPageBoundary.tsx` | C06 | server-compatible; page-local Suspense |
 | `src/components/grid/skeleton/profile-skeleton.tsx` | C06 | server-compatible; dimensioned profile fallback |
 | `src/components/OptionalErrorBoundary.tsx` | C06 | client |
-| `src/components/PageRange/index.tsx` | C12 | server-compatible / helper |
 | `src/components/Pagination/index.tsx` | C05 | server-compatible / helper |
-| `src/components/PayloadRedirects/index.tsx` | C12 | server-compatible / helper |
 | `src/components/PlaceholderPageCard.tsx` | C06 | server-compatible / helper |
 | `src/components/RichText/index.tsx` | C09 | server-compatible / helper |
 | `src/components/RichText/nodeFormat.tsx` | C09 | server-compatible / helper |
@@ -166,7 +162,6 @@ Every TSX module below has one package assignment. “Server-compatible” means
 | `src/components/grid/card/activity/grid-card-activity-full.tsx` | C03 | server-compatible / helper |
 | `src/components/grid/card/activity/grid-card-activity-review.tsx` | C03 | server-compatible / helper |
 | `src/components/grid/card/activity/index.tsx` | C03 | server-compatible / helper |
-| `src/components/grid/card/admin/index.tsx` | C15 | client |
 | `src/components/grid/card/empty-state/index.tsx` | C06 | server-compatible / helper |
 | `src/components/grid/card/hero/index.tsx` | C03 | server-compatible / helper |
 | `src/components/grid/card/index.tsx` | C03 | server-compatible / helper |
@@ -177,7 +172,6 @@ Every TSX module below has one package assignment. “Server-compatible” means
 | `src/components/grid/card/nav/menu-mode.tsx` | C04 | server-compatible / helper |
 | `src/components/grid/card/nav/search-input.tsx` | C04 | client |
 | `src/components/grid/card/nav/search-mode.tsx` | C04 | server-compatible / helper |
-| `src/components/grid/card/nav/settings-mode.tsx` | C12 | server-compatible / helper |
 | `src/components/grid/card/nav/site-title-section.tsx` | C04 | server-compatible / helper |
 | `src/components/grid/card/nav/theme-switcher.tsx` | C04 | client |
 | `src/components/grid/card/not-found/index.tsx` | C06 | server-compatible / helper |
@@ -205,62 +199,12 @@ Every TSX module below has one package assignment. “Server-compatible” means
 | `src/components/grid/skeleton/skeleton-grid.tsx` | C06 | server-compatible / helper |
 | `src/components/post-transitions/PostDrillInLink.tsx` | C10 | server-compatible / helper |
 | `src/components/post-transitions/PostTransitionBoundary.tsx` | C10 | server-compatible / helper |
-| `src/components/theme-selector/index.tsx` | C12 | client |
-| `src/components/ui/accordion.tsx` | C13 | client |
-| `src/components/ui/alert-dialog.tsx` | C13 | client |
-| `src/components/ui/alert.tsx` | C13 | server-compatible / helper |
-| `src/components/ui/aspect-ratio.tsx` | C13 | client |
-| `src/components/ui/avatar.tsx` | C13 | client |
-| `src/components/ui/badge.tsx` | C13 | server-compatible / helper |
-| `src/components/ui/breadcrumb.tsx` | C13 | server-compatible / helper |
-| `src/components/ui/button-group.tsx` | C13 | server-compatible / helper |
 | `src/components/ui/button.tsx` | C13 | server-compatible / helper |
-| `src/components/ui/calendar.tsx` | C13 | client |
 | `src/components/ui/card.tsx` | C13 | server-compatible / helper |
-| `src/components/ui/carousel.tsx` | C13 | client |
-| `src/components/ui/chart.tsx` | C13 | client |
-| `src/components/ui/checkbox.tsx` | C13 | client |
-| `src/components/ui/collapsible.tsx` | C13 | client |
-| `src/components/ui/command.tsx` | C13 | client |
-| `src/components/ui/context-menu.tsx` | C13 | client |
-| `src/components/ui/dialog.tsx` | C13 | client |
-| `src/components/ui/drawer.tsx` | C13 | client |
-| `src/components/ui/dropdown-menu.tsx` | C13 | client |
-| `src/components/ui/empty.tsx` | C13 | server-compatible / helper |
-| `src/components/ui/field.tsx` | C13 | client |
-| `src/components/ui/form.tsx` | C13 | client |
-| `src/components/ui/hover-card.tsx` | C13 | client |
-| `src/components/ui/input-group.tsx` | C13 | client |
-| `src/components/ui/input-otp.tsx` | C13 | client |
 | `src/components/ui/input.tsx` | C13 | server-compatible / helper |
-| `src/components/ui/item.tsx` | C13 | server-compatible / helper |
-| `src/components/ui/kbd.tsx` | C13 | server-compatible / helper |
 | `src/components/ui/label.tsx` | C13 | client |
-| `src/components/ui/menubar.tsx` | C13 | client |
-| `src/components/ui/navigation-menu.tsx` | C13 | server-compatible / helper |
-| `src/components/ui/pagination.tsx` | C13 | server-compatible / helper |
-| `src/components/ui/popover.tsx` | C13 | client |
-| `src/components/ui/progress.tsx` | C13 | client |
-| `src/components/ui/radio-group.tsx` | C13 | client |
-| `src/components/ui/resizable.tsx` | C13 | client |
-| `src/components/ui/scroll-area.tsx` | C13 | client |
-| `src/components/ui/select.tsx` | C13 | client |
-| `src/components/ui/separator.tsx` | C13 | client |
-| `src/components/ui/sheet.tsx` | C13 | client |
-| `src/components/ui/sidebar.tsx` | C13 | client |
 | `src/components/ui/skeleton.tsx` | C13 | server-compatible / helper |
-| `src/components/ui/slider.tsx` | C13 | client |
-| `src/components/ui/sonner.tsx` | C13 | client |
-| `src/components/ui/spinner.tsx` | C13 | server-compatible / helper |
-| `src/components/ui/switch.tsx` | C13 | client |
-| `src/components/ui/table.tsx` | C13 | client |
-| `src/components/ui/tabs.tsx` | C13 | client |
-| `src/components/ui/textarea.tsx` | C13 | server-compatible / helper |
-| `src/components/ui/toggle-group.tsx` | C13 | client |
-| `src/components/ui/toggle.tsx` | C13 | client |
-| `src/components/ui/tooltip.tsx` | C13 | client |
 | `src/providers/index.tsx` | C11 | server-compatible / helper |
-| `src/search/Component.tsx` | C12 | client |
 | `src/search/page-content.tsx` | C14 | server-compatible / helper |
 
 ### Additional TSX modules
@@ -277,7 +221,7 @@ These files participate in the public contract even though they are not TSX comp
 | Scope | Files and decision |
 | --- | --- |
 | Domain reads | `src/utilities/get-post.ts`, `get-note.ts`, `get-activity.ts`, `get-project.ts`, `get-projects.ts`, `get-project-posts.ts`, `get-topic.ts`, `get-topic-posts.ts`, `get-lyovson-profile.ts`, `get-lyovson-feed.ts`: apply the parent cache table, visibility, projections, keys and invalidation tests. |
-| Query dependencies | `content-queries.ts`, `post-summary.ts`, `mixed-feed.ts`, `activity-preview.ts`, `payload-client.ts`, `getDocument.ts`, `getRedirects.ts`, `activity-path.ts`, `activity-type.ts`: preserve predicates, ordering, public shape, path identity and cached redirect correctness. |
+| Query dependencies | `content-queries.ts`, `post-summary.ts`, `mixed-feed.ts`, `activity-preview.ts`, `payload-client.ts`, `activity-path.ts`, `activity-type.ts`: preserve predicates, ordering, public shape, path identity and cached redirect correctness. |
 | Recommendation support | `get-similar-posts.ts`, `get-similar-notes.ts` and embedding helpers: trace whether called by publication or runtime before optimizing; no regeneration or new semantic work from prefetch. Inline RelatedPosts/RelatedNotes are explicitly covered by R03/R05. |
 | Public hooks | `src/collections/Posts/hooks`, `Notes/hooks`, `Activities/hooks`, plus Media, Lyovsons, Projects, Topics and References collection hooks/configs: map public invalidation dependencies. No admin UI work or schema changes. |
 | Search | `src/search/service.ts`, `types.ts`, `beforeSync.ts`, `fieldOverrides.ts`, `src/app/api/search/route.ts`: retain normalization, limits, visibility and scope/ranking; deduplicate per request, support direct query URLs, and exclude typing/prefetch from embedding execution. |
@@ -316,4 +260,4 @@ For every completed group, record: source commit; fixtures/routes; intended init
 
 ## Scope reconciliation
 
-The checked-out public page inventory remains exactly 37 files. Component inventory is now exactly 150 TSX modules (132 components, 13 blocks, 1 provider, 2 search modules, 1 social-icon helper, 1 admin slug field). Eight listed admin-only modules are excluded, as are all Payload admin route/layout modules. The two frontend playground routes remain in the ledger as utility/auth-boundary checks, not an admin redesign. Pure helpers and barrel exports are counted as modules so no source file is silently omitted.
+The checked-out public page inventory remains exactly 37 files. The component inventory above reflects the September 6 removal of unused modules. Payload admin route/layout modules remain excluded. The two frontend playground routes remain in the ledger as utility/auth-boundary checks, not an admin redesign. Pure helpers and barrel exports are counted as modules so no source file is silently omitted.

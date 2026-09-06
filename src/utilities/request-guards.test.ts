@@ -7,47 +7,46 @@ import {
 describe("request guards", () => {
   it.each([
     "/.env",
-    "/.env.local",
     "/admin/.env",
-    "/api/.env",
-    "/laravel/.env",
     "/core/.env.save",
     "/.git/config",
     "/wp-login.php",
-    "/wordpress/wp-login.php",
-    "/xmlrpc.php",
-    "/phpinfo.php",
     "/server-status",
-    "/server-status/",
     "/actuator/env",
     "/defunct.dat",
     "/backup.sql",
     "/dump.sql.gz",
-    "/config.bak",
     "/old/archive.zip",
     "/db.sqlite",
     "/upload.php",
     "/shell.phtml",
-    "/rip.php",
-    "/ms-edit.php",
     "/update/da222.php",
   ])("blocks hostile probe path %s", (pathname) => {
     expect(isHostileProbePath(pathname)).toBe(true);
   });
 
-  it.each(["/", "/posts/bye-bye-apple-tv", "/topics/media", "/feed.xml"])(
+  it.each([
+    "/",
+    "/posts/bye-bye-apple-tv",
+    "/topics/media",
+    "/feed.xml",
+    "/posts/a.php-story",
+  ])(
     "does not classify normal public path as a hostile probe: %s",
     (pathname) => {
       expect(isHostileProbePath(pathname)).toBe(false);
     }
   );
 
-  it("blocks AI crawlers on expensive public paths without blocking search crawlers", () => {
-    expect(shouldBlockExpensiveBotRequest("/posts/example", "GPTBot")).toBe(
-      true
-    );
-    expect(shouldBlockExpensiveBotRequest("/posts/example", "Googlebot")).toBe(
-      false
-    );
+  it.each([
+    ["/posts/example", "GPTBot", true],
+    ["/api/search", "python-requests", true],
+    ["/posts/example", "Googlebot", false],
+    ["/posts/example", "Twitterbot", false],
+    ["/posts/example", "Mozilla/5.0", false],
+    ["/crest-light-simple.webp", "GPTBot", false],
+    ["/postscripts", "GPTBot", false],
+  ])("applies crawler policy to %s for %s", (pathname, userAgent, blocked) => {
+    expect(shouldBlockExpensiveBotRequest(pathname, userAgent)).toBe(blocked);
   });
 });

@@ -1,231 +1,83 @@
 # Lyóvson.com
 
-**The official website of Rafa and Jess Lyóvson**
+The website of Rafa and Jess Lyóvson: posts, notes, projects, and activities in a shared card grid.
 
-A personal family blog combined with a public zettelkasten (digital knowledge garden) where we share our thoughts, ideas, and intellectual journey as a family.
+## Stack
 
----
+- Next.js 16, React 19, and TypeScript
+- Payload CMS 3 with Lexical rich text
+- Neon Postgres with pgvector for search and recommendations
+- Tailwind CSS, Shadcn UI primitives, and native view transitions
+- Vercel hosting and Blob storage; Resend for email
+- Biome/Ultracite, Vitest, and Playwright for validation
 
-## 🎯 Purpose
+## Local development
 
-This site serves as both:
+Use Node.js 24 and pnpm 10.30 through `mise`.
 
-- **Family Blog**: Articles, reviews, and project updates from Rafa and Jess
-- **Public Zettelkasten**: A connected web of notes, ideas, and thoughts that evolve over time
-- **Knowledge Base**: References to books, movies, and other media with our family's thoughts and quotes
-- **Dynasty Archive**: A growing collection of family wisdom that will expand as our family grows
-
-## 🏗️ Architecture
-
-### **Core Technologies**
-
-- **Frontend**: Next.js 15+ (App Router) with React 19+ Server Components
-- **CMS**: Payload CMS v3 (Headless CMS)
-- **Database**: Neon Postgres with pgvector for semantic search
-- **Styling**: Tailwind CSS + Shadcn UI components
-- **Animations**: Motion for React
-- **Rich Text**: Lexical Editor
-- **Email**: Resend
-- **Hosting**: Vercel
-
-### **AI & Search**
-
-- **Vector Embeddings**: pgvector 0.8.0 (VARCHAR storage with runtime casts)
-- **Semantic Search**: Powered by text-embedding models
-- **Content Discovery**: AI-driven connections between posts and notes
-
-## 📚 Content Structure
-
-### **Posts Collection**
-
-Articles, reviews, and project updates written by family members
-
-- **Types**: Articles, Reviews, Project Updates
-- **Features**: Rich text content, semantic search, cross-references
-
-### **Notes Collection**
-
-Zettelkasten-style notes with different types and purposes
-
-- **Permanent Notes**: Developed concepts and ideas
-- **Literature Notes**: Quotes and thoughts from books/media
-- **Fleeting Notes**: Quick captures and temporary thoughts
-- **Index Notes**: Navigation and organization
-
-### **Reference Collections**
-
-Curated collections of external content with API integrations and family curation
-
-- **Books**: Google Books API integration with authors, genres, publication data
-- **Movies**: OMDB API integration with directors, actors, cast information
-- **TV Shows**: Episode tracking, creators, cast, and seasonal organization
-- **Music**: Albums and songs with artists, genres, and streaming platform links
-- **Podcasts**: Episodes with hosts, guests, and platform availability
-- **Video Games**: Gaming collection with developers, platforms, and genres
-- **People**: Central registry of creators, authors, directors, and other contributors
-- **Links**: Curated web content, articles, and casual video references
-
-#### **People Collection - Multi-Role System**
-
-The People collection serves as a central registry for all creators and contributors:
-
-- **Multiple Roles**: Authors, directors, actors, hosts, musicians, developers
-- **Cross-Media Relationships**: One person can be linked to books, movies, podcasts, etc.
-- **Bidirectional Connections**: People → Media and Media → People relationships
-- **Literature Notes**: Can reference people directly for quotes and thoughts
-
-#### **Family Curation Features**
-
-- **Reading/Watching/Listening Status**: Track progress across all media types
-- **Family Ratings**: Shared scores and opinions on content
-- **Quote Collections**: Meaningful passages with family commentary and analysis
-- **Cross-References**: Connect media to posts, notes, and other references
-
-## 🔍 Key Features
-
-### **Semantic Discovery**
-
-- **Related Content**: AI-powered suggestions while writing
-- **Cross-Author Insights**: Find where family members wrote about similar themes
-- **Unexpected Connections**: Discover links between seemingly unrelated ideas
-- **Literature Integration**: Connect quotes to original thoughts
-
-### **Family-Specific Workflows**
-
-- **Multi-Author System**: Content from both Rafa and Jess
-- **Family Ratings**: Shared opinions on books, movies, and shows
-- **Cross-References**: Manual and automatic connections between content
-- **Knowledge Evolution**: Track how ideas develop over time
-
-### **Content Organization**
-
-- **Flexible Relationships**: Notes can connect to posts, other notes, and references
-- **Status Tracking**: Reading/watching progress for media
-- **Automatic Metadata**: Generated embeddings, timestamps, and hashes
-- **Version Control**: Draft and published states with version history
-
-## 🎨 Design Philosophy
-
-### **Content-First Approach**
-
-- **Server-Side Rendering**: Fast initial page loads
-- **Minimal JavaScript**: Progressive enhancement for interactivity
-- **Responsive Design**: Mobile-first with elegant desktop experience
-- **Accessibility**: WCAG compliance and semantic HTML
-
-### **Zettelkasten Principles**
-
-- **Atomic Notes**: Each note represents a single idea
-- **Linking**: Extensive cross-referencing between concepts
-- **Emergence**: Ideas develop through connections over time
-- **No Hierarchy**: Organic organization rather than rigid structure
-
-## 🚀 Getting Started
-
-### **Development Setup**
-
-```bash
-# Install dependencies
-pnpm install
-
-# Set up environment variables
-cp .env.example .env.local
-
-# Start development server
-pnpm dev
+```sh
+mise exec -- pnpm install --frozen-lockfile
 ```
 
-### **Database Setup**
+Create `.env.local` with the configuration needed for your environment:
 
-- Configure Neon Postgres connection
-- Run Payload CMS migrations
-- Set up pgvector extension
-- Embeddings auto-generate on publish (no manual setup needed)
+| Variable | Purpose |
+| --- | --- |
+| `POSTGRES_URL` | Postgres connection used by Payload |
+| `PAYLOAD_SECRET` | Payload authentication secret |
+| `NEXT_PUBLIC_SERVER_URL` | Site origin for links and metadata |
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob media storage |
+| `OPENAI_API_KEY` | Embedding generation |
+| `RESEND_API_KEY` | Email delivery |
+| `TENOR_API_KEY` | GIF search in the CMS |
+| `CRON_SECRET` | Authenticated job execution |
 
-### **Content Management**
+Start development with automatic schema changes disabled:
 
-- Access Payload CMS admin at `/admin`
-- Create posts and notes through the CMS
-- Embeddings are generated automatically
-- Semantic search works immediately
-
-## 📈 Scaling Strategy
-
-### **Current Capacity**
-
-- **Content**: Optimized for thousands of posts and notes
-- **Performance**: Fast semantic search queries (~2.7ms at current scale)
-- **Storage**: Efficient vector storage with Neon Postgres
-- **Costs**: Minimal overhead with serverless architecture
-
-### **Future Growth**
-
-- **Multi-generational**: Designed to grow with the family
-- **Knowledge Accumulation**: Years of connected thoughts and ideas
-- **Cross-generational Discovery**: Find connections across time periods
-- **Archive Stability**: Built for long-term preservation
-
-## 🔧 Configuration
-
-### **Key Environment Variables**
-
-```env
-# Database
-DATABASE_URL=postgresql://...
-
-# Payload CMS
-PAYLOAD_SECRET=...
-
-# OpenAI (for embeddings)
-OPENAI_API_KEY=...
-
-# Email
-RESEND_API_KEY=...
+```sh
+PAYLOAD_DB_PUSH=false mise exec -- pnpm dev --port 3100
 ```
 
-### **Payload CMS Collections**
+`PAYLOAD_DB_PUSH=false` disables schema pushes; it does not prevent application writes. For public browsing checks against an existing database, the preview commands also enforce read-only database transactions and clear the OpenAI and Resend keys:
 
-- `posts` - Family blog articles and reviews
-- `notes` - Zettelkasten notes with types and literature notes
-- `books` - Book references with Google Books API integration
-- `movies` - Movie references with OMDB API integration
-- `tvShows` - TV show references with episode and season tracking
-- `music` - Albums and songs with streaming platform integration
-- `podcasts` - Podcast episodes with hosts and platform links
-- `videoGames` - Gaming collection with platforms and developers
-- `people` - Multi-role creator registry (authors, directors, artists, etc.)
-- `links` - Curated web content and casual references
+```sh
+mise exec -- pnpm preview:experience:build
+mise exec -- pnpm preview:experience
+```
 
-## 🤝 Family Collaboration
+The preview runs at `http://localhost:3100`. Use an isolated database for CMS edits or migration work.
 
-### **Writing Workflow**
+## Source layout
 
-1. Create content in Payload CMS
-2. AI suggests related existing content
-3. Add manual connections between ideas
-4. Publish to generate embeddings
-5. Discover unexpected connections over time
+- `src/app/(frontend)`: public pages and layouts
+- `src/app/(payload)`: CMS admin and Payload API routes
+- `src/app/api`: search, documentation, and embedding endpoints
+- `src/components/grid`: navigation and content cards
+- `src/blocks`: rich-text block configuration and rendering
+- `src/collections`: `posts`, `notes`, `activities`, `projects`, `topics`, `references`, `lyovsons`, `contacts`, and `media`
+- `src/search`, `src/jobs`, `src/utilities`: search, embedding jobs, content queries, and shared helpers
+- `src/migrations`: versioned database migrations
+- `e2e`: browser checks for public pages, navigation, and media
 
-### **Knowledge Building**
+## Validation
 
-- **Literature Notes**: Save meaningful quotes with commentary
-- **Idea Development**: Grow fleeting notes into permanent concepts
-- **Cross-Pollination**: Find connections between family members' thoughts
-- **Wisdom Accumulation**: Build a searchable family knowledge base
+```sh
+mise exec -- pnpm lint
+mise exec -- pnpm test
+mise exec -- pnpm seo:check
+mise exec -- pnpm preview:experience:build
+# With the preview running:
+mise exec -- pnpm test:browser
+```
 
-## 📖 Documentation
+`pnpm build` creates the normal production build. `pnpm generate:types` and `pnpm generate:importmap` update Payload's generated files after CMS configuration changes.
 
-- **Architecture Details**: See `/docs/architecture.md`
-- **Embedding Strategy**: See `/docs/new-schema-2.md`
-- **Design System**: See `/docs/design-system.md`
-- **Implementation Guide**: See `/docs/implementation-guide.md`
+## Documentation
 
-## 🎯 Future Vision
-
-This site is designed to be a **multi-generational family knowledge base** - a place where ideas, thoughts, and wisdom accumulate over time. As our family grows, so will the connections between concepts, creating an ever-richer web of family intellectual history.
-
-The combination of modern web technology with timeless zettelkasten principles creates a platform for long-term knowledge building that will serve the Lyóvson family for decades to come.
-
----
-
-**Built with ❤️ by the Lyóvson family**
+- [Lint configuration and framework guidance](docs/linting.md)
+- [Test coverage and scope](docs/test-coverage.md)
+- [Public experience coverage](docs/public-experience-coverage.md)
+- [Public experience verification](docs/public-experience-verification.md)
+- [Theme refinement](docs/theme-refinement.md)
+- [View transition audit](docs/view-transition-audit.md)
+- [Embedding system](README-AI-SYSTEM.md)

@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { getActivityByDateAndSlug } from "./get-activity";
 import { getLyovsonProfile } from "./get-lyovson-profile";
+import { getNote } from "./get-note";
 import { getRelatedNotes, getRelatedPosts } from "./get-related-content";
 import { getPayloadClient } from "./payload-client";
 
@@ -59,4 +61,39 @@ describe("public read contracts", () => {
       })
     );
   });
+});
+
+it.each([
+  ["notes", () => getNote("same-slug")],
+  ["activities", () => getActivityByDateAndSlug("09-06-26", "same-slug")],
+] as const)(
+  "restricts %s detail reads to public content and excludes embedding internals",
+  async (collection, read) => {
+    const find = vi.fn().mockResolvedValue({ docs: [] });
+    vi.mocked(getPayloadClient).mockResolvedValue({ find } as never);
+    expect(await read()).toBeNull();
+    expect(find).toHaveBeenCalledWith(
+      expect.objectContaining({
+        collection,
+        where: {
+          _status: { equals: "published" },
+          visibility: { equals: "public" },
+          slug: { equals: "same-slug" },
+        },
+        select: expect.objectContaining({
+          embedding_vector: false,
+          embedding_text_hash: false,
+        }),
+      })
+    );
+  }
+);
+
+it("distinguishes repeated activity slugs by their UTC date", async () => {
+  const first = { id: 1, slug: "reading", startedAt: "2026-09-05T12:00:00Z" };
+  const second = { id: 2, slug: "reading", startedAt: "2026-09-06T12:00:00Z" };
+  const find = vi.fn().mockResolvedValue({ docs: [first, second] });
+  vi.mocked(getPayloadClient).mockResolvedValue({ find } as never);
+  expect(await getActivityByDateAndSlug("09-06-26", "reading")).toEqual(second);
+  expect(await getActivityByDateAndSlug("09-07-26", "reading")).toBeNull();
 });

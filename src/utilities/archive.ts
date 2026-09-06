@@ -8,11 +8,16 @@ export const TOPIC_POSTS_PER_PAGE = DEFAULT_ARCHIVE_PAGE_SIZE;
 export const LYOVSON_ITEMS_PER_PAGE = DEFAULT_ARCHIVE_PAGE_SIZE;
 export const MAX_INDEXED_PAGE = 3;
 
-export function parsePageNumber(value: number | string): number | null {
-  const pageNumber =
-    typeof value === "number" ? value : Number.parseInt(value, 10);
+const PAGE_NUMBER_PATTERN = /^\d+$/;
 
-  if (!Number.isInteger(pageNumber) || pageNumber < 1) {
+export function parsePageNumber(value: number | string): number | null {
+  if (typeof value === "string" && !PAGE_NUMBER_PATTERN.test(value)) {
+    return null;
+  }
+
+  const pageNumber = Number(value);
+
+  if (!Number.isSafeInteger(pageNumber) || pageNumber < 1) {
     return null;
   }
 

@@ -132,9 +132,7 @@ async function ActivityPageContent({ params: paramsPromise }: Args) {
   const activityWithSeo = activity as ActivityWithSeo;
 
   const referenceObj =
-    typeof activity.reference === "object" && activity.reference !== null
-      ? activity.reference
-      : null;
+    typeof activity.reference === "object" ? activity.reference : null;
 
   const pageTitle =
     activityWithSeo.seo?.title ||
@@ -344,9 +342,7 @@ export async function generateMetadata({
   const activityWithSeo = activity as ActivityWithSeo;
 
   const referenceObj =
-    typeof activity.reference === "object" && activity.reference !== null
-      ? activity.reference
-      : null;
+    typeof activity.reference === "object" ? activity.reference : null;
 
   const title =
     activityWithSeo.seo?.title ||

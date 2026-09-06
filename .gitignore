@@ -23,3 +23,6 @@ src/utilities/test-*.ts
 src/utilities/check-*.ts
 src/utilities/migrations/run-*.ts
 src/utilities/migrate-*.ts
+
+# Local lint reports
+lint-result.txt

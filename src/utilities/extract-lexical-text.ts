@@ -1,38 +1,3 @@
-/**
- * Lexical Text Extraction Utilities
- *
- * This module provides utilities for extracting plain text from Lexical editor
- * content stored in JSONB format. Used for generating full-text feeds, search
- * indexing, and content previews.
- *
- * @module extract-lexical-text
- */
-
-/**
- * Extract plain text from Lexical rich text content
- *
- * Recursively traverses the Lexical content tree and extracts all text nodes,
- * joining them with spaces. Handles various Lexical node types and nested
- * structures.
- *
- * @param content - Lexical content in any format (Document, Node, Array, or string)
- * @returns Extracted plain text string
- *
- * @example
- * ```typescript
- * const lexicalContent = {
- *   root: {
- *     children: [
- *       { type: "paragraph", children: [{ type: "text", text: "Hello" }] },
- *       { type: "paragraph", children: [{ type: "text", text: "World" }] }
- *     ]
- *   }
- * };
- *
- * const text = extractLexicalText(lexicalContent);
- * // Returns: "Hello World"
- * ```
- */
 type ExtractionMode = "newline" | "plain";
 
 function getNestedLexicalContent(content: Record<string, unknown>): unknown {

@@ -7,31 +7,9 @@ import { getRuntimeSiteOrigin } from "./src/utilities/site-config";
 const TAILWIND_REGEX = /[\\/]node_modules[\\/]tailwindcss[\\/]/;
 
 // Image quality presets for Next.js Image Optimization
-/* biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit quality breakpoints */
 const IMAGE_QUALITIES: number[] = [25, 50, 75, 80, 90, 100];
 const IMAGE_SIZES: number[] = [
-  // biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit breakpoints
-  16,
-  // biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit breakpoints
-  32,
-  // biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit breakpoints
-  48,
-  // biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit breakpoints
-  64,
-  // biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit breakpoints
-  96,
-  // biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit breakpoints
-  128,
-  // biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit breakpoints
-  256,
-  // biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit breakpoints
-  384,
-  // biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit breakpoints
-  400,
-  // biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit breakpoints
-  800,
-  // biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit breakpoints
-  1200,
+  16, 32, 48, 64, 96, 128, 256, 384, 400, 800, 1200,
 ];
 
 const NEXT_PUBLIC_SERVER_URL = getRuntimeSiteOrigin();
@@ -99,29 +77,22 @@ const nextConfig: NextConfig = {
   async headers() {
     const contentSecurityPolicy = [
       "default-src 'self'",
-      // Removed platform.twitter.com - replaced by react-tweet (no external scripts)
-      // Removed *.tenor.com from script-src - replaced by direct video URLs
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.google-analytics.com *.googletagmanager.com *.vercel-scripts.com",
       "style-src 'self' 'unsafe-inline' fonts.googleapis.com",
       "font-src 'self' fonts.gstatic.com data:",
-      // Added cdn.syndication.twimg.com, pbs.twimg.com, abs.twimg.com for react-tweet
-      // Kept media.tenor.com for video sources (GIF optimization)
       [
         "img-src 'self' data: blob: *.vercel-insights.com *.google-analytics.com *.googletagmanager.com pbs.twimg.com abs.twimg.com *.twimg.com media.tenor.com",
         VERCEL_BLOB_CSP_SOURCE,
       ]
         .filter(Boolean)
         .join(" "),
-      // Kept media.tenor.com for MP4/WebM videos (GIF optimization)
       [
         "media-src 'self' blob: video.twimg.com media.tenor.com",
         VERCEL_BLOB_CSP_SOURCE,
       ]
         .filter(Boolean)
         .join(" "),
-      // Added cdn.syndication.twimg.com for react-tweet API
       "connect-src 'self' *.vercel-insights.com *.google-analytics.com *.googletagmanager.com cdn.syndication.twimg.com vitals.vercel-insights.com",
-      // Removed platform.twitter.com and tenor.com - no longer needed (eliminated iframes)
       "frame-src 'self' www.youtube.com youtube.com",
       "worker-src 'self' blob:",
       "child-src 'self' blob:",
@@ -193,17 +164,16 @@ const nextConfig: NextConfig = {
     ]);
   },
   reactCompiler: true,
-  // Enable persistent caching for the turbopack dev server and build.
   cacheLife: {
     static: {
-      stale: 86_400, // 24 hours stale (was 2h) - rarely-changing taxonomy data
-      revalidate: 172_800, // 48 hours revalidate (was 4h)
-      expire: 604_800, // 7 days max (was 24h)
+      stale: 86_400, // 24 hours stale - rarely-changing taxonomy data
+      revalidate: 172_800, // 48 hours revalidate
+      expire: 604_800, // 7 days max
     },
     homepage: {
-      stale: 3600, // 1 hour stale (was 30min) - event-driven revalidation makes longer safe
-      revalidate: 7200, // 2 hours revalidate (was 1h)
-      expire: 86_400, // 24 hours max (was 2h)
+      stale: 3600, // 1 hour stale - event-driven revalidation makes longer safe
+      revalidate: 7200, // 2 hours revalidate
+      expire: 86_400, // 24 hours max
     },
     feed: {
       stale: 3600, // 1 hour stale - mixed content feeds track post/note/activity cadence
@@ -211,24 +181,24 @@ const nextConfig: NextConfig = {
       expire: 86_400, // 24 hours max
     },
     posts: {
-      stale: 3600, // 1 hour stale (was 30min) - event-driven revalidation makes longer safe
-      revalidate: 7200, // 2 hours revalidate (was 1h)
-      expire: 86_400, // 24 hours max (was 2h)
+      stale: 3600, // 1 hour stale - event-driven revalidation makes longer safe
+      revalidate: 7200, // 2 hours revalidate
+      expire: 86_400, // 24 hours max
     },
     notes: {
-      stale: 3600, // 1 hour stale (was 30min) - event-driven revalidation makes longer safe
-      revalidate: 7200, // 2 hours revalidate (was 1h)
-      expire: 86_400, // 24 hours max (was 2h)
+      stale: 3600, // 1 hour stale - event-driven revalidation makes longer safe
+      revalidate: 7200, // 2 hours revalidate
+      expire: 86_400, // 24 hours max
     },
     activities: {
-      stale: 3600, // 1 hour stale (was 30min) - event-driven revalidation makes longer safe
-      revalidate: 7200, // 2 hours revalidate (was 1h)
-      expire: 86_400, // 24 hours max (was 2h)
+      stale: 3600, // 1 hour stale - event-driven revalidation makes longer safe
+      revalidate: 7200, // 2 hours revalidate
+      expire: 86_400, // 24 hours max
     },
     "grid-cards": {
-      stale: 3600, // 1 hour stale (was 30min) - event-driven revalidation makes longer safe
-      revalidate: 7200, // 2 hours revalidate (was 1h)
-      expire: 86_400, // 24 hours max (was 2h)
+      stale: 3600, // 1 hour stale - event-driven revalidation makes longer safe
+      revalidate: 7200, // 2 hours revalidate
+      expire: 86_400, // 24 hours max
     },
     "user-session": {
       stale: 60, // 1 minute stale
@@ -236,34 +206,34 @@ const nextConfig: NextConfig = {
       expire: 1800, // 30 minutes max
     },
     projects: {
-      stale: 14_400, // 4 hours stale (was 1 hour)
-      revalidate: 28_800, // 8 hours revalidate (was 2 hours)
+      stale: 14_400, // 4 hours stale
+      revalidate: 28_800, // 8 hours revalidate
       expire: 86_400, // 24 hours max
     },
     topics: {
-      stale: 7200, // 2 hours stale (was 30 minutes)
-      revalidate: 14_400, // 4 hours revalidate (was 1 hour)
-      expire: 86_400, // 24 hours max (was 12 hours)
+      stale: 7200, // 2 hours stale
+      revalidate: 14_400, // 4 hours revalidate
+      expire: 86_400, // 24 hours max
     },
     authors: {
-      stale: 7200, // 2 hours stale (was 30 minutes)
-      revalidate: 14_400, // 4 hours revalidate (was 1 hour)
+      stale: 7200, // 2 hours stale
+      revalidate: 14_400, // 4 hours revalidate
       expire: 86_400, // 24 hours max
     },
     sitemap: {
-      stale: 14_400, // 4 hours stale (was 1 hour)
-      revalidate: 28_800, // 8 hours revalidate (was 2 hours)
-      expire: 172_800, // 48 hours max (was 24 hours)
+      stale: 14_400, // 4 hours stale
+      revalidate: 28_800, // 8 hours revalidate
+      expire: 172_800, // 48 hours max
     },
     search: {
-      stale: 1800, // 30 minutes stale (was 10 minutes)
-      revalidate: 3600, // 1 hour revalidate (was 20 minutes)
-      expire: 7200, // 2 hours max (was 1 hour)
+      stale: 1800, // 30 minutes stale
+      revalidate: 3600, // 1 hour revalidate
+      expire: 7200, // 2 hours max
     },
     rss: {
-      stale: 14_400, // 4 hours stale (was 1 hour)
-      revalidate: 28_800, // 8 hours revalidate (was 2 hours)
-      expire: 172_800, // 48 hours max (was 24 hours)
+      stale: 14_400, // 4 hours stale
+      revalidate: 28_800, // 8 hours revalidate
+      expire: 172_800, // 48 hours max
     },
     redirects: {
       stale: 14_400, // 4 hours stale
@@ -272,7 +242,6 @@ const nextConfig: NextConfig = {
     },
   },
   logging: {
-    // Forward browser logs to the terminal for easier debugging
     browserToTerminal: true,
   },
   experimental: {
@@ -286,12 +255,10 @@ const nextConfig: NextConfig = {
     // Enable Turbopack file system caching for faster builds (stores compiler artifacts between runs)
     turbopackFileSystemCacheForDev: true,
   },
-  // Turbopack is now the default bundler for both dev and prod in Next.js 16
   turbopack: {
     resolveExtensions: [".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".json"],
   },
-  // Webpack config kept as fallback for --webpack flag or if Turbopack isn't used
-  // Turbopack handles chunking automatically, but this ensures compatibility
+  // Fallback for builds using --webpack.
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.optimization.splitChunks.cacheGroups = {

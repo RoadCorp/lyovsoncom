@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import { SkeletonCard } from "@/components/grid";
 import { LoadingTransition } from "@/components/LoadingTransition";
 import { SearchPageContent } from "@/search/page-content";
+import { normalizeSearchQuery } from "@/search/query";
 import { getLyovsonProfile } from "@/utilities/get-lyovson-profile";
 import {
   buildLyovsonMetadata,
@@ -15,7 +16,7 @@ import { getLyovsonStaticParams } from "../_utilities/staticParams";
 
 interface PageProps {
   params: Promise<{ lyovson: string }>;
-  searchParams: Promise<{ q: string }>;
+  searchParams: Promise<{ q?: string | string[] }>;
 }
 
 export async function generateStaticParams() {
@@ -73,7 +74,7 @@ export async function generateMetadata({
     return buildLyovsonNotFoundMetadata();
   }
 
-  const normalizedQuery = query?.trim() || "";
+  const normalizedQuery = normalizeSearchQuery(query);
   const scopeLabel = profile.name || username;
 
   return buildLyovsonMetadata({

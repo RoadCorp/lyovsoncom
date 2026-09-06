@@ -279,9 +279,7 @@ export async function generateMetadata({
   const noteWithSeo = note as NoteWithSeo;
 
   const title = noteWithSeo.seo?.title || note.title;
-  const contentText = note.content
-    ? extractLexicalText(note.content).trim()
-    : "";
+  const contentText = extractLexicalText(note.content).trim();
   const description =
     noteWithSeo.seo?.description ||
     (contentText.length > 0

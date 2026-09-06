@@ -4,25 +4,26 @@
 - `src/app`: Next.js App Router. Groups `(frontend)` for site pages and `(payload)` for CMS/admin; API routes under `src/app/api/*`.
 - `src/collections`, `src/blocks`, `src/components`, `src/utilities`: Domain models, UI, and helpers. Payload config in `src/payload.config.ts`.
 - `public/`: Static assets (media uploads in `public/media/`, git-ignored). Global styles at `src/app/(frontend)/globals.css`.
-- Key configs: `next.config.ts`, `eslint.config.js`, `.editorconfig`, `.prettierrc.json`, `redirects.js`.
+- Key configs: `next.config.ts`, `biome.jsonc`, `.editorconfig`, `vitest.config.ts`, `playwright.config.ts`, `redirects.js`.
 
 ## Build, Test, and Development Commands
 - `pnpm dev`: Start Next.js in dev mode (Turbo) and local CMS.
 - `pnpm build`: Production build of the Next app.
 - `pnpm start`: Serve the built app.
-- `pnpm lint` / `pnpm lint:fix`: Lint code (Next + Prettier rules) and auto-fix.
+- `pnpm lint` / `pnpm lint:fix`: Check Biome/Ultracite rules and auto-fix. Lint fails on warnings too.
 - `pnpm payload`: Run Payload CLI (admin, tasks).
 - `pnpm generate:types` / `pnpm generate:importmap`: Generate Payload types and admin import map.
 
 ## Coding Style & Naming Conventions
-- TypeScript, 2-space indent (`.editorconfig`). Prettier: single quotes, no semicolons, width 100.
-- ESLint extends Next + Prettier; fix all errors before PR.
+- TypeScript; use Biome/Ultracite formatting from `biome.jsonc` (2-space indent, double quotes, semicolons).
+- Core, Next.js, React, and Vitest presets enforce code quality. See `docs/linting.md` for deliberate exceptions and framework coverage.
 - Files: React components `PascalCase.tsx`; utilities/hooks `camelCase.ts`; route segments and slugs `kebab-case`.
 - Styling via Tailwind CSS; co-locate component styles or use global `globals.css`.
 
 ## Testing Guidelines
-- No test suite is configured yet. If adding tests, prefer Vitest + Testing Library.
-- Name tests `*.test.ts(x)` colocated with code. Mock network with MSW. Keep units small and deterministic.
+- `pnpm test` runs Vitest unit and API contract tests; `pnpm test:browser` runs Playwright against the preview.
+- Colocate `*.test.ts(x)` files and keep browser tests in `e2e`. Mock external work in unit tests.
+- Test distinct behavior and failure boundaries without repeating library internals. See `docs/test-coverage.md` for scope and safe preview commands.
 
 ## Commit & Pull Request Guidelines
 - Use Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`). Imperative, ≤72 char subject; scope optional.
@@ -30,7 +31,7 @@
 - Before opening: `pnpm lint` and `pnpm build` pass; update docs in `/docs` or `README.md` when behavior changes.
 
 ## Security & Configuration Tips
-- Do not commit secrets. Use `.env.local` (see `README.md`). Common keys: `DATABASE_URL`, `PAYLOAD_SECRET`, `OPENAI_API_KEY`, `RESEND_API_KEY`.
+- Do not commit secrets. Use `.env.local` (see `README.md`). Common keys: `POSTGRES_URL`, `PAYLOAD_SECRET`, `OPENAI_API_KEY`, `RESEND_API_KEY`.
 - `public/media/` is ignored; keep uploads there. Avoid `console.log` in server paths; prefer typed helpers in `src/utilities`.
 
 ## Agent Notes
@@ -343,9 +344,8 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 - Don't use disabled tests.
 
 ## Common Tasks
-- `npx ultracite init` - Initialize Ultracite in your project
-- `npx ultracite fix` - Format and fix code automatically
-- `npx ultracite check` - Check for issues without fixing
+- `mise exec -- pnpm lint:fix` - Format and fix code automatically
+- `mise exec -- pnpm lint` - Check for issues without fixing
 
 ## Example: Error Handling
 ```typescript

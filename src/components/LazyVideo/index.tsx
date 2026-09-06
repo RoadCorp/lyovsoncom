@@ -12,20 +12,7 @@ interface LazyVideoProps {
   webmSrc?: string;
 }
 
-/**
- * LazyVideo Component - Intersection Observer Lazy Loading
- *
- * Performance Optimizations:
- * - Uses Intersection Observer API for lazy loading
- * - Loads video sources only when scrolling near (300px margin)
- * - Supports MP4 and WebM formats with automatic fallback
- * - Autoplay + loop + muted for GIF-like behavior
- * - Poster image placeholder while loading
- *
- * Use Case:
- * - Optimized replacement for Tenor GIF embeds
- * - Converts GIF → MP4/WebM for 80-85% size reduction
- */
+// Attach video sources near the viewport and pause when React hides the content.
 export const LazyVideo = ({
   mp4Src,
   webmSrc,
@@ -51,7 +38,7 @@ export const LazyVideo = ({
         }
       },
       {
-        rootMargin: "300px", // Start loading when 300px away from viewport
+        rootMargin: "300px",
       }
     );
 

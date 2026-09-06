@@ -55,7 +55,7 @@ function getFeedItem(
     post.project && typeof post.project === "object"
       ? post.project.slug || ""
       : "";
-  const fullContent = post.content ? extractLexicalText(post.content) : "";
+  const fullContent = extractLexicalText(post.content);
   const description =
     post.description || fullContent || "Read the full article on Lyóvson.com";
 

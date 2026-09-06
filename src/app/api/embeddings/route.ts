@@ -88,7 +88,6 @@ export async function GET(request: NextRequest) {
 
     // Handle specific item embedding
     if (id && type) {
-      // TODO: Properly type this as union of Post | Note | Project with embedding fields
       let item: ItemWithEmbedding | null = null;
 
       if (type === "posts") {

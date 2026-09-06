@@ -1,6 +1,11 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "extends": ["ultracite/biome/core", "ultracite/biome/next"],
+  "extends": [
+    "ultracite/biome/core",
+    "ultracite/biome/next",
+    "ultracite/biome/react",
+    "ultracite/biome/vitest"
+  ],
   "files": {
     "includes": [
       "!.claude/worktrees",
@@ -32,64 +37,28 @@
         "noIncrementDecrement": "off",
         "useConsistentArrowReturn": "off",
         "useDestructuring": "off",
-        "noMagicNumbers": "warn",
-        "useFilenamingConvention": "off",
-        "noNonNullAssertion": "warn",
-        "noNestedTernary": "warn",
-        "noNamespace": "warn",
-        "useConsistentTypeDefinitions": "warn"
+        "useFilenamingConvention": "off"
       },
       "suspicious": {
         // Existing nullish guards intentionally match both null and undefined.
         "noEqualsToNull": "off",
-        "noExplicitAny": "warn",
-        "noArrayIndexKey": "warn",
         "noBitwiseOperators": "off",
-        "noEmptyBlockStatements": "warn",
         "noUnknownAtRules": "off",
-        "useAwait": "warn",
-        "noEvolvingTypes": "warn",
-        "noImplicitAnyLet": "warn",
-        "noDocumentCookie": "warn",
-        "noShadow": "warn",
-        "noUnnecessaryConditions": "warn"
+        // Biome cannot reliably track mutable React refs or validate stored CMS data.
+        "noUnnecessaryConditions": "off",
+        // This rule also flags boolean state and intentional string children as leaks.
+        "noLeakedRender": "off"
       },
       "complexity": {
         "noUselessCatchBinding": "off",
-        "noExcessiveCognitiveComplexity": "warn",
-        "noCommaOperator": "off",
-        "noForEach": "warn",
-        "noBannedTypes": "warn"
+        "noCommaOperator": "off"
       },
       "performance": {
         // Sequential CMS operations preserve order and avoid request bursts.
         "noAwaitInLoops": "off",
         // Callback allocation alone does not establish a React performance issue.
         "noJsxPropsBind": "off",
-        "noBarrelFile": "off",
-        "useTopLevelRegex": "warn",
-        "noNamespaceImport": "warn"
-      },
-      "a11y": {
-        "noSvgWithoutTitle": "warn",
-        "useValidAnchor": "warn",
-        "useButtonType": "warn",
-        "useAriaPropsSupportedByRole": "warn",
-        "useSemanticElements": "warn",
-        "noNoninteractiveElementInteractions": "warn",
-        "useKeyWithClickEvents": "warn",
-        "noStaticElementInteractions": "warn",
-        "useFocusableInteractive": "warn",
-        "useAriaPropsForRole": "warn"
-      },
-      "security": {
-        "noDangerouslySetInnerHtml": "warn"
-      },
-      "correctness": {
-        "noUnusedVariables": "warn",
-        "useExhaustiveDependencies": "warn",
-        "noUnusedFunctionParameters": "warn",
-        "noNestedComponentDefinitions": "warn"
+        "noBarrelFile": "off"
       }
     }
   }

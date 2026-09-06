@@ -5,11 +5,12 @@ import { Suspense } from "react";
 import { SkeletonCard } from "@/components/grid";
 import { LoadingTransition } from "@/components/LoadingTransition";
 import { SearchPageContent } from "@/search/page-content";
+import { normalizeSearchQuery } from "@/search/query";
 import { buildSeoMetadata } from "@/utilities/seo-metadata";
 
 interface Args {
   searchParams: Promise<{
-    q: string;
+    q?: string | string[];
   }>;
 }
 
@@ -39,7 +40,7 @@ export async function generateMetadata({
   searchParams: searchParamsPromise,
 }: Args): Promise<Metadata> {
   const { q: query } = await searchParamsPromise;
-  const normalizedQuery = query?.trim() || "";
+  const normalizedQuery = normalizeSearchQuery(query);
 
   const title = normalizedQuery
     ? `Search results for "${normalizedQuery}"`

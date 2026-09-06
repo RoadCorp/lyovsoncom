@@ -553,12 +553,10 @@ function getSearchPreviewItem(
   }
 
   if (item.type === "note") {
-    const excerpt = item.data.content
-      ? truncateText(
-          extractLexicalText(item.data.content).trim(),
-          NOTE_PREVIEW_MAX_CHARS
-        )
-      : "";
+    const excerpt = truncateText(
+      extractLexicalText(item.data.content).trim(),
+      NOTE_PREVIEW_MAX_CHARS
+    );
 
     return {
       type: "note",

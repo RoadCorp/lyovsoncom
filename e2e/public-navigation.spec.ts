@@ -44,14 +44,18 @@ test("article and Back retain correct content and navigation", async ({
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/posts");
-  const article = page.locator('a[href^="/posts/"]').first();
+  const article = page
+    .locator('a[href^="/posts/"]')
+    .filter({ has: page.locator("h2") })
+    .first();
+  const title = await article.locator("h2").innerText();
   const href = await article.getAttribute("href");
   await article.hover();
   await article.click();
-  await expect(page).toHaveURL(new RegExp(`${href}$`));
-  await expect(page.locator("h1").first()).not.toBeEmpty();
+  await expect(page).toHaveURL((url) => url.pathname === href);
+  await expect(page.locator("h1").first()).toHaveText(title);
   await page.goBack();
-  await expect(page).toHaveURL(/\/posts$/);
+  await expect(page).toHaveURL((url) => url.pathname === "/posts");
   await expect(article).toBeVisible();
   expect(errors).toEqual([]);
 });
@@ -77,7 +81,7 @@ test("typing does not execute search and Escape restores navigation", async ({
     page.getByRole("button", { name: "Submit search" })
   ).toBeEnabled();
   await input.press("Escape");
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page).toHaveURL((url) => url.pathname === "/");
   expect(searchRequests).toEqual([]);
 });
 
@@ -103,7 +107,7 @@ test("author context survives section changes and a journey beyond route retenti
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
   await page.getByRole("link", { name: "Rafa", exact: true }).first().click();
-  await expect(page).toHaveURL(/\/rafa$/);
+  await expect(page).toHaveURL((url) => url.pathname === "/rafa");
   for (const section of ["Posts", "Notes", "Activities"]) {
     await page.getByRole("button", { name: "Menu", exact: true }).click();
     await page
@@ -116,7 +120,7 @@ test("author context survives section changes and a journey beyond route retenti
     ).toBeVisible();
   }
   await page.getByRole("link", { name: "Jess", exact: true }).first().click();
-  await expect(page).toHaveURL(/\/jess$/);
+  await expect(page).toHaveURL((url) => url.pathname === "/jess");
   for (const route of [
     "/rafa/activities",
     "/rafa/notes",
@@ -133,33 +137,11 @@ test("author context survives section changes and a journey beyond route retenti
   expect(errors).toEqual([]);
 });
 
-test("mobile dark and reduced-motion navigation keeps the grid within the viewport", async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.emulateMedia({ colorScheme: "dark", reducedMotion: "reduce" });
-  await page.goto("/");
-  await page.getByRole("button", { name: "Menu", exact: true }).click();
-  if (!(await page.locator("html").getAttribute("class"))?.includes("dark")) {
-    await page.getByRole("button", { name: "Theme", exact: true }).click();
-  }
-  await expect(page.locator("html")).toHaveClass(/dark/);
-  await expect(
-    page.getByRole("link", { name: "Posts", exact: true })
-  ).toBeVisible();
-  const overflow = await page.evaluate(
-    () => document.documentElement.scrollWidth - window.innerWidth
-  );
-  expect(overflow).toBeLessThanOrEqual(1);
-  await page.screenshot({
-    path: test.info().outputPath("mobile-dark-menu.png"),
-  });
-});
-
 test("the narrow menu stays usable in both themes and restores keyboard focus", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 320, height: 740 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   const menu = page.getByRole("button", { name: "Menu", exact: true });
   await expect(menu).toBeEnabled();

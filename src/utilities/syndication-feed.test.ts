@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/style/noMagicNumbers: Tests use explicit query limits and HTTP status expectations. */
 import { cacheLife, cacheTag } from "next/cache";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GET as getAtomFeed } from "@/app/atom.xml/route";

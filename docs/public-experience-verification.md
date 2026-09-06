@@ -1,5 +1,6 @@
 # Public experience implementation and verification
 
+The later [test coverage review](test-coverage.md) describes the current suite; counts below record the earlier implementation verification.
 Date: September 6, 2026. Baseline commit: `655c07e67a2bd6fc1eb2e4e7cb638e26ddaa2b01`.
 Status: Implementation and final polish verified locally. Push to `main` authorized on September 6; production verification is tracked separately.
 

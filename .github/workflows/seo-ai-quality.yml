@@ -43,6 +43,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Lint
+        run: pnpm lint
+
+      - name: Unit and API contract tests
+        run: pnpm test
+
       - name: Run Payload migrations
         run: pnpm payload migrate
 

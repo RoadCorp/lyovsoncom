@@ -1,6 +1,7 @@
 import { ViewTransition } from "react";
 import { ArchiveItems } from "@/components/ArchiveItems";
 import { GridCardEmptyState } from "@/components/grid";
+import { normalizeSearchQuery } from "@/search/query";
 import {
   hydrateSearchResults,
   runHybridSearch,
@@ -12,7 +13,7 @@ const SEARCH_RESULTS_LIMIT = 12;
 const SEARCH_FAILURE_STATUS = 500;
 
 interface SearchPageContentProps {
-  query: string | undefined;
+  query: string | string[] | undefined;
   scopeLabel?: string;
   scopeUsername?: string | null;
 }
@@ -75,7 +76,7 @@ async function SearchResults({
   scopeLabel,
   scopeUsername,
 }: SearchPageContentProps) {
-  const normalizedQuery = query?.trim() || "";
+  const normalizedQuery = normalizeSearchQuery(query);
   const scopeText = getScopeText(scopeLabel, scopeUsername);
   const headingText = normalizedQuery
     ? `Search Results for "${normalizedQuery}"`
@@ -101,7 +102,7 @@ async function SearchResults({
       scopeUsername,
     });
 
-    if (!searchResults.results || searchResults.results.length === 0) {
+    if (searchResults.results.length === 0) {
       return (
         <SearchEmptyState
           description={
@@ -171,7 +172,7 @@ async function SearchResults({
 }
 
 export function SearchPageContent(props: SearchPageContentProps) {
-  const resultKey = `${props.scopeUsername || "global"}:${props.query?.trim() || ""}`;
+  const resultKey = `${props.scopeUsername || "global"}:${normalizeSearchQuery(props.query)}`;
   return (
     <ViewTransition
       default="none"
