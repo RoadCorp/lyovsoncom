@@ -116,14 +116,14 @@ async function getLyovsonRoutes({
   ];
 
   const counts = await getLyovsonFeedCounts(username);
-  const totalMixedItems = counts?.all || 0;
 
+  // /{username}/page/N paginates posts, not the mixed feed.
   addLyovsonPaginatedRoutes({
     routes,
     siteUrl,
     username,
     basePath: "",
-    totalItems: totalMixedItems,
+    totalItems: counts?.posts || 0,
     pageSize: LYOVSON_ITEMS_PER_PAGE,
     lastModified,
     priority: 0.65,

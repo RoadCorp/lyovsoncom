@@ -46,17 +46,50 @@ interface BuildSeoMetadataArgs {
   twitterCard?: "summary" | "summary_large_image";
 }
 
+const BLOB_HOST_SUFFIX = ".public.blob.vercel-storage.com";
+
+/**
+ * Uploads are full-size originals (up to 6 MB), which is slow for scrapers
+ * and over X's 5 MB card limit. Serve Blob images through the image optimizer
+ * at the Open Graph width instead.
+ */
+export function getSocialImage(image: SeoImageInput) {
+  let isBlobUpload = false;
+  try {
+    isBlobUpload = new URL(image.url).hostname.endsWith(BLOB_HOST_SUFFIX);
+  } catch {
+    // Relative or malformed URLs are left as they are.
+  }
+
+  if (!isBlobUpload) {
+    return {
+      url: image.url,
+      alt: image.alt || undefined,
+      width: image.width || undefined,
+      height: image.height || undefined,
+    };
+  }
+
+  const width = DEFAULT_OPEN_GRAPH_IMAGE_WIDTH;
+  const height =
+    image.width && image.height
+      ? Math.round((image.height * width) / image.width)
+      : undefined;
+
+  return {
+    url: `${getCanonicalSiteOrigin()}/_next/image?url=${encodeURIComponent(image.url)}&w=${width}&q=75`,
+    alt: image.alt || undefined,
+    width,
+    height,
+  };
+}
+
 function normalizeImage(image: SeoImageInput | null | undefined) {
   if (!image?.url) {
     return DEFAULT_OG_IMAGE;
   }
 
-  return {
-    url: image.url,
-    alt: image.alt || undefined,
-    width: image.width || undefined,
-    height: image.height || undefined,
-  };
+  return getSocialImage(image);
 }
 
 function normalizeKeywords(keywords: string[] | string | undefined) {
