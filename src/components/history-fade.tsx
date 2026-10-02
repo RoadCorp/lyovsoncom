@@ -8,6 +8,21 @@ const FADE_ATTRIBUTE = "data-history-fade";
 const FADE_CLEANUP_MS = 160;
 
 /**
+ * Whether a navigation should get the fade: history traversals only, and
+ * not when the browser already animated it (for example Safari's
+ * swipe-back), which would otherwise play two animations in a row.
+ */
+export function shouldFadeNavigation(
+  event: Pick<NavigateEvent, "navigationType"> & {
+    hasUAVisualTransition?: boolean;
+  }
+) {
+  return (
+    event.navigationType === "traverse" && event.hasUAVisualTransition !== true
+  );
+}
+
+/**
  * Back and Forward restore the previous page without a view transition, so
  * it used to appear abruptly. Fade the page content in over 120ms instead.
  * The attribute is set in a layout effect so the restored page never paints
@@ -22,15 +37,16 @@ export function HistoryFade() {
       traversing.current = true;
     };
     const onNavigate = (event: Event) => {
-      if ((event as NavigateEvent).navigationType === "traverse") {
+      if (shouldFadeNavigation(event as NavigateEvent)) {
         onTraverse();
       }
     };
     // React renders popstate transitions synchronously inside the router's
     // listener, so the flag must be set before that listener runs. The
-    // Navigation API's navigate event fires before popstate; without it, a
-    // capture listener runs before the router's. Listening to both in
-    // Chromium would leave a stale flag behind for the next link click.
+    // Navigation API's navigate event (Baseline since January 2026) fires
+    // before popstate and says whether the browser already animated the
+    // navigation; older browsers fall back to a capture popstate listener.
+    // Listening to both would leave a stale flag for the next link click.
     const navigation = (window as Window & { navigation?: EventTarget })
       .navigation;
     if (navigation) {

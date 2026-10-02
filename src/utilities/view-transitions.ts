@@ -15,6 +15,7 @@ const archiveMovement = {
   default: "vt-card",
   [transitionTypes.drillIn]: "none",
   [transitionTypes.postDrillIn]: "none",
+  [transitionTypes.navBack]: "none",
   [transitionTypes.navMode]: "none",
 } as const;
 
@@ -51,6 +52,7 @@ export const frontendViewTransitionClasses = {
       [transitionTypes.navMode]: "none",
       [transitionTypes.drillIn]: "none",
       [transitionTypes.postDrillIn]: "none",
+      [transitionTypes.navBack]: "none",
       [transitionTypes.paginationNext]: "vt-pagination-next",
       [transitionTypes.paginationPrev]: "vt-pagination-prev",
     },
@@ -59,6 +61,7 @@ export const frontendViewTransitionClasses = {
       [transitionTypes.navMode]: "none",
       [transitionTypes.drillIn]: "none",
       [transitionTypes.postDrillIn]: "none",
+      [transitionTypes.navBack]: "none",
       [transitionTypes.paginationNext]: "vt-pagination-next",
       [transitionTypes.paginationPrev]: "vt-pagination-prev",
     },
