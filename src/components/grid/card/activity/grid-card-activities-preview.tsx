@@ -142,6 +142,7 @@ export function GridCardActivitiesPreview({
                     <ActivityIcon
                       aria-hidden="true"
                       className="h-4 w-4 shrink-0"
+                      data-activity-type={activity.activityType}
                     />
                     <span className="sr-only">{activityTypeLabel}</span>
                     {dateLabel ? (

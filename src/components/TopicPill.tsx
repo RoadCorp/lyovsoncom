@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { AppLink } from "@/components/AppLink";
 import { cn } from "@/lib/utils";
 import { topicRoute } from "@/utilities/routes";
@@ -6,15 +6,24 @@ import { topicRoute } from "@/utilities/routes";
 interface TopicPillProps {
   children: ReactNode;
   className?: string;
+  /** The topic's CMS colour; only its hue is used (see .topic-pill). */
+  color?: string | null;
 }
 
-export function TopicPill({ children, className }: TopicPillProps) {
+const HEX_COLOR = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i;
+
+export function TopicPill({ children, className, color }: TopicPillProps) {
   return (
     <span
       className={cn(
         "surface-chip topic-pill tone-heading flex w-full items-center justify-center",
         className
       )}
+      style={
+        color && HEX_COLOR.test(color)
+          ? ({ "--topic": color } as CSSProperties)
+          : undefined
+      }
     >
       {children}
     </span>
@@ -22,6 +31,7 @@ export function TopicPill({ children, className }: TopicPillProps) {
 }
 
 interface TopicLinkData {
+  color?: string | null;
   id: number | string;
   name?: string | null;
   slug?: string | null;
@@ -62,7 +72,7 @@ export function TopicPillList({
           key={topic.id}
           prefetch={false}
         >
-          <TopicPill>{topic.name}</TopicPill>
+          <TopicPill color={topic.color}>{topic.name}</TopicPill>
         </AppLink>
       ))}
       {hiddenCount > 0 && allTopicsHref ? (
