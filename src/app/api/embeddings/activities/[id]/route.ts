@@ -268,10 +268,7 @@ export async function GET(
       status: 200,
       headers: {
         "Content-Type": "application/json; charset=utf-8",
-        "Cache-Control": regenerate
-          ? "no-cache, no-store, must-revalidate"
-          : "public, max-age=3600, s-maxage=3600",
-        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "private, no-store",
       },
     });
 

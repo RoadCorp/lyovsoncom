@@ -1,5 +1,6 @@
 import type { NextRequest } from "next/server";
 import type { Payload } from "payload";
+import { isCronRequest } from "./cron-auth";
 
 interface EmbeddingMutationAuthResult {
   authorized: boolean;
@@ -34,12 +35,7 @@ export async function authorizeEmbeddingMutation(
   request: NextRequest,
   payload: Payload
 ): Promise<EmbeddingMutationAuthResult> {
-  const authHeader = request.headers.get("authorization");
-  const bearerToken = authHeader?.startsWith("Bearer ")
-    ? authHeader.slice("Bearer ".length)
-    : null;
-
-  if (bearerToken && bearerToken === process.env.CRON_SECRET) {
+  if (isCronRequest(request.headers)) {
     return { authorized: true };
   }
 

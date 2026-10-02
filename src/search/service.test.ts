@@ -13,6 +13,7 @@ import {
 } from "./service";
 
 vi.mock("@/utilities/payload-client", () => ({ getPayloadClient: vi.fn() }));
+vi.mock("@/utilities/api-telemetry", () => ({ logApiTelemetry: vi.fn() }));
 vi.mock("@/utilities/generate-embedding", () => ({
   EMBEDDING_VECTOR_DIMENSIONS: 1536,
   generateEmbedding: vi.fn(),
@@ -175,11 +176,10 @@ describe("search execution", () => {
         new NextRequest("https://www.lyovson.com/api/search?q=books")
       );
       expect(response.status).toBe(500);
-      expect(response.headers.has("Cache-Control")).toBe(false);
-      expect(await response.json()).toMatchObject({
-        message: "Search failed",
-        results: [],
-      });
+      expect(response.headers.get("Cache-Control")).toBe("no-store");
+      const body = await response.json();
+      expect(body).toMatchObject({ message: "Search failed", results: [] });
+      expect(JSON.stringify(body)).not.toContain("Unavailable");
       if (failure === "provider") {
         expect(execute).not.toHaveBeenCalled();
       }
