@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { FirstLoadEntrance } from "@/components/first-load-entrance";
 import { HistoryFade } from "@/components/history-fade";
 
 /**
@@ -24,6 +25,7 @@ export const Grid = ({
         {nav}
         <main className="contents">
           <HistoryFade />
+          <FirstLoadEntrance />
           <span className="sr-only" id="main-content" tabIndex={-1} />
           {children}
         </main>
