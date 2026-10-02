@@ -4,16 +4,26 @@ import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next/types";
 import type { PaginatedDocs } from "payload";
 import type { ReactNode } from "react";
+import {
+  ACTIVITIES_PREVIEW_PAGINATION_CLASS_NAME,
+  GridCardActivitiesPreview,
+  HOME_ACTIVITIES_PREVIEW_RAIL_CLASS_NAME,
+} from "@/components/grid";
 import { JsonLd } from "@/components/json-ld";
 import { Pagination } from "@/components/Pagination";
 import { PublicPageBoundary } from "@/components/public-page-boundary";
+import { ACTIVITY_PREVIEW_LIMIT } from "@/utilities/activity-preview";
 import { getPaginatedStaticParams } from "@/utilities/archive";
 import { ensureStaticParams } from "@/utilities/ensure-static-params";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
-import { getActivityCount } from "@/utilities/get-activity";
+import {
+  getActivityCount,
+  getLatestActivities,
+} from "@/utilities/get-activity";
 import { getNoteCount } from "@/utilities/get-note";
 import { getPostCount } from "@/utilities/get-post";
 import {
+  type BuildPaginatedArchiveMetadataArgs,
   buildPaginatedArchiveMetadata,
   getPaginatedArchivePageState,
   isPaginatedArchivePageOutOfRange,
@@ -50,6 +60,8 @@ interface PaginatedArchivePageConfig<TDoc, TIndex extends string> {
     /** JSON-LD name, followed by " - Page N". */
     schemaName: string;
   };
+  /** Tags the static params with these before the collection tag. */
+  extraCacheTags?: string[];
   getItemUrl: (doc: TDoc) => string | null;
   getPage: (pageNumber: number, limit: number) => Promise<PaginatedDocs<TDoc>>;
   perPage: number;
@@ -58,14 +70,22 @@ interface PaginatedArchivePageConfig<TDoc, TIndex extends string> {
     index: () => Route<TIndex>;
     page: (pageNumber: number) => string;
   };
+  /** Social image and keywords for the page metadata. */
+  seo?: Pick<BuildPaginatedArchiveMetadataArgs, "image" | "keywords">;
+  /** Adds the latest activities rail after the items, as on the home page. */
+  withActivitiesPreview?: boolean;
 }
 
 async function getArchiveStaticParams(
   collection: ArchiveCollection,
-  perPage: number
+  perPage: number,
+  extraCacheTags: string[]
 ) {
   "use cache";
 
+  for (const tag of extraCacheTags) {
+    cacheTag(tag);
+  }
   cacheTag(collection);
   cacheLife("static");
 
@@ -86,14 +106,17 @@ async function getArchiveStaticParams(
 export function createPaginatedArchivePage<TDoc, TIndex extends string>({
   collection,
   copy,
+  extraCacheTags = [],
   getItemUrl,
   getPage,
   perPage,
   renderItems,
   routes,
+  seo,
+  withActivitiesPreview = false,
 }: PaginatedArchivePageConfig<TDoc, TIndex>) {
   function generateStaticParams() {
-    return getArchiveStaticParams(collection, perPage);
+    return getArchiveStaticParams(collection, perPage, extraCacheTags);
   }
 
   async function PageContent({
@@ -111,7 +134,14 @@ export function createPaginatedArchivePage<TDoc, TIndex extends string>({
     }
 
     const sanitizedPageNumber = pageState.pageNumber;
-    const response = await getPage(sanitizedPageNumber, perPage);
+    const [response, activities] = await Promise.all([
+      getPage(sanitizedPageNumber, perPage),
+      withActivitiesPreview
+        ? getLatestActivities(ACTIVITY_PREVIEW_LIMIT).then(
+            (preview) => preview.docs
+          )
+        : null,
+    ]);
 
     if (
       !response ||
@@ -133,21 +163,51 @@ export function createPaginatedArchivePage<TDoc, TIndex extends string>({
       }),
     });
 
+    const heading = (
+      <h1 className="sr-only">
+        {`${copy.heading} - Page `}
+        {sanitizedPageNumber}
+      </h1>
+    );
+    const jsonLd = <JsonLd data={collectionPageSchema} />;
+    const items = renderItems(docs);
+    const pagination =
+      totalPages > 1 && page ? (
+        <Pagination
+          className={
+            activities?.length
+              ? ACTIVITIES_PREVIEW_PAGINATION_CLASS_NAME
+              : undefined
+          }
+          getPageHref={(pageNumberValue) => routes.page(pageNumberValue)}
+          page={page}
+          totalPages={totalPages}
+        />
+      ) : null;
+
+    // Two literal trees keep the children identical to the original pages:
+    // no empty slot where the preview rail would go.
+    if (!activities) {
+      return (
+        <>
+          {heading}
+          {jsonLd}
+          {items}
+          {pagination}
+        </>
+      );
+    }
+
     return (
       <>
-        <h1 className="sr-only">
-          {`${copy.heading} - Page `}
-          {sanitizedPageNumber}
-        </h1>
-        <JsonLd data={collectionPageSchema} />
-        {renderItems(docs)}
-        {totalPages > 1 && page ? (
-          <Pagination
-            getPageHref={(pageNumberValue) => routes.page(pageNumberValue)}
-            page={page}
-            totalPages={totalPages}
-          />
-        ) : null}
+        {heading}
+        {jsonLd}
+        {items}
+        <GridCardActivitiesPreview
+          activities={activities}
+          className={HOME_ACTIVITIES_PREVIEW_RAIL_CLASS_NAME}
+        />
+        {pagination}
       </>
     );
   }
@@ -169,6 +229,7 @@ export function createPaginatedArchivePage<TDoc, TIndex extends string>({
       description: copy.metaDescription(sanitizedPageNumber),
       pageNumber: sanitizedPageNumber,
       title: copy.metaTitle(sanitizedPageNumber),
+      ...seo,
     });
   }
 

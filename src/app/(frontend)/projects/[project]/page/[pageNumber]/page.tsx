@@ -1,180 +1,40 @@
-import { PublicPageBoundary } from "@/components/public-page-boundary";
+import { GridCardProjectHero } from "@/components/grid/card/project";
+import { PROJECT_POSTS_PER_PAGE } from "@/utilities/archive";
+import { createEntityArchivePage } from "@/utilities/create-entity-archive-page";
+import { getProject } from "@/utilities/get-project";
+import { getPaginatedProjectPosts } from "@/utilities/get-project-posts";
+import { projectPageRoute, projectRoute } from "@/utilities/routes";
+
 export const prefetch = "partial";
 
-import { cacheLife, cacheTag } from "next/cache";
-import { notFound, redirect } from "next/navigation";
-import type { Metadata } from "next/types";
-import { CollectionArchive } from "@/components/CollectionArchive";
-import { GridCardProjectHero } from "@/components/grid/card/project";
-import { JsonLd } from "@/components/json-ld";
-import { Pagination } from "@/components/Pagination";
-import {
-  getPaginatedStaticParams,
-  PROJECT_POSTS_PER_PAGE,
-  parsePageNumber,
-} from "@/utilities/archive";
-import { ensureStaticParams } from "@/utilities/ensure-static-params";
-import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
-import { getProject } from "@/utilities/get-project";
-import {
-  getPaginatedProjectPosts,
-  getProjectPostCount,
-} from "@/utilities/get-project-posts";
-import { buildPaginatedArchiveMetadata } from "@/utilities/paginated-archive";
-import { getPayloadClient } from "@/utilities/payload-client";
-import {
-  absoluteUrl,
-  postRoute,
-  projectPageRoute,
-  projectRoute,
-} from "@/utilities/routes";
-import { buildNotFoundMetadata } from "@/utilities/seo-metadata";
-
-interface Args {
-  params: Promise<{
-    pageNumber: string;
-    project: string;
-  }>;
-}
-
-export async function generateStaticParams() {
-  "use cache";
-  cacheTag("projects");
-  cacheLife("static");
-
-  const payload = await getPayloadClient();
-  const projects = await payload.find({
-    collection: "projects",
-    limit: 1000,
-  });
-
-  const paths: { pageNumber: string; project: string }[] = [];
-  let fallbackProject: string | null = null;
-
-  for (const project of projects.docs) {
-    if (!(typeof project === "object" && "slug" in project && project.slug)) {
-      continue;
-    }
-
-    const projectSlug = project.slug as string;
-    fallbackProject ??= projectSlug;
-
-    const totalPosts = await getProjectPostCount(projectSlug);
-    for (const pageNumber of getPaginatedStaticParams(
-      totalPosts ?? 0,
-      PROJECT_POSTS_PER_PAGE
-    )) {
-      paths.push({
-        project: projectSlug,
-        pageNumber,
-      });
-    }
-  }
-
-  return ensureStaticParams(paths, {
-    project: fallbackProject || "__placeholder__",
-    pageNumber: "__placeholder__",
-  });
-}
-
-async function PageContent({ params: paramsPromise }: Args) {
-  const { project: projectSlug, pageNumber } = await paramsPromise;
-  const sanitizedPageNumber = parsePageNumber(pageNumber);
-
-  if (sanitizedPageNumber == null) {
-    return notFound();
-  }
-
-  if (sanitizedPageNumber === 1) {
-    redirect(projectRoute(projectSlug));
-  }
-
-  const project = await getProject(projectSlug);
-  if (!project) {
-    return notFound();
-  }
-
-  const postsResponse = await getPaginatedProjectPosts(
-    projectSlug,
-    sanitizedPageNumber,
-    PROJECT_POSTS_PER_PAGE
-  );
-
-  if (!postsResponse) {
-    return notFound();
-  }
-
-  const { docs: posts, page, totalPages } = postsResponse;
-  const projectName = project.name || projectSlug;
-  const currentPageRoute = projectPageRoute(projectSlug, sanitizedPageNumber);
-
-  const collectionPageSchema = generateCollectionPageSchema({
-    name: `${projectName} - Page ${sanitizedPageNumber}`,
-    description:
-      project.description ||
-      `Archive of ${projectName} posts on page ${sanitizedPageNumber}.`,
-    url: absoluteUrl(currentPageRoute),
-    itemCount: postsResponse.totalDocs,
-    items: posts
-      .filter((post) => post.slug)
-      .map((post) => ({
-        url: absoluteUrl(postRoute(post.slug as string)),
-      })),
-  });
-
-  return (
-    <>
-      <JsonLd data={collectionPageSchema} />
-      <h1 className="sr-only">{projectName}</h1>
-      <GridCardProjectHero project={project} />
-      <CollectionArchive posts={posts} />
-      {totalPages > 1 && page ? (
-        <Pagination
-          getPageHref={(pageNumberValue) =>
-            projectPageRoute(projectSlug, pageNumberValue)
-          }
-          page={page}
-          totalPages={totalPages}
-        />
-      ) : null}
-    </>
-  );
-}
-
-export async function generateMetadata({
-  params: paramsPromise,
-}: Args): Promise<Metadata> {
-  const { project: projectSlug, pageNumber } = await paramsPromise;
-  const sanitizedPageNumber = parsePageNumber(pageNumber);
-
-  if (sanitizedPageNumber == null || sanitizedPageNumber < 2) {
-    return buildNotFoundMetadata();
-  }
-
-  const project = await getProject(projectSlug);
-  if (!project) {
-    return buildNotFoundMetadata({
+const archive = createEntityArchivePage({
+  copy: {
+    metaDescription: (name) => `Posts from ${name}`,
+    metaTitle: (name, page) => `${name} Posts Page ${page}`,
+    notFound: {
       title: "Project Not Found",
       description: "The requested project could not be found",
-    });
-  }
+    },
+    schemaDescription: (name, page) =>
+      `Archive of ${name} posts on page ${page}.`,
+  },
+  entity: "projects",
+  getEntity: getProject,
+  getPage: getPaginatedProjectPosts,
+  param: "project",
+  perPage: PROJECT_POSTS_PER_PAGE,
+  renderPage: ({ entity, jsonLd, name, pagination, posts }) => (
+    <>
+      {jsonLd}
+      <h1 className="sr-only">{name}</h1>
+      <GridCardProjectHero project={entity} />
+      {posts}
+      {pagination}
+    </>
+  ),
+  routes: { index: projectRoute, page: projectPageRoute },
+});
 
-  const projectName = project.name || projectSlug;
-  const title = `${projectName} Posts Page ${sanitizedPageNumber}`;
-  const description = project.description || `Posts from ${projectName}`;
-
-  return buildPaginatedArchiveMetadata({
-    canonicalPath: projectPageRoute(projectSlug, sanitizedPageNumber),
-    description,
-    pageNumber: sanitizedPageNumber,
-    title,
-  });
-}
-
-export default function Page(props: Args) {
-  return (
-    <PublicPageBoundary>
-      <PageContent {...props} />
-    </PublicPageBoundary>
-  );
-}
+export const generateMetadata = archive.generateMetadata;
+export const generateStaticParams = archive.generateStaticParams;
+export default archive.Page;

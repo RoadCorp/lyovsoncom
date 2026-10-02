@@ -1,141 +1,34 @@
-import { PublicPageBoundary } from "@/components/public-page-boundary";
+import { CollectionArchive } from "@/components/CollectionArchive";
+import { POSTS_PER_PAGE } from "@/utilities/archive";
+import { createPaginatedArchivePage } from "@/utilities/create-paginated-archive-page";
+import { getPaginatedPosts } from "@/utilities/get-post";
+import { homepageRoute, homeRoute, postUrl } from "@/utilities/routes";
+
 export const prefetch = "partial";
 
-import { cacheLife, cacheTag } from "next/cache";
-import { notFound, redirect } from "next/navigation";
-import type { Metadata } from "next/types";
-import { CollectionArchive } from "@/components/CollectionArchive";
-import {
-  ACTIVITIES_PREVIEW_PAGINATION_CLASS_NAME,
-  GridCardActivitiesPreview,
-  HOME_ACTIVITIES_PREVIEW_RAIL_CLASS_NAME,
-} from "@/components/grid";
-import { JsonLd } from "@/components/json-ld";
-import { Pagination } from "@/components/Pagination";
-import { ACTIVITY_PREVIEW_LIMIT } from "@/utilities/activity-preview";
-import {
-  getPaginatedStaticParams,
-  MAX_INDEXED_PAGE,
-  POSTS_PER_PAGE,
-  parsePageNumber,
-} from "@/utilities/archive";
-import { ensureStaticParams } from "@/utilities/ensure-static-params";
-import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
-import { getLatestActivities } from "@/utilities/get-activity";
-import { getPaginatedPosts, getPostCount } from "@/utilities/get-post";
-import {
-  getPaginatedArchivePageState,
-  isPaginatedArchivePageOutOfRange,
-} from "@/utilities/paginated-archive";
-import {
-  absoluteUrl,
-  homepageRoute,
-  homeRoute,
-  postUrl,
-} from "@/utilities/routes";
-import {
-  buildNotFoundMetadata,
-  buildSeoMetadata,
-} from "@/utilities/seo-metadata";
-
-interface Args {
-  params: Promise<{
-    pageNumber: string;
-  }>;
-}
-
-export async function generateStaticParams() {
-  "use cache";
-
-  cacheTag("homepage");
-  cacheTag("posts");
-  cacheLife("static");
-
-  const { totalDocs } = await getPostCount();
-
-  return ensureStaticParams(
-    getPaginatedStaticParams(totalDocs, POSTS_PER_PAGE).map((pageNumber) => ({
-      pageNumber,
-    })),
-    { pageNumber: "__placeholder__" }
-  );
-}
-
-async function PageContent({ params: paramsPromise }: Args) {
-  const { pageNumber } = await paramsPromise;
-  const pageState = getPaginatedArchivePageState(pageNumber);
-
-  if (pageState.kind === "notFound") {
-    notFound();
-  }
-
-  if (pageState.kind === "redirect") {
-    redirect(homeRoute());
-  }
-
-  const sanitizedPageNumber = pageState.pageNumber;
-  const [postResponse, activityResponse] = await Promise.all([
-    getPaginatedPosts(sanitizedPageNumber, POSTS_PER_PAGE),
-    getLatestActivities(ACTIVITY_PREVIEW_LIMIT),
-  ]);
-  const { docs, totalDocs, totalPages } = postResponse;
-  const hasActivitiesPreview = activityResponse.docs.length > 0;
-
-  if (isPaginatedArchivePageOutOfRange(sanitizedPageNumber, totalPages)) {
-    notFound();
-  }
-
-  const collectionPageSchema = generateCollectionPageSchema({
-    name: `Latest Posts - Page ${sanitizedPageNumber}`,
-    description: `Latest posts archive page ${sanitizedPageNumber}.`,
-    url: absoluteUrl(homepageRoute(sanitizedPageNumber)),
-    itemCount: totalDocs,
-    items: docs
-      .filter((post) => post.slug)
-      .map((post) => ({ url: postUrl(post.slug as string) })),
-  });
-
-  return (
-    <>
-      <h1 className="sr-only">
-        Lyóvson.com - Latest Posts - Page {sanitizedPageNumber}
-      </h1>
-      <JsonLd data={collectionPageSchema} />
-      <CollectionArchive posts={docs} />
-      <GridCardActivitiesPreview
-        activities={activityResponse.docs}
-        className={HOME_ACTIVITIES_PREVIEW_RAIL_CLASS_NAME}
-      />
-      <Pagination
-        className={
-          hasActivitiesPreview
-            ? ACTIVITIES_PREVIEW_PAGINATION_CLASS_NAME
-            : undefined
-        }
-        getPageHref={(pageNumberValue) => homepageRoute(pageNumberValue)}
-        page={sanitizedPageNumber}
-        totalPages={totalPages}
-      />
-    </>
-  );
-}
-
-export async function generateMetadata({
-  params: paramsPromise,
-}: Args): Promise<Metadata> {
-  const { pageNumber } = await paramsPromise;
-  const sanitizedPageNumber = parsePageNumber(pageNumber);
-
-  if (sanitizedPageNumber == null || sanitizedPageNumber < 2) {
-    return buildNotFoundMetadata();
-  }
-
-  const title = `Latest Posts - Page ${sanitizedPageNumber}`;
-  const description = `Latest posts archive page ${sanitizedPageNumber} from Lyovson.com.`;
-
-  return buildSeoMetadata({
-    title,
-    description,
+const archive = createPaginatedArchivePage({
+  collection: "posts",
+  copy: {
+    heading: "Lyóvson.com - Latest Posts",
+    metaDescription: (page) =>
+      `Latest posts archive page ${page} from Lyovson.com.`,
+    metaTitle: (page) => `Latest Posts - Page ${page}`,
+    schemaDescription: (page) => `Latest posts archive page ${page}.`,
+    schemaName: "Latest Posts",
+  },
+  extraCacheTags: ["homepage"],
+  getItemUrl: (post) => (post.slug ? postUrl(post.slug) : null),
+  getPage: getPaginatedPosts,
+  perPage: POSTS_PER_PAGE,
+  renderItems: (posts) => <CollectionArchive posts={posts} />,
+  routes: { index: homeRoute, page: homepageRoute },
+  seo: {
+    image: {
+      url: "/og-image.png",
+      width: 1200,
+      height: 630,
+      alt: "Latest Posts",
+    },
     keywords: [
       "latest posts",
       "articles",
@@ -150,25 +43,10 @@ export async function generateMetadata({
       "technology",
       "blog",
     ],
-    canonicalPath: homepageRoute(sanitizedPageNumber),
-    image: {
-      url: "/og-image.png",
-      width: 1200,
-      height: 630,
-      alt: "Latest Posts",
-    },
-    robots: {
-      index: sanitizedPageNumber <= MAX_INDEXED_PAGE,
-      follow: true,
-      noarchive: sanitizedPageNumber > 1,
-    },
-  });
-}
+  },
+  withActivitiesPreview: true,
+});
 
-export default function Page(props: Args) {
-  return (
-    <PublicPageBoundary>
-      <PageContent {...props} />
-    </PublicPageBoundary>
-  );
-}
+export const generateMetadata = archive.generateMetadata;
+export const generateStaticParams = archive.generateStaticParams;
+export default archive.Page;
