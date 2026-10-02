@@ -4,7 +4,7 @@ Date: September 6, 2026
 Status: Implementation and final polish verified locally; push to `main` authorized. Production verification remains separate.
 Notion: [Public experience plan](https://app.notion.com/p/3d3a881304bb817c8cade59f2451329a).
 Source baseline: `655c07e67a2bd6fc1eb2e4e7cb638e26ddaa2b01`.
-Scope: all 37 frontend page definitions, their layouts and states, and the component inventory in [Public experience coverage](public-experience-coverage.md).
+Scope: all 37 frontend page definitions, their layouts and states, and the component inventory in [Public experience coverage](../public-experience-coverage.md).
 
 ## Outcome and scope
 

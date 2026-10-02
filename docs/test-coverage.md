@@ -1,6 +1,6 @@
 # Test coverage
 
-Reviewed September 6, 2026. The suite targets public behavior, privacy, freshness, and paid-work boundaries. There is no blanket line-coverage target.
+Reviewed September 6, 2026; updated October 2, 2026 after the site audit. The suite targets public behavior, privacy, freshness, and paid-work boundaries. There is no blanket line-coverage target.
 
 ## What runs where
 
@@ -16,13 +16,13 @@ Reviewed September 6, 2026. The suite targets public behavior, privacy, freshnes
 | Risk | Coverage |
 | --- | --- |
 | Unauthorized embedding reads or paid mutations | Every embedding GET/POST handler rejects missing and invalid credentials; missing credentials do not initialize Payload. Shared auth accepts the configured cron secret or an authenticated Payload session and fails closed on auth errors. |
-| Duplicate paid work or recursive writes | The embedding task skips unchanged or ineligible content, rejects incompatible output, persists recursion guards, and propagates provider failures for retries. |
-| Search failures or mixed-up results | Input validation, repeated query parameters on global/profile pages, crawler rejection before work, global/scoped response serialization and parameter binding, invalid vectors, provider/database failure responses, public hydration predicates, rank order, and removed-document handling. |
+| Duplicate paid work or recursive writes | The shared embedding path skips unchanged text unless forced and skips ineligible content. It writes conditionally on `updatedAt`, so a save during generation stays stale. Stale markers compare against the stored document, so resubmitting unchanged fields keeps the hash. The daily cron sync is stale-only. Without an API key, nothing calls the provider. |
+| Search failures or mixed-up results | Full-text fallback when the query embedding is missing or fails, input validation, repeated query parameters on global/profile pages, crawler rejection before work, global/scoped response serialization and parameter binding, invalid vectors, provider/database failure responses, public hydration predicates, rank order, and removed-document handling. |
 | Private content in public pages | Public note/activity predicates, excluded embedding fields, public profile selection, recommended-note access, and activity date identity. |
 | Stale withdrawn or renamed content | Publication, privacy withdrawal, deletion, slug/date changes, dependency invalidation, and feed freshness. |
 | Invalid archive URLs | Full integer parsing, safe numeric bounds, canonical page-one redirects, and last-page boundaries. Regression inputs include `2junk`, `2.5`, and `2e3`. |
 | Lost or unsafe article content | Escaping and syntax highlighting, combined rich-text formatting, line breaks, unsupported-block fallback, and article-title identity after navigation. |
-| Broken public navigation | Route smoke checks, missing-page metadata, actual playground-to-admin redirect, initial shell and partial navigation, Back, author context, keyboard focus, themes, and narrow layouts. |
+| Broken public navigation | Route smoke checks, unknown embedding collections rejected before work, hidden placeholder pages kept routable, missing-page metadata, actual playground-to-admin redirect, initial shell and partial navigation, Back, author context, keyboard focus, themes, and narrow layouts. |
 | Hidden media or stale clipboard feedback | Video pause, YouTube reset, clipboard failure announcements, and delayed completion after hiding. |
 | Broken syndication and shared transitions | Feed formats/headers/fallbacks, relation deduplication, unique transition names, and UTC activity paths. |
 
@@ -38,12 +38,10 @@ Paid provider success, real pgvector ranking/SQL execution, authenticated CMS ed
 
 ## Latest local verification
 
-- 128 Vitest cases passed across 12 files.
-- 72 Playwright cases passed across Chromium, WebKit, and Firefox in 44.2 seconds; the prior 150-case run took about 78 seconds.
-- The build generated all 173 routes; type checking and SEO checks passed.
-- Lint passed with zero warnings or errors using the core, Next.js, React, and Vitest presets. See [linting](linting.md) for the documented rule exceptions.
-- Four new pagination cases failed against the old parser and passed after the fix.
-- The repeated-search-parameter browser check reproduced a `trim is not a function` crash before the fix and passed afterward on global and profile search pages.
+- October 2, 2026: 166 Vitest cases passed across 17 files.
+- 73 Playwright cases passed across Chromium, WebKit and Firefox against the read-only preview.
+- The build generated all routes, and type checking, SEO checks and lint (zero warnings) passed.
+- The audit's design and motion work was also checked outside the suite with scripted probes. They covered axe on 17 routes in both themes, one `startViewTransition` per navigation, the Back fade in all three engines, a single skeleton per detail route, and title overflow. The probes live in the session that ran them. The repeatable parts are the crawl diff and screenshots in `.claude/skills/visual-review`.
 
 ## Run
 

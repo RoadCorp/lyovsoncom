@@ -1212,10 +1212,10 @@ Then analyze which similarity scores correlate with clicks.
 - [Next.js 15 - "use cache" Directive](https://nextjs.org/docs/app/api-reference/directives/use-cache)
 
 ### Related Code
-- [src/utilities/generate-embedding.ts](../src/utilities/generate-embedding.ts) - Embedding generation
-- [src/components/grid/card/related/index.tsx](../src/components/grid/card/related/index.tsx) - UI component
-- [src/payload.config.ts](../src/payload.config.ts) - Database config
-- [src/types/embeddings.ts](../src/types/embeddings.ts) - Type definitions
+- [src/utilities/generate-embedding.ts](../../src/utilities/generate-embedding.ts) - Embedding generation
+- [src/components/grid/card/related/index.tsx](../../src/components/grid/card/related/index.tsx) - UI component
+- [src/payload.config.ts](../../src/payload.config.ts) - Database config
+- src/types/embeddings.ts (`src/types/embeddings.ts`, since removed) - Type definitions
 
 ### Support
 - GitHub Issues: [Report bugs or request features](https://github.com/your-repo/issues)

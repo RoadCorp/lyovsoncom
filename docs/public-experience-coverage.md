@@ -5,7 +5,7 @@ Date: September 6, 2026. Baseline: `655c07e67a2bd6fc1eb2e4e7cb638e26ddaa2b01`.
 
 Notion: [Page and component coverage](https://app.notion.com/p/3d3a881304bb81cdbfd8f9636e399893).
 
-Companion to [Public experience integration plan](public-experience-plan.md). This ledger accounts for every frontend page and all non-app TSX modules, including the social-icon helper and the admin slug field. A file inventory is not a claim that every file ships or has been tested in a browser. Implementation is complete locally; executed checks and remaining release scenarios are recorded below and in `docs/public-experience-verification.md`. Payload admin is excluded.
+Companion to [Public experience integration plan](archive/public-experience-plan.md). Inventory as of September 6, 2026, updated for the October audit (removed files dropped; placeholder pages hidden; `/topics` added). This ledger accounts for every frontend page and all non-app TSX modules, including the social-icon helper and the admin slug field. A file inventory is not a claim that every file ships or has been tested in a browser. Implementation is complete locally; executed checks and remaining release scenarios are recorded below and in [`archive/public-experience-verification.md`](archive/public-experience-verification.md). Payload admin is excluded.
 
 ## Implementation result — September 6, 2026
 
@@ -15,7 +15,7 @@ Verification: 84 unit tests passed; 150 browser cases passed across Chromium, We
 
 Before final polish, the initial document's JavaScript increased by 929 bytes (183,759 → 184,688); two later chunks added 10,834 bytes. The shell tests prove useful rendering while dynamic content is withheld, not a measured 100ms guarantee or production cost reduction. Production cache behavior, field performance, paid-search success, exhaustive content fixtures and paused-frame transition review remain release checks. Push to `main` was authorized on September 6; deployed behavior must be verified separately.
 
-Evidence, repeatable commands and rollback notes: `docs/public-experience-verification.md`. Browser cases: `e2e/public-pages.spec.ts`, `e2e/public-navigation.spec.ts`, `e2e/media.spec.ts`.
+Evidence, repeatable commands and rollback notes: [`archive/public-experience-verification.md`](archive/public-experience-verification.md). Browser cases: `e2e/public-pages.spec.ts`, `e2e/public-navigation.spec.ts`, `e2e/media.spec.ts`.
 
 ## Shared acceptance across the inventory
 
@@ -42,20 +42,21 @@ Each row covers its page-local helper components and metadata/static-parameter f
 | `/[lyovson]/posts` | R13: Author posts | Shared author layout and filtered cached feed. | Profile stays anchored; child list shell; public summary reads. | Correct author scope; change section without profile flash. |
 | `/[lyovson]/posts/page/[pageNumber]` | R13: Author post pagination | Author/page/filter keyed cached feed. | URL boundary below shared layout; same summary/pager contract. | Author-specific total; first/last/invalid page. |
 | `/[lyovson]/search` | R19: Scoped search | Suspense around params/query, cached profile, submit-only search. | Account for author layout boundary separately; shell must not execute embeddings; direct query URLs and scope-aware pending announcements remain correct. | Rafa/Jess/global query switch; no cross-author results; Back. |
-| `/about` | R20: About placeholder | Synchronous placeholder card and static metadata. | Retain lightweight static content; instant menu destination. | Correct heading/canonical; small screen and theme; no new content project. |
+| `/about` | R20: About placeholder (hidden) | Synchronous placeholder card; `noindex, follow`; not in the menu or sitemap. | Keep the route; restore the menu and sitemap entries when real content exists. | Correct heading/canonical; robots meta. |
 | `/activities` | R06: Activities archive | Cached activity query with populated relationships. | Shape public card projection around reference/review/participant needs. | Different activity types; missing dates/media; correct order. |
 | `/activities/[date]/[slug]` | R07: Activity detail | Cached date+slug helper; multiple review/info panels. | Date+slug URL boundary; stable hero shell; preserve participants/references and sharing. | Same slug on different dates; changed date; missing reference; reviews. |
 | `/activities/page/[pageNumber]` | R06: Activities pagination | Params gate cached results. | URL boundary and preserved directional pager. | Forward/backward, last page and empty fixture. |
 | `/ai-docs` | R22: AI access guidance | Static guide with cached last-updated label. | Keep simple cached/static rendering and canonical discovery links. | Date freshness semantics; feeds/docs references; no unnecessary client module. |
-| `/am` | R20: Armenian section placeholder | Synchronous English placeholder for future Armenian section. | Retain static shell; do not introduce language model/routing changes. | Preserve current content/lang semantics; no implied completed translation. |
-| `/contact` | R20: Global contact placeholder | Synchronous placeholder; no active contact form. | Retain static destination; no optimistic submission work. | Keyboard/menu navigation; existing content only. |
+| `/am` | R20: Armenian section placeholder (hidden) | Synchronous placeholder card; `noindex, follow`; not in the menu or sitemap. | Keep the route; restore the menu and sitemap entries when real content exists. | Correct heading/canonical; robots meta. |
+| `/contact` | R20: Global contact placeholder (hidden) | Synchronous placeholder card; `noindex, follow`; not in the menu or sitemap. | Keep the route; restore the menu and sitemap entries when real content exists. | Correct heading/canonical; robots meta. |
+| `/topics` | Topics index | One cached query for topics with published posts and their counts; tinted pills. | Static, in the menu and sitemap. | Pill links, counts, both themes. |
 | `/notes` | R04: Notes archive | Cached depth-2 notes; full documents passed to cards. | Inventory excerpt/quote fields; evaluate summary projection; stable shell. | All note types; source references; empty list. |
 | `/notes/[slug]` | R05: Note detail | Cached note; separate loading; uncached RelatedNotes ID lookup. | Public-filter related results before caching; body/metadata sharing; independent recommendations. | Private/draft fixture excluded; missing reference; duplicate related item; long quote. |
 | `/notes/page/[pageNumber]` | R04: Notes pagination | Params gate cached notes; shared pagination. | URL boundary; same summary contract; directional continuity. | Page-one redirect; page beyond total; notes → detail → Back. |
 | `/offline` | R23: Offline information | Existing recovery/information page; no offline retry rollout here. | Keep lightweight; distinguish informational page from guaranteed offline availability. | Links work when connected; no new service worker or fake offline guarantee. |
 | `/page/[pageNumber]` | R01: Home pagination | URL params gate cached posts/activity reads. | Route-local URL boundary; preserve rail; directional page change. | Page 1 redirect; invalid/out-of-range page; Back to prior scroll. |
 | `/playground` | R24: Protected utility | Suspense then headers/auth; redirects unauthenticated visitors to admin. | Retain auth-only behavior; no shared public cache or eager prefetch; no admin work. | Unauthenticated redirect; isolated authenticated fixture if needed. |
-| `/playground/skeleton` | R25: Skeleton utility | Existing skeleton demonstration. | Use for geometry review; do not convert into a new product feature. | Card dimensions/light-dark/reduced motion; retain existing visibility. |
+| `/playground/skeleton` | R25: Skeleton utility | Auth-guarded in the page (`RequireUser`); anonymous visitors get only the fallback and a redirect to admin. | Use for geometry review; do not convert into a new product feature. | Unauthenticated redirect; card dimensions in both themes. |
 | `/posts` | R02: Posts archive | Cached summary query; shared archive cards and pager. | Instant archive shell; selective detail prefetch; preserve real counts. | First/last page; overlap; empty fixture. |
 | `/posts/[slug]` | R03: Post detail | Cached article; params awaited at page; inline uncached RelatedPosts in Suspense. | URL boundary; cached public recommendations; isolate external embeds; retain image/title pair. | Long article; absent-build slug; invalid slug; related failures; hero final frame. |
 | `/posts/page/[pageNumber]` | R02: Posts pagination | Params gate cached summary query. | Page boundary with shaped grid fallback; page-specific content on intent. | Forward/backward; active numeral visible at every frame. |
@@ -151,7 +152,6 @@ Unused template components and UI primitives were removed during the September 6
 | `src/components/RichText/index.tsx` | C09 | server-compatible / helper |
 | `src/components/RichText/nodeFormat.tsx` | C09 | server-compatible / helper |
 | `src/components/RichText/serialize.tsx` | C09 | server-compatible / helper |
-| `src/components/ServiceWorkerCleanup.tsx` | C11 | client |
 | `src/components/TopicPill.tsx` | C07 | server-compatible / helper |
 | `src/components/admin/admin-font-provider.tsx` | C15 | client |
 | `src/components/admin/icon.tsx` | C15 | client |
@@ -165,7 +165,6 @@ Unused template components and UI primitives were removed during the September 6
 | `src/components/grid/card/empty-state/index.tsx` | C06 | server-compatible / helper |
 | `src/components/grid/card/hero/index.tsx` | C03 | server-compatible / helper |
 | `src/components/grid/card/index.tsx` | C03 | server-compatible / helper |
-| `src/components/grid/card/lyovson-sections/index.tsx` | C12 | server-compatible / helper |
 | `src/components/grid/card/nav/grid-card-nav-item.tsx` | C04 | server-compatible / helper |
 | `src/components/grid/card/nav/hero-mode.tsx` | C04 | server-compatible / helper |
 | `src/components/grid/card/nav/index.tsx` | C04 | client |
@@ -185,12 +184,6 @@ Unused template components and UI primitives were removed during the September 6
 | `src/components/grid/card/related/grid-card-related-notes.tsx` | C07 | server-compatible / helper |
 | `src/components/grid/card/related/index.tsx` | C07 | server-compatible / helper |
 | `src/components/grid/card/section/index.tsx` | C03 | server-compatible / helper |
-| `src/components/grid/card/subscribe/error-mode.tsx` | C12 | server-compatible / helper |
-| `src/components/grid/card/subscribe/form-mode.tsx` | C12 | server-compatible / helper |
-| `src/components/grid/card/subscribe/index.tsx` | C12 | client |
-| `src/components/grid/card/subscribe/info-mode.tsx` | C12 | server-compatible / helper |
-| `src/components/grid/card/subscribe/subscribe-form.tsx` | C12 | client |
-| `src/components/grid/card/subscribe/success-mode.tsx` | C12 | server-compatible / helper |
 | `src/components/grid/card/user/index.tsx` | C07 | server-compatible / helper |
 | `src/components/grid/card/user-social/index.tsx` | C16 | server-compatible / helper |
 | `src/components/grid/index.tsx` | C03 | server-compatible / helper |
@@ -227,7 +220,6 @@ These files participate in the public contract even though they are not TSX comp
 | Search | `src/search/service.ts`, `types.ts`, `beforeSync.ts`, `fieldOverrides.ts`, `src/app/api/search/route.ts`: retain normalization, limits, visibility and scope/ranking; deduplicate per request, support direct query URLs, and exclude typing/prefetch from embedding execution. |
 | Routing/motion/style | `src/utilities/routes.ts`, `view-transitions.ts`, `src/app/(frontend)/globals.css`, navigation types, activity shared helpers: retain identity, accessibility, theme and grid contracts. |
 | Media and block schemas | `src/components/Media/image-sizes.ts`, `types.ts`, `src/blocks/*/config.ts`, GIF types/actions and aspect-ratio utilities: read to understand public fields; no admin picker/schema refactor. |
-| Preview boundary | `src/app/(frontend)/next/preview/route.ts`, `next/exit-preview/route.ts`: retain authorization and isolation from public caches. Do not activate the currently unmounted preview listener. |
 | Feeds and metadata | `src/app/feed.xml/route.ts`, `atom.xml/route.ts`, `feed.json/route.ts`, `sitemap.ts`, `robots.ts`, `manifest.ts`, `llms.txt/route.ts`, `api/docs/route.ts`; `syndication-feed.ts`, `get-sitemap-data.ts`, metadata/JSON-LD/site-origin helpers: preserve cached public output, freshness and canonical links. |
 | API boundaries | `src/app/api/embeddings/**`, `src/app/(payload)/api/**`, `src/proxy.ts`: no feature rollout or speculative calls. Preserve existing guards and media serving; only investigate a dependency if it blocks a public acceptance check. Admin/GraphQL UX remains excluded. |
 | Build/runtime | `next.config.ts`, package/lock files, TypeScript config, existing test/CI setup: no version change initially; no global partialPrefetching rollout. Confirm the active bundler, default cache handler and shell-eligible profiles; evaluate app-wide chunking experiments only after measurement and shared-build compatibility checks. Add version-matched navigation tests only as needed. |
