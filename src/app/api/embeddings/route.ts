@@ -102,24 +102,295 @@ async function embedProject(payload: Payload, id: number) {
   };
 }
 
+interface EmbeddingsParams {
+  id: string | null;
+  includeContent: boolean;
+  includeVector: boolean;
+  limit: number;
+  query: string | null;
+  startedAt: number;
+  type: string;
+}
+
+function parseEmbeddingsParams(request: NextRequest): EmbeddingsParams {
+  const startedAt = Date.now();
+  const { searchParams } = new URL(request.url);
+  return {
+    startedAt,
+    type: searchParams.get("type") || "all",
+    id: searchParams.get("id"),
+    query: searchParams.get("q"),
+    includeContent: searchParams.get("content") === "true",
+    includeVector: searchParams.get("vector") === "true",
+    limit: Math.min(
+      Number.parseInt(searchParams.get("limit") || "50", 10),
+      MAX_EMBEDDINGS_LIMIT
+    ),
+  };
+}
+
+/** `?q=`: embeds the query text on demand. */
+async function queryEmbeddingResponse(query: string, startedAt: number) {
+  const { vector, model, dimensions } = await generateEmbedding(query);
+  logApiTelemetry({
+    route: "api.embeddings.query.completed",
+    startedAt,
+    summary: { dimensions, queryLength: query.length, status: 200 },
+  });
+  return json(
+    {
+      query,
+      embedding: vector,
+      dimensions,
+      model,
+      timestamp: new Date().toISOString(),
+    },
+    200
+  );
+}
+
+async function projectEmbeddingResponse(
+  payload: Payload,
+  itemId: number,
+  { includeVector, startedAt, type }: EmbeddingsParams
+) {
+  const project = await embedProject(payload, itemId);
+  if (!project) {
+    return json({ error: "Item not found" }, 404);
+  }
+  logApiTelemetry({
+    route: "api.embeddings.item.completed",
+    startedAt,
+    summary: {
+      id: project.id,
+      itemType: type,
+      precomputed: false,
+      status: 200,
+    },
+  });
+  return json(
+    {
+      id: project.id,
+      type,
+      ...(includeVector && { embedding: project.vector }),
+      dimensions: project.dimensions,
+      metadata: {
+        title: project.title,
+        slug: project.slug,
+        url: project.url,
+        lastModified: project.updatedAt,
+        hasPrecomputedEmbedding: false,
+      },
+      model: project.model,
+      timestamp: new Date().toISOString(),
+    },
+    200,
+    { "X-Embedding-Source": "on-demand" }
+  );
+}
+
+async function storedEmbeddingResponse(
+  payload: Payload,
+  type: EmbeddableCollection,
+  itemId: number,
+  { includeVector, startedAt }: EmbeddingsParams
+) {
+  const doc = (await payload.findByID({
+    collection: type,
+    id: itemId,
+    depth: EMBEDDABLE[type].depth,
+    overrideAccess: false,
+    context: { [TRUSTED_EMBEDDING_READ]: true },
+    disableErrors: true,
+  })) as EmbeddableDoc | null;
+  if (!doc) {
+    return json({ error: "Item not found" }, 404);
+  }
+
+  const embedding = readStoredEmbedding(doc);
+  if (!embedding) {
+    return json(
+      {
+        error: "Embedding not available yet. Run /api/embeddings/sync.",
+        type,
+        id: doc.id,
+      },
+      409
+    );
+  }
+  const dimensions = embedding.dimensions || embedding.vector.length;
+  if (dimensions !== EMBEDDING_VECTOR_DIMENSIONS) {
+    return json(
+      {
+        error: `Embedding dimension mismatch. Expected ${EMBEDDING_VECTOR_DIMENSIONS}D.`,
+        type,
+        id: doc.id,
+        currentDimensions: dimensions,
+      },
+      409
+    );
+  }
+
+  const { title, url } = describeEmbeddableDoc(type, doc);
+  logApiTelemetry({
+    route: "api.embeddings.item.completed",
+    startedAt,
+    summary: { id: doc.id, itemType: type, precomputed: true, status: 200 },
+  });
+  return json(
+    {
+      id: doc.id,
+      type,
+      ...(includeVector && { embedding: embedding.vector }),
+      dimensions,
+      metadata: {
+        title: title || "",
+        slug: doc.slug,
+        url,
+        lastModified: doc.updatedAt,
+        hasPrecomputedEmbedding: true,
+      },
+      model: embedding.model || "pre-computed",
+      timestamp: new Date().toISOString(),
+    },
+    200,
+    { "X-Embedding-Source": "pre-computed" }
+  );
+}
+
+/** `?type=&id=`: one item's embedding (projects are embedded on demand). */
+function itemEmbeddingResponse(
+  payload: Payload,
+  id: string,
+  params: EmbeddingsParams
+) {
+  const itemId = Number.parseInt(id, 10);
+  const { type } = params;
+
+  if (type === "projects") {
+    return projectEmbeddingResponse(payload, itemId, params);
+  }
+  if (!isEmbeddableCollection(type)) {
+    return json({ error: "Item not found" }, 404);
+  }
+  return storedEmbeddingResponse(payload, type, itemId, params);
+}
+
+async function listStoredEmbeddings(
+  payload: Payload,
+  { includeVector, limit, type }: EmbeddingsParams
+) {
+  const collections = EMBEDDABLE_COLLECTIONS.filter(
+    (collection) => type === "all" || type === collection
+  );
+  const embeddings: Record<string, unknown>[] = [];
+
+  for (const collection of collections) {
+    const docs = await payload.find({
+      collection,
+      overrideAccess: false,
+      context: { [TRUSTED_EMBEDDING_READ]: true },
+      where: EMBEDDABLE[collection].publicWhere,
+      limit,
+      depth: EMBEDDABLE[collection].depth,
+    });
+
+    for (const doc of docs.docs as EmbeddableDoc[]) {
+      const embedding = readStoredEmbedding(doc);
+      if (!embedding) {
+        continue;
+      }
+      const { title, url } = describeEmbeddableDoc(collection, doc);
+      embeddings.push({
+        id: doc.id,
+        type: ITEM_TYPE[collection],
+        ...(includeVector && { embedding: embedding.vector }),
+        dimensions: embedding.dimensions || embedding.vector.length,
+        metadata: {
+          title,
+          slug: doc.slug,
+          url,
+          lastModified: doc.updatedAt,
+          ...bulkExtras(collection, doc),
+          hasPrecomputedEmbedding: true,
+        },
+        model: embedding.model || "pre-computed",
+      });
+    }
+  }
+
+  return embeddings;
+}
+
+/** Bulk listing: stored embeddings only, so responses stay fast. */
+async function bulkEmbeddingsResponse(
+  payload: Payload,
+  params: EmbeddingsParams
+) {
+  const { includeContent, includeVector, limit, startedAt, type } = params;
+  const embeddings = await listStoredEmbeddings(payload, params);
+
+  const response = {
+    embeddings,
+    count: embeddings.length,
+    dimensions: (embeddings[0]?.dimensions as number | undefined) || 0,
+    model: embeddings.length > 0 ? "mixed" : "none",
+    usage: {
+      type,
+      includeContent,
+      includeVector,
+      limit,
+      precomputedOnly: true,
+    },
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      specificItem: absoluteUrl("/api/embeddings?type={type}&id={id}"),
+      queryEmbedding: absoluteUrl("/api/embeddings?q={query}"),
+      sync: absoluteUrl("/api/embeddings/sync"),
+      bulk: absoluteUrl("/api/embeddings?type={type}&limit={limit}"),
+      collections: Object.fromEntries(
+        EMBEDDABLE_COLLECTIONS.map((collection) => [
+          collection,
+          absoluteUrl(`/api/embeddings/${collection}/{id}`),
+        ])
+      ),
+    },
+    notes: {
+      performance: "Using pre-computed embeddings for fast response times",
+      coverage:
+        "Only items with pre-computed embeddings are included in bulk requests",
+      onDemand:
+        "Use POST /api/embeddings/sync for batch generation; query mode requires admin auth or CRON_SECRET",
+    },
+  };
+
+  logApiTelemetry({
+    route: "api.embeddings.bulk.completed",
+    startedAt,
+    summary: {
+      count: response.count,
+      includeContent,
+      includeVector,
+      limit,
+      status: 200,
+      type,
+    },
+  });
+
+  return json(response, 200, {
+    "X-Embeddings-Source": "pre-computed",
+    "X-Total-Items-With-Embeddings": embeddings.length.toString(),
+  });
+}
+
 /**
  * Admin and cron only. `?q=` embeds a query on demand; `?type=&id=` returns
  * one item's embedding; otherwise lists stored embeddings for `?type=`
  * (posts, notes, activities or all). `?vector=true` includes vectors.
  */
-/* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Three request modes share auth, telemetry and error handling */
 export async function GET(request: NextRequest) {
-  const startedAt = Date.now();
-  const { searchParams } = new URL(request.url);
-  const type = searchParams.get("type") || "all";
-  const id = searchParams.get("id");
-  const query = searchParams.get("q");
-  const includeContent = searchParams.get("content") === "true";
-  const includeVector = searchParams.get("vector") === "true";
-  const limit = Math.min(
-    Number.parseInt(searchParams.get("limit") || "50", 10),
-    MAX_EMBEDDINGS_LIMIT
-  );
+  const params = parseEmbeddingsParams(request);
+  const { id, query, startedAt, type } = params;
 
   try {
     if (!hasEmbeddingAuthHint(request)) {
@@ -132,221 +403,12 @@ export async function GET(request: NextRequest) {
     }
 
     if (query) {
-      const { vector, model, dimensions } = await generateEmbedding(query);
-      logApiTelemetry({
-        route: "api.embeddings.query.completed",
-        startedAt,
-        summary: { dimensions, queryLength: query.length, status: 200 },
-      });
-      return json(
-        {
-          query,
-          embedding: vector,
-          dimensions,
-          model,
-          timestamp: new Date().toISOString(),
-        },
-        200
-      );
+      return await queryEmbeddingResponse(query, startedAt);
     }
-
     if (id && type) {
-      const itemId = Number.parseInt(id, 10);
-
-      if (type === "projects") {
-        const project = await embedProject(payload, itemId);
-        if (!project) {
-          return json({ error: "Item not found" }, 404);
-        }
-        logApiTelemetry({
-          route: "api.embeddings.item.completed",
-          startedAt,
-          summary: {
-            id: project.id,
-            itemType: type,
-            precomputed: false,
-            status: 200,
-          },
-        });
-        return json(
-          {
-            id: project.id,
-            type,
-            ...(includeVector && { embedding: project.vector }),
-            dimensions: project.dimensions,
-            metadata: {
-              title: project.title,
-              slug: project.slug,
-              url: project.url,
-              lastModified: project.updatedAt,
-              hasPrecomputedEmbedding: false,
-            },
-            model: project.model,
-            timestamp: new Date().toISOString(),
-          },
-          200,
-          { "X-Embedding-Source": "on-demand" }
-        );
-      }
-
-      if (!isEmbeddableCollection(type)) {
-        return json({ error: "Item not found" }, 404);
-      }
-
-      const doc = (await payload.findByID({
-        collection: type,
-        id: itemId,
-        depth: EMBEDDABLE[type].depth,
-        overrideAccess: false,
-        context: { [TRUSTED_EMBEDDING_READ]: true },
-        disableErrors: true,
-      })) as EmbeddableDoc | null;
-      if (!doc) {
-        return json({ error: "Item not found" }, 404);
-      }
-
-      const embedding = readStoredEmbedding(doc);
-      if (!embedding) {
-        return json(
-          {
-            error: "Embedding not available yet. Run /api/embeddings/sync.",
-            type,
-            id: doc.id,
-          },
-          409
-        );
-      }
-      const dimensions = embedding.dimensions || embedding.vector.length;
-      if (dimensions !== EMBEDDING_VECTOR_DIMENSIONS) {
-        return json(
-          {
-            error: `Embedding dimension mismatch. Expected ${EMBEDDING_VECTOR_DIMENSIONS}D.`,
-            type,
-            id: doc.id,
-            currentDimensions: dimensions,
-          },
-          409
-        );
-      }
-
-      const { title, url } = describeEmbeddableDoc(type, doc);
-      logApiTelemetry({
-        route: "api.embeddings.item.completed",
-        startedAt,
-        summary: { id: doc.id, itemType: type, precomputed: true, status: 200 },
-      });
-      return json(
-        {
-          id: doc.id,
-          type,
-          ...(includeVector && { embedding: embedding.vector }),
-          dimensions,
-          metadata: {
-            title: title || "",
-            slug: doc.slug,
-            url,
-            lastModified: doc.updatedAt,
-            hasPrecomputedEmbedding: true,
-          },
-          model: embedding.model || "pre-computed",
-          timestamp: new Date().toISOString(),
-        },
-        200,
-        { "X-Embedding-Source": "pre-computed" }
-      );
+      return await itemEmbeddingResponse(payload, id, params);
     }
-
-    // Bulk listing: stored embeddings only, so responses stay fast.
-    const collections = EMBEDDABLE_COLLECTIONS.filter(
-      (collection) => type === "all" || type === collection
-    );
-    const embeddings: Record<string, unknown>[] = [];
-
-    for (const collection of collections) {
-      const docs = await payload.find({
-        collection,
-        overrideAccess: false,
-        context: { [TRUSTED_EMBEDDING_READ]: true },
-        where: EMBEDDABLE[collection].publicWhere,
-        limit,
-        depth: EMBEDDABLE[collection].depth,
-      });
-
-      for (const doc of docs.docs as EmbeddableDoc[]) {
-        const embedding = readStoredEmbedding(doc);
-        if (!embedding) {
-          continue;
-        }
-        const { title, url } = describeEmbeddableDoc(collection, doc);
-        embeddings.push({
-          id: doc.id,
-          type: ITEM_TYPE[collection],
-          ...(includeVector && { embedding: embedding.vector }),
-          dimensions: embedding.dimensions || embedding.vector.length,
-          metadata: {
-            title,
-            slug: doc.slug,
-            url,
-            lastModified: doc.updatedAt,
-            ...bulkExtras(collection, doc),
-            hasPrecomputedEmbedding: true,
-          },
-          model: embedding.model || "pre-computed",
-        });
-      }
-    }
-
-    const response = {
-      embeddings,
-      count: embeddings.length,
-      dimensions: (embeddings[0]?.dimensions as number | undefined) || 0,
-      model: embeddings.length > 0 ? "mixed" : "none",
-      usage: {
-        type,
-        includeContent,
-        includeVector,
-        limit,
-        precomputedOnly: true,
-      },
-      timestamp: new Date().toISOString(),
-      endpoints: {
-        specificItem: absoluteUrl("/api/embeddings?type={type}&id={id}"),
-        queryEmbedding: absoluteUrl("/api/embeddings?q={query}"),
-        sync: absoluteUrl("/api/embeddings/sync"),
-        bulk: absoluteUrl("/api/embeddings?type={type}&limit={limit}"),
-        collections: Object.fromEntries(
-          EMBEDDABLE_COLLECTIONS.map((collection) => [
-            collection,
-            absoluteUrl(`/api/embeddings/${collection}/{id}`),
-          ])
-        ),
-      },
-      notes: {
-        performance: "Using pre-computed embeddings for fast response times",
-        coverage:
-          "Only items with pre-computed embeddings are included in bulk requests",
-        onDemand:
-          "Use POST /api/embeddings/sync for batch generation; query mode requires admin auth or CRON_SECRET",
-      },
-    };
-
-    logApiTelemetry({
-      route: "api.embeddings.bulk.completed",
-      startedAt,
-      summary: {
-        count: response.count,
-        includeContent,
-        includeVector,
-        limit,
-        status: 200,
-        type,
-      },
-    });
-
-    return json(response, 200, {
-      "X-Embeddings-Source": "pre-computed",
-      "X-Total-Items-With-Embeddings": embeddings.length.toString(),
-    });
+    return await bulkEmbeddingsResponse(payload, params);
   } catch (error) {
     logApiTelemetry({
       route: "api.embeddings.failed",
