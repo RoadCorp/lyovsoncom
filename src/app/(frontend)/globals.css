@@ -776,6 +776,24 @@
     letter-spacing: -0.02em;
   }
 
+  /* Post hero: the summary can't push the byline out of the fixed-height
+     panel, and a hairline separates the byline from the text above. */
+  .hero-dek {
+    display: -webkit-box;
+    flex-shrink: 0;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    -webkit-line-clamp: 3;
+  }
+
+  .hero-dek[data-lines="2"] {
+    -webkit-line-clamp: 2;
+  }
+
+  .hero-footer {
+    border-top: 1px solid color-mix(in oklab, var(--line-1) 70%, transparent);
+  }
+
   .surface-rail-panel {
     --tone-muted-color: color-mix(
       in oklab,
