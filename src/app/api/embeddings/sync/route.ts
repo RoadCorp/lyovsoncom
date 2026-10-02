@@ -106,7 +106,10 @@ function buildCollectionSummary(): CollectionSummary {
 }
 
 /* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Batch sync endpoint orchestrates auth, filtering, and per-collection processing */
-export async function POST(request: NextRequest) {
+async function handleSync(
+  request: NextRequest,
+  { readBody }: { readBody: boolean }
+) {
   const startedAt = Date.now();
   try {
     if (!hasEmbeddingAuthHint(request)) {
@@ -121,13 +124,15 @@ export async function POST(request: NextRequest) {
     }
 
     let body: SyncBody = {};
-    try {
-      const parsed = (await request.json()) as unknown;
-      if (parsed && typeof parsed === "object") {
-        body = parsed as SyncBody;
+    if (readBody) {
+      try {
+        const parsed = (await request.json()) as unknown;
+        if (parsed && typeof parsed === "object") {
+          body = parsed as SyncBody;
+        }
+      } catch {
+        body = {};
       }
-    } catch {
-      body = {};
     }
 
     const collections = normalizeCollections(body.collections);
@@ -252,4 +257,17 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+/** Manual sync; the JSON body may set collections, limitPerCollection, force. */
+export function POST(request: NextRequest) {
+  return handleSync(request, { readBody: true });
+}
+
+/**
+ * Vercel Cron (GET with `Authorization: Bearer $CRON_SECRET`): stale-only sync
+ * of every collection with the default per-collection limit.
+ */
+export function GET(request: NextRequest) {
+  return handleSync(request, { readBody: false });
 }
