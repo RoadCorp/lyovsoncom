@@ -1,6 +1,9 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { revalidatePost } from "@/collections/Posts/hooks/revalidatePost";
 import {
+  hasPublicChanges,
+  isDraftOnlySave,
   revalidatePublicContent,
   revalidatePublicDependencies,
 } from "./revalidate-public-content";
@@ -77,8 +80,64 @@ describe("public publication freshness", () => {
       "topics",
       "sitemap",
     ]) {
-      expect(revalidateTag).toHaveBeenCalledWith(tag, { expire: 0 });
+      expect(revalidateTag).toHaveBeenCalledWith(tag, "max");
     }
+    expect(revalidateTag).not.toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ expire: 0 })
+    );
+  });
+});
+
+describe("draft and autosave saves", () => {
+  const published = { ...note, _status: "published" } as const;
+  const runHook = (query: Record<string, string>, status: string) =>
+    revalidatePost({
+      context: {},
+      doc: { ...published, _status: status },
+      previousDoc: published,
+      req: { query },
+    } as never);
+
+  it.each([
+    ["Save draft", { draft: "true" }],
+    ["autosave", { draft: "true", autosave: "true" }],
+  ])("leaves the published page cached on %s", (_label, query) => {
+    runHook(query, "draft");
+    expect(revalidateTag).not.toHaveBeenCalled();
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it("still withdraws content on unpublish (no draft parameter)", () => {
+    runHook({}, "draft");
+    expect(revalidateTag).toHaveBeenCalledWith("posts", { expire: 0 });
+  });
+
+  it("revalidates on publish", () => {
+    runHook({}, "published");
+    expect(revalidateTag).toHaveBeenCalledWith("post-a-note", "posts");
+  });
+
+  it("treats a draft-flagged save that publishes as a publish", () => {
+    expect(isDraftOnlySave({ query: { draft: "true" } }, published)).toBe(
+      false
+    );
+  });
+});
+
+describe("public change detection", () => {
+  it("ignores timestamps and listed private fields", () => {
+    expect(
+      hasPublicChanges(
+        { name: "Rafa", updatedAt: "b", sessions: [2] },
+        { name: "Rafa", updatedAt: "a", sessions: [1] },
+        ["sessions"]
+      )
+    ).toBe(false);
+  });
+
+  it("detects a rendered field change", () => {
+    expect(hasPublicChanges({ alt: "New" }, { alt: "Old" })).toBe(true);
   });
 });
 

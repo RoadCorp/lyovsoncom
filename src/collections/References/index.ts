@@ -2,7 +2,11 @@ import type { CollectionConfig } from "payload";
 import { anyone } from "@/access/anyone";
 import { authenticated } from "@/access/authenticated";
 import { slugField } from "@/fields/slug";
-import { revalidatePublicDependencies } from "@/utilities/revalidate-public-content";
+import {
+  hasPublicChanges,
+  isDraftOnlySave,
+  revalidatePublicDependencies,
+} from "@/utilities/revalidate-public-content";
 
 export const References: CollectionConfig = {
   slug: "references",
@@ -678,10 +682,18 @@ export const References: CollectionConfig = {
   ],
   hooks: {
     afterChange: [
-      ({ doc, context }) => {
-        if (!context?.skipRevalidation) {
-          revalidatePublicDependencies();
+      ({ context, doc, operation, previousDoc, req }) => {
+        // A new reference isn't rendered until content links to it, and
+        // draft saves (autosave every 30s) don't change the published one.
+        if (
+          context?.skipRevalidation ||
+          operation === "create" ||
+          isDraftOnlySave(req, doc) ||
+          !hasPublicChanges(doc, previousDoc)
+        ) {
+          return doc;
         }
+        revalidatePublicDependencies();
         return doc;
       },
     ],
