@@ -4,6 +4,7 @@ import { SunMoon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { revealTheme } from "@/utilities/theme-reveal";
 import { GridCardNavItem } from "./grid-card-nav-item";
 
 interface ThemeSwitcherProps {
@@ -56,7 +57,9 @@ export const ThemeSwitcher = ({ className }: ThemeSwitcherProps) => {
   useEffect(() => setMounted(true), []);
 
   const current = toThemeChoice(theme);
-  const next = getNextTheme(current, systemTheme === "dark" ? "dark" : "light");
+  const resolvedSystem: ResolvedTheme =
+    systemTheme === "dark" ? "dark" : "light";
+  const next = getNextTheme(current, resolvedSystem);
 
   return (
     <GridCardNavItem
@@ -66,7 +69,13 @@ export const ThemeSwitcher = ({ className }: ThemeSwitcherProps) => {
           : "Theme"
       }
       className={cn("col-start-3 col-end-4 row-start-3 row-end-4", className)}
-      onClick={() => setTheme(next)}
+      onClick={(event) =>
+        revealTheme({
+          apply: () => setTheme(next),
+          origin: event.currentTarget,
+          resolvedNext: next === "system" ? resolvedSystem : next,
+        })
+      }
       variant="button"
     >
       <SunMoon aria-hidden="true" className="h-7 w-7" />

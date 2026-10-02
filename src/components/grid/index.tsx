@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { HistoryFade } from "@/components/HistoryFade";
 
 /**
  * The page grid. The nav card is a grid item, so it can't be outside the grid
@@ -22,6 +23,7 @@ export const Grid = ({
       <div className="relative mx-auto grid min-h-screen g2:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)] g3:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)] g4:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)] g5:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)] g6:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)] grid-cols-[minmax(0,min(100%,var(--grid-card-1x1)))] place-items-center justify-center gap-[var(--grid-gap)] p-[var(--grid-gap)] [container-type:inline-size] g2:[grid-auto-rows:max-content]">
         {nav}
         <main className="contents">
+          <HistoryFade />
           <span className="sr-only" id="main-content" tabIndex={-1} />
           {children}
         </main>
