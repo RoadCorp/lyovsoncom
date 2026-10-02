@@ -1,6 +1,6 @@
 import { and, eq } from "@payloadcms/db-vercel-postgres/drizzle";
 import { revalidateTag } from "next/cache";
-import type { Payload } from "payload";
+import type { Payload, Where } from "payload";
 import type { Activity, Note, Post } from "@/payload-types";
 import { getActivityTypeLabel } from "@/utilities/activity-type";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";
@@ -124,6 +124,12 @@ export const EMBEDDABLE_COLLECTIONS: readonly EmbeddableCollection[] = [
   "activities",
 ];
 
+const PUBLISHED: Where = { _status: { equals: "published" } };
+const PUBLISHED_AND_PUBLIC: Where = {
+  _status: { equals: "published" },
+  visibility: { equals: "public" },
+};
+
 export function isEmbeddableCollection(
   value: unknown
 ): value is EmbeddableCollection {
@@ -147,6 +153,8 @@ interface EmbeddableSpec<C extends EmbeddableCollection> {
   /** Relationship depth the embedding text needs (topics, project, reference). */
   depth: number;
   label: string;
+  /** Documents that are publicly listed (and so belong in coverage stats). */
+  publicWhere: Where;
   /** Recommendations stored on the document after its embedding changes. */
   recommendations?: {
     cacheProfile: "notes" | "posts";
@@ -162,6 +170,7 @@ export const EMBEDDABLE: { [C in EmbeddableCollection]: EmbeddableSpec<C> } = {
     buildText: buildPostEmbeddingText,
     depth: 2,
     label: "Post",
+    publicWhere: PUBLISHED,
     recommendations: {
       cacheProfile: "posts",
       cacheTagPrefix: "post",
@@ -174,6 +183,7 @@ export const EMBEDDABLE: { [C in EmbeddableCollection]: EmbeddableSpec<C> } = {
     buildText: buildNoteEmbeddingText,
     depth: 1,
     label: "Note",
+    publicWhere: PUBLISHED_AND_PUBLIC,
     recommendations: {
       cacheProfile: "notes",
       cacheTagPrefix: "note",
@@ -186,6 +196,7 @@ export const EMBEDDABLE: { [C in EmbeddableCollection]: EmbeddableSpec<C> } = {
     buildText: buildActivityEmbeddingText,
     depth: 1,
     label: "Activity",
+    publicWhere: PUBLISHED_AND_PUBLIC,
     requiresContent: false,
   },
 };

@@ -1,10 +1,8 @@
 import configPromise from "@payload-config";
 import type { NextRequest } from "next/server";
-import { getPayload } from "payload";
+import { getPayload, type Payload } from "payload";
 import { TRUSTED_EMBEDDING_READ } from "@/access/privateFieldRead";
-import type { Activity, Note, Post, Project, Topic } from "@/payload-types";
-import { getActivityPath } from "@/utilities/activity-path";
-import { getActivityTypeLabel } from "@/utilities/activity-type";
+import type { Activity, Post } from "@/payload-types";
 import { logApiTelemetry } from "@/utilities/api-telemetry";
 import {
   authorizeEmbeddingMutation,
@@ -12,26 +10,110 @@ import {
   hasEmbeddingAuthHint,
 } from "@/utilities/embedding-auth";
 import {
+  describeEmbeddableDoc,
+  type EmbeddableDoc,
+  readStoredEmbedding,
+} from "@/utilities/embedding-documents";
+import {
   EMBEDDING_VECTOR_DIMENSIONS,
   generateEmbedding,
 } from "@/utilities/generate-embedding";
-
-// Extended types with pgvector fields
-type ItemWithEmbedding = (Post | Note | Activity | Project) & {
-  embedding_vector?: string | null;
-  embedding_model?: string | null;
-  embedding_dimensions?: number | null;
-};
+import {
+  EMBEDDABLE,
+  EMBEDDABLE_COLLECTIONS,
+  type EmbeddableCollection,
+  isEmbeddableCollection,
+} from "@/utilities/generate-embedding-helpers";
+import { isPopulated } from "@/utilities/relations";
+import { absoluteUrl } from "@/utilities/routes";
 
 const MAX_EMBEDDINGS_LIMIT = 100;
 
-/* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Legacy endpoint supports query, item, and bulk embedding modes */
+/** Singular item type used in bulk responses ("post", "note", "activity"). */
+const ITEM_TYPE: Record<EmbeddableCollection, string> = {
+  posts: "post",
+  notes: "note",
+  activities: "activity",
+};
+
+function json(
+  body: unknown,
+  status: number,
+  headers: Record<string, string> = {}
+) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "private, no-store",
+      ...headers,
+    },
+  });
+}
+
+/** Collection-specific metadata that only the bulk listing reports. */
+function bulkExtras(collection: EmbeddableCollection, doc: EmbeddableDoc) {
+  if (collection === "activities") {
+    return { activityType: (doc as Activity).activityType };
+  }
+  if (collection !== "posts") {
+    return {};
+  }
+  const post = doc as Post;
+  return {
+    topics: post.topics
+      ?.map((topic) => (isPopulated(topic) ? topic.name : topic))
+      .filter(Boolean),
+    authors: post.populatedAuthors
+      ?.filter((author) => author?.name)
+      .map((author) => ({
+        name: String(author.name),
+        username: author.username ? String(author.username) : "",
+      })),
+    project: isPopulated(post.project)
+      ? { name: post.project.name, slug: post.project.slug }
+      : null,
+  };
+}
+
+/** Projects have no stored vectors, so item requests embed them on demand. */
+async function embedProject(payload: Payload, id: number) {
+  const project = await payload.findByID({
+    collection: "projects",
+    id,
+    overrideAccess: false,
+    context: { [TRUSTED_EMBEDDING_READ]: true },
+    disableErrors: true,
+    select: { name: true, slug: true, description: true, updatedAt: true },
+  });
+  if (!project) {
+    return null;
+  }
+  const result = await generateEmbedding(
+    [project.name, project.description].filter(Boolean).join(" ")
+  );
+  return {
+    id: project.id,
+    title: project.name || "",
+    slug: project.slug,
+    url: absoluteUrl(`/${project.slug}`),
+    updatedAt: project.updatedAt,
+    ...result,
+  };
+}
+
+/**
+ * Admin and cron only. `?q=` embeds a query on demand; `?type=&id=` returns
+ * one item's embedding; otherwise lists stored embeddings for `?type=`
+ * (posts, notes, activities or all). `?vector=true` includes vectors.
+ */
+/* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Three request modes share auth, telemetry and error handling */
 export async function GET(request: NextRequest) {
   const startedAt = Date.now();
   const { searchParams } = new URL(request.url);
-  const type = searchParams.get("type") || "all"; // 'posts', 'projects', 'all' - defaults to 'all'
-  const id = searchParams.get("id"); // specific item ID
-  const query = searchParams.get("q"); // text query to embed
+  const type = searchParams.get("type") || "all";
+  const id = searchParams.get("id");
+  const query = searchParams.get("q");
   const includeContent = searchParams.get("content") === "true";
   const includeVector = searchParams.get("vector") === "true";
   const limit = Math.min(
@@ -39,486 +121,177 @@ export async function GET(request: NextRequest) {
     MAX_EMBEDDINGS_LIMIT
   );
 
-  const SITE_URL =
-    process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
-
   try {
     if (!hasEmbeddingAuthHint(request)) {
       return getEmbeddingUnauthorizedResponse();
     }
-
     const payload = await getPayload({ config: configPromise });
     const authResult = await authorizeEmbeddingMutation(request, payload);
-
     if (!authResult.authorized) {
       return getEmbeddingUnauthorizedResponse(authResult.reason);
     }
 
-    // Handle text query embedding - generate on-demand
     if (query) {
       const { vector, model, dimensions } = await generateEmbedding(query);
       logApiTelemetry({
         route: "api.embeddings.query.completed",
         startedAt,
-        summary: {
-          dimensions,
-          queryLength: query.length,
-          status: 200,
-        },
+        summary: { dimensions, queryLength: query.length, status: 200 },
       });
-
-      return new Response(
-        JSON.stringify({
+      return json(
+        {
           query,
           embedding: vector,
           dimensions,
           model,
           timestamp: new Date().toISOString(),
-        }),
-        {
-          status: 200,
-          headers: {
-            "Content-Type": "application/json; charset=utf-8",
-            "Cache-Control": "private, no-store",
-          },
-        }
+        },
+        200
       );
     }
 
-    // Handle specific item embedding
     if (id && type) {
-      let item: ItemWithEmbedding | null = null;
+      const itemId = Number.parseInt(id, 10);
 
-      if (type === "posts") {
-        item = await payload.findByID({
-          collection: "posts",
-          id: Number.parseInt(id, 10),
-          overrideAccess: false,
-          context: { [TRUSTED_EMBEDDING_READ]: true },
-          depth: 2,
-          select: {
-            id: true,
-            title: true,
-            slug: true,
-            content: true,
-            meta: true,
-            topics: true,
-            project: true,
-            populatedAuthors: true,
-            publishedAt: true,
-            updatedAt: true,
-            embedding_vector: true, // pgvector field
-            embedding_model: true,
-            embedding_dimensions: true,
-            embedding_generated_at: true,
-          },
-        });
-      } else if (type === "notes") {
-        item = await payload.findByID({
-          collection: "notes",
-          id: Number.parseInt(id, 10),
-          overrideAccess: false,
-          context: { [TRUSTED_EMBEDDING_READ]: true },
-          depth: 1,
-          select: {
-            id: true,
-            title: true,
-            slug: true,
-            content: true,
-            updatedAt: true,
-            embedding_vector: true,
-            embedding_model: true,
-            embedding_dimensions: true,
-          },
-        });
-      } else if (type === "activities") {
-        item = await payload.findByID({
-          collection: "activities",
-          id: Number.parseInt(id, 10),
-          overrideAccess: false,
-          context: { [TRUSTED_EMBEDDING_READ]: true },
-          depth: 1,
-          select: {
-            id: true,
-            slug: true,
-            activityType: true,
-            reference: true,
-            notes: true,
-            startedAt: true,
-            finishedAt: true,
-            publishedAt: true,
-            updatedAt: true,
-            embedding_vector: true,
-            embedding_model: true,
-            embedding_dimensions: true,
-          },
-        });
-      } else if (type === "projects") {
-        item = await payload.findByID({
-          collection: "projects",
-          id: Number.parseInt(id, 10),
-          overrideAccess: false,
-          context: { [TRUSTED_EMBEDDING_READ]: true },
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-            description: true,
-            updatedAt: true,
-          },
-        });
-      }
-
-      if (!item) {
-        return new Response(JSON.stringify({ error: "Item not found" }), {
-          status: 404,
-          headers: { "Content-Type": "application/json" },
-        });
-      }
-
-      // Use pre-computed embedding for posts/notes/activities.
-      // Projects don't have pre-computed vectors, so keep on-demand generation there only.
-      let embedding: number[] = [];
-      let model = "unknown";
-      let dimensions = 0;
-      const isPrecomputedType =
-        type === "posts" || type === "notes" || type === "activities";
-
-      if (isPrecomputedType) {
-        if (!item.embedding_vector) {
-          return new Response(
-            JSON.stringify({
-              error: "Embedding not available yet. Run /api/embeddings/sync.",
-              type,
-              id: item.id,
-            }),
-            {
-              status: 409,
-              headers: { "Content-Type": "application/json; charset=utf-8" },
-            }
-          );
+      if (type === "projects") {
+        const project = await embedProject(payload, itemId);
+        if (!project) {
+          return json({ error: "Item not found" }, 404);
         }
-
-        const vectorString = item.embedding_vector;
-        embedding =
-          typeof vectorString === "string"
-            ? JSON.parse(vectorString)
-            : vectorString;
-        model = item.embedding_model || "pre-computed";
-        dimensions = item.embedding_dimensions || embedding.length;
-
-        if (dimensions !== EMBEDDING_VECTOR_DIMENSIONS) {
-          return new Response(
-            JSON.stringify({
-              error: `Embedding dimension mismatch. Expected ${EMBEDDING_VECTOR_DIMENSIONS}D.`,
-              type,
-              id: item.id,
-              currentDimensions: dimensions,
-            }),
-            {
-              status: 409,
-              headers: { "Content-Type": "application/json; charset=utf-8" },
-            }
-          );
-        }
-      } else {
-        const projectTitle = "name" in item ? item.name || "" : "";
-        const projectDescription =
-          "description" in item ? item.description || "" : "";
-        const textToEmbed = [projectTitle, projectDescription]
-          .filter(Boolean)
-          .join(" ");
-
-        const result = await generateEmbedding(textToEmbed);
-        embedding = result.vector;
-        model = result.model;
-        dimensions = result.dimensions;
+        logApiTelemetry({
+          route: "api.embeddings.item.completed",
+          startedAt,
+          summary: {
+            id: project.id,
+            itemType: type,
+            precomputed: false,
+            status: 200,
+          },
+        });
+        return json(
+          {
+            id: project.id,
+            type,
+            ...(includeVector && { embedding: project.vector }),
+            dimensions: project.dimensions,
+            metadata: {
+              title: project.title,
+              slug: project.slug,
+              url: project.url,
+              lastModified: project.updatedAt,
+              hasPrecomputedEmbedding: false,
+            },
+            model: project.model,
+            timestamp: new Date().toISOString(),
+          },
+          200,
+          { "X-Embedding-Source": "on-demand" }
+        );
       }
 
-      const result = {
-        id: item.id,
-        type,
-        ...(includeVector && { embedding }),
-        dimensions,
-        metadata: {
-          title: (() => {
-            if ("title" in item) {
-              return item.title || "";
-            }
-            if ("name" in item) {
-              return item.name || "";
-            }
-            return "";
-          })(),
-          slug: item.slug,
-          url: (() => {
-            if (type === "posts") {
-              return `${SITE_URL}/posts/${item.slug}`;
-            }
-            if (type === "notes") {
-              return `${SITE_URL}/notes/${item.slug}`;
-            }
-            if (type === "activities") {
-              const activityPath = getActivityPath(item as Activity);
-              return activityPath
-                ? `${SITE_URL}${activityPath}`
-                : `${SITE_URL}/activities/unknown/${item.slug}`;
-            }
-            return `${SITE_URL}/${item.slug}`;
-          })(),
-          lastModified: item.updatedAt,
-          hasPrecomputedEmbedding: !!item.embedding_vector,
-        },
-        model,
-        timestamp: new Date().toISOString(),
-      };
+      if (!isEmbeddableCollection(type)) {
+        return json({ error: "Item not found" }, 404);
+      }
 
+      const doc = (await payload.findByID({
+        collection: type,
+        id: itemId,
+        depth: EMBEDDABLE[type].depth,
+        overrideAccess: false,
+        context: { [TRUSTED_EMBEDDING_READ]: true },
+        disableErrors: true,
+      })) as EmbeddableDoc | null;
+      if (!doc) {
+        return json({ error: "Item not found" }, 404);
+      }
+
+      const embedding = readStoredEmbedding(doc);
+      if (!embedding) {
+        return json(
+          {
+            error: "Embedding not available yet. Run /api/embeddings/sync.",
+            type,
+            id: doc.id,
+          },
+          409
+        );
+      }
+      const dimensions = embedding.dimensions || embedding.vector.length;
+      if (dimensions !== EMBEDDING_VECTOR_DIMENSIONS) {
+        return json(
+          {
+            error: `Embedding dimension mismatch. Expected ${EMBEDDING_VECTOR_DIMENSIONS}D.`,
+            type,
+            id: doc.id,
+            currentDimensions: dimensions,
+          },
+          409
+        );
+      }
+
+      const { title, url } = describeEmbeddableDoc(type, doc);
       logApiTelemetry({
         route: "api.embeddings.item.completed",
         startedAt,
-        summary: {
-          id: item.id,
-          itemType: type,
-          precomputed: Boolean(item.embedding_vector),
-          status: 200,
-        },
+        summary: { id: doc.id, itemType: type, precomputed: true, status: 200 },
       });
-
-      return new Response(JSON.stringify(result), {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json; charset=utf-8",
-          "Cache-Control": "private, no-store",
-          "X-Embedding-Source": item.embedding_vector
-            ? "pre-computed"
-            : "on-demand",
-        },
-      });
-    }
-
-    // Handle bulk embeddings
-    const embeddings: Array<{
-      id: number | string;
-      type: string;
-      embedding?: number[];
-      dimensions: number;
-      metadata: Record<string, unknown>;
-      model: string;
-    }> = [];
-
-    if (type === "posts" || type === "all") {
-      const posts = await payload.find({
-        collection: "posts",
-        overrideAccess: false,
-        context: { [TRUSTED_EMBEDDING_READ]: true },
-        where: { _status: { equals: "published" } },
-        limit,
-        depth: 2,
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          meta: true,
-          topics: true,
-          project: true,
-          populatedAuthors: true,
-          updatedAt: true,
-          embedding_vector: true, // pgvector field
-          embedding_model: true,
-          embedding_dimensions: true,
-        },
-      });
-
-      for (const post of posts.docs) {
-        const postWithEmbedding = post as ItemWithEmbedding;
-        let embedding: number[] = [];
-        let model = "unknown";
-        let dimensions = 0;
-
-        if (postWithEmbedding.embedding_vector) {
-          // Use pre-computed embedding - parse pgvector format
-          const vectorString = postWithEmbedding.embedding_vector;
-          embedding =
-            typeof vectorString === "string"
-              ? JSON.parse(vectorString)
-              : vectorString;
-          model = postWithEmbedding.embedding_model || "pre-computed";
-          dimensions =
-            postWithEmbedding.embedding_dimensions || embedding.length;
-        } else {
-          // Skip posts without pre-computed embeddings in bulk requests
-          // to avoid long response times
-          continue;
-        }
-
-        embeddings.push({
-          id: post.id,
-          type: "post",
-          ...(includeVector && { embedding }),
+      return json(
+        {
+          id: doc.id,
+          type,
+          ...(includeVector && { embedding: embedding.vector }),
           dimensions,
           metadata: {
-            title: post.title,
-            slug: post.slug,
-            url: `${SITE_URL}/posts/${post.slug}`,
-            lastModified: post.updatedAt,
-            topics: post.topics
-              ?.map((t) =>
-                typeof t === "object" && t !== null ? (t as Topic).name : t
-              )
-              .filter(Boolean),
-            authors: post.populatedAuthors
-              ?.map((author) => {
-                if (!author || typeof author !== "object") {
-                  return null;
-                }
-                if (!("name" in author)) {
-                  return null;
-                }
-                return {
-                  name: String(author.name),
-                  username: "username" in author ? String(author.username) : "",
-                };
-              })
-              .filter(Boolean),
-            project:
-              post.project && typeof post.project === "object"
-                ? { name: post.project.name, slug: post.project.slug }
-                : null,
+            title: title || "",
+            slug: doc.slug,
+            url,
+            lastModified: doc.updatedAt,
             hasPrecomputedEmbedding: true,
           },
-          model,
-        });
-      }
+          model: embedding.model || "pre-computed",
+          timestamp: new Date().toISOString(),
+        },
+        200,
+        { "X-Embedding-Source": "pre-computed" }
+      );
     }
 
-    if (type === "notes" || type === "all") {
-      const notes = await payload.find({
-        collection: "notes",
+    // Bulk listing: stored embeddings only, so responses stay fast.
+    const collections = EMBEDDABLE_COLLECTIONS.filter(
+      (collection) => type === "all" || type === collection
+    );
+    const embeddings: Record<string, unknown>[] = [];
+
+    for (const collection of collections) {
+      const docs = await payload.find({
+        collection,
         overrideAccess: false,
         context: { [TRUSTED_EMBEDDING_READ]: true },
-        where: { _status: { equals: "published" } },
+        where: EMBEDDABLE[collection].publicWhere,
         limit,
-        depth: 1,
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          updatedAt: true,
-          embedding_vector: true,
-          embedding_model: true,
-          embedding_dimensions: true,
-        },
+        depth: EMBEDDABLE[collection].depth,
       });
 
-      for (const note of notes.docs) {
-        const noteWithEmbedding = note as ItemWithEmbedding;
-        let embedding: number[] = [];
-        let model = "unknown";
-        let dimensions = 0;
-
-        if (noteWithEmbedding.embedding_vector) {
-          const vectorString = noteWithEmbedding.embedding_vector;
-          embedding =
-            typeof vectorString === "string"
-              ? JSON.parse(vectorString)
-              : vectorString;
-          model = noteWithEmbedding.embedding_model || "pre-computed";
-          dimensions =
-            noteWithEmbedding.embedding_dimensions || embedding.length;
-        } else {
+      for (const doc of docs.docs as EmbeddableDoc[]) {
+        const embedding = readStoredEmbedding(doc);
+        if (!embedding) {
           continue;
         }
-
+        const { title, url } = describeEmbeddableDoc(collection, doc);
         embeddings.push({
-          id: note.id,
-          type: "note",
-          ...(includeVector && { embedding }),
-          dimensions,
-          metadata: {
-            title: note.title,
-            slug: note.slug,
-            url: `${SITE_URL}/notes/${note.slug}`,
-            lastModified: note.updatedAt,
-            hasPrecomputedEmbedding: true,
-          },
-          model,
-        });
-      }
-    }
-
-    if (type === "activities" || type === "all") {
-      const activities = await payload.find({
-        collection: "activities",
-        overrideAccess: false,
-        context: { [TRUSTED_EMBEDDING_READ]: true },
-        where: {
-          _status: { equals: "published" },
-          visibility: { equals: "public" },
-        },
-        limit,
-        depth: 1,
-        select: {
-          id: true,
-          slug: true,
-          activityType: true,
-          reference: true,
-          startedAt: true,
-          finishedAt: true,
-          publishedAt: true,
-          updatedAt: true,
-          embedding_vector: true,
-          embedding_model: true,
-          embedding_dimensions: true,
-        },
-      });
-
-      for (const activity of activities.docs) {
-        const activityWithEmbedding = activity as ItemWithEmbedding;
-        let embedding: number[] = [];
-        let model = "unknown";
-        let dimensions = 0;
-
-        if (activityWithEmbedding.embedding_vector) {
-          const vectorString = activityWithEmbedding.embedding_vector;
-          embedding =
-            typeof vectorString === "string"
-              ? JSON.parse(vectorString)
-              : vectorString;
-          model = activityWithEmbedding.embedding_model || "pre-computed";
-          dimensions =
-            activityWithEmbedding.embedding_dimensions || embedding.length;
-        } else {
-          continue;
-        }
-
-        const referenceObj =
-          typeof activity.reference === "object" && activity.reference !== null
-            ? activity.reference
-            : null;
-
-        const title = referenceObj?.title
-          ? `${getActivityTypeLabel(activity.activityType)} ${referenceObj.title}`
-          : "Activity";
-
-        embeddings.push({
-          id: activity.id,
-          type: "activity",
-          ...(includeVector && { embedding }),
-          dimensions,
+          id: doc.id,
+          type: ITEM_TYPE[collection],
+          ...(includeVector && { embedding: embedding.vector }),
+          dimensions: embedding.dimensions || embedding.vector.length,
           metadata: {
             title,
-            slug: activity.slug,
-            url: (() => {
-              const activityPath = getActivityPath(activity as Activity);
-              return activityPath
-                ? `${SITE_URL}${activityPath}`
-                : `${SITE_URL}/activities/unknown/${activity.slug}`;
-            })(),
-            lastModified: activity.updatedAt,
-            activityType: activity.activityType,
+            slug: doc.slug,
+            url,
+            lastModified: doc.updatedAt,
+            ...bulkExtras(collection, doc),
             hasPrecomputedEmbedding: true,
           },
-          model,
+          model: embedding.model || "pre-computed",
         });
       }
     }
@@ -526,26 +299,27 @@ export async function GET(request: NextRequest) {
     const response = {
       embeddings,
       count: embeddings.length,
-      dimensions: embeddings[0]?.dimensions || 0,
+      dimensions: (embeddings[0]?.dimensions as number | undefined) || 0,
       model: embeddings.length > 0 ? "mixed" : "none",
       usage: {
-        type: type || "all",
+        type,
         includeContent,
         includeVector,
         limit,
-        precomputedOnly: true, // We only return pre-computed embeddings in bulk
+        precomputedOnly: true,
       },
       timestamp: new Date().toISOString(),
       endpoints: {
-        specificItem: `${SITE_URL}/api/embeddings?type={type}&id={id}`,
-        queryEmbedding: `${SITE_URL}/api/embeddings?q={query}`,
-        sync: `${SITE_URL}/api/embeddings/sync`,
-        bulk: `${SITE_URL}/api/embeddings?type={type}&limit={limit}`,
-        collections: {
-          posts: `${SITE_URL}/api/embeddings/posts/{id}`,
-          notes: `${SITE_URL}/api/embeddings/notes/{id}`,
-          activities: `${SITE_URL}/api/embeddings/activities/{id}`,
-        },
+        specificItem: absoluteUrl("/api/embeddings?type={type}&id={id}"),
+        queryEmbedding: absoluteUrl("/api/embeddings?q={query}"),
+        sync: absoluteUrl("/api/embeddings/sync"),
+        bulk: absoluteUrl("/api/embeddings?type={type}&limit={limit}"),
+        collections: Object.fromEntries(
+          EMBEDDABLE_COLLECTIONS.map((collection) => [
+            collection,
+            absoluteUrl(`/api/embeddings/${collection}/{id}`),
+          ])
+        ),
       },
       notes: {
         performance: "Using pre-computed embeddings for fast response times",
@@ -569,14 +343,9 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    return new Response(JSON.stringify(response), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        "Cache-Control": "private, no-store",
-        "X-Embeddings-Source": "pre-computed",
-        "X-Total-Items-With-Embeddings": embeddings.length.toString(),
-      },
+    return json(response, 200, {
+      "X-Embeddings-Source": "pre-computed",
+      "X-Total-Items-With-Embeddings": embeddings.length.toString(),
     });
   } catch (error) {
     logApiTelemetry({
@@ -590,20 +359,13 @@ export async function GET(request: NextRequest) {
         type,
       },
     });
-
-    return new Response(
-      JSON.stringify({
+    return json(
+      {
         error: "Failed to generate embeddings",
         message: "Please try again later or contact hello@lyovson.com",
         timestamp: new Date().toISOString(),
-      }),
-      {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json; charset=utf-8",
-          "Cache-Control": "private, no-store",
-        },
-      }
+      },
+      500
     );
   }
 }
