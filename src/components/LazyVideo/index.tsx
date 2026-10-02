@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { usePrefersReducedMotion } from "@/utilities/use-prefers-reduced-motion";
 
 interface LazyVideoProps {
   alt?: string;
@@ -23,6 +24,8 @@ export const LazyVideo = ({
 }: LazyVideoProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  // GIFs are short loops; with reduced motion, show the poster and controls.
+  const reduceMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     const videoElement = videoRef.current;
@@ -53,11 +56,12 @@ export const LazyVideo = ({
   return (
     <video
       aria-label={alt}
-      autoPlay
+      autoPlay={!reduceMotion}
       className={cn(
         "media-frame h-auto w-full rounded-lg object-cover",
         className
       )}
+      controls={reduceMotion}
       loop
       muted
       playsInline

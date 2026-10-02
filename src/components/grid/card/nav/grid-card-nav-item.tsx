@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { AppLink } from "@/components/AppLink";
 import { cn } from "@/lib/utils";
 import { transitionTypes } from "@/utilities/routes";
@@ -16,11 +16,15 @@ type GridCardNavItemLinkProps = GridCardNavItemBaseProps & {
   href: string;
 };
 
-type GridCardNavItemButtonProps = GridCardNavItemBaseProps & {
-  variant: "button";
-  onClick: () => void;
-  disabled?: boolean;
-};
+type GridCardNavItemButtonProps = GridCardNavItemBaseProps &
+  Pick<
+    ComponentPropsWithoutRef<"button">,
+    "aria-controls" | "aria-expanded" | "aria-label" | "aria-pressed"
+  > & {
+    variant: "button";
+    onClick: () => void;
+    disabled?: boolean;
+  };
 
 type GridCardNavItemStaticProps = GridCardNavItemBaseProps & {
   variant?: "static";
@@ -58,6 +62,10 @@ export const GridCardNavItem = ({
   if (props.variant === "button") {
     return (
       <GridCardSection
+        aria-controls={props["aria-controls"]}
+        aria-expanded={props["aria-expanded"]}
+        aria-label={props["aria-label"]}
+        aria-pressed={props["aria-pressed"]}
         className={cn(
           "tone-heading flex h-full flex-col items-center justify-center gap-2",
           className

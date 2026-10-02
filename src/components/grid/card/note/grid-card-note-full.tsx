@@ -180,16 +180,20 @@ function NoteThoughtContent({
 }
 
 function NoteContentPreview({
+  label,
   noteUrl,
   preview,
   slug,
 }: {
+  /** Accessible name; otherwise the whole excerpt would be read as the link. */
+  label: string;
   noteUrl: ReturnType<typeof noteRoute>;
   preview: NotePreview;
   slug: string;
 }) {
   return (
     <IntentLink
+      aria-label={label}
       className="ui-focus-ring group block h-full"
       href={noteUrl}
       transitionTypes={[transitionTypes.drillIn]}
@@ -242,9 +246,10 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
   const uniqueTopics = getUniqueTopics(topics);
 
   return (
-    <GridCard className={className}>
+    <GridCard as="article" className={className}>
       <GridCardSection className="col-start-1 col-end-4 row-start-1 row-end-3 flex h-full flex-col overflow-hidden">
         <NoteContentPreview
+          label={note.title ? `Note: ${note.title}` : "Note"}
           noteUrl={noteUrl}
           preview={preview}
           slug={noteSlug}
@@ -291,8 +296,10 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
       >
         <GridCardSection className="surface-rail-panel col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
           <IntentLink
-            className="ui-focus-ring group block flex flex-col items-center gap-1"
+            aria-hidden="true"
+            className="group block flex flex-col items-center gap-1"
             href={noteUrl}
+            tabIndex={-1}
             transitionTypes={[transitionTypes.drillIn]}
           >
             {isQuoteType ? (

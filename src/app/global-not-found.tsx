@@ -12,7 +12,7 @@ export default function GlobalNotFound() {
   return (
     <html lang="en">
       <body>
-        <div
+        <main
           style={{
             alignItems: "center",
             display: "flex",
@@ -31,7 +31,7 @@ export default function GlobalNotFound() {
               This page could not be found.
             </p>
           </div>
-        </div>
+        </main>
       </body>
     </html>
   );

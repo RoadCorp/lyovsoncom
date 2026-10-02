@@ -63,38 +63,47 @@ export function Code({
           {language.toUpperCase()}
         </div>
       )}
-      <pre
-        className="rounded-lg p-6 font-mono text-sm leading-relaxed content-code-shell"
-        style={codeTheme.plain}
+      {/* Long lines scroll sideways, so the scroller must be keyboard-focusable
+          (WCAG 2.1.1). See docs/linting.md for the tabIndex exception. */}
+      <section
+        aria-label={language ? `${language} code` : "Code"}
+        className="ui-focus-ring overflow-x-auto rounded-lg"
+        // biome-ignore lint/a11y/noNoninteractiveTabindex: a scrollable region must be focusable for keyboard users (WCAG 2.1.1).
+        tabIndex={0}
       >
-        <code>
-          {lines.map((line) => (
-            <span className="table-row" key={line.offset}>
-              <span
-                aria-hidden="true"
-                className="tone-muted table-cell min-w-[3rem] select-none pr-4 text-right"
-              >
-                {line.number}
+        <pre
+          className="overflow-visible rounded-lg p-6 font-mono text-sm leading-relaxed content-code-shell"
+          style={codeTheme.plain}
+        >
+          <code>
+            {lines.map((line) => (
+              <span className="table-row" key={line.offset}>
+                <span
+                  aria-hidden="true"
+                  className="tone-muted table-cell min-w-[3rem] select-none pr-4 text-right"
+                >
+                  {line.number}
+                </span>
+                <span className="table-cell">
+                  {line.spans.map((token) => (
+                    <span
+                      key={token.offset}
+                      style={
+                        codeTheme.styles.find((rule) =>
+                          token.types.some((type) => rule.types.includes(type))
+                        )?.style
+                      }
+                    >
+                      {token.content}
+                    </span>
+                  ))}
+                  {"\n"}
+                </span>
               </span>
-              <span className="table-cell">
-                {line.spans.map((token) => (
-                  <span
-                    key={token.offset}
-                    style={
-                      codeTheme.styles.find((rule) =>
-                        token.types.some((type) => rule.types.includes(type))
-                      )?.style
-                    }
-                  >
-                    {token.content}
-                  </span>
-                ))}
-                {"\n"}
-              </span>
-            </span>
-          ))}
-        </code>
-      </pre>
+            ))}
+          </code>
+        </pre>
+      </section>
       <CopyButton code={code} />
     </div>
   );

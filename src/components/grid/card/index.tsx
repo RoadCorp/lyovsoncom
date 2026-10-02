@@ -57,7 +57,7 @@ export const GridCard = <T extends ElementType = "div">({
   return (
     <Component
       className={cardClassName}
-      role={role ?? (Component === "div" ? "article" : undefined)}
+      role={role}
       style={{ ...baseStyle, ...style }}
       {...(rest as ComponentPropsWithoutRef<T>)}
     >

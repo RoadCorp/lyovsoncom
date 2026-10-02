@@ -140,7 +140,7 @@ export function Pagination({
       update="vt-anchor"
     >
       <div className={cn("mx-auto flex justify-center", className)}>
-        <GridCard interactive={false}>
+        <GridCard aria-label="Pagination" as="nav" interactive={false}>
           {gridCells.map((cell, index) => {
             const isNumeric = typeof cell.label === "number";
             const positionClass = cellPositions[index];

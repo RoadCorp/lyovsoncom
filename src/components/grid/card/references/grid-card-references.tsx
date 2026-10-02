@@ -132,9 +132,9 @@ export const GridCardReferences = ({
 
             <div className="col-start-2 col-end-4 row-start-1 row-end-2 flex min-w-0 flex-col justify-center gap-1 pr-4">
               <div className="flex items-start justify-between gap-3">
-                <h3 className="tone-heading ui-group-hover-dim line-clamp-2 font-medium text-sm">
+                <h2 className="tone-heading ui-group-hover-dim line-clamp-2 font-medium text-sm">
                   {reference.title}
-                </h3>
+                </h2>
                 {isExternal ? (
                   <ExternalLink
                     aria-hidden="true"

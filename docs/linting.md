@@ -22,6 +22,8 @@ Two optional Biome rules are disabled after checking their diagnostics against t
 - [`noUnnecessaryConditions`](https://biomejs.dev/linter/rules/no-unnecessary-conditions/javascript/) treats mutable React refs as their initial values. It incorrectly flags timer cleanup, clipboard cancellation, and navigation focus restoration. Generated CMS types also do not validate stored or external data; preserve necessary runtime guards.
 - [`noLeakedRender`](https://biomejs.dev/linter/rules/no-leaked-render/javascript/) flags boolean `useState` values and intentional string children, including the copy-status and submit-button labels. These do not leak numeric values into the UI. Keep checking numeric conditional renders during review.
 
+One accessibility rule has a single local suppression: [`noNoninteractiveTabindex`](https://biomejs.dev/linter/rules/no-noninteractive-tabindex/) on the code block's horizontally scrolling `<section>` (`src/blocks/Code/Code.tsx`). WCAG 2.1.1 requires keyboard users to be able to scroll it, and axe reports `scrollable-region-focusable` without the `tabIndex`.
+
 Both rules are outside Biome's recommended set, although Ultracite enables them. Reassess these exceptions when upgrading Biome. The `noMagicNumbers` rule uses Ultracite's default of off; named limits remain useful, while HTTP status assertions and image-size lists do not need suppression comments.
 
 The existing exclusions also cover Shadcn primitives, Payload scaffolding, and one-off maintenance scripts. They are not a claim that those files have been linted. Review changes to them directly; never exclude application code simply to make lint pass.

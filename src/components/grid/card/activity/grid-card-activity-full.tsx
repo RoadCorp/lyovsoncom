@@ -100,16 +100,18 @@ export const GridCardActivityFull = ({
   const iconClassName = "tone-heading ui-group-hover-dim h-5 w-5";
 
   return (
-    <GridCard className={className}>
+    <GridCard as="article" className={className}>
       {referenceImage ? (
         <GridCardSection
           className="col-start-1 col-end-3 row-start-1 row-end-4"
           flush={true}
         >
+          {/* Pointer shortcut only: the title link is the card's one tab stop. */}
           <IntentLink
-            aria-label={`View activity: ${activityTypeLabel} ${referenceTitle}`}
+            aria-hidden="true"
             className="group block h-full overflow-hidden rounded-lg"
             href={activityHref}
+            tabIndex={-1}
             transitionTypes={[transitionTypes.drillIn]}
           >
             <ViewTransition
@@ -132,6 +134,7 @@ export const GridCardActivityFull = ({
 
       <GridCardSection className="surface-title-stage col-start-3 col-end-4 row-start-1 row-end-2 flex h-full flex-col justify-center">
         <IntentLink
+          aria-label={`${activityTypeLabel} ${referenceTitle}`}
           className="ui-focus-ring group block"
           href={activityHref}
           transitionTypes={[transitionTypes.drillIn]}
@@ -173,8 +176,10 @@ export const GridCardActivityFull = ({
 
       <GridCardSection className="surface-rail-panel col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
         <IntentLink
-          className="ui-focus-ring group block flex flex-col items-center gap-1"
+          aria-hidden="true"
+          className="group block flex flex-col items-center gap-1"
           href={activityHref}
+          tabIndex={-1}
           transitionTypes={[transitionTypes.drillIn]}
         >
           <ActivityIcon aria-hidden="true" className={iconClassName} />

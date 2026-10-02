@@ -96,6 +96,7 @@ async function PageContent({ params: paramsPromise }: Args) {
 
   return (
     <>
+      <h1 className="sr-only">All Activities - Page {sanitizedPageNumber}</h1>
       <JsonLd data={collectionPageSchema} />
       <ActivitiesArchive activities={docs} />
       {totalPages > 1 && page ? (

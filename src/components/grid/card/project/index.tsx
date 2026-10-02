@@ -43,7 +43,7 @@ export const GridCardProject = ({
         href={projectHref}
         transitionTypes={[transitionTypes.drillIn]}
       >
-        <GridCard className={className}>
+        <GridCard as="article" className={className}>
           {project.image && typeof project.image !== "string" ? (
             <GridCardSection
               className="col-start-1 col-end-4 row-start-1 row-end-3"
@@ -138,9 +138,9 @@ export const GridCardProjectHero = ({
                 name={getProjectTitleTransitionName(slug)}
                 {...frontendViewTransitionClasses.sharedTitle}
               >
-                <h1 className="tone-heading text-center font-bold text-2xl md:text-3xl lg:text-4xl">
+                <h2 className="tone-heading text-center font-bold text-2xl md:text-3xl lg:text-4xl">
                   {name}
-                </h1>
+                </h2>
               </ViewTransition>
               {description ? (
                 <p className="tone-muted text-left text-base leading-relaxed">

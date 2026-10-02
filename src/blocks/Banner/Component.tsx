@@ -44,7 +44,9 @@ export function BannerBlock({ className, content, style }: Props) {
             accentClasses[bannerStyle]
           )}
         >
-          <span className="text-lg">{iconClasses[bannerStyle]}</span>
+          <span aria-hidden="true" className="text-lg">
+            {iconClasses[bannerStyle]}
+          </span>
         </div>
 
         {/* Content */}

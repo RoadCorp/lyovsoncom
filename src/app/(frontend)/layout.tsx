@@ -125,12 +125,11 @@ export default function RootLayout({
       </head>
       <body>
         <JsonLd data={getSiteEntitySchemas()} />
+        <a className="skip-link ui-focus-ring" href="#main-content">
+          Skip to content
+        </a>
         <Providers>
-          <Grid>
-            <GridCardNav />
-
-            {children}
-          </Grid>
+          <Grid nav={<GridCardNav />}>{children}</Grid>
         </Providers>
         <Analytics />
       </body>

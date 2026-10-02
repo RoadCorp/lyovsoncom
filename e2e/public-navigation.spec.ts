@@ -1,6 +1,9 @@
 import { instant } from "@next/playwright";
 import { expect, test } from "@playwright/test";
 
+// The theme button announces its state, e.g. "Theme: Auto. Switch to Dark".
+const THEME_BUTTON_NAME = /^Theme: /;
+
 test("initial shell exposes usable navigation before dynamic content", async ({
   page,
   baseURL,
@@ -148,7 +151,7 @@ test("the narrow menu stays usable in both themes and restores keyboard focus", 
   await menu.press("Enter");
   for (const theme of ["light", "dark"]) {
     if (!(await page.locator("html").getAttribute("class"))?.includes(theme)) {
-      await page.getByRole("button", { name: "Theme", exact: true }).click();
+      await page.getByRole("button", { name: THEME_BUTTON_NAME }).click();
     }
     await expect(page.locator("html")).toHaveClass(new RegExp(theme));
     await expect(

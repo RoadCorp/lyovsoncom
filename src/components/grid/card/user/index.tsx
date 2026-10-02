@@ -83,13 +83,13 @@ export const GridCardUser = ({ user, className }: Props) => {
           )}
         >
           <div className="mx-auto w-full max-w-3xl space-y-4">
-            <h1
+            <h2
               className={
                 "tone-heading text-center font-bold text-2xl md:text-3xl lg:text-4xl"
               }
             >
               {userName}
-            </h1>
+            </h2>
             {userQuote && (
               <p className={"tone-muted text-center text-base leading-relaxed"}>
                 {userQuote}
