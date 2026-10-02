@@ -1,6 +1,6 @@
 import type { Metadata } from "next/types";
 import { MAX_INDEXED_PAGE, parsePageNumber } from "@/utilities/archive";
-import { buildSeoMetadata } from "@/utilities/seo-metadata";
+import { buildSeoMetadata, type SeoImageInput } from "@/utilities/seo-metadata";
 
 export type PaginatedArchivePageState =
   | {
@@ -14,9 +14,12 @@ export type PaginatedArchivePageState =
       pageNumber: number;
     };
 
-interface BuildPaginatedArchiveMetadataArgs {
+export interface BuildPaginatedArchiveMetadataArgs {
   canonicalPath: string;
   description: string;
+  /** A dedicated social image; also switches to the large Twitter card. */
+  image?: SeoImageInput;
+  keywords?: string[];
   pageNumber: number;
   title: string;
 }
@@ -50,6 +53,8 @@ export function isPaginatedArchivePageOutOfRange(
 export function buildPaginatedArchiveMetadata({
   canonicalPath,
   description,
+  image,
+  keywords,
   pageNumber,
   title,
 }: BuildPaginatedArchiveMetadataArgs): Metadata {
@@ -57,7 +62,9 @@ export function buildPaginatedArchiveMetadata({
     title,
     description,
     canonicalPath,
-    twitterCard: "summary",
+    image,
+    keywords,
+    twitterCard: image ? "summary_large_image" : "summary",
     robots: {
       index: pageNumber <= MAX_INDEXED_PAGE,
       follow: true,

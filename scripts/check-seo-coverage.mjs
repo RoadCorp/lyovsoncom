@@ -94,6 +94,7 @@ const pageFactories = {
     "src/utilities/create-paginated-archive-page.tsx",
   "create-lyovson-feed-page":
     "src/app/(frontend)/[lyovson]/_utilities/create-lyovson-feed-page.tsx",
+  "create-entity-archive-page": "src/utilities/create-entity-archive-page.tsx",
 };
 
 async function readPageSource(file) {

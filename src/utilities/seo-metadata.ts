@@ -16,7 +16,7 @@ const DEFAULT_OG_IMAGE = {
   alt: `${siteConfig.name} - Writing, Projects & Research`,
 } as const;
 
-interface SeoImageInput {
+export interface SeoImageInput {
   alt?: string | null;
   height?: number | null;
   url: string;
