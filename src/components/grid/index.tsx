@@ -32,7 +32,7 @@ export const Grid = ({
   );
 };
 
-export { GridCard, GridCardContent } from "./card";
+export { GridCard } from "./card";
 export {
   ACTIVITIES_PREVIEW_PAGINATION_CLASS_NAME,
   GridCardActivitiesPreview,
@@ -47,7 +47,6 @@ export {
   GridCardHeroActivity,
   GridCardHeroNote,
 } from "./card/hero";
-export { GridCardLyovsonSections } from "./card/lyovson-sections";
 export { GridCardNav, GridCardNavItem } from "./card/nav";
 export { GridCardNotFound } from "./card/not-found";
 export { GridCardNoteFull } from "./card/note";
@@ -56,7 +55,6 @@ export { GridCardProject, GridCardProjectHero } from "./card/project";
 export { GridCardReferences } from "./card/references";
 export { GridCardRelatedNotes, GridCardRelatedPosts } from "./card/related";
 export { GridCardSection } from "./card/section";
-export { GridCardSubscribe } from "./card/subscribe";
 export { GridCardUser } from "./card/user";
 export { GridCardUserSocial } from "./card/user-social";
 export { SkeletonCard, SkeletonGrid } from "./skeleton";

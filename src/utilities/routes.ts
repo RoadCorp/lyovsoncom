@@ -175,10 +175,6 @@ export function topicRoute(slug: string) {
   return typedRoute(`/topics/${slug}`);
 }
 
-export function topicUrl(slug: string) {
-  return absoluteUrl(topicRoute(slug));
-}
-
 export function topicPageRoute(topicSlug: string, pageNumber: number) {
   return pageNumber <= 1
     ? topicRoute(topicSlug)
@@ -187,10 +183,6 @@ export function topicPageRoute(topicSlug: string, pageNumber: number) {
 
 export function lyovsonRoute(username: string) {
   return typedRoute(`/${username}`);
-}
-
-export function lyovsonUrl(username: string) {
-  return absoluteUrl(lyovsonRoute(username));
 }
 
 export function lyovsonBioRoute(username: string) {

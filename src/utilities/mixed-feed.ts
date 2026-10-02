@@ -1,6 +1,5 @@
 import type { Activity, Note } from "@/payload-types";
 import type { PostSummary } from "@/utilities/post-summary";
-import { activityUrl, noteUrl, postUrl } from "@/utilities/routes";
 
 export type MixedFeedItem =
   | { type: "activity"; data: Activity; timestamp: number }
@@ -62,16 +61,4 @@ export function sortMixedFeedItems<T extends { timestamp: number }>(
   items: T[]
 ) {
   return [...items].sort((left, right) => right.timestamp - left.timestamp);
-}
-
-export function getMixedFeedItemUrl(item: Omit<MixedFeedItem, "timestamp">) {
-  if (item.type === "post") {
-    return item.data.slug ? postUrl(item.data.slug) : null;
-  }
-
-  if (item.type === "note") {
-    return item.data.slug ? noteUrl(item.data.slug) : null;
-  }
-
-  return activityUrl(item.data);
 }

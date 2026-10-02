@@ -21,7 +21,3 @@ export async function getProject(slug: string): Promise<Project | null> {
 
   return (response.docs[0] as Project) || null;
 }
-
-export function getCachedProjectBySlug(slug: string): Promise<Project | null> {
-  return getProject(slug);
-}

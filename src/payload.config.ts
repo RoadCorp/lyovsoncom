@@ -20,11 +20,7 @@ import { References } from "@/collections/References";
 import { Topics } from "@/collections/Topics";
 import { tsvector } from "@/db/custom-types";
 import { defaultLexical } from "@/fields/defaultLexical";
-import { ComputeRecommendations } from "@/jobs/tasks/compute-recommendations";
-import { GenerateEmbedding } from "@/jobs/tasks/generate-embedding";
-import { ProcessPostEmbeddings } from "@/jobs/workflows/process-post-embeddings";
 import { plugins } from "@/plugins";
-import { isCronRequest } from "@/utilities/cron-auth";
 import { getServerSideURL } from "@/utilities/getURL";
 
 const filename = fileURLToPath(import.meta.url);
@@ -214,19 +210,6 @@ export default buildConfig({
     Activities,
     Notes,
   ],
-  jobs: {
-    // Register tasks (reusable building blocks)
-    tasks: [GenerateEmbedding, ComputeRecommendations],
-
-    // Register workflows (orchestrate tasks)
-    workflows: [ProcessPostEmbeddings],
-
-    // Access control - secure the jobs endpoint
-    access: {
-      // Allow authenticated admins or requests with a valid CRON_SECRET
-      run: ({ req }) => Boolean(req.user) || isCronRequest(req.headers),
-    },
-  },
   cors: [getServerSideURL()].filter(Boolean),
   globals: [],
   // The admin and site use REST and the local API only.
