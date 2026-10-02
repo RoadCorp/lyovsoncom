@@ -118,7 +118,7 @@ function NoteQuoteContent({
     <div className="relative flex h-full flex-col justify-start px-6 py-6">
       <p
         className={[
-          "tone-heading min-h-0 flex-1 overflow-hidden break-words pr-10 text-left text-[15px] italic leading-snug",
+          "tone-heading min-h-0 flex-1 overflow-hidden break-words pr-10 text-left font-serif text-note not-italic leading-snug",
           // Always fade: text can overflow the card before the excerpt limit.
           QUOTE_TRUNCATION_MASK_CLASS,
           isPoem ? "whitespace-pre-line" : "whitespace-normal",
@@ -158,7 +158,7 @@ function NoteThoughtContent({
     <div className="relative flex h-full flex-col justify-start px-6 py-6">
       <p
         className={[
-          "tone-heading min-h-0 flex-1 overflow-hidden text-pretty break-words pr-10 text-left text-[15px] leading-relaxed",
+          "tone-heading min-h-0 flex-1 overflow-hidden text-pretty break-words pr-10 text-left text-note leading-relaxed",
           "tracking-[-0.01em]",
           // Always fade: text can overflow the card before the excerpt limit.
           THOUGHT_TRUNCATION_MASK_CLASS,

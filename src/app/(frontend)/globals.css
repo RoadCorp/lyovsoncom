@@ -369,6 +369,9 @@
 */
 
 @theme inline {
+  /* Small type scale for the sizes that used arbitrary values. */
+  --text-label: 0.6875rem;
+  --text-note: 0.9375rem;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -726,6 +729,16 @@
       color-mix(in oklab, var(--surface-2) 94%, var(--accent-rail) 6%)
     );
     border-radius: calc(var(--radius) - 4px);
+  }
+
+  /* Editorial display type: titles and headings in Plex Serif 600, body
+     and meta text stay in Plex Sans. */
+  .card-title,
+  .surface-title-stage :is(h1, h2),
+  .content-prose :is(h2, h3) {
+    font-family: var(--font-display), var(--font-serif), Georgia, serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
   }
 
   .card-title {
@@ -1760,8 +1773,8 @@
   .note-quote-prose p,
   /* biome-ignore lint/style/noDescendingSpecificity: Typography does not override the earlier .content-prose li + li spacing. */
   .note-quote-prose li {
+    font-family: var(--font-serif), Georgia, serif;
     font-size: clamp(1.1rem, 1.3vw + 0.8rem, 1.45rem);
-    font-style: italic;
     line-height: 1.8;
     color: color-mix(in oklab, var(--text-1) 72%, var(--accent-quote) 28%);
     letter-spacing: -0.012em;

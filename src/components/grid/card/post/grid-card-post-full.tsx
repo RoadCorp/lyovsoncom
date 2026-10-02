@@ -128,7 +128,7 @@ export const GridCardPostFull = ({
           >
             <span
               aria-hidden="true"
-              className="card-eyebrow font-mono text-[0.6875rem] uppercase tracking-[0.16em]"
+              className="card-eyebrow font-mono text-label uppercase tracking-[0.16em]"
               data-post-type={postType}
             >
               {postType}
