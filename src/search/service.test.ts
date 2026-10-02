@@ -1,7 +1,7 @@
 import type { SQL } from "@payloadcms/db-vercel-postgres/drizzle";
 import { PgDialect } from "@payloadcms/db-vercel-postgres/drizzle/pg-core";
 import { NextRequest } from "next/server";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GET } from "@/app/api/search/route";
 import { generateEmbedding } from "@/utilities/generate-embedding";
 import { getPayloadClient } from "@/utilities/payload-client";
@@ -24,6 +24,7 @@ vi.mock("@/utilities/generate-embedding", () => ({
 beforeEach(() => {
   vi.resetAllMocks();
 });
+afterEach(() => vi.unstubAllEnvs());
 
 describe("search input validation", () => {
   it.each([Number.NaN, Number.POSITIVE_INFINITY, 1.5, 0, -1, 51])(
@@ -90,6 +91,7 @@ describe("search execution", () => {
   const execute = vi.fn<(query: SQL) => Promise<{ rows: (typeof row)[] }>>();
 
   beforeEach(() => {
+    vi.stubEnv("OPENAI_API_KEY", "test-key");
     execute.mockReset().mockResolvedValue({ rows: [row] });
     vi.mocked(getPayloadClient).mockResolvedValue({
       db: { drizzle: { execute } },
@@ -171,6 +173,17 @@ describe("search execution", () => {
     // The embedding parameter is NULL, so the SQL skips semantic ranking.
     expect(query.params).toContain(null);
     expect(query.params).toContain("books");
+  });
+
+  it("skips the provider entirely when no API key is configured", async () => {
+    vi.stubEnv("OPENAI_API_KEY", "");
+    const response = await GET(
+      new NextRequest("https://www.lyovson.com/api/search?q=books")
+    );
+    expect(response.status).toBe(200);
+    expect(generateEmbedding).not.toHaveBeenCalled();
+    const [[statement]] = execute.mock.calls;
+    expect(new PgDialect().sqlToQuery(statement).params).toContain(null);
   });
 
   it("rejects queries longer than 200 characters before any work", async () => {
