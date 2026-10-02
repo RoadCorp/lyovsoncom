@@ -78,9 +78,7 @@ export async function GET(request: NextRequest) {
           status: 200,
           headers: {
             "Content-Type": "application/json; charset=utf-8",
-            "Cache-Control":
-              "public, max-age=300, s-maxage=600, stale-while-revalidate=1800",
-            "Access-Control-Allow-Origin": "*",
+            "Cache-Control": "private, no-store",
           },
         }
       );
@@ -285,8 +283,7 @@ export async function GET(request: NextRequest) {
         status: 200,
         headers: {
           "Content-Type": "application/json; charset=utf-8",
-          "Cache-Control": "public, max-age=7200, s-maxage=7200", // Cache individual embeddings longer
-          "Access-Control-Allow-Origin": "*",
+          "Cache-Control": "private, no-store",
           "X-Embedding-Source": item.embedding_vector
             ? "pre-computed"
             : "on-demand",
@@ -568,10 +565,7 @@ export async function GET(request: NextRequest) {
       status: 200,
       headers: {
         "Content-Type": "application/json; charset=utf-8",
-        "Cache-Control": "public, max-age=3600, s-maxage=3600",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET",
-        "Access-Control-Allow-Headers": "Content-Type",
+        "Cache-Control": "private, no-store",
         "X-Embeddings-Source": "pre-computed",
         "X-Total-Items-With-Embeddings": embeddings.length.toString(),
       },
@@ -599,7 +593,7 @@ export async function GET(request: NextRequest) {
         status: 500,
         headers: {
           "Content-Type": "application/json; charset=utf-8",
-          "Cache-Control": "no-cache",
+          "Cache-Control": "private, no-store",
         },
       }
     );

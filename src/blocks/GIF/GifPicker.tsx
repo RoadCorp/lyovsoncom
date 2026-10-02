@@ -10,7 +10,8 @@ import {
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 
-import { extractVideoUrls, searchGifs } from "./actions";
+import { searchGifs } from "./actions";
+import { extractVideoUrls, type TenorResult } from "./tenor";
 
 /**
  * GIF Picker Component for Payload Admin
@@ -19,21 +20,6 @@ import { extractVideoUrls, searchGifs } from "./actions";
  * Lexical editor's GIF block. Users can search and select GIFs without
  * leaving the admin panel.
  */
-
-// Types
-interface TenorResult {
-  id: string;
-  media_formats: {
-    tinygif: {
-      url: string;
-      dims: [number, number];
-    };
-    mp4: {
-      url: string;
-      dims: [number, number];
-    };
-  };
-}
 
 // Component
 export const GifPicker: React.FC = () => {
@@ -87,9 +73,9 @@ export const GifPicker: React.FC = () => {
   }, [searchTerm]);
 
   const handleSelectGif = useCallback(
-    async (result: TenorResult) => {
+    (result: TenorResult) => {
       // Extract video URLs and metadata
-      const videoData = await extractVideoUrls(result);
+      const videoData = extractVideoUrls(result);
 
       // Update form fields with video URLs
       dispatchFields({
