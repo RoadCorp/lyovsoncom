@@ -24,6 +24,7 @@ import { ComputeRecommendations } from "@/jobs/tasks/compute-recommendations";
 import { GenerateEmbedding } from "@/jobs/tasks/generate-embedding";
 import { ProcessPostEmbeddings } from "@/jobs/workflows/process-post-embeddings";
 import { plugins } from "@/plugins";
+import { isCronRequest } from "@/utilities/cron-auth";
 import { getServerSideURL } from "@/utilities/getURL";
 
 const filename = fileURLToPath(import.meta.url);
@@ -218,15 +219,8 @@ export default buildConfig({
 
     // Access control - secure the jobs endpoint
     access: {
-      run: ({ req }) => {
-        // Allow authenticated admins or requests with valid CRON_SECRET
-        const cronSecret = req.headers
-          .get("authorization")
-          ?.replace("Bearer ", "");
-        return Boolean(
-          req.user || (cronSecret && cronSecret === process.env.CRON_SECRET)
-        );
-      },
+      // Allow authenticated admins or requests with a valid CRON_SECRET
+      run: ({ req }) => Boolean(req.user) || isCronRequest(req.headers),
     },
   },
   cors: [getServerSideURL()].filter(Boolean),

@@ -359,9 +359,7 @@ export async function GET(request: NextRequest) {
       status: 200,
       headers: {
         "Content-Type": "application/json; charset=utf-8",
-        "Cache-Control":
-          "public, max-age=7200, s-maxage=14400, stale-while-revalidate=28800", // Cache for 2-4 hours, stale up to 8 hours
-        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "private, no-store",
         "X-Robots-Tag": "noindex, nofollow", // Prevent search engine indexing
       },
     });
@@ -388,7 +386,7 @@ export async function GET(request: NextRequest) {
         status: 500,
         headers: {
           "Content-Type": "application/json; charset=utf-8",
-          "Cache-Control": "no-cache",
+          "Cache-Control": "private, no-store",
         },
       }
     );

@@ -5,12 +5,14 @@ import {
   runHybridSearch,
   SearchInputError,
 } from "@/search/service";
+import { logApiTelemetry } from "@/utilities/api-telemetry";
 import {
   getRequestUserAgent,
   shouldBlockExpensiveBotRequest,
 } from "@/utilities/request-guards";
 
 export async function GET(request: NextRequest) {
+  const startedAt = Date.now();
   const query = request.nextUrl.searchParams.get("q");
   const userAgent = getRequestUserAgent(request.headers);
 
@@ -55,7 +57,6 @@ export async function GET(request: NextRequest) {
         headers: {
           "Cache-Control":
             "public, max-age=300, s-maxage=600, stale-while-revalidate=1800", // Cache 5-10 min, stale up to 30 min
-          "Access-Control-Allow-Origin": "*",
         },
       }
     );
@@ -73,16 +74,24 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    logApiTelemetry({
+      route: "api.search.failed",
+      startedAt,
+      level: "error",
+      summary: {
+        error: error instanceof Error ? error.message : String(error),
+      },
+    });
+
     return NextResponse.json(
       {
         results: [],
         query: "",
         count: 0,
         message: "Search failed",
-        error: error instanceof Error ? error.message : "Unknown error",
         previewItems: [],
       },
-      { status: 500 }
+      { status: 500, headers: { "Cache-Control": "no-store" } }
     );
   }
 }
