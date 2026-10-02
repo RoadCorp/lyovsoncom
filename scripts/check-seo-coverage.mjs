@@ -87,6 +87,25 @@ function readRelativeFile(file) {
   return readFile(getAbsolutePath(file), "utf8");
 }
 
+// Pages built by a factory get their metadata and JSON-LD from it, so the
+// checks read the factory along with the page that imports it.
+const pageFactories = {
+  "create-paginated-archive-page":
+    "src/utilities/create-paginated-archive-page.tsx",
+  "create-lyovson-feed-page":
+    "src/app/(frontend)/[lyovson]/_utilities/create-lyovson-feed-page.tsx",
+};
+
+async function readPageSource(file) {
+  let source = await readRelativeFile(file);
+  for (const [marker, factory] of Object.entries(pageFactories)) {
+    if (source.includes(marker)) {
+      source += `\n${await readRelativeFile(factory)}`;
+    }
+  }
+  return source;
+}
+
 async function listFilesRecursively(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
   const files = [];
@@ -145,7 +164,7 @@ async function checkCanonicalCoverage() {
   const issues = [];
 
   for (const file of requiredCanonicalFiles) {
-    const source = await readRelativeFile(file);
+    const source = await readPageSource(file);
 
     if (!source.includes("canonical")) {
       issues.push(`Missing canonical metadata wiring: ${file}`);
@@ -159,7 +178,7 @@ async function checkJsonLdCoverage() {
   const issues = [];
 
   for (const file of requiredJsonLdFiles) {
-    const source = await readRelativeFile(file);
+    const source = await readPageSource(file);
     const hasJsonLd = source.includes("JsonLd");
     const hasSchemaGenerator =
       source.includes("generateCollectionPageSchema") ||
