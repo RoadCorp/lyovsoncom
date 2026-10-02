@@ -8,10 +8,9 @@ import { richEditorConfig } from "@/fields/lexical-configs";
 import { publishedAtField } from "@/fields/publishedAt";
 import { seoField } from "@/fields/seo";
 import { slugField } from "@/fields/slug";
-import { formatSlug } from "@/fields/slug/formatSlug";
 import { markActivityEmbeddingStaleHook } from "@/utilities/mark-embedding-stale";
-import { getRelationId } from "@/utilities/relations";
 import { populateContentTextHook } from "./hooks/populateContentText";
+import { populateSlugSourceHook } from "./hooks/populateSlugSource";
 
 const revalidateActivity = revalidateContentHooks("activities");
 
@@ -184,58 +183,7 @@ export const Activities: CollectionConfig<"activities"> = {
         hidden: true,
       },
       hooks: {
-        beforeValidate: [
-          // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: slugSource composition depends on related reference title
-          async ({ data, operation, originalDoc, req }) => {
-            const originalSlugSource =
-              originalDoc &&
-              typeof originalDoc === "object" &&
-              "slugSource" in originalDoc &&
-              typeof originalDoc.slugSource === "string"
-                ? originalDoc.slugSource
-                : "";
-
-            if (operation !== "create" && operation !== "update") {
-              return data?.slugSource || originalSlugSource;
-            }
-
-            // Use incoming reference first; fall back to original document on partial updates.
-            const referenceValue =
-              data?.reference ??
-              (originalDoc &&
-              typeof originalDoc === "object" &&
-              "reference" in originalDoc
-                ? originalDoc.reference
-                : null);
-            const referenceId = getRelationId(referenceValue);
-
-            if (referenceId !== null) {
-              try {
-                const reference = (await req.payload.findByID({
-                  collection: "references",
-                  id: referenceId,
-                })) as unknown as { title?: string };
-
-                if (reference?.title) {
-                  if (data) {
-                    data.slug = formatSlug(reference.title);
-                  }
-                  return reference.title;
-                }
-              } catch (error) {
-                req.payload.logger.error(
-                  `Failed to fetch reference ${referenceId} for activity slug: ${error instanceof Error ? error.message : String(error)}`
-                );
-              }
-            }
-
-            const fallbackSlugSource = data?.slugSource || originalSlugSource;
-            if (fallbackSlugSource && data) {
-              data.slug = formatSlug(fallbackSlugSource);
-            }
-            return fallbackSlugSource;
-          },
-        ],
+        beforeValidate: [populateSlugSourceHook],
       },
     },
     ...slugField("slugSource", {
