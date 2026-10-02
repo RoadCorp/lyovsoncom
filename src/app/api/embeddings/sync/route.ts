@@ -1,7 +1,7 @@
 import configPromise from "@payload-config";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { getPayload } from "payload";
+import { getPayload, type Payload } from "payload";
 import { logApiTelemetry } from "@/utilities/api-telemetry";
 import {
   authorizeEmbeddingMutation,
@@ -100,7 +100,79 @@ function buildCollectionSummary(): CollectionSummary {
   };
 }
 
-/* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Batch sync endpoint orchestrates auth, filtering, and per-collection processing */
+/** The POST body is optional; anything other than a JSON object is ignored. */
+async function readSyncBody(request: NextRequest): Promise<SyncBody> {
+  try {
+    const parsed = (await request.json()) as unknown;
+    if (parsed && typeof parsed === "object") {
+      return parsed as SyncBody;
+    }
+  } catch {
+    // Fall through to the defaults.
+  }
+  return {};
+}
+
+/** Embeds one collection's stale (or, with force, all) public documents. */
+async function syncCollection(
+  payload: Payload,
+  collection: EmbeddableCollection,
+  summary: CollectionSummary,
+  { force, limit }: { force: boolean; limit: number }
+) {
+  const docs = await payload.find({
+    collection,
+    overrideAccess: true,
+    where: getWhereClause(collection, force) as never,
+    sort: "-updatedAt",
+    limit,
+    // The helpers load each document themselves; only ids are needed here.
+    depth: 0,
+    select: {},
+  });
+
+  summary.queued = docs.docs.length;
+
+  for (const doc of docs.docs) {
+    const id = Number(doc.id);
+    if (Number.isNaN(id)) {
+      summary.failed += 1;
+      continue;
+    }
+
+    const result = await generateEmbeddingFor(collection, id, payload);
+
+    summary.processed += 1;
+    if (!result.success) {
+      summary.failed += 1;
+    } else if (result.skipped) {
+      summary.skipped += 1;
+    } else {
+      summary.generated += 1;
+    }
+  }
+}
+
+function sumSummaries(summaries: CollectionSummary[]) {
+  return summaries.reduce(
+    (acc, summary) => {
+      acc.queued += summary.queued;
+      acc.processed += summary.processed;
+      acc.generated += summary.generated;
+      acc.skipped += summary.skipped;
+      acc.failed += summary.failed;
+      return acc;
+    },
+    {
+      queued: 0,
+      processed: 0,
+      generated: 0,
+      skipped: 0,
+      failed: 0,
+    }
+  );
+}
+
 async function handleSync(
   request: NextRequest,
   { readBody }: { readBody: boolean }
@@ -118,18 +190,7 @@ async function handleSync(
       return getEmbeddingUnauthorizedResponse(authResult.reason);
     }
 
-    let body: SyncBody = {};
-    if (readBody) {
-      try {
-        const parsed = (await request.json()) as unknown;
-        if (parsed && typeof parsed === "object") {
-          body = parsed as SyncBody;
-        }
-      } catch {
-        body = {};
-      }
-    }
-
+    const body = readBody ? await readSyncBody(request) : {};
     const collections = normalizeCollections(body.collections);
     const limitPerCollection = normalizeLimit(body.limitPerCollection);
     const force = body.force === true;
@@ -141,55 +202,14 @@ async function handleSync(
     };
 
     for (const collection of collections) {
-      const docs = await payload.find({
-        collection,
-        overrideAccess: true,
-        where: getWhereClause(collection, force) as never,
-        sort: "-updatedAt",
+      await syncCollection(payload, collection, summary[collection], {
+        force,
         limit: limitPerCollection,
-        // The helpers load each document themselves; only ids are needed here.
-        depth: 0,
-        select: {},
       });
-
-      summary[collection].queued = docs.docs.length;
-
-      for (const doc of docs.docs) {
-        const id = Number(doc.id);
-        if (Number.isNaN(id)) {
-          summary[collection].failed += 1;
-          continue;
-        }
-
-        const result = await generateEmbeddingFor(collection, id, payload);
-
-        summary[collection].processed += 1;
-        if (!result.success) {
-          summary[collection].failed += 1;
-        } else if (result.skipped) {
-          summary[collection].skipped += 1;
-        } else {
-          summary[collection].generated += 1;
-        }
-      }
     }
 
-    const totals = collections.reduce(
-      (acc, collection) => {
-        acc.queued += summary[collection].queued;
-        acc.processed += summary[collection].processed;
-        acc.generated += summary[collection].generated;
-        acc.skipped += summary[collection].skipped;
-        acc.failed += summary[collection].failed;
-        return acc;
-      },
-      {
-        queued: 0,
-        processed: 0,
-        generated: 0,
-        skipped: 0,
-        failed: 0,
-      }
+    const totals = sumSummaries(
+      collections.map((collection) => summary[collection])
     );
 
     const responseBody = {
