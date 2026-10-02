@@ -11,7 +11,7 @@ import { markNoteEmbeddingStaleHook } from "@/utilities/mark-embedding-stale";
 import { populateContentTextHook } from "./hooks/populateContentText";
 import { revalidateNote, revalidateNoteDelete } from "./hooks/revalidateNote";
 
-export const Notes: CollectionConfig = {
+export const Notes: CollectionConfig<"notes"> = {
   slug: "notes",
   access: {
     create: authenticated,

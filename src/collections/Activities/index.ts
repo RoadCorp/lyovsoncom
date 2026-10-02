@@ -14,7 +14,7 @@ import {
   revalidateActivityDelete,
 } from "./hooks/revalidateActivity";
 
-export const Activities: CollectionConfig = {
+export const Activities: CollectionConfig<"activities"> = {
   slug: "activities",
   access: {
     create: authenticated,

@@ -6,7 +6,7 @@ import { authenticated } from "@/access/authenticated";
 import { seoField } from "@/fields/seo";
 import { slugField } from "@/fields/slug";
 
-export const Projects: CollectionConfig = {
+export const Projects: CollectionConfig<"projects"> = {
   slug: "projects",
   // Fields returned when another document references this one.
   defaultPopulate: {

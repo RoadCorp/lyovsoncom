@@ -20,7 +20,7 @@ const PRIVATE_AUTH_FIELDS = [
   "sessions",
 ] as const;
 
-export const Lyovsons: CollectionConfig = {
+export const Lyovsons: CollectionConfig<"lyovsons"> = {
   slug: "lyovsons",
   // Fields returned when another document references this one.
   defaultPopulate: {
