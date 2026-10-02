@@ -2431,6 +2431,60 @@
   animation: vt-page-in var(--vt-content-duration) var(--vt-ease) both;
 }
 
+/* First full page load: the first six page cards rise in 30ms apart
+   (src/components/first-load-entrance.tsx ends this after the first load).
+   They start nearly, not fully, transparent: Chrome doesn't count
+   opacity 0 as painted, which would delay Largest Contentful Paint. */
+@media (prefers-reduced-motion: no-preference) {
+  /* Count only rendered cards: skip the skip-link target and JSON-LD. */
+  :root:not([data-entered])
+    main
+    > :nth-child(-n + 6 of :not(script, #main-content)) {
+    animation: entrance-rise 340ms var(--ease-snappy) backwards;
+  }
+
+  :root:not([data-entered])
+    main
+    > :nth-child(2 of :not(script, #main-content)) {
+    animation-delay: 30ms;
+  }
+
+  :root:not([data-entered])
+    main
+    > :nth-child(3 of :not(script, #main-content)) {
+    animation-delay: 60ms;
+  }
+
+  :root:not([data-entered])
+    main
+    > :nth-child(4 of :not(script, #main-content)) {
+    animation-delay: 90ms;
+  }
+
+  :root:not([data-entered])
+    main
+    > :nth-child(5 of :not(script, #main-content)) {
+    animation-delay: 120ms;
+  }
+
+  :root:not([data-entered])
+    main
+    > :nth-child(6 of :not(script, #main-content)) {
+    animation-delay: 150ms;
+  }
+}
+
+@keyframes entrance-rise {
+  from {
+    opacity: 0.01;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* Back and Forward have no view transition; fade the restored page in
    (src/components/HistoryFade.tsx). */
 @media (prefers-reduced-motion: no-preference) {
