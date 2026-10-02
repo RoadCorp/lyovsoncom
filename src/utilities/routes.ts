@@ -12,6 +12,8 @@ export const UNKNOWN_ACTIVITY_DATE_SLUG = "unknown";
 
 export const transitionTypes = {
   drillIn: "drill-in",
+  // In-page links back to an archive; the shared image and title morph back.
+  navBack: "nav-back",
   section: "section",
   navMode: "nav-mode",
   postDrillIn: "post-drill-in",

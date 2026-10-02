@@ -1,7 +1,15 @@
-import { Brain, Calendar, FileText, PenTool, Quote } from "lucide-react";
+import {
+  ArrowLeft,
+  Brain,
+  Calendar,
+  FileText,
+  PenTool,
+  Quote,
+} from "lucide-react";
 import { ViewTransition } from "react";
 import { AppLink } from "@/components/app-link";
 import { GridCard } from "@/components/grid";
+import { IntentLink } from "@/components/intent-link";
 import { Media } from "@/components/Media";
 import { CARD_FULL_IMAGE_SIZE } from "@/components/Media/image-sizes";
 import { MediaFallback } from "@/components/Media/media-fallback";
@@ -12,9 +20,13 @@ import type { Activity, Note, Post, Topic } from "@/payload-types";
 import { formatShortDate } from "@/utilities/date";
 import { dedupeRelationItemsById } from "@/utilities/dedupe-relation-items-by-id";
 import {
+  activitiesRoute,
   getActivityDateSlug,
   lyovsonRoute,
+  notesRoute,
+  postsRoute,
   projectRoute,
+  transitionTypes,
 } from "@/utilities/routes";
 import {
   frontendViewTransitionClasses,
@@ -59,6 +71,25 @@ function PostHeroDescription({
         {description}
       </p>
     </PostTransitionBoundary>
+  );
+}
+
+/**
+ * Back to the archive this page belongs to. Unlike the browser's Back
+ * button, a link navigation can carry a transition type, so the shared
+ * image and title morph back into their card.
+ */
+function HeroBackLink({ href, label }: { href: string; label: string }) {
+  return (
+    <IntentLink
+      aria-label={`Back to ${label.toLowerCase()}`}
+      className="hero-back-link ui-focus-ring"
+      href={href}
+      transitionTypes={[transitionTypes.navBack]}
+    >
+      <ArrowLeft aria-hidden="true" className="h-3.5 w-3.5" />
+      <span>{label}</span>
+    </IntentLink>
   );
 }
 
@@ -195,7 +226,10 @@ export const GridCardHero = ({
 
         <GridCardSection className="surface-title-stage col-start-1 g3:col-start-4 col-end-4 g3:col-end-7 g3:row-start-1 row-start-4 g3:row-end-4 row-end-7">
           <div className="flex h-full flex-col gap-4 px-6 py-5 md:px-7 md:py-6">
-            <PostHeroEyebrow post={post} />
+            <div className="flex items-center justify-between gap-3">
+              <PostHeroEyebrow post={post} />
+              <HeroBackLink href={postsRoute()} label="Posts" />
+            </div>
             <div className="flex flex-1 flex-col justify-center gap-3">
               <PostTransitionBoundary slug={post.slug} variant="title">
                 <h1
@@ -243,6 +277,9 @@ export const GridCardHeroNote = ({
       )}
     >
       <GridCardSection className="surface-title-stage col-start-1 col-end-4 row-start-1 row-end-3 flex h-full flex-col items-center justify-center px-6 py-6">
+        <div className="absolute top-3 right-4">
+          <HeroBackLink href={notesRoute()} label="Notes" />
+        </div>
         <ViewTransition
           name={getNoteTitleTransitionName(note.slug || String(note.id))}
           {...frontendViewTransitionClasses.sharedTitle}
@@ -365,6 +402,9 @@ export const GridCardHeroActivity = ({
       ) : null}
 
       <GridCardSection className="surface-title-stage col-start-1 g3:col-start-4 col-end-4 g3:col-end-7 g3:row-start-1 row-start-4 g3:row-end-4 row-end-7">
+        <div className="absolute top-3 right-4">
+          <HeroBackLink href={activitiesRoute()} label="Activities" />
+        </div>
         <div className="flex h-full flex-col items-center justify-center px-4 md:px-8">
           <div className="mx-auto w-full max-w-3xl space-y-4">
             <ViewTransition

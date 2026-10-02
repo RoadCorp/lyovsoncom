@@ -790,6 +790,26 @@
     -webkit-line-clamp: 2;
   }
 
+  .hero-back-link {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    gap: 0.25rem;
+    align-items: center;
+    min-height: 24px;
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    color: var(--tone-muted-color, var(--text-3));
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    border-radius: 0.375rem;
+    transition: color var(--duration-medium) var(--ease-standard);
+  }
+
+  .hero-back-link:hover {
+    color: var(--accent-link);
+  }
+
   .hero-footer {
     border-top: 1px solid color-mix(in oklab, var(--line-1) 70%, transparent);
   }
