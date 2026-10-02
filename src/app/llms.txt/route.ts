@@ -15,19 +15,18 @@ ${siteConfig.name} is a personal website showcasing technical writing, creative 
 
 ## Main Sections
 
-- Writing & Articles: ${siteUrl}/posts
-- Projects & Research: ${siteUrl}/projects
-- Author: Rafa: ${siteUrl}/rafa
-- Author: Jess: ${siteUrl}/jess
-- Search: ${siteUrl}/search
+- [Writing & Articles](${siteUrl}/posts): essays and articles
+- [Projects & Research](${siteUrl}/projects): ongoing projects and their posts
+- [Rafa Lyóvson](${siteUrl}/rafa): posts, notes and activities
+- [Jess Lyóvson](${siteUrl}/jess): posts, notes and activities
 
 ## Machine-readable access
 
-- JSON Feed: ${siteUrl}/feed.json
-- RSS Feed: ${siteUrl}/feed.xml
-- Atom Feed: ${siteUrl}/atom.xml
-- XML Sitemap: ${siteUrl}/sitemap.xml
-- Robots Policy: ${siteUrl}/robots.txt
+- [JSON Feed](${siteUrl}/feed.json)
+- [RSS Feed](${siteUrl}/feed.xml)
+- [Atom Feed](${siteUrl}/atom.xml)
+- [XML Sitemap](${siteUrl}/sitemap.xml)
+- [Robots Policy](${siteUrl}/robots.txt)
 
 ## Usage
 
@@ -35,17 +34,17 @@ ${siteConfig.name} is a personal website showcasing technical writing, creative 
 - Commercial/licensing contact: hello@lyovson.com
 - Respect Cache-Control headers.
 - Use feeds and canonical public pages for content access.
-- Public REST, GraphQL, search, and embedding endpoints are not crawler access surfaces.
+- The REST API, search and embedding endpoints are not crawler access surfaces.
 
 ## Authors
 
-- Rafa Lyóvson: ${siteUrl}/rafa
-- Jess Lyóvson: ${siteUrl}/jess
+- [Rafa Lyóvson](${siteUrl}/rafa/bio)
+- [Jess Lyóvson](${siteUrl}/jess/bio)
 
 ## Contact
 
-- Email: hello@lyovson.com
-- Website: ${siteUrl}
+- [Email](mailto:hello@lyovson.com)
+- [Website](${siteUrl})
 
 ---
 

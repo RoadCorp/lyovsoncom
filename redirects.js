@@ -1,3 +1,6 @@
+// Same store-id parsing as the image and CSP settings in next.config.ts.
+const BLOB_TOKEN_PATTERN = /^vercel_blob_rw_([a-z\d]+)_[a-z\d]+$/i;
+
 const redirects = () => {
   const internetExplorerRedirect = {
     destination: "/ie-incompatible.html",
@@ -114,8 +117,32 @@ const redirects = () => {
     },
   ];
 
+  // Media is served straight from Vercel Blob; Payload's /api/media/file route
+  // has no storage handler (disablePayloadAccessControl) and returns 500 for
+  // the old URLs that still circulate.
+  const blobStoreId =
+    process.env.BLOB_READ_WRITE_TOKEN?.match(
+      BLOB_TOKEN_PATTERN
+    )?.[1]?.toLowerCase();
+  const mediaRedirects = blobStoreId
+    ? [
+        {
+          source: "/api/media/file/:path*",
+          destination: `https://${blobStoreId}.public.blob.vercel-storage.com/:path*`,
+          permanent: true,
+        },
+      ]
+    : [];
+
+  // Next serves the home page at /index; keep one canonical URL.
+  const canonicalRedirects = [
+    { source: "/index", destination: "/", permanent: true },
+  ];
+
   const allRedirects = [
     internetExplorerRedirect,
+    ...mediaRedirects,
+    ...canonicalRedirects,
     ...newsletterArchiveRedirects,
     ...specificPostRedirects,
     ...projectIndexRedirects,
