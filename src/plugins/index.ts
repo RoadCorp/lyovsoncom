@@ -12,7 +12,6 @@ import {
 import type { Plugin } from "payload";
 
 import { authenticated } from "@/access/authenticated";
-import { revalidateRedirects } from "@/hooks/revalidateRedirects";
 import type { Post } from "@/payload-types";
 import { beforeSyncWithSearch } from "@/search/beforeSync";
 import { searchFields } from "@/search/fieldOverrides";
@@ -52,9 +51,6 @@ export const plugins: Plugin[] = [
           }
           return field;
         });
-      },
-      hooks: {
-        afterChange: [revalidateRedirects],
       },
     },
   }),
