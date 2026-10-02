@@ -27,7 +27,7 @@ export async function getProjectPosts(
   const result = await payload.find({
     collection: "posts",
     select: postSummarySelect,
-    depth: 2,
+    depth: 1,
     limit: 25,
     where: projectPostsWhere(projectId),
     sort: "-publishedAt",
@@ -62,7 +62,7 @@ export async function getPaginatedProjectPosts(
   const result = await payload.find({
     collection: "posts",
     select: postSummarySelect,
-    depth: 2,
+    depth: 1,
     limit,
     page: pageNumber,
     where: projectPostsWhere(projectId),

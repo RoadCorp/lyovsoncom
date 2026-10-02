@@ -38,7 +38,7 @@ export async function getPaginatedTopicPosts(
   const result = await payload.find({
     collection: "posts",
     select: postSummarySelect,
-    depth: 2,
+    depth: 1,
     limit,
     page: pageNumber,
     where: topicPostsWhere(topicId),

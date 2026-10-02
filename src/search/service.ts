@@ -14,6 +14,7 @@ import {
   generateEmbedding,
 } from "@/utilities/generate-embedding";
 import { getPayloadClient } from "@/utilities/payload-client";
+import { publicContentSelect } from "@/utilities/public-content-select";
 import {
   activitiesRoute,
   activityRoute,
@@ -493,7 +494,9 @@ export async function hydrateSearchResults(results: SearchResult[]) {
               },
             ],
           },
-          depth: 2,
+          // Post cards and previews never use second-level relations.
+          depth: 1,
+          select: publicContentSelect,
           limit: postsResults.length,
         })
       : Promise.resolve({ docs: [] as Post[] }),
@@ -511,6 +514,7 @@ export async function hydrateSearchResults(results: SearchResult[]) {
             ],
           },
           depth: 1,
+          select: publicContentSelect,
           limit: notesResults.length,
         })
       : Promise.resolve({ docs: [] as Note[] }),
@@ -528,6 +532,7 @@ export async function hydrateSearchResults(results: SearchResult[]) {
             ],
           },
           depth: 2,
+          select: publicContentSelect,
           limit: activitiesResults.length,
           overrideAccess: true,
         })
