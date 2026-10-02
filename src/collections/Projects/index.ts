@@ -77,7 +77,6 @@ export const Projects: CollectionConfig = {
         revalidateTag(`project-${doc.slug}`, { expire: 0 });
         revalidateTag("posts", { expire: 0 }); // Posts may reference this project
         revalidateTag("sitemap", { expire: 0 });
-        revalidateTag("playground", { expire: 0 }); // Playground uses project data
 
         // Revalidate project paths
         revalidatePath(`/projects/${doc.slug}`);
@@ -95,7 +94,6 @@ export const Projects: CollectionConfig = {
         revalidateTag(`project-${doc?.slug}`, { expire: 0 });
         revalidateTag("posts", { expire: 0 }); // Posts may reference this project
         revalidateTag("sitemap", { expire: 0 });
-        revalidateTag("playground", { expire: 0 }); // Playground uses project data
 
         // Revalidate project paths
         revalidatePath(`/projects/${doc?.slug}`);

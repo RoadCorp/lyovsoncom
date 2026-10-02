@@ -7,7 +7,8 @@ import { getRuntimeSiteOrigin } from "./src/utilities/site-config";
 const TAILWIND_REGEX = /[\\/]node_modules[\\/]tailwindcss[\\/]/;
 
 // Image quality presets for Next.js Image Optimization
-const IMAGE_QUALITIES: number[] = [25, 50, 75, 80, 90, 100];
+// 75 is the next/image default; cards request 80.
+const IMAGE_QUALITIES: number[] = [75, 80];
 const IMAGE_SIZES: number[] = [
   16, 32, 48, 64, 96, 128, 256, 384, 400, 800, 1200,
 ];
@@ -47,14 +48,9 @@ const nextConfig: NextConfig = {
         hostname: "img.youtube.com",
         protocol: "https",
       },
-      {
-        hostname: "dev.lyovson.com",
-        protocol: "https",
-      },
-      {
-        hostname: "localhost",
-        protocol: "http",
-      },
+      ...(process.env.NODE_ENV === "production"
+        ? []
+        : [{ hostname: "localhost", protocol: "http" as const }]),
       ...(VERCEL_BLOB_HOST
         ? [
             {
@@ -71,8 +67,9 @@ const nextConfig: NextConfig = {
     // This ensures Next.js serves appropriately-sized images for our grid cards
     // instead of defaulting to 640px (smallest deviceSize)
     imageSizes: IMAGE_SIZES,
-    // Next.js 16 default: 4 hours (14_400 seconds) - reduces CPU usage and costs
-    minimumCacheTTL: 14_400,
+    // Blob uploads are immutable (a re-upload gets a new name), so optimized
+    // variants can be cached for 30 days.
+    minimumCacheTTL: 2_592_000,
   },
   reactStrictMode: true,
   redirects,
@@ -173,59 +170,49 @@ const nextConfig: NextConfig = {
       expire: 604_800, // 7 days max
     },
     homepage: {
-      stale: 3600, // 1 hour stale - event-driven revalidation makes longer safe
-      revalidate: 7200, // 2 hours revalidate
-      expire: 86_400, // 24 hours max
+      stale: 3600, // 1 hour client; tags refresh on publish, 7 days/30 days as a backstop
+      revalidate: 604_800,
+      expire: 2_592_000,
     },
     feed: {
-      stale: 3600, // 1 hour stale - mixed content feeds track post/note/activity cadence
-      revalidate: 7200, // 2 hours revalidate
-      expire: 86_400, // 24 hours max
+      stale: 3600, // 1 hour client; tags refresh on publish, 7 days/30 days as a backstop
+      revalidate: 604_800,
+      expire: 2_592_000,
     },
     posts: {
-      stale: 3600, // 1 hour stale - event-driven revalidation makes longer safe
-      revalidate: 7200, // 2 hours revalidate
-      expire: 86_400, // 24 hours max
+      stale: 3600, // 1 hour client; tags refresh on publish, 7 days/30 days as a backstop
+      revalidate: 604_800,
+      expire: 2_592_000,
     },
     notes: {
-      stale: 3600, // 1 hour stale - event-driven revalidation makes longer safe
-      revalidate: 7200, // 2 hours revalidate
-      expire: 86_400, // 24 hours max
+      stale: 3600, // 1 hour client; tags refresh on publish, 7 days/30 days as a backstop
+      revalidate: 604_800,
+      expire: 2_592_000,
     },
     activities: {
-      stale: 3600, // 1 hour stale - event-driven revalidation makes longer safe
-      revalidate: 7200, // 2 hours revalidate
-      expire: 86_400, // 24 hours max
-    },
-    "grid-cards": {
-      stale: 3600, // 1 hour stale - event-driven revalidation makes longer safe
-      revalidate: 7200, // 2 hours revalidate
-      expire: 86_400, // 24 hours max
-    },
-    "user-session": {
-      stale: 60, // 1 minute stale
-      revalidate: 300, // 5 minutes revalidate
-      expire: 1800, // 30 minutes max
+      stale: 3600, // 1 hour client; tags refresh on publish, 7 days/30 days as a backstop
+      revalidate: 604_800,
+      expire: 2_592_000,
     },
     projects: {
-      stale: 14_400, // 4 hours stale
-      revalidate: 28_800, // 8 hours revalidate
-      expire: 86_400, // 24 hours max
+      stale: 14_400, // 4 hours client; tags refresh on edit, 7 days/30 days as a backstop
+      revalidate: 604_800,
+      expire: 2_592_000,
     },
     topics: {
-      stale: 7200, // 2 hours stale
-      revalidate: 14_400, // 4 hours revalidate
-      expire: 86_400, // 24 hours max
+      stale: 14_400, // 4 hours client; tags refresh on edit, 7 days/30 days as a backstop
+      revalidate: 604_800,
+      expire: 2_592_000,
     },
     authors: {
-      stale: 7200, // 2 hours stale
-      revalidate: 14_400, // 4 hours revalidate
-      expire: 86_400, // 24 hours max
+      stale: 14_400, // 4 hours client; tags refresh on edit, 7 days/30 days as a backstop
+      revalidate: 604_800,
+      expire: 2_592_000,
     },
     sitemap: {
-      stale: 14_400, // 4 hours stale
-      revalidate: 28_800, // 8 hours revalidate
-      expire: 172_800, // 48 hours max
+      stale: 14_400, // 4 hours client; tags refresh on publish, 7 days/30 days as a backstop
+      revalidate: 604_800,
+      expire: 2_592_000,
     },
     search: {
       stale: 1800, // 30 minutes stale
@@ -233,14 +220,9 @@ const nextConfig: NextConfig = {
       expire: 7200, // 2 hours max
     },
     rss: {
-      stale: 14_400, // 4 hours stale
-      revalidate: 28_800, // 8 hours revalidate
-      expire: 172_800, // 48 hours max
-    },
-    redirects: {
-      stale: 14_400, // 4 hours stale
-      revalidate: 28_800, // 8 hours revalidate
-      expire: 172_800, // 48 hours max
+      stale: 14_400, // 4 hours client; tags refresh on publish, 7 days/30 days as a backstop
+      revalidate: 604_800,
+      expire: 2_592_000,
     },
   },
   logging: {
