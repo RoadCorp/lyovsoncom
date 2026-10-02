@@ -29,6 +29,8 @@ const IS_VERCEL_DEPLOYMENT =
   Boolean(process.env.VERCEL_URL);
 
 const nextConfig: NextConfig = {
+  // AGENTS.md is maintained by hand; stop `next dev` from rewriting it.
+  agentRules: false,
   cacheComponents: true,
   typedRoutes: true,
   images: {

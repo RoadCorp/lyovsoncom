@@ -105,8 +105,10 @@ export default buildConfig({
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
   db: vercelPostgresAdapter({
-    // Read-only previews can opt out of development schema synchronization.
-    push: process.env.PAYLOAD_DB_PUSH !== "false",
+    // Development schema push is opt-in so a shared or production database is
+    // never altered by `next dev`. Use migrations, or PAYLOAD_DB_PUSH=true on
+    // a disposable database.
+    push: process.env.PAYLOAD_DB_PUSH === "true",
     pool: {
       connectionString: process.env.POSTGRES_URL || "",
       // Optimized settings for faster schema introspection
