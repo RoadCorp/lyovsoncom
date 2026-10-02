@@ -105,7 +105,7 @@ async function getLyovsonPostsPaginated(
   const result = await payload.find({
     collection: "posts",
     select: postSummarySelect,
-    depth: 2,
+    depth: 1,
     limit,
     page,
     where: lyovsonPostsWhere(lyovsonId),
@@ -128,7 +128,7 @@ async function getLyovsonPostsForMixedFeed(
   const result = await payload.find({
     collection: "posts",
     select: postSummarySelect,
-    depth: 2,
+    depth: 1,
     limit,
     where: lyovsonPostsWhere(lyovsonId),
     sort: "-publishedAt",

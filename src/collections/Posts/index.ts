@@ -14,6 +14,16 @@ import { revalidateDelete, revalidatePost } from "./hooks/revalidatePost";
 
 export const Posts: CollectionConfig<"posts"> = {
   slug: "posts",
+  // Fields returned when another document references this one.
+  defaultPopulate: {
+    title: true,
+    slug: true,
+    type: true,
+    description: true,
+    featuredImage: true,
+    publishedAt: true,
+    updatedAt: true,
+  },
   access: {
     create: authenticated,
     delete: authenticated,

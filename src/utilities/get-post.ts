@@ -4,6 +4,7 @@ import type { Post } from "@/payload-types";
 import { publishedPostsWhere } from "@/utilities/content-queries";
 import { getPayloadClient } from "@/utilities/payload-client";
 import { type PostSummary, postSummarySelect } from "@/utilities/post-summary";
+import { publicContentSelect } from "@/utilities/public-content-select";
 
 export async function getPost(slug: string): Promise<Post | null> {
   "use cache";
@@ -22,6 +23,7 @@ export async function getPost(slug: string): Promise<Post | null> {
     },
     limit: 1,
     depth: 2,
+    select: publicContentSelect,
   });
 
   return (response.docs[0] as Post) || null;
@@ -41,6 +43,7 @@ export async function getPostByProjectAndSlug(
   const response = await payload.find({
     collection: "posts",
     depth: 2,
+    select: publicContentSelect,
     where: {
       AND: [
         publishedPostsWhere(),
@@ -73,7 +76,7 @@ export async function getLatestPosts(
   const result = await payload.find({
     collection: "posts",
     select: postSummarySelect,
-    depth: 2,
+    depth: 1,
     limit,
     sort: "-publishedAt",
     where: publishedPostsWhere(),
@@ -95,7 +98,7 @@ export async function getPaginatedPosts(
   const result = await payload.find({
     collection: "posts",
     select: postSummarySelect,
-    depth: 2,
+    depth: 1,
     limit,
     page: pageNumber,
     sort: "-publishedAt",

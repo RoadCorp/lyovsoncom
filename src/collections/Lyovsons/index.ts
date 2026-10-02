@@ -22,6 +22,14 @@ const PRIVATE_AUTH_FIELDS = [
 
 export const Lyovsons: CollectionConfig = {
   slug: "lyovsons",
+  // Fields returned when another document references this one.
+  defaultPopulate: {
+    name: true,
+    username: true,
+    avatar: true,
+    quote: true,
+    socialLinks: true,
+  },
   access: {
     admin: authenticated,
     create: authenticated,

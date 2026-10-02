@@ -9,6 +9,14 @@ import { slugField } from "@/fields/slug";
 
 export const Projects: CollectionConfig = {
   slug: "projects",
+  // Fields returned when another document references this one.
+  defaultPopulate: {
+    name: true,
+    slug: true,
+    image: true,
+    description: true,
+    updatedAt: true,
+  },
   access: {
     create: authenticated,
     delete: authenticated,
