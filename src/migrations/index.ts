@@ -6,6 +6,10 @@ import {
   down as migration_20260422_183456_down,
   up as migration_20260422_183456_up,
 } from "./20260422_183456";
+import {
+  down as migration_20261002_140539_payload_3_90_upgrade_down,
+  up as migration_20261002_140539_payload_3_90_upgrade_up,
+} from "./20261002_140539_payload_3_90_upgrade";
 
 export const migrations = [
   {
@@ -17,5 +21,10 @@ export const migrations = [
     up: migration_20260422_183456_up,
     down: migration_20260422_183456_down,
     name: "20260422_183456",
+  },
+  {
+    up: migration_20261002_140539_payload_3_90_upgrade_up,
+    down: migration_20261002_140539_payload_3_90_upgrade_down,
+    name: "20261002_140539_payload_3_90_upgrade",
   },
 ];
