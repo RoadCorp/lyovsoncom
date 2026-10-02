@@ -113,6 +113,12 @@ async function getCachedQueryVector(normalizedQuery: string) {
  * full-text and trigram matches.
  */
 async function getSearchVectorString(query: string): Promise<string | null> {
+  // Without a key there is nothing to call; skip it rather than throwing
+  // inside the cached function, which Next logs as a render error.
+  if (!process.env.OPENAI_API_KEY) {
+    return null;
+  }
+
   try {
     return await getCachedQueryVector(query.toLowerCase().replace(/\s+/g, " "));
   } catch (error) {
