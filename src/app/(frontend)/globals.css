@@ -29,6 +29,12 @@
   --cedar-gold: oklch(0.76 0.085 75);
   --boat-coral: oklch(0.69 0.1 38);
   --lichen-green: oklch(0.49 0.073 150);
+  /* Activity types use the warm half of the palette; darkened on paper so
+     icons stay visible. */
+  --activity-read: color-mix(in oklab, var(--cedar-gold) 65%, black 35%);
+  --activity-watch: color-mix(in oklab, var(--boat-coral) 70%, black 30%);
+  --activity-listen: var(--lichen-green);
+  --activity-play: var(--wave-blue);
   --seal-red: oklch(0.49 0.135 28);
   --storm-gray: oklch(0.49 0.018 250);
 
@@ -212,6 +218,10 @@
   --cedar-gold: oklch(0.76 0.07 72);
   --boat-coral: oklch(0.69 0.056 45);
   --lichen-green: oklch(0.76 0.075 150);
+  --activity-read: var(--cedar-gold);
+  --activity-watch: var(--boat-coral);
+  --activity-listen: var(--lichen-green);
+  --activity-play: var(--river-blue);
   --seal-red: oklch(0.73 0.12 28);
   --storm-gray: oklch(0.6 0.02 250);
 
@@ -925,6 +935,47 @@
     letter-spacing: 0.03em;
     text-wrap: balance;
     white-space: normal;
+  }
+
+  /* Topic colours from the CMS, harmonised: only the hue is kept, at the
+     palette's lightness and chroma, so any colour an editor picks fits the
+     site and text contrast stays high. */
+  @supports (color: oklch(from red l c h)) {
+    .topic-pill {
+      color: oklch(from var(--topic, var(--accent-meta)) 0.42 0.09 h);
+      background: oklch(from var(--topic, var(--accent-meta)) 0.93 0.035 h);
+      border-color: transparent;
+      box-shadow: none;
+    }
+
+    .dark .topic-pill {
+      color: oklch(from var(--topic, var(--accent-meta)) 0.85 0.07 h);
+      background: oklch(from var(--topic, var(--accent-meta)) 0.32 0.045 h);
+    }
+  }
+
+  [data-activity-type="read"] {
+    color: var(--activity-read);
+  }
+
+  [data-activity-type="watch"] {
+    color: var(--activity-watch);
+  }
+
+  [data-activity-type="listen"] {
+    color: var(--activity-listen);
+  }
+
+  [data-activity-type="play"] {
+    color: var(--activity-play);
+  }
+
+  .card-eyebrow {
+    color: var(--accent-meta);
+  }
+
+  .card-eyebrow[data-post-type="review"] {
+    color: var(--accent-callout);
   }
 
   .surface-tag {

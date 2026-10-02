@@ -182,7 +182,11 @@ export const GridCardActivityFull = ({
           tabIndex={-1}
           transitionTypes={[transitionTypes.drillIn]}
         >
-          <ActivityIcon aria-hidden="true" className={iconClassName} />
+          <ActivityIcon
+            aria-hidden="true"
+            className={iconClassName}
+            data-activity-type={activityType}
+          />
           <span className="tone-muted text-xs capitalize">
             {activityTypeLabel}
           </span>
