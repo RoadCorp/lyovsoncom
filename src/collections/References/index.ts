@@ -8,7 +8,7 @@ import {
   revalidatePublicDependencies,
 } from "@/utilities/revalidate-public-content";
 
-export const References: CollectionConfig = {
+export const References: CollectionConfig<"references"> = {
   slug: "references",
   access: {
     create: authenticated,
