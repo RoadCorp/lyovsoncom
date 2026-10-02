@@ -227,6 +227,10 @@ export default buildConfig({
   },
   cors: [getServerSideURL()].filter(Boolean),
   globals: [],
+  // The admin and site use REST and the local API only.
+  graphQL: { disable: true },
+  // Cap relationship population for every API request (the site uses <= 2).
+  maxDepth: 2,
   plugins: [
     ...plugins,
     vercelBlobStorage({

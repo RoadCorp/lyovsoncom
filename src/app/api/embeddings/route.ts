@@ -1,6 +1,7 @@
 import configPromise from "@payload-config";
 import type { NextRequest } from "next/server";
 import { getPayload } from "payload";
+import { TRUSTED_EMBEDDING_READ } from "@/access/privateFieldRead";
 import type { Activity, Note, Post, Project, Topic } from "@/payload-types";
 import { getActivityPath } from "@/utilities/activity-path";
 import { getActivityTypeLabel } from "@/utilities/activity-type";
@@ -93,6 +94,7 @@ export async function GET(request: NextRequest) {
           collection: "posts",
           id: Number.parseInt(id, 10),
           overrideAccess: false,
+          context: { [TRUSTED_EMBEDDING_READ]: true },
           depth: 2,
           select: {
             id: true,
@@ -116,6 +118,7 @@ export async function GET(request: NextRequest) {
           collection: "notes",
           id: Number.parseInt(id, 10),
           overrideAccess: false,
+          context: { [TRUSTED_EMBEDDING_READ]: true },
           depth: 1,
           select: {
             id: true,
@@ -133,6 +136,7 @@ export async function GET(request: NextRequest) {
           collection: "activities",
           id: Number.parseInt(id, 10),
           overrideAccess: false,
+          context: { [TRUSTED_EMBEDDING_READ]: true },
           depth: 1,
           select: {
             id: true,
@@ -154,6 +158,7 @@ export async function GET(request: NextRequest) {
           collection: "projects",
           id: Number.parseInt(id, 10),
           overrideAccess: false,
+          context: { [TRUSTED_EMBEDDING_READ]: true },
           select: {
             id: true,
             name: true,
@@ -305,6 +310,7 @@ export async function GET(request: NextRequest) {
       const posts = await payload.find({
         collection: "posts",
         overrideAccess: false,
+        context: { [TRUSTED_EMBEDDING_READ]: true },
         where: { _status: { equals: "published" } },
         limit,
         depth: 2,
@@ -389,6 +395,7 @@ export async function GET(request: NextRequest) {
       const notes = await payload.find({
         collection: "notes",
         overrideAccess: false,
+        context: { [TRUSTED_EMBEDDING_READ]: true },
         where: { _status: { equals: "published" } },
         limit,
         depth: 1,
@@ -443,6 +450,7 @@ export async function GET(request: NextRequest) {
       const activities = await payload.find({
         collection: "activities",
         overrideAccess: false,
+        context: { [TRUSTED_EMBEDDING_READ]: true },
         where: {
           _status: { equals: "published" },
           visibility: { equals: "public" },
