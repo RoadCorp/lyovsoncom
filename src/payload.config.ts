@@ -18,9 +18,9 @@ import { Projects } from "@/collections/Projects";
 import { References } from "@/collections/References";
 import { Topics } from "@/collections/Topics";
 import { tsvector } from "@/db/custom-types";
-import { defaultLexical } from "@/fields/defaultLexical";
+import { defaultLexical } from "@/fields/default-lexical";
 import { plugins } from "@/plugins";
-import { getServerSideURL } from "@/utilities/getURL";
+import { getServerSideURL } from "@/utilities/get-url";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);

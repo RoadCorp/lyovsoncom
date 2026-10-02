@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { HistoryFade } from "@/components/HistoryFade";
+import { HistoryFade } from "@/components/history-fade";
 
 /**
  * The page grid. The nav card is a grid item, so it can't be outside the grid

@@ -1,16 +1,16 @@
 import type { CollectionConfig } from "payload";
 import { authenticated } from "@/access/authenticated";
-import { authenticatedOrPublished } from "@/access/authenticatedOrPublished";
-import { populateContentTextHook } from "@/collections/hooks/populateContentText";
+import { authenticatedOrPublished } from "@/access/authenticated-or-published";
+import { populateContentTextHook } from "@/collections/hooks/populate-content-text";
 import { draftVersions, previewAdmin } from "@/collections/shared";
 import { contentTextField, embeddingFields } from "@/fields/embedding";
 import { richEditorConfig } from "@/fields/lexical-configs";
-import { publishedAtField } from "@/fields/publishedAt";
+import { publishedAtField } from "@/fields/published-at";
 import { seoField } from "@/fields/seo";
 import { slugField } from "@/fields/slug";
 import { markPostEmbeddingStaleHook } from "@/utilities/mark-embedding-stale";
-import { populateAuthors } from "./hooks/populateAuthors";
-import { revalidateDelete, revalidatePost } from "./hooks/revalidatePost";
+import { populateAuthors } from "./hooks/populate-authors";
+import { revalidateDelete, revalidatePost } from "./hooks/revalidate-post";
 
 export const Posts: CollectionConfig<"posts"> = {
   slug: "posts",

@@ -11,7 +11,7 @@ import type { TextFieldClientProps } from "payload";
 import type React from "react";
 import { useCallback, useEffect } from "react";
 
-import { formatSlug } from "./formatSlug";
+import { formatSlug } from "./format-slug";
 import "./index.scss";
 
 type SlugComponentProps = {

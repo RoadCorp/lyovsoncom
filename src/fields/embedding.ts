@@ -1,5 +1,5 @@
 import type { Field, TextField } from "payload";
-import { embeddingFieldRead } from "@/access/privateFieldRead";
+import { embeddingFieldRead } from "@/access/private-field-read";
 
 /** Hidden from anonymous reads and written only by hooks and embedding jobs. */
 const hookManagedAccess = () => ({

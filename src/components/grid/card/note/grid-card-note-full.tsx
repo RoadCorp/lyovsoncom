@@ -1,8 +1,8 @@
 import { Brain, Calendar, PenTool, Quote } from "lucide-react";
 import { ViewTransition } from "react";
 import { GridCard, GridCardSection } from "@/components/grid";
-import { IntentLink } from "@/components/IntentLink";
-import { TopicPillList } from "@/components/TopicPill";
+import { IntentLink } from "@/components/intent-link";
+import { TopicPillList } from "@/components/topic-pill";
 import type { Note, Topic } from "@/payload-types";
 import { formatShortDate } from "@/utilities/date";
 import {

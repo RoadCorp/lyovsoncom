@@ -862,7 +862,7 @@ pnpm generate:types
 - No changes needed
 - pgvector already configured
 
-**`src/collections/Posts/hooks/revalidatePost.ts`**
+**`src/collections/Posts/hooks/revalidate-post.ts`**
 - No changes needed
 - Already invalidates cache correctly
 

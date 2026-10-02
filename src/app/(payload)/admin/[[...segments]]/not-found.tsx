@@ -4,7 +4,7 @@
 import config from "@payload-config";
 import { generatePageMetadata, NotFoundPage } from "@payloadcms/next/views";
 import type { Metadata } from "next";
-import { getServerSideURL } from "@/utilities/getURL";
+import { getServerSideURL } from "@/utilities/get-url";
 import { importMap } from "../importMap";
 
 type Args = {

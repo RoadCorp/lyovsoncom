@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import type { AppTransitionType } from "@/utilities/routes";
-import { AppLinkPendingIndicator } from "./AppLinkPendingIndicator";
+import { AppLinkPendingIndicator } from "./app-link-pending-indicator";
 
 type LinkHref = ComponentPropsWithoutRef<typeof Link>["href"];
 

@@ -1,5 +1,5 @@
 import type React from "react";
-import { AppLink } from "@/components/AppLink";
+import { AppLink } from "@/components/app-link";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { postReferenceRoute } from "@/utilities/routes";

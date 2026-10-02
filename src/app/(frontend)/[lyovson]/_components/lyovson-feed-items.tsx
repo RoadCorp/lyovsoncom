@@ -1,4 +1,4 @@
-import { ArchiveItems } from "@/components/ArchiveItems";
+import { ArchiveItems } from "@/components/archive-items";
 import type { LyovsonMixedFeedItem } from "@/utilities/get-lyovson-feed";
 
 interface LyovsonFeedItemsProps {

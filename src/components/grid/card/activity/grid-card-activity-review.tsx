@@ -1,5 +1,5 @@
 import { Quote, Star, StarHalf, User } from "lucide-react";
-import { AppLink } from "@/components/AppLink";
+import { AppLink } from "@/components/app-link";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { cn } from "@/lib/utils";
 import type { Lyovson } from "@/payload-types";

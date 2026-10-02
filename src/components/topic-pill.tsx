@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
-import { AppLink } from "@/components/AppLink";
+import { AppLink } from "@/components/app-link";
 import { cn } from "@/lib/utils";
 import { topicRoute } from "@/utilities/routes";
 

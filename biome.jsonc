@@ -12,11 +12,7 @@
       "!src/components/ui",
       "!src/app/(payload)",
       "!src/payload-types.ts",
-      "!src/app/(payload)/admin/importMap.js",
-      "!!**/src/utilities/test-*.ts",
-      "!!**/src/utilities/check-*.ts",
-      "!!**/src/utilities/migrations/run-*.ts",
-      "!!**/src/utilities/migrate-*.ts"
+      "!src/app/(payload)/admin/importMap.js"
     ]
   },
   "assist": {
@@ -37,7 +33,12 @@
         "noIncrementDecrement": "off",
         "useConsistentArrowReturn": "off",
         "useDestructuring": "off",
-        "useFilenamingConvention": "off"
+        // Source files are kebab-case; Next.js and Payload reserved names
+        // (page, layout, route, [slug], (group)) already comply.
+        "useFilenamingConvention": {
+          "level": "error",
+          "options": { "filenameCases": ["kebab-case"], "requireAscii": true }
+        }
       },
       "suspicious": {
         // Existing nullish guards intentionally match both null and undefined.
@@ -61,5 +62,14 @@
         "noBarrelFile": "off"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      // Payload names generated migrations with timestamps and underscores.
+      "includes": ["src/migrations/**"],
+      "linter": {
+        "rules": { "style": { "useFilenamingConvention": "off" } }
+      }
+    }
+  ]
 }

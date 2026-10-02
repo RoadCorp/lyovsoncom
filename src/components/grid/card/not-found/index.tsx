@@ -1,4 +1,4 @@
-import { AppLink } from "@/components/AppLink";
+import { AppLink } from "@/components/app-link";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { cn } from "@/lib/utils";
 import { homeRoute } from "@/utilities/routes";

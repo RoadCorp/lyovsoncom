@@ -1,4 +1,4 @@
-import { PublicPageBoundary } from "@/components/PublicPageBoundary";
+import { PublicPageBoundary } from "@/components/public-page-boundary";
 export const prefetch = "partial";
 
 import { cacheLife, cacheTag } from "next/cache";
@@ -10,7 +10,7 @@ import {
   GridCardActivitiesPreview,
   HOME_ACTIVITIES_PREVIEW_RAIL_CLASS_NAME,
 } from "@/components/grid";
-import { JsonLd } from "@/components/JsonLd";
+import { JsonLd } from "@/components/json-ld";
 import { Pagination } from "@/components/Pagination";
 import { ACTIVITY_PREVIEW_LIMIT } from "@/utilities/activity-preview";
 import {
@@ -19,7 +19,7 @@ import {
   POSTS_PER_PAGE,
   parsePageNumber,
 } from "@/utilities/archive";
-import { ensureStaticParams } from "@/utilities/ensureStaticParams";
+import { ensureStaticParams } from "@/utilities/ensure-static-params";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getLatestActivities } from "@/utilities/get-activity";
 import { getPaginatedPosts, getPostCount } from "@/utilities/get-post";

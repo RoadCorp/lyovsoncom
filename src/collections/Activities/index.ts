@@ -1,16 +1,16 @@
 import type { CollectionConfig } from "payload";
 import { authenticated } from "@/access/authenticated";
-import { authenticatedOrPublishedPublic } from "@/access/authenticatedOrPublishedPublic";
-import { revalidateContentHooks } from "@/collections/hooks/revalidateContent";
+import { authenticatedOrPublishedPublic } from "@/access/authenticated-or-published-public";
+import { revalidateContentHooks } from "@/collections/hooks/revalidate-content";
 import { draftVersions } from "@/collections/shared";
 import { contentTextField, embeddingFields } from "@/fields/embedding";
 import { richEditorConfig } from "@/fields/lexical-configs";
-import { publishedAtField } from "@/fields/publishedAt";
+import { publishedAtField } from "@/fields/published-at";
 import { seoField } from "@/fields/seo";
 import { slugField } from "@/fields/slug";
 import { markActivityEmbeddingStaleHook } from "@/utilities/mark-embedding-stale";
-import { populateContentTextHook } from "./hooks/populateContentText";
-import { populateSlugSourceHook } from "./hooks/populateSlugSource";
+import { populateContentTextHook } from "./hooks/populate-content-text";
+import { populateSlugSourceHook } from "./hooks/populate-slug-source";
 
 const revalidateActivity = revalidateContentHooks("activities");
 

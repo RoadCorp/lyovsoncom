@@ -1,4 +1,4 @@
-import { PublicPageBoundary } from "@/components/PublicPageBoundary";
+import { PublicPageBoundary } from "@/components/public-page-boundary";
 export const prefetch = "partial";
 
 import type { Metadata } from "next";
@@ -12,15 +12,15 @@ import {
   GridCardRelatedPosts,
   GridCardSection,
 } from "@/components/grid";
-import { JsonLd } from "@/components/JsonLd";
-import { OptionalErrorBoundary } from "@/components/OptionalErrorBoundary";
-import { PostTransitionBoundary } from "@/components/post-transitions/PostTransitionBoundary";
+import { JsonLd } from "@/components/json-ld";
+import { OptionalErrorBoundary } from "@/components/optional-error-boundary";
+import { PostTransitionBoundary } from "@/components/post-transitions/post-transition-boundary";
 import RichText from "@/components/RichText";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import type { Lyovson, Media, Post } from "@/payload-types";
 import { publishedPostsWhere } from "@/utilities/content-queries";
-import { ensureStaticParams } from "@/utilities/ensureStaticParams";
+import { ensureStaticParams } from "@/utilities/ensure-static-params";
 import {
   generateArticleSchema,
   generateBreadcrumbSchema,

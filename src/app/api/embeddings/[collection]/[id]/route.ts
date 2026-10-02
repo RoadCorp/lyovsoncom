@@ -1,7 +1,7 @@
 import configPromise from "@payload-config";
 import type { NextRequest } from "next/server";
 import { getPayload } from "payload";
-import { TRUSTED_EMBEDDING_READ } from "@/access/privateFieldRead";
+import { TRUSTED_EMBEDDING_READ } from "@/access/private-field-read";
 import {
   authorizeEmbeddingMutation,
   getEmbeddingUnauthorizedResponse,

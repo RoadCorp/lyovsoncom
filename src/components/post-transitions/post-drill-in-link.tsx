@@ -1,5 +1,5 @@
-import type { AppLinkProps } from "@/components/AppLink";
-import { IntentLink } from "@/components/IntentLink";
+import type { AppLinkProps } from "@/components/app-link";
+import { IntentLink } from "@/components/intent-link";
 import { transitionTypes } from "@/utilities/routes";
 
 export function PostDrillInLink(

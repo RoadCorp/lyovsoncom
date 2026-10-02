@@ -1,7 +1,7 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { Code } from "./Code";
+import { Code } from "./code";
 
 describe("server-rendered code blocks", () => {
   it("escapes source text and retains syntax colors without client highlighting", () => {

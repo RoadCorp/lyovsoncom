@@ -1,5 +1,5 @@
-import { AppLink } from "@/components/AppLink";
-import { Logo } from "@/components/Logo/Logo";
+import { AppLink } from "@/components/app-link";
+import { Logo } from "@/components/Logo/logo";
 import { transitionTypes } from "@/utilities/routes";
 import { GridCardSection } from "../section";
 

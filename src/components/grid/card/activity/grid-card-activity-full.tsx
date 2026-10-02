@@ -1,8 +1,8 @@
 import { Calendar, PenTool } from "lucide-react";
 import { ViewTransition } from "react";
-import { AppLink } from "@/components/AppLink";
+import { AppLink } from "@/components/app-link";
 import { GridCard, GridCardSection } from "@/components/grid";
-import { IntentLink } from "@/components/IntentLink";
+import { IntentLink } from "@/components/intent-link";
 import { Media } from "@/components/Media";
 import { CARD_COVER_IMAGE_SIZE } from "@/components/Media/image-sizes";
 import type { Activity } from "@/payload-types";

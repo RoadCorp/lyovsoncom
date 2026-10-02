@@ -9,7 +9,7 @@ import {
   SiYoutube,
 } from "@icons-pack/react-simple-icons";
 import { GridCard, GridCardNavItem } from "@/components/grid";
-import { LinkedInIcon } from "@/components/LinkedInIcon";
+import { LinkedInIcon } from "@/components/linked-in-icon";
 import { cn } from "@/lib/utils";
 
 const MAX_STAGGER_INDEX = 6;

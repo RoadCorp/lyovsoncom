@@ -5,7 +5,7 @@ import {
   NoteDetailSkeleton,
   PostDetailSkeleton,
 } from "@/components/grid/skeleton/detail-skeletons";
-import { LoadingTransition } from "@/components/LoadingTransition";
+import { LoadingTransition } from "@/components/loading-transition";
 
 export type PublicPageSkeleton = "activity" | "archive" | "note" | "post";
 

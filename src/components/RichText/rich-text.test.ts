@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 import RichText from "./index";
 
-vi.mock("@/blocks/XPost/Component", () => ({ XPostBlock: () => null }));
+vi.mock("@/blocks/XPost/component", () => ({ XPostBlock: () => null }));
 
 describe("stored rich text", () => {
   it("preserves paragraphs, combined emphasis and line breaks while escaping text", () => {

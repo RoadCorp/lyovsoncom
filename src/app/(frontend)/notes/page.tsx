@@ -2,7 +2,7 @@ export const prefetch = "partial";
 
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
-import { JsonLd } from "@/components/JsonLd";
+import { JsonLd } from "@/components/json-ld";
 import { NotesArchive } from "@/components/NotesArchive";
 import { Pagination } from "@/components/Pagination";
 import { NOTES_PER_PAGE } from "@/utilities/archive";

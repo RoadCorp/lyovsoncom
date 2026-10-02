@@ -1,12 +1,12 @@
 import type { CollectionConfig } from "payload";
 import { authenticated } from "@/access/authenticated";
-import { authenticatedOrPublishedPublic } from "@/access/authenticatedOrPublishedPublic";
-import { populateContentTextHook } from "@/collections/hooks/populateContentText";
-import { revalidateContentHooks } from "@/collections/hooks/revalidateContent";
+import { authenticatedOrPublishedPublic } from "@/access/authenticated-or-published-public";
+import { populateContentTextHook } from "@/collections/hooks/populate-content-text";
+import { revalidateContentHooks } from "@/collections/hooks/revalidate-content";
 import { draftVersions, previewAdmin } from "@/collections/shared";
 import { contentTextField, embeddingFields } from "@/fields/embedding";
 import { noteEditorConfig } from "@/fields/lexical-configs";
-import { publishedAtField } from "@/fields/publishedAt";
+import { publishedAtField } from "@/fields/published-at";
 import { seoField } from "@/fields/seo";
 import { slugField } from "@/fields/slug";
 import { markNoteEmbeddingStaleHook } from "@/utilities/mark-embedding-stale";

@@ -11,9 +11,9 @@ import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { StrikethroughFeatureClient as StrikethroughFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { LinkFeatureClient as LinkFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
-import { GifPicker as GifPicker_521604cca69f6bdfa1c382eaa98a6ed8 } from '@/blocks/GIF/GifPicker'
+import { GifPicker as GifPicker_6d0747c0f1aab9fdcb3853ebe15b2e15 } from '@/blocks/GIF/gif-picker'
 import { HeadingFeatureClient as HeadingFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
-import { SlugComponent as SlugComponent_92cc057d0a2abb4f6cf0307edf59f986 } from '@/fields/slug/SlugComponent'
+import { SlugComponent as SlugComponent_3a40a28053fdc7f295f2ddfa7a528d90 } from '@/fields/slug/slug-component'
 import { default as default_0430f5fb3b8132a602107d7535a2a344 } from '@/components/admin/icon'
 import { default as default_334250e18ce0b45af3e0c04bb6fe8307 } from '@/components/admin/logo'
 import { default as default_cb2a1950465b657675d3ed6492a8aaaa } from '@/components/admin/login-text'
@@ -37,9 +37,9 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#StrikethroughFeatureClient": StrikethroughFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#LinkFeatureClient": LinkFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
-  "@/blocks/GIF/GifPicker#GifPicker": GifPicker_521604cca69f6bdfa1c382eaa98a6ed8,
+  "@/blocks/GIF/gif-picker#GifPicker": GifPicker_6d0747c0f1aab9fdcb3853ebe15b2e15,
   "@payloadcms/richtext-lexical/client#HeadingFeatureClient": HeadingFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
-  "@/fields/slug/SlugComponent#SlugComponent": SlugComponent_92cc057d0a2abb4f6cf0307edf59f986,
+  "@/fields/slug/slug-component#SlugComponent": SlugComponent_3a40a28053fdc7f295f2ddfa7a528d90,
   "@/components/admin/icon#default": default_0430f5fb3b8132a602107d7535a2a344,
   "@/components/admin/logo#default": default_334250e18ce0b45af3e0c04bb6fe8307,
   "@/components/admin/login-text#default": default_cb2a1950465b657675d3ed6492a8aaaa,

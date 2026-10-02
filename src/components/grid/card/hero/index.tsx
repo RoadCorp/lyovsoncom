@@ -1,16 +1,16 @@
 import { Brain, Calendar, FileText, PenTool, Quote } from "lucide-react";
 import { ViewTransition } from "react";
-import { AppLink } from "@/components/AppLink";
+import { AppLink } from "@/components/app-link";
 import { GridCard } from "@/components/grid";
 import { Media } from "@/components/Media";
 import { CARD_FULL_IMAGE_SIZE } from "@/components/Media/image-sizes";
-import { MediaFallback } from "@/components/Media/MediaFallback";
-import { PostTransitionBoundary } from "@/components/post-transitions/PostTransitionBoundary";
-import { TopicPillList } from "@/components/TopicPill";
+import { MediaFallback } from "@/components/Media/media-fallback";
+import { PostTransitionBoundary } from "@/components/post-transitions/post-transition-boundary";
+import { TopicPillList } from "@/components/topic-pill";
 import { cn } from "@/lib/utils";
 import type { Activity, Note, Post, Topic } from "@/payload-types";
 import { formatShortDate } from "@/utilities/date";
-import { dedupeRelationItemsById } from "@/utilities/dedupeRelationItemsById";
+import { dedupeRelationItemsById } from "@/utilities/dedupe-relation-items-by-id";
 import {
   getActivityDateSlug,
   lyovsonRoute,

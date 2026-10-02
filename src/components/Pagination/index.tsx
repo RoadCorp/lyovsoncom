@@ -1,6 +1,6 @@
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
 import { type ReactNode, ViewTransition } from "react";
-import { AppLink } from "@/components/AppLink";
+import { AppLink } from "@/components/app-link";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { cn } from "@/lib/utils";
 import { transitionTypes } from "@/utilities/routes";

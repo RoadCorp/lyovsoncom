@@ -3,7 +3,7 @@ export const prefetch = "partial";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { ActivitiesArchive } from "@/components/ActivitiesArchive";
-import { JsonLd } from "@/components/JsonLd";
+import { JsonLd } from "@/components/json-ld";
 import { Pagination } from "@/components/Pagination";
 import { ACTIVITIES_PER_PAGE } from "@/utilities/archive";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";

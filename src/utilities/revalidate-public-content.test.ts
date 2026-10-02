@@ -1,6 +1,6 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { revalidatePost } from "@/collections/Posts/hooks/revalidatePost";
+import { revalidatePost } from "@/collections/Posts/hooks/revalidate-post";
 import {
   hasPublicChanges,
   isDraftOnlySave,

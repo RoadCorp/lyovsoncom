@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { dedupeRelationItemsById } from "./dedupeRelationItemsById";
+import { dedupeRelationItemsById } from "./dedupe-relation-items-by-id";
 
 describe("dedupeRelationItemsById", () => {
   it("removes duplicate relation objects while preserving order", () => {

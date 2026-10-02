@@ -38,14 +38,14 @@ hero post destination, project destination, and nav/menu client navigation behav
 `src/components/RichText/index.tsx`
 `src/components/RichText/serialize.tsx`
 6. Longform block components:
-`src/blocks/Banner/Component.tsx`
-`src/blocks/Quote/Component.tsx`
-`src/blocks/MediaBlock/Component.tsx`
-`src/blocks/YouTube/Component.tsx`
-`src/blocks/YouTube/YouTubePlayer.tsx`
-`src/blocks/XPost/Component.tsx`
-`src/blocks/GIF/Component.tsx`
-`src/blocks/Code/Component.client.tsx`
+`src/blocks/Banner/component.tsx`
+`src/blocks/Quote/component.tsx`
+`src/blocks/MediaBlock/component.tsx`
+`src/blocks/YouTube/component.tsx`
+`src/blocks/YouTube/you-tube-player.tsx`
+`src/blocks/XPost/component.tsx`
+`src/blocks/GIF/component.tsx`
+`src/blocks/Code/component.client.tsx`
 
 ## Out of Scope
 1. Shadcn internals in `src/components/ui/**` (usage updates are allowed).

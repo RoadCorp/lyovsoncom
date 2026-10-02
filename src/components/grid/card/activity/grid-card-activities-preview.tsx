@@ -1,6 +1,6 @@
 import { ViewTransition } from "react";
 import { GridCard, GridCardSection } from "@/components/grid";
-import { IntentLink } from "@/components/IntentLink";
+import { IntentLink } from "@/components/intent-link";
 import { Media } from "@/components/Media";
 import { CARD_THUMBNAIL_IMAGE_SIZE } from "@/components/Media/image-sizes";
 import { cn } from "@/lib/utils";

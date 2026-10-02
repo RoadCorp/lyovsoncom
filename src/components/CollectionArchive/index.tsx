@@ -1,5 +1,5 @@
 import type React from "react";
-import { ArchiveItems, toArchiveItems } from "@/components/ArchiveItems";
+import { ArchiveItems, toArchiveItems } from "@/components/archive-items";
 import type { PostSummary } from "@/utilities/post-summary";
 
 export interface Props {

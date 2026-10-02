@@ -1,5 +1,5 @@
 import { normalizeTokens, Prism, type PrismTheme } from "prism-react-renderer";
-import { CopyButton } from "./CopyButton";
+import { CopyButton } from "./copy-button";
 
 const codeTheme: PrismTheme = {
   plain: { color: "var(--text-1)" },

@@ -1,10 +1,10 @@
 import { BriefcaseBusiness } from "lucide-react";
 import { ViewTransition } from "react";
 import { GridCard, GridCardSection } from "@/components/grid";
-import { IntentLink } from "@/components/IntentLink";
+import { IntentLink } from "@/components/intent-link";
 import { Media } from "@/components/Media";
 import { CARD_FULL_IMAGE_SIZE } from "@/components/Media/image-sizes";
-import { MediaFallback } from "@/components/Media/MediaFallback";
+import { MediaFallback } from "@/components/Media/media-fallback";
 import type { Project } from "@/payload-types";
 import { projectRoute, transitionTypes } from "@/utilities/routes";
 import {

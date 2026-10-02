@@ -2,7 +2,7 @@ import RichText from "@/components/RichText";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { YouTubeBlock as YouTubeBlockType } from "@/payload-types";
-import { YouTubePlayer } from "./YouTubePlayer";
+import { YouTubePlayer } from "./you-tube-player";
 
 /**
  * YouTube Block - Optimized Facade Pattern Implementation

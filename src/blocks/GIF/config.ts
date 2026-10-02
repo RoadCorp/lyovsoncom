@@ -14,7 +14,7 @@ export const GIF: Block = {
       type: "ui",
       admin: {
         components: {
-          Field: "@/blocks/GIF/GifPicker#GifPicker",
+          Field: "@/blocks/GIF/gif-picker#GifPicker",
         },
       },
     },

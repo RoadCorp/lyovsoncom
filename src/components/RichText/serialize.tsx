@@ -3,14 +3,14 @@ import type {
   SerializedBlockNode,
 } from "@payloadcms/richtext-lexical";
 import React, { type JSX } from "react";
-import { BannerBlock } from "@/blocks/Banner/Component";
-import { CodeBlock, type CodeBlockProps } from "@/blocks/Code/Component";
-import { GIFBlock } from "@/blocks/GIF/Component";
+import { BannerBlock } from "@/blocks/Banner/component";
+import { CodeBlock, type CodeBlockProps } from "@/blocks/Code/component";
+import { GIFBlock } from "@/blocks/GIF/component";
 import type { GIFBlock as GIFBlockProps } from "@/blocks/GIF/types";
-import { MediaBlock } from "@/blocks/MediaBlock/Component";
-import { QuoteBlock } from "@/blocks/Quote/Component";
-import { XPostBlock } from "@/blocks/XPost/Component";
-import { YouTubeBlock } from "@/blocks/YouTube/Component";
+import { MediaBlock } from "@/blocks/MediaBlock/component";
+import { QuoteBlock } from "@/blocks/Quote/component";
+import { XPostBlock } from "@/blocks/XPost/component";
+import { YouTubeBlock } from "@/blocks/YouTube/component";
 import { CMSLink } from "@/components/Link";
 import type {
   BannerBlock as BannerBlockProps,
@@ -27,7 +27,7 @@ import {
   IS_SUBSCRIPT,
   IS_SUPERSCRIPT,
   IS_UNDERLINE,
-} from "./nodeFormat";
+} from "./node-format";
 
 export type NodeTypes =
   | DefaultNodeTypes
