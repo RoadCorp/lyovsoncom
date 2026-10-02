@@ -22,7 +22,10 @@ function toRank(value: unknown): number | null {
   return value ? Number(value) : null;
 }
 
-function parseHybridSearchRow(row: HybridSearchRow): SearchResult {
+/** API responses also report the trigram rank alongside the public fields. */
+type ParsedSearchResult = SearchResult & { fuzzy_rank: number | null };
+
+function parseHybridSearchRow(row: HybridSearchRow): ParsedSearchResult {
   return {
     collection: toText(row.collection) || "posts",
     id: Number(row.id),
@@ -41,6 +44,6 @@ function parseHybridSearchRow(row: HybridSearchRow): SearchResult {
 
 export function parseHybridSearchRows(
   rows: readonly HybridSearchRow[]
-): SearchResult[] {
+): ParsedSearchResult[] {
   return rows.map(parseHybridSearchRow);
 }
