@@ -7,26 +7,12 @@ import { seoField } from "@/fields/seo";
 import { slugField } from "@/fields/slug";
 import { formatSlug } from "@/fields/slug/formatSlug";
 import { markActivityEmbeddingStaleHook } from "@/utilities/mark-embedding-stale";
+import { getRelationId } from "@/utilities/relations";
 import { populateContentTextHook } from "./hooks/populateContentText";
 import {
   revalidateActivity,
   revalidateActivityDelete,
 } from "./hooks/revalidateActivity";
-
-function extractRelationshipId(value: unknown): number | string | null {
-  if (typeof value === "number" || typeof value === "string") {
-    return value;
-  }
-
-  if (typeof value === "object" && value !== null && "id" in value) {
-    const { id } = value as { id?: unknown };
-    if (typeof id === "number" || typeof id === "string") {
-      return id;
-    }
-  }
-
-  return null;
-}
 
 export const Activities: CollectionConfig = {
   slug: "activities",
@@ -237,9 +223,9 @@ export const Activities: CollectionConfig = {
               "reference" in originalDoc
                 ? originalDoc.reference
                 : null);
-            const referenceId = extractRelationshipId(referenceValue);
+            const referenceId = getRelationId(referenceValue);
 
-            if (referenceId !== null && referenceId !== "") {
+            if (referenceId !== null) {
               try {
                 const reference = (await req.payload.findByID({
                   collection: "references",
