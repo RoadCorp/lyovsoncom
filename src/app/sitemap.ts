@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { getActivityPath } from "@/utilities/activity-path";
 import {
   ACTIVITIES_PER_PAGE,
   getIndexedPaginationPages,
@@ -12,7 +11,37 @@ import {
 } from "@/utilities/archive";
 import { getLyovsonFeedCounts } from "@/utilities/get-lyovson-feed";
 import { getSitemapData } from "@/utilities/get-sitemap-data";
-import { getCanonicalURL } from "@/utilities/getURL";
+import {
+  absoluteUrl,
+  activitiesPageRoute,
+  activitiesRoute,
+  activityUrl,
+  lyovsonActivitiesPageRoute,
+  lyovsonActivitiesRoute,
+  lyovsonBioRoute,
+  lyovsonContactRoute,
+  lyovsonNotesPageRoute,
+  lyovsonNotesRoute,
+  lyovsonPageRoute,
+  lyovsonPortfolioRoute,
+  lyovsonPostsPageRoute,
+  lyovsonPostsRoute,
+  lyovsonRoute,
+  notesPageRoute,
+  notesRoute,
+  noteUrl,
+  postsPageRoute,
+  postsRoute,
+  postUrl,
+  privacyPolicyRoute,
+  projectPageRoute,
+  projectsRoute,
+  projectUrl,
+  topicPageRoute,
+  topicRoute,
+  topicsRoute,
+} from "@/utilities/routes";
+import { getCanonicalSiteOrigin } from "@/utilities/site-config";
 
 function getSlugFromRelation(
   relation: unknown,
@@ -33,27 +62,23 @@ function getSlugFromRelation(
 }
 
 function addLyovsonPaginatedRoutes({
-  basePath,
   lastModified,
+  pageRoute,
   pageSize,
   priority,
   routes,
-  siteUrl,
   totalItems,
-  username,
 }: {
-  basePath: string;
   lastModified: Date;
+  pageRoute: (pageNumber: number) => string;
   pageSize: number;
   priority: number;
   routes: MetadataRoute.Sitemap;
-  siteUrl: string;
   totalItems: number;
-  username: string;
 }) {
   for (const pageNumber of getIndexedPaginationPages(totalItems, pageSize)) {
     routes.push({
-      url: `${siteUrl}/${username}${basePath}/page/${pageNumber}`,
+      url: absoluteUrl(pageRoute(pageNumber)),
       lastModified,
       changeFrequency: "weekly",
       priority,
@@ -63,52 +88,50 @@ function addLyovsonPaginatedRoutes({
 
 async function getLyovsonRoutes({
   lastModified,
-  siteUrl,
   username,
 }: {
   lastModified: Date;
-  siteUrl: string;
   username: string;
 }): Promise<MetadataRoute.Sitemap> {
   const routes: MetadataRoute.Sitemap = [
     {
-      url: `${siteUrl}/${username}`,
+      url: absoluteUrl(lyovsonRoute(username)),
       lastModified,
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
-      url: `${siteUrl}/${username}/bio`,
+      url: absoluteUrl(lyovsonBioRoute(username)),
       lastModified,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
-      url: `${siteUrl}/${username}/portfolio`,
+      url: absoluteUrl(lyovsonPortfolioRoute(username)),
       lastModified,
       changeFrequency: "weekly",
       priority: 0.7,
     },
     {
-      url: `${siteUrl}/${username}/contact`,
+      url: absoluteUrl(lyovsonContactRoute(username)),
       lastModified,
       changeFrequency: "monthly",
       priority: 0.6,
     },
     {
-      url: `${siteUrl}/${username}/posts`,
+      url: absoluteUrl(lyovsonPostsRoute(username)),
       lastModified,
       changeFrequency: "weekly",
       priority: 0.75,
     },
     {
-      url: `${siteUrl}/${username}/notes`,
+      url: absoluteUrl(lyovsonNotesRoute(username)),
       lastModified,
       changeFrequency: "weekly",
       priority: 0.75,
     },
     {
-      url: `${siteUrl}/${username}/activities`,
+      url: absoluteUrl(lyovsonActivitiesRoute(username)),
       lastModified,
       changeFrequency: "weekly",
       priority: 0.75,
@@ -120,9 +143,7 @@ async function getLyovsonRoutes({
   // /{username}/page/N paginates posts, not the mixed feed.
   addLyovsonPaginatedRoutes({
     routes,
-    siteUrl,
-    username,
-    basePath: "",
+    pageRoute: (pageNumber) => lyovsonPageRoute(username, pageNumber),
     totalItems: counts?.posts || 0,
     pageSize: LYOVSON_ITEMS_PER_PAGE,
     lastModified,
@@ -132,9 +153,7 @@ async function getLyovsonRoutes({
   if (counts?.posts) {
     addLyovsonPaginatedRoutes({
       routes,
-      siteUrl,
-      username,
-      basePath: "/posts",
+      pageRoute: (pageNumber) => lyovsonPostsPageRoute(username, pageNumber),
       totalItems: counts.posts,
       pageSize: LYOVSON_ITEMS_PER_PAGE,
       lastModified,
@@ -145,9 +164,7 @@ async function getLyovsonRoutes({
   if (counts?.notes) {
     addLyovsonPaginatedRoutes({
       routes,
-      siteUrl,
-      username,
-      basePath: "/notes",
+      pageRoute: (pageNumber) => lyovsonNotesPageRoute(username, pageNumber),
       totalItems: counts.notes,
       pageSize: LYOVSON_ITEMS_PER_PAGE,
       lastModified,
@@ -158,9 +175,8 @@ async function getLyovsonRoutes({
   if (counts?.activities) {
     addLyovsonPaginatedRoutes({
       routes,
-      siteUrl,
-      username,
-      basePath: "/activities",
+      pageRoute: (pageNumber) =>
+        lyovsonActivitiesPageRoute(username, pageNumber),
       totalItems: counts.activities,
       pageSize: LYOVSON_ITEMS_PER_PAGE,
       lastModified,
@@ -183,7 +199,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   cacheTag("lyovsons");
   cacheLife("sitemap");
 
-  const SITE_URL = getCanonicalURL();
   const now = new Date();
 
   const { posts, projects, topics, notes, activities, lyovsons } =
@@ -233,38 +248,39 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes: MetadataRoute.Sitemap = [
     // Homepage - highest priority
     {
-      url: SITE_URL,
+      // The bare origin (no trailing slash), matching the layout canonical.
+      url: getCanonicalSiteOrigin(),
       lastModified: now,
       changeFrequency: "daily",
       priority: 1,
     },
     // Main section pages - high priority
     {
-      url: `${SITE_URL}/posts`,
+      url: absoluteUrl(postsRoute()),
       lastModified: now,
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
-      url: `${SITE_URL}/notes`,
+      url: absoluteUrl(notesRoute()),
       lastModified: now,
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
-      url: `${SITE_URL}/activities`,
+      url: absoluteUrl(activitiesRoute()),
       lastModified: now,
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
-      url: `${SITE_URL}/projects`,
+      url: absoluteUrl(projectsRoute()),
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
-      url: `${SITE_URL}/topics`,
+      url: absoluteUrl(topicsRoute()),
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.8,
@@ -272,14 +288,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Utility pages - medium priority (About, AM and Contact are noindexed
     // placeholders and stay out until they have content)
     {
-      url: `${SITE_URL}/privacy-policy`,
+      url: absoluteUrl(privacyPolicyRoute()),
       lastModified: now,
       changeFrequency: "yearly",
       priority: 0.3,
     },
     // AI and bot documentation - high priority for discovery
     {
-      url: `${SITE_URL}/ai-docs`,
+      url: absoluteUrl("/ai-docs"),
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.8,
@@ -295,7 +311,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
 
     routes.push({
-      url: `${SITE_URL}/posts/${post.slug}`,
+      url: postUrl(post.slug),
       lastModified: new Date(post.updatedAt),
       changeFrequency: "monthly", // Articles change less frequently after publication
       priority: 0.8,
@@ -308,7 +324,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     POSTS_PER_PAGE
   )) {
     routes.push({
-      url: `${SITE_URL}/posts/page/${pageNumber}`,
+      url: absoluteUrl(postsPageRoute(pageNumber)),
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.6,
@@ -322,7 +338,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
 
     routes.push({
-      url: `${SITE_URL}/projects/${project.slug}`,
+      url: projectUrl(project.slug),
       lastModified: new Date(project.updatedAt),
       changeFrequency: "weekly",
       priority: 0.9,
@@ -334,7 +350,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       PROJECT_POSTS_PER_PAGE
     )) {
       routes.push({
-        url: `${SITE_URL}/projects/${project.slug}/page/${pageNumber}`,
+        url: absoluteUrl(projectPageRoute(project.slug, pageNumber)),
         lastModified: new Date(project.updatedAt),
         changeFrequency: "weekly",
         priority: 0.6,
@@ -349,7 +365,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
 
     routes.push({
-      url: `${SITE_URL}/topics/${topic.slug}`,
+      url: absoluteUrl(topicRoute(topic.slug)),
       lastModified: new Date(topic.updatedAt),
       changeFrequency: "monthly",
       priority: 0.7,
@@ -361,7 +377,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       TOPIC_POSTS_PER_PAGE
     )) {
       routes.push({
-        url: `${SITE_URL}/topics/${topic.slug}/page/${pageNumber}`,
+        url: absoluteUrl(topicPageRoute(topic.slug, pageNumber)),
         lastModified: new Date(topic.updatedAt),
         changeFrequency: "monthly",
         priority: 0.5,
@@ -376,7 +392,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
 
     routes.push({
-      url: `${SITE_URL}/notes/${note.slug}`,
+      url: noteUrl(note.slug),
       lastModified: new Date(note.updatedAt),
       changeFrequency: "monthly",
       priority: 0.8,
@@ -388,7 +404,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     NOTES_PER_PAGE
   )) {
     routes.push({
-      url: `${SITE_URL}/notes/page/${pageNumber}`,
+      url: absoluteUrl(notesPageRoute(pageNumber)),
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.6,
@@ -397,17 +413,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Add activities
   for (const activity of activities) {
-    if (!activity?.slug) {
-      continue;
-    }
-
-    const activityPath = getActivityPath(activity);
-    if (!activityPath) {
+    const url = activity ? activityUrl(activity) : null;
+    if (!url) {
       continue;
     }
 
     routes.push({
-      url: `${SITE_URL}${activityPath}`,
+      url,
       lastModified: new Date(activity.updatedAt),
       changeFrequency: "weekly",
       priority: 0.8,
@@ -419,7 +431,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ACTIVITIES_PER_PAGE
   )) {
     routes.push({
-      url: `${SITE_URL}/activities/page/${pageNumber}`,
+      url: absoluteUrl(activitiesPageRoute(pageNumber)),
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.6,
@@ -436,7 +448,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           ? new Date(lyovson.updatedAt)
           : now;
         return getLyovsonRoutes({
-          siteUrl: SITE_URL,
           username,
           lastModified,
         });

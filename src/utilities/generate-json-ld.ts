@@ -19,11 +19,11 @@ import type {
   ProfilePageSchema,
   WebSiteSchema,
 } from "@/types/schema";
-import { getCanonicalURL } from "./getURL";
+
 import { absoluteUrl, lyovsonRoute } from "./routes";
 import {
+  getCanonicalSiteOrigin,
   getSiteEntityAuthorData,
-  getSiteLogoUrl,
   siteConfig,
 } from "./site-config";
 
@@ -38,10 +38,10 @@ const organizationData: OrganizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: siteConfig.name,
-  url: getCanonicalURL(),
+  url: getCanonicalSiteOrigin(),
   logo: {
     "@type": "ImageObject",
-    url: getSiteLogoUrl(),
+    url: absoluteUrl(siteConfig.logoPath),
     width: 512,
     height: 512,
   },
@@ -55,12 +55,12 @@ const websiteData: WebSiteSchema = {
   "@type": "WebSite",
   name: siteConfig.name,
   alternateName: [...siteConfig.alternateNames],
-  url: getCanonicalURL(),
+  url: getCanonicalSiteOrigin(),
   description: organizationData.description,
   inLanguage: "en-US",
   potentialAction: {
     "@type": "SearchAction",
-    target: `${getCanonicalURL()}/search?q={search_term_string}`,
+    target: `${getCanonicalSiteOrigin()}/search?q={search_term_string}`,
     "query-input": "required name=search_term_string",
   },
   publisher: organizationData,
@@ -152,7 +152,7 @@ export function generateArticleSchema(data: ArticleDataParams): ArticleSchema {
             "@context": "https://schema.org" as const,
             "@type": "Person" as const,
             name: "Lyóvson Team",
-            url: getCanonicalURL(),
+            url: getCanonicalSiteOrigin(),
           },
         ];
 

@@ -1,8 +1,7 @@
-import { getCanonicalURL } from "@/utilities/getURL";
-import { siteConfig } from "@/utilities/site-config";
+import { getCanonicalSiteOrigin, siteConfig } from "@/utilities/site-config";
 
 export function GET() {
-  const siteUrl = getCanonicalURL();
+  const siteUrl = getCanonicalSiteOrigin();
   const lastUpdated = new Date().toISOString().slice(0, 10);
 
   const body = `# ${siteConfig.name} - Discovery Guide

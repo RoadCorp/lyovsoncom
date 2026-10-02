@@ -1,8 +1,8 @@
-import { getCanonicalURL } from "@/utilities/getURL";
+import { getCanonicalSiteOrigin } from "@/utilities/site-config";
 import { getSyndicationFeeds } from "@/utilities/syndication-feed";
 
 export async function GET() {
-  const SITE_URL = getCanonicalURL();
+  const SITE_URL = getCanonicalSiteOrigin();
 
   try {
     const feeds = await getSyndicationFeeds();

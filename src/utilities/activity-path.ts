@@ -1,7 +1,3 @@
-export {
-  activityFullRoute as getActivityFullPath,
-  activityRoute as getActivityPath,
-  getActivityDateSlug,
-  getActivityDateValue,
-  UNKNOWN_ACTIVITY_DATE_SLUG,
-} from "@/utilities/routes";
+// Legacy alias kept for the embeddings API routes; new code should import
+// activityRoute from routes.ts directly.
+export { activityRoute as getActivityPath } from "@/utilities/routes";

@@ -4,8 +4,8 @@ import type { Metadata } from "next";
 import { cacheLife } from "next/cache";
 import type { ReactNode } from "react";
 import { GridCard, GridCardSection } from "@/components/grid";
-import { getCanonicalURL } from "@/utilities/getURL";
 import { buildSeoMetadata } from "@/utilities/seo-metadata";
+import { getCanonicalSiteOrigin } from "@/utilities/site-config";
 
 const DOCS_CARD_CLASS_NAME =
   "aspect-auto h-auto g2:col-start-2 g2:col-end-3 g3:col-start-2 g3:col-end-4 g3:w-[var(--grid-card-2x1)]";
@@ -65,7 +65,7 @@ function ExternalLink({
 }
 
 export default async function AIDocsPage() {
-  const siteUrl = getCanonicalURL();
+  const siteUrl = getCanonicalSiteOrigin();
   const lastUpdated = await getLastUpdatedLabel();
 
   return (

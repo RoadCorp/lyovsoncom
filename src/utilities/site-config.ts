@@ -72,18 +72,6 @@ export function getCanonicalSiteOrigin() {
   return siteConfig.canonicalOrigin;
 }
 
-export function getCanonicalUrl(path = "/") {
-  return new URL(path, getCanonicalSiteOrigin()).toString();
-}
-
-export function getDefaultOgImageUrl() {
-  return getCanonicalUrl(siteConfig.defaultOgImagePath);
-}
-
-export function getSiteLogoUrl() {
-  return getCanonicalUrl(siteConfig.logoPath);
-}
-
 export function stripSiteBranding(value: string) {
   return value.replace(siteNamePattern, "").trim();
 }

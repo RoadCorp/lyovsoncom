@@ -27,7 +27,6 @@ import { JsonLd } from "@/components/JsonLd";
 import RichText from "@/components/RichText";
 import { cn } from "@/lib/utils";
 import type { Activity, Lyovson, Media } from "@/payload-types";
-import { getActivityDateSlug } from "@/utilities/activity-path";
 import { getActivityTypeLabel } from "@/utilities/activity-type";
 import { dedupeRelationItemsById } from "@/utilities/dedupeRelationItemsById";
 import { ensureStaticParams } from "@/utilities/ensureStaticParams";
@@ -37,7 +36,12 @@ import {
 } from "@/utilities/generate-json-ld";
 import { getActivityByDateAndSlug } from "@/utilities/get-activity";
 import { getLyovsonPersonInput } from "@/utilities/lyovson-person";
-import { absoluteUrl, activitiesRoute, homeRoute } from "@/utilities/routes";
+import {
+  absoluteUrl,
+  activitiesRoute,
+  getActivityDateSlug,
+  homeRoute,
+} from "@/utilities/routes";
 import {
   buildNotFoundMetadata,
   buildSeoMetadata,

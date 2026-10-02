@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { getCanonicalURL } from "@/utilities/getURL";
+import { getCanonicalSiteOrigin } from "@/utilities/site-config";
 
 /* biome-ignore lint/suspicious/useAwait: async required by "use cache" directive */
 export default async function robots(): Promise<MetadataRoute.Robots> {
@@ -8,7 +8,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
   cacheTag("robots");
   cacheLife("static"); // Robots.txt changes very rarely
 
-  const SITE_URL = getCanonicalURL();
+  const SITE_URL = getCanonicalSiteOrigin();
   const HOSTNAME = new URL(SITE_URL).host;
   const sharedDisallowRules = [
     "/api/*",

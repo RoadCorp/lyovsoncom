@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 
-import { getDefaultOgImageUrl, siteConfig } from "./site-config";
+import { absoluteUrl } from "./routes";
+import { siteConfig } from "./site-config";
 
 const defaultOpenGraph: Metadata["openGraph"] = {
   type: "website",
   description: siteConfig.defaultDescription,
   images: [
     {
-      url: getDefaultOgImageUrl(),
+      url: absoluteUrl(siteConfig.defaultOgImagePath),
     },
   ],
   siteName: siteConfig.name,

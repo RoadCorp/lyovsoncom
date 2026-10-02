@@ -1,22 +1,24 @@
 import { cacheLife, cacheTag } from "next/cache";
 import type { PaginatedDocs } from "payload";
+import { TOPIC_POSTS_PER_PAGE } from "@/utilities/archive";
 import { topicPostsWhere } from "@/utilities/content-queries";
 import { getTopic } from "@/utilities/get-topic";
-import { getPayloadClient } from "@/utilities/payload-client";
-import { type PostSummary, postSummarySelect } from "@/utilities/post-summary";
-
-const DEFAULT_TOPIC_PAGE_SIZE = 25;
+import {
+  countPosts,
+  findPostSummaries,
+  type PostSummary,
+} from "@/utilities/post-summary";
 
 export function getTopicPosts(
   slug: string
 ): Promise<PaginatedDocs<PostSummary> | null> {
-  return getPaginatedTopicPosts(slug, 1, DEFAULT_TOPIC_PAGE_SIZE);
+  return getPaginatedTopicPosts(slug, 1, TOPIC_POSTS_PER_PAGE);
 }
 
 export async function getPaginatedTopicPosts(
   slug: string,
   pageNumber: number,
-  limit = DEFAULT_TOPIC_PAGE_SIZE
+  limit = TOPIC_POSTS_PER_PAGE
 ): Promise<PaginatedDocs<PostSummary> | null> {
   "use cache";
   cacheTag("posts");
@@ -25,28 +27,15 @@ export async function getPaginatedTopicPosts(
   cacheTag(`topic-${slug}-page-${pageNumber}`);
   cacheLife("posts");
 
-  const payload = await getPayloadClient();
-
-  const topic = await getTopic(slug);
-
-  const topicId = topic?.id;
-
+  const topicId = (await getTopic(slug))?.id;
   if (!topicId) {
     return null;
   }
 
-  const result = await payload.find({
-    collection: "posts",
-    select: postSummarySelect,
-    depth: 1,
+  return findPostSummaries(topicPostsWhere(topicId), {
     limit,
     page: pageNumber,
-    where: topicPostsWhere(topicId),
-    sort: "-publishedAt",
-    overrideAccess: true,
   });
-
-  return result;
 }
 
 export async function getTopicPostCount(slug: string): Promise<number | null> {
@@ -57,20 +46,10 @@ export async function getTopicPostCount(slug: string): Promise<number | null> {
   cacheTag(`topic-${slug}-count`);
   cacheLife("posts");
 
-  const payload = await getPayloadClient();
-
-  const topic = await getTopic(slug);
-
-  const topicId = topic?.id;
+  const topicId = (await getTopic(slug))?.id;
   if (!topicId) {
     return null;
   }
 
-  const count = await payload.count({
-    collection: "posts",
-    overrideAccess: true,
-    where: topicPostsWhere(topicId),
-  });
-
-  return count.totalDocs;
+  return countPosts(topicPostsWhere(topicId));
 }
