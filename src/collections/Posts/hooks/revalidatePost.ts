@@ -3,14 +3,19 @@ import type {
   CollectionAfterDeleteHook,
 } from "payload";
 import type { Post } from "@/payload-types";
-import { revalidatePublicContent } from "@/utilities/revalidate-public-content";
+import {
+  isDraftOnlySave,
+  revalidatePublicContent,
+} from "@/utilities/revalidate-public-content";
 
 export const revalidatePost: CollectionAfterChangeHook<Post> = ({
   doc,
   previousDoc,
   context,
+  req,
 }) => {
-  if (!context?.skipRevalidation) {
+  // Draft saves and autosaves don't change the published page.
+  if (!(context?.skipRevalidation || isDraftOnlySave(req, doc))) {
     revalidatePublicContent("posts", doc, previousDoc);
   }
   return doc;

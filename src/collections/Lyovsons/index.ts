@@ -2,7 +2,23 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
 import { authenticated } from "@/access/authenticated";
 import { bioEditorConfig } from "@/fields/lexical-configs";
-import { revalidatePublicDependencies } from "@/utilities/revalidate-public-content";
+import {
+  hasPublicChanges,
+  revalidatePublicDependencies,
+} from "@/utilities/revalidate-public-content";
+
+// Auth bookkeeping that never appears on the public site.
+const PRIVATE_AUTH_FIELDS = [
+  "email",
+  "hash",
+  "lockUntil",
+  "loginAttempts",
+  "resetPasswordExpiration",
+  "resetPasswordRequestedAt",
+  "resetPasswordToken",
+  "salt",
+  "sessions",
+] as const;
 
 export const Lyovsons: CollectionConfig = {
   slug: "lyovsons",
@@ -141,19 +157,24 @@ export const Lyovsons: CollectionConfig = {
   ],
   hooks: {
     afterChange: [
-      ({ doc, req }) => {
-        if (doc.username) {
-          req.payload.logger.info(`Updating cache for author: ${doc.username}`);
-
-          // Revalidate lyovson-related cache tags
-          revalidatePublicDependencies();
-          revalidateTag(`lyovson-${doc.username}`, { expire: 0 });
-          revalidateTag("posts", { expire: 0 }); // Posts may reference this author
-          revalidateTag("sitemap", { expire: 0 });
-
-          // Revalidate author page path
-          revalidatePath(`/${doc.username}`);
+      ({ doc, previousDoc, req }) => {
+        // Password resets and other auth changes never render publicly.
+        if (
+          !(
+            doc.username &&
+            hasPublicChanges(doc, previousDoc, PRIVATE_AUTH_FIELDS)
+          )
+        ) {
+          return;
         }
+        req.payload.logger.info(`Updating cache for author: ${doc.username}`);
+
+        // Author names and avatars are populated across the site.
+        revalidatePublicDependencies();
+        revalidateTag(`lyovson-${doc.username}`, { expire: 0 });
+
+        // Revalidate author page path
+        revalidatePath(`/${doc.username}`);
       },
     ],
     afterDelete: [

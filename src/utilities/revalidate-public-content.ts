@@ -80,6 +80,53 @@ export function revalidatePublicContent(
   }
 }
 
+/**
+ * Admin "Save draft" and autosave send `draft=true` with a non-published
+ * status; Payload then writes only a version and leaves the live document
+ * untouched. (Publishing sends no `draft` parameter.)
+ */
+export function isDraftOnlySave(
+  req: { query?: Record<string, unknown> } | undefined,
+  doc: { _status?: string | null } | null | undefined
+) {
+  const query = req?.query;
+  const isDraftRequest = query?.draft === "true" || query?.autosave === "true";
+  return isDraftRequest && doc?._status !== "published";
+}
+
+const UNRENDERED_FIELDS = new Set(["createdAt", "updatedAt"]);
+
+/**
+ * True when a field that can appear on the public site changed. `ignore`
+ * lists private fields (for example auth state) that never render.
+ */
+export function hasPublicChanges(
+  doc: Record<string, unknown> | null | undefined,
+  previousDoc: Record<string, unknown> | null | undefined,
+  ignore: readonly string[] = []
+) {
+  const skip = new Set([...UNRENDERED_FIELDS, ...ignore]);
+  const keys = new Set([
+    ...Object.keys(doc ?? {}),
+    ...Object.keys(previousDoc ?? {}),
+  ]);
+  for (const key of keys) {
+    if (
+      !skip.has(key) &&
+      JSON.stringify(doc?.[key] ?? null) !==
+        JSON.stringify(previousDoc?.[key] ?? null)
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Populated reference, media and author fields appear across the site.
+ * Stale-while-revalidate: visitors get the cached page while it refreshes,
+ * instead of every page blocking on regeneration at once.
+ */
 export function revalidatePublicDependencies() {
   for (const tag of [
     "posts",
@@ -91,6 +138,6 @@ export function revalidatePublicDependencies() {
     "homepage",
     "sitemap",
   ]) {
-    revalidateTag(tag, { expire: 0 });
+    revalidateTag(tag, "max");
   }
 }

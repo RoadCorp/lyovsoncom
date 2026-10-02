@@ -8,7 +8,10 @@ import {
 import type { CollectionConfig } from "payload";
 import { anyone } from "@/access/anyone";
 import { authenticated } from "@/access/authenticated";
-import { revalidatePublicDependencies } from "@/utilities/revalidate-public-content";
+import {
+  hasPublicChanges,
+  revalidatePublicDependencies,
+} from "@/utilities/revalidate-public-content";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -46,10 +49,16 @@ export const Media: CollectionConfig = {
   ],
   hooks: {
     afterChange: [
-      ({ doc, context }) => {
-        if (!context?.skipRevalidation) {
-          revalidatePublicDependencies();
+      ({ context, doc, operation, previousDoc }) => {
+        // A new upload isn't rendered until content links to it.
+        if (
+          context?.skipRevalidation ||
+          operation === "create" ||
+          !hasPublicChanges(doc, previousDoc)
+        ) {
+          return doc;
         }
+        revalidatePublicDependencies();
         return doc;
       },
     ],
