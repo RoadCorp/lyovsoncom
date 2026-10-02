@@ -1,5 +1,5 @@
 import { ViewTransition } from "react";
-import { ArchiveItems } from "@/components/ArchiveItems";
+import { ArchiveItems } from "@/components/archive-items";
 import { GridCardEmptyState } from "@/components/grid";
 import { normalizeSearchQuery } from "@/search/query";
 import {

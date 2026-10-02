@@ -1,4 +1,4 @@
-import { PublicPageBoundary } from "@/components/PublicPageBoundary";
+import { PublicPageBoundary } from "@/components/public-page-boundary";
 export const prefetch = "partial";
 
 import { notFound } from "next/navigation";
@@ -9,7 +9,7 @@ import {
   GridCardEmptyState,
   LYOVSON_ACTIVITIES_PREVIEW_RAIL_CLASS_NAME,
 } from "@/components/grid";
-import { JsonLd } from "@/components/JsonLd";
+import { JsonLd } from "@/components/json-ld";
 import { Pagination } from "@/components/Pagination";
 import { ACTIVITY_PREVIEW_LIMIT } from "@/utilities/activity-preview";
 import {

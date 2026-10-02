@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { browserTheme } from "@/utilities/browserTheme";
+import { browserTheme } from "@/utilities/browser-theme";
 import { getCanonicalSiteOrigin } from "@/utilities/site-config";
 
 export default function manifest(): MetadataRoute.Manifest {

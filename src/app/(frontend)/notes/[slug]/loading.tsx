@@ -1,4 +1,4 @@
-import { PublicPageFallback } from "@/components/PublicPageBoundary";
+import { PublicPageFallback } from "@/components/public-page-boundary";
 
 export default function Loading() {
   return <PublicPageFallback skeleton="note" />;

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { SkeletonCard, SkeletonGrid } from "@/components/grid/skeleton";
-import { RequireUser } from "@/components/RequireUser";
+import { RequireUser } from "@/components/require-user";
 import { buildSeoMetadata } from "@/utilities/seo-metadata";
 
 export default function SkeletonPlayground() {

@@ -1,7 +1,7 @@
 import { Activity, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { CopyButton } from "@/blocks/Code/CopyButton";
-import { YouTubePlayer } from "@/blocks/YouTube/YouTubePlayer";
+import { CopyButton } from "@/blocks/Code/copy-button";
+import { YouTubePlayer } from "@/blocks/YouTube/you-tube-player";
 import { LazyVideo } from "@/components/LazyVideo";
 
 function Fixture() {

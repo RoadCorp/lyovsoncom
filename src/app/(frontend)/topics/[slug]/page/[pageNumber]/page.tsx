@@ -1,18 +1,18 @@
-import { PublicPageBoundary } from "@/components/PublicPageBoundary";
+import { PublicPageBoundary } from "@/components/public-page-boundary";
 export const prefetch = "partial";
 
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next/types";
 import { CollectionArchive } from "@/components/CollectionArchive";
-import { JsonLd } from "@/components/JsonLd";
+import { JsonLd } from "@/components/json-ld";
 import { Pagination } from "@/components/Pagination";
 import {
   getPaginatedStaticParams,
   parsePageNumber,
   TOPIC_POSTS_PER_PAGE,
 } from "@/utilities/archive";
-import { ensureStaticParams } from "@/utilities/ensureStaticParams";
+import { ensureStaticParams } from "@/utilities/ensure-static-params";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getAllTopics, getTopic } from "@/utilities/get-topic";
 import {

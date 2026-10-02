@@ -4,7 +4,7 @@ import {
   getPaginatedStaticParams,
   LYOVSON_ITEMS_PER_PAGE,
 } from "@/utilities/archive";
-import { ensureStaticParams } from "@/utilities/ensureStaticParams";
+import { ensureStaticParams } from "@/utilities/ensure-static-params";
 import {
   getLyovsonFeedCounts,
   type LyovsonFilter,

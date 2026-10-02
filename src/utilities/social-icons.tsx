@@ -7,7 +7,7 @@ import {
 } from "@icons-pack/react-simple-icons";
 import { Globe } from "lucide-react";
 import type { ComponentType } from "react";
-import { LinkedInIcon } from "@/components/LinkedInIcon";
+import { LinkedInIcon } from "@/components/linked-in-icon";
 
 interface IconProps {
   className?: string;

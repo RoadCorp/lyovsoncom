@@ -1,5 +1,5 @@
 import type { FieldHook, PayloadRequest } from "payload";
-import { formatSlug } from "@/fields/slug/formatSlug";
+import { formatSlug } from "@/fields/slug/format-slug";
 import { getRelationId } from "@/utilities/relations";
 
 function readStoredField(originalDoc: unknown, field: string): unknown {

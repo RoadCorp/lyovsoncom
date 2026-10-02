@@ -4,7 +4,7 @@ import {
   GridCardSection,
   GridCardUserSocial,
 } from "@/components/grid";
-import { RequireUser } from "@/components/RequireUser";
+import { RequireUser } from "@/components/require-user";
 import { buildSeoMetadata } from "@/utilities/seo-metadata";
 
 export default function Playground() {

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import type React from "react";
 import { useLayoutEffect, useState } from "react";
-import { normalizeAspectRatio } from "@/utilities/aspectRatio";
+import { normalizeAspectRatio } from "@/utilities/aspect-ratio";
 
 const PlayButton = () => (
   <div

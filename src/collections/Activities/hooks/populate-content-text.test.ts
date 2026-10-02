@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { populateContentTextHook } from "./populateContentText";
+import { populateContentTextHook } from "./populate-content-text";
 
 const notes = {
   root: {

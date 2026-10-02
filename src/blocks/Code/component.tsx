@@ -1,6 +1,6 @@
 import type React from "react";
 
-import { Code } from "./Code";
+import { Code } from "./code";
 
 export interface CodeBlockProps {
   blockType: "code";

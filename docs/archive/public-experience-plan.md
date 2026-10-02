@@ -28,7 +28,7 @@ This document retains the approved design and acceptance contract. The implement
 | Recovery | Route retry and `catchError` for optional panels already exist | Expand isolation only where an independent failure would otherwise obscure useful content. |
 | Media | Responsive image sizes, YouTube click-to-load, lazy GIF videos, server-rendered X embeds | Fix remaining hydration and hidden-media work; retain existing optimizations. |
 
-Evidence: `next.config.ts`, `package.json`, `src/components/AppLink.tsx`, `src/components/IntentLink.tsx`, `src/search`, and `docs/view-transition-audit.md`.
+Evidence: `next.config.ts`, `package.json`, `src/components/app-link.tsx`, `src/components/intent-link.tsx`, `src/search`, and `docs/view-transition-audit.md`.
 
 The existing [transition task](https://app.notion.com/p/3d2a881304bb816699d0e91f7aa77fcb) records subsequent released fixes beyond the older local-only wording in the repository audit. Its recorded image-handoff, shared-fade dimming, and pagination-number fixes are regression requirements here. The task also records legacy direct-media failures with working displayed Blob images; this plan does not assume those historical failures are still live.
 

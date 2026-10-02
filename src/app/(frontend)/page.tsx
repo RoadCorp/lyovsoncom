@@ -7,7 +7,7 @@ import {
   GridCardActivitiesPreview,
   HOME_ACTIVITIES_PREVIEW_RAIL_CLASS_NAME,
 } from "@/components/grid";
-import { JsonLd } from "@/components/JsonLd";
+import { JsonLd } from "@/components/json-ld";
 import { Pagination } from "@/components/Pagination";
 import { ACTIVITY_PREVIEW_LIMIT } from "@/utilities/activity-preview";
 import { POSTS_PER_PAGE } from "@/utilities/archive";

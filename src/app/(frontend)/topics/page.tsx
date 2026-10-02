@@ -1,10 +1,10 @@
 export const prefetch = "partial";
 
 import type { Metadata } from "next";
-import { AppLink } from "@/components/AppLink";
+import { AppLink } from "@/components/app-link";
 import { GridCard, GridCardSection } from "@/components/grid";
-import { JsonLd } from "@/components/JsonLd";
-import { TopicPill } from "@/components/TopicPill";
+import { JsonLd } from "@/components/json-ld";
+import { TopicPill } from "@/components/topic-pill";
 import {
   generateBreadcrumbSchema,
   generateCollectionPageSchema,

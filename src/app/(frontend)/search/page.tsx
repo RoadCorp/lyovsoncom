@@ -3,7 +3,7 @@ export const prefetch = "partial";
 import type { Metadata } from "next/types";
 import { Suspense } from "react";
 import { SkeletonCard } from "@/components/grid";
-import { LoadingTransition } from "@/components/LoadingTransition";
+import { LoadingTransition } from "@/components/loading-transition";
 import { SearchPageContent } from "@/search/page-content";
 import { normalizeSearchQuery } from "@/search/query";
 import { buildSeoMetadata } from "@/utilities/seo-metadata";

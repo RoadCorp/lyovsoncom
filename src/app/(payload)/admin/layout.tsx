@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type React from "react";
-import { getServerSideURL } from "@/utilities/getURL";
+import { getServerSideURL } from "@/utilities/get-url";
 
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),

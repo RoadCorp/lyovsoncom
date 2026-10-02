@@ -1,6 +1,6 @@
 import type { CheckboxField, TextField } from "payload";
 
-import { formatSlugHook } from "./formatSlug";
+import { formatSlugHook } from "./format-slug";
 
 interface Overrides {
   checkboxOverrides?: Partial<CheckboxField>;
@@ -43,7 +43,7 @@ export const slugField: Slug = (fieldToUse = "title", overrides = {}) => {
       ...(slugOverrides?.admin || {}),
       components: {
         Field: {
-          path: "@/fields/slug/SlugComponent#SlugComponent",
+          path: "@/fields/slug/slug-component#SlugComponent",
           clientProps: {
             fieldToUse,
             checkboxFieldPath: checkBoxField.name,

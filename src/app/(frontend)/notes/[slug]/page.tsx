@@ -1,4 +1,4 @@
-import { PublicPageBoundary } from "@/components/PublicPageBoundary";
+import { PublicPageBoundary } from "@/components/public-page-boundary";
 export const prefetch = "partial";
 
 import { cacheLife, cacheTag } from "next/cache";
@@ -12,13 +12,13 @@ import {
   GridCardRelatedNotes,
   GridCardSection,
 } from "@/components/grid";
-import { JsonLd } from "@/components/JsonLd";
-import { OptionalErrorBoundary } from "@/components/OptionalErrorBoundary";
+import { JsonLd } from "@/components/json-ld";
+import { OptionalErrorBoundary } from "@/components/optional-error-boundary";
 import RichText from "@/components/RichText";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import type { Media, Note, Reference } from "@/payload-types";
-import { ensureStaticParams } from "@/utilities/ensureStaticParams";
+import { ensureStaticParams } from "@/utilities/ensure-static-params";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";
 import {
   generateArticleSchema,

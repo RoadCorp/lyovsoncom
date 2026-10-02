@@ -1,14 +1,14 @@
 import { BriefcaseBusiness, Calendar, FileText, PenTool } from "lucide-react";
-import { AppLink } from "@/components/AppLink";
+import { AppLink } from "@/components/app-link";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { Media } from "@/components/Media";
 import { CARD_COVER_IMAGE_SIZE } from "@/components/Media/image-sizes";
-import { MediaFallback } from "@/components/Media/MediaFallback";
-import { PostDrillInLink } from "@/components/post-transitions/PostDrillInLink";
-import { PostTransitionBoundary } from "@/components/post-transitions/PostTransitionBoundary";
-import { TopicPillList } from "@/components/TopicPill";
+import { MediaFallback } from "@/components/Media/media-fallback";
+import { PostDrillInLink } from "@/components/post-transitions/post-drill-in-link";
+import { PostTransitionBoundary } from "@/components/post-transitions/post-transition-boundary";
+import { TopicPillList } from "@/components/topic-pill";
 import { formatShortDate } from "@/utilities/date";
-import { dedupeRelationItemsById } from "@/utilities/dedupeRelationItemsById";
+import { dedupeRelationItemsById } from "@/utilities/dedupe-relation-items-by-id";
 import type { PostSummary } from "@/utilities/post-summary";
 import { lyovsonRoute, postRoute, projectRoute } from "@/utilities/routes";
 

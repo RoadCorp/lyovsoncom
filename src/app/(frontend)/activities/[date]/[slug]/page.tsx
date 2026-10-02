@@ -1,4 +1,4 @@
-import { PublicPageBoundary } from "@/components/PublicPageBoundary";
+import { PublicPageBoundary } from "@/components/public-page-boundary";
 export const prefetch = "partial";
 
 import {
@@ -23,13 +23,13 @@ import {
   GridCardHeroActivity,
   GridCardSection,
 } from "@/components/grid";
-import { JsonLd } from "@/components/JsonLd";
+import { JsonLd } from "@/components/json-ld";
 import RichText from "@/components/RichText";
 import { cn } from "@/lib/utils";
 import type { Activity, Lyovson, Media } from "@/payload-types";
 import { getActivityTypeLabel } from "@/utilities/activity-type";
-import { dedupeRelationItemsById } from "@/utilities/dedupeRelationItemsById";
-import { ensureStaticParams } from "@/utilities/ensureStaticParams";
+import { dedupeRelationItemsById } from "@/utilities/dedupe-relation-items-by-id";
+import { ensureStaticParams } from "@/utilities/ensure-static-params";
 import {
   generateArticleSchema,
   generateBreadcrumbSchema,

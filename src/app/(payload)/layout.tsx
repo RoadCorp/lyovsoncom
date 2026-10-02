@@ -6,7 +6,7 @@ import { handleServerFunctions, RootLayout } from "@payloadcms/next/layouts";
 import type { Metadata } from "next";
 import type { ServerFunctionClient } from "payload";
 import type React from "react";
-import { getServerSideURL } from "@/utilities/getURL";
+import { getServerSideURL } from "@/utilities/get-url";
 
 import { importMap } from "./admin/importMap.js";
 import "./custom.scss";

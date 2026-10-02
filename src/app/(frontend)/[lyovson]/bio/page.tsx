@@ -1,4 +1,4 @@
-import { PublicPageBoundary } from "@/components/PublicPageBoundary";
+import { PublicPageBoundary } from "@/components/public-page-boundary";
 export const prefetch = "partial";
 
 import { notFound } from "next/navigation";
@@ -8,7 +8,7 @@ import {
   GridCardEmptyState,
   GridCardSection,
 } from "@/components/grid";
-import { JsonLd } from "@/components/JsonLd";
+import { JsonLd } from "@/components/json-ld";
 import RichText from "@/components/RichText";
 import {
   generatePersonSchema,

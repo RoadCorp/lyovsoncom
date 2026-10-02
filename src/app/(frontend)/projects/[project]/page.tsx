@@ -1,4 +1,4 @@
-import { PublicPageBoundary } from "@/components/PublicPageBoundary";
+import { PublicPageBoundary } from "@/components/public-page-boundary";
 export const prefetch = "partial";
 
 import { cacheLife, cacheTag } from "next/cache";
@@ -6,10 +6,10 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { CollectionArchive } from "@/components/CollectionArchive";
 import { GridCardProjectHero } from "@/components/grid";
-import { JsonLd } from "@/components/JsonLd";
+import { JsonLd } from "@/components/json-ld";
 import { Pagination } from "@/components/Pagination";
 import type { Media, Project } from "@/payload-types";
-import { ensureStaticParams } from "@/utilities/ensureStaticParams";
+import { ensureStaticParams } from "@/utilities/ensure-static-params";
 import {
   generateBreadcrumbSchema,
   generateCollectionPageSchema,

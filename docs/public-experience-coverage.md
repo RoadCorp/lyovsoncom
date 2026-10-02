@@ -116,43 +116,43 @@ Unused template components and UI primitives were removed during the September 6
 
 | Module | Package | Direct declaration |
 | --- | --- | --- |
-| `src/blocks/Banner/Component.tsx` | C09 | server-compatible / helper |
-| `src/blocks/Code/Code.tsx` | C09 | server-compatible; server tokenization |
-| `src/blocks/Code/Component.tsx` | C09 | server-compatible / helper |
-| `src/blocks/Code/CopyButton.tsx` | C09 | client |
-| `src/blocks/GIF/Component.tsx` | C08 | server-compatible / helper |
-| `src/blocks/GIF/GifPicker.tsx` | C15 | client |
-| `src/blocks/MediaBlock/Component.tsx` | C08 | server-compatible / helper |
-| `src/blocks/Quote/Component.tsx` | C09 | server-compatible / helper |
-| `src/blocks/XPost/Component.tsx` | C08 | server-compatible / helper |
-| `src/blocks/YouTube/Component.tsx` | C08 | server-compatible / helper |
-| `src/blocks/YouTube/YouTubePlayer.tsx` | C08 | client |
+| `src/blocks/Banner/component.tsx` | C09 | server-compatible / helper |
+| `src/blocks/Code/code.tsx` | C09 | server-compatible; server tokenization |
+| `src/blocks/Code/component.tsx` | C09 | server-compatible / helper |
+| `src/blocks/Code/copy-button.tsx` | C09 | client |
+| `src/blocks/GIF/component.tsx` | C08 | server-compatible / helper |
+| `src/blocks/GIF/gif-picker.tsx` | C15 | client |
+| `src/blocks/MediaBlock/component.tsx` | C08 | server-compatible / helper |
+| `src/blocks/Quote/component.tsx` | C09 | server-compatible / helper |
+| `src/blocks/XPost/component.tsx` | C08 | server-compatible / helper |
+| `src/blocks/YouTube/component.tsx` | C08 | server-compatible / helper |
+| `src/blocks/YouTube/you-tube-player.tsx` | C08 | client |
 | `src/components/ActivitiesArchive/index.tsx` | C02 | server-compatible / helper |
-| `src/components/AppLink.tsx` | C01 | server-compatible / helper |
-| `src/components/AppLinkPendingIndicator.tsx` | C01 | client |
-| `src/components/ArchiveItems.tsx` | C02 | server-compatible / helper |
+| `src/components/app-link.tsx` | C01 | server-compatible / helper |
+| `src/components/app-link-pending-indicator.tsx` | C01 | client |
+| `src/components/archive-items.tsx` | C02 | server-compatible / helper |
 | `src/components/CollectionArchive/index.tsx` | C02 | server-compatible / helper |
-| `src/components/IntentLink.tsx` | C01 | client |
-| `src/components/JsonLd.tsx` | C11 | server-compatible / helper |
+| `src/components/intent-link.tsx` | C01 | client |
+| `src/components/json-ld.tsx` | C11 | server-compatible / helper |
 | `src/components/LazyVideo/index.tsx` | C08 | client |
 | `src/components/Link/index.tsx` | C01 | server-compatible / helper |
-| `src/components/LinkedInIcon.tsx` | C07 | server-compatible / helper |
-| `src/components/LoadingTransition.tsx` | C10 | server-compatible / helper |
-| `src/components/Logo/Logo.tsx` | C11 | server-compatible / helper |
+| `src/components/linked-in-icon.tsx` | C07 | server-compatible / helper |
+| `src/components/loading-transition.tsx` | C10 | server-compatible / helper |
+| `src/components/Logo/logo.tsx` | C11 | server-compatible / helper |
 | `src/components/Media/ImageMedia/index.tsx` | C08 | server-compatible / helper |
 | `src/components/Media/VideoMedia/index.tsx` | C08 | client; hidden-media cleanup |
 | `src/components/Media/index.tsx` | C08 | server-compatible / helper |
 | `src/components/NotesArchive/index.tsx` | C02 | server-compatible / helper |
-| `src/components/OfflinePage.tsx` | C11 | client; retained offline controls |
-| `src/components/PublicPageBoundary.tsx` | C06 | server-compatible; page-local Suspense |
+| `src/components/offline-page.tsx` | C11 | client; retained offline controls |
+| `src/components/public-page-boundary.tsx` | C06 | server-compatible; page-local Suspense |
 | `src/components/grid/skeleton/profile-skeleton.tsx` | C06 | server-compatible; dimensioned profile fallback |
-| `src/components/OptionalErrorBoundary.tsx` | C06 | client |
+| `src/components/optional-error-boundary.tsx` | C06 | client |
 | `src/components/Pagination/index.tsx` | C05 | server-compatible / helper |
-| `src/components/PlaceholderPageCard.tsx` | C06 | server-compatible / helper |
+| `src/components/placeholder-page-card.tsx` | C06 | server-compatible / helper |
 | `src/components/RichText/index.tsx` | C09 | server-compatible / helper |
-| `src/components/RichText/nodeFormat.tsx` | C09 | server-compatible / helper |
+| `src/components/RichText/node-format.tsx` | C09 | server-compatible / helper |
 | `src/components/RichText/serialize.tsx` | C09 | server-compatible / helper |
-| `src/components/TopicPill.tsx` | C07 | server-compatible / helper |
+| `src/components/topic-pill.tsx` | C07 | server-compatible / helper |
 | `src/components/admin/admin-font-provider.tsx` | C15 | client |
 | `src/components/admin/icon.tsx` | C15 | client |
 | `src/components/admin/login-text.tsx` | C15 | server-compatible / helper |
@@ -190,8 +190,8 @@ Unused template components and UI primitives were removed during the September 6
 | `src/components/grid/skeleton/index.tsx` | C06 | server-compatible / helper |
 | `src/components/grid/skeleton/skeleton-card.tsx` | C06 | server-compatible / helper |
 | `src/components/grid/skeleton/skeleton-grid.tsx` | C06 | server-compatible / helper |
-| `src/components/post-transitions/PostDrillInLink.tsx` | C10 | server-compatible / helper |
-| `src/components/post-transitions/PostTransitionBoundary.tsx` | C10 | server-compatible / helper |
+| `src/components/post-transitions/post-drill-in-link.tsx` | C10 | server-compatible / helper |
+| `src/components/post-transitions/post-transition-boundary.tsx` | C10 | server-compatible / helper |
 | `src/components/ui/button.tsx` | C13 | server-compatible / helper |
 | `src/components/ui/card.tsx` | C13 | server-compatible / helper |
 | `src/components/ui/input.tsx` | C13 | server-compatible / helper |
@@ -205,7 +205,7 @@ Unused template components and UI primitives were removed during the September 6
 | Module | Package | Direct declaration |
 | --- | --- | --- |
 | `src/utilities/social-icons.tsx` | C07 | server-compatible / helper |
-| `src/fields/slug/SlugComponent.tsx` | C15 | client; admin-only and excluded |
+| `src/fields/slug/slug-component.tsx` | C15 | client; admin-only and excluded |
 
 ## Supporting files and endpoints
 

@@ -1,6 +1,6 @@
 import type { CollectionAdminOptions, CollectionConfig } from "payload";
-import { generatePreviewPath } from "@/utilities/generatePreviewPath";
-import { getServerSideURL } from "@/utilities/getURL";
+import { generatePreviewPath } from "@/utilities/generate-preview-path";
+import { getServerSideURL } from "@/utilities/get-url";
 
 /** Drafts with 30-second autosave, keeping the five latest versions. */
 export const draftVersions = (): CollectionConfig["versions"] => ({

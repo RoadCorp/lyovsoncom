@@ -1,7 +1,7 @@
 export const prefetch = "partial";
 
 import type { Metadata } from "next";
-import { PlaceholderPageCard } from "@/components/PlaceholderPageCard";
+import { PlaceholderPageCard } from "@/components/placeholder-page-card";
 import { buildSeoMetadata } from "@/utilities/seo-metadata";
 
 export default function AmPage() {

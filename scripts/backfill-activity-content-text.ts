@@ -10,7 +10,7 @@
  */
 import configPromise from "@payload-config";
 import { createLocalReq, getPayload } from "payload";
-import { populateContentTextHook } from "@/collections/Activities/hooks/populateContentText";
+import { populateContentTextHook } from "@/collections/Activities/hooks/populate-content-text";
 
 const write = process.env.BACKFILL_WRITE === "1";
 const payload = await getPayload({ config: await configPromise });

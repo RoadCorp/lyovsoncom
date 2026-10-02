@@ -1,7 +1,7 @@
 import { Brain, Quote } from "lucide-react";
 import { ViewTransition } from "react";
 import { GridCard, GridCardSection } from "@/components/grid";
-import { IntentLink } from "@/components/IntentLink";
+import { IntentLink } from "@/components/intent-link";
 import { cn } from "@/lib/utils";
 import type { Note } from "@/payload-types";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";

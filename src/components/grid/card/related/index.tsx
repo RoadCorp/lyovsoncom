@@ -1,8 +1,8 @@
 import { GridCard, GridCardSection } from "@/components/grid";
 import { Media } from "@/components/Media";
 import { CARD_THUMBNAIL_IMAGE_SIZE } from "@/components/Media/image-sizes";
-import { PostDrillInLink } from "@/components/post-transitions/PostDrillInLink";
-import { PostTransitionBoundary } from "@/components/post-transitions/PostTransitionBoundary";
+import { PostDrillInLink } from "@/components/post-transitions/post-drill-in-link";
+import { PostTransitionBoundary } from "@/components/post-transitions/post-transition-boundary";
 import { cn } from "@/lib/utils";
 import type { PostSummary } from "@/utilities/post-summary";
 import { postRoute } from "@/utilities/routes";

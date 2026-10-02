@@ -6,7 +6,7 @@ Use mise and pnpm with the committed versions. [package.json](package.json) owns
 
 - Preserve the responsive grid-card design, theme tokens, and custom breakpoints in `src/app/(frontend)/globals.css`; reuse `src/components/grid/`. Desktop grid units are 400px, while mobile cards fit their container.
 - Payload collections and hooks own content publication, access, embeddings, and invalidation. Preserve public-read predicates, private-field filtering, paid-work authorization, unchanged-content skips, and recursion guards. Inspect current hooks/jobs before changing these paths.
-- Lexical editors share `src/fields/defaultLexical.ts` and `src/fields/lexical-configs.ts`. Update these owners rather than duplicating editor configs. Regenerate Payload types/import maps when their inputs change using `pnpm generate:types` and `pnpm generate:importmap`.
+- Lexical editors share `src/fields/default-lexical.ts` and `src/fields/lexical-configs.ts`. Update these owners rather than duplicating editor configs. Regenerate Payload types/import maps when their inputs change using `pnpm generate:types` and `pnpm generate:importmap`.
 - Consult [README.md](README.md) for setup and database discovery. Confirm the intended environment before migrations or paid provider work.
 
 ## Verification

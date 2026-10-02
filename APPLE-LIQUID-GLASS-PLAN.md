@@ -169,14 +169,14 @@ Pitfalls:
 
 ### 8) Lexical Block Components
 Files:
-`src/blocks/Banner/Component.tsx`
-`src/blocks/Quote/Component.tsx`
-`src/blocks/MediaBlock/Component.tsx`
-`src/blocks/YouTube/Component.tsx`
-`src/blocks/XPost/Component.tsx`
-`src/blocks/GIF/Component.tsx`
-`src/blocks/Code/Component.tsx`
-`src/blocks/Code/Component.client.tsx`
+`src/blocks/Banner/component.tsx`
+`src/blocks/Quote/component.tsx`
+`src/blocks/MediaBlock/component.tsx`
+`src/blocks/YouTube/component.tsx`
+`src/blocks/XPost/component.tsx`
+`src/blocks/GIF/component.tsx`
+`src/blocks/Code/component.tsx`
+`src/blocks/Code/component.client.tsx`
 
 Opportunities:
 1. Assign each block a material intent:

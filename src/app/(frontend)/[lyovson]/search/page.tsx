@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { Suspense } from "react";
 import { SkeletonCard } from "@/components/grid";
-import { LoadingTransition } from "@/components/LoadingTransition";
+import { LoadingTransition } from "@/components/loading-transition";
 import { SearchPageContent } from "@/search/page-content";
 import { normalizeSearchQuery } from "@/search/query";
 import { getLyovsonProfile } from "@/utilities/get-lyovson-profile";
@@ -12,7 +12,7 @@ import {
   buildLyovsonMetadata,
   buildLyovsonNotFoundMetadata,
 } from "../_utilities/metadata";
-import { getLyovsonStaticParams } from "../_utilities/staticParams";
+import { getLyovsonStaticParams } from "../_utilities/static-params";
 
 interface PageProps {
   params: Promise<{ lyovson: string }>;

@@ -1,10 +1,10 @@
-import { PublicPageBoundary } from "@/components/PublicPageBoundary";
+import { PublicPageBoundary } from "@/components/public-page-boundary";
 export const prefetch = "partial";
 
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { GridCardEmptyState } from "@/components/grid";
-import { JsonLd } from "@/components/JsonLd";
+import { JsonLd } from "@/components/json-ld";
 import { Pagination } from "@/components/Pagination";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getLyovsonFeed } from "@/utilities/get-lyovson-feed";

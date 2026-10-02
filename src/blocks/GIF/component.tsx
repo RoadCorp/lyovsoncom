@@ -2,7 +2,7 @@ import { LazyVideo } from "@/components/LazyVideo";
 import RichText from "@/components/RichText";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { normalizeAspectRatio } from "@/utilities/aspectRatio";
+import { normalizeAspectRatio } from "@/utilities/aspect-ratio";
 import type { GIFBlock as GIFBlockType } from "./types";
 
 /**

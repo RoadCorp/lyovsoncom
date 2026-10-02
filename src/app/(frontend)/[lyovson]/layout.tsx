@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { GridCardUser } from "@/components/grid";
 import { ProfileSkeleton } from "@/components/grid/skeleton/profile-skeleton";
 import { getLyovsonProfile } from "@/utilities/get-lyovson-profile";
-import { getLyovsonStaticParams } from "./_utilities/staticParams";
+import { getLyovsonStaticParams } from "./_utilities/static-params";
 
 interface LayoutProps {
   children: React.ReactNode;
