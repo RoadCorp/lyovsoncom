@@ -10,6 +10,10 @@ import {
   down as migration_20261002_140539_payload_3_90_upgrade_down,
   up as migration_20261002_140539_payload_3_90_upgrade_up,
 } from "./20261002_140539_payload_3_90_upgrade";
+import {
+  down as migration_20261002_150000_search_functions_down,
+  up as migration_20261002_150000_search_functions_up,
+} from "./20261002_150000_search_functions";
 
 export const migrations = [
   {
@@ -26,5 +30,10 @@ export const migrations = [
     up: migration_20261002_140539_payload_3_90_upgrade_up,
     down: migration_20261002_140539_payload_3_90_upgrade_down,
     name: "20261002_140539_payload_3_90_upgrade",
+  },
+  {
+    up: migration_20261002_150000_search_functions_up,
+    down: migration_20261002_150000_search_functions_down,
+    name: "20261002_150000_search_functions",
   },
 ];
