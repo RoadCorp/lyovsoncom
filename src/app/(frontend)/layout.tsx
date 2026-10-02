@@ -1,7 +1,6 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import Script from "next/script";
 import type React from "react";
 import { Grid, GridCardNav } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
@@ -146,24 +145,6 @@ export default function RootLayout({
         </Providers>
         <Analytics />
       </body>
-      <Script
-        // biome-ignore lint/security/noDangerouslySetInnerHtml: Required for GA initialization
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-R4R3XJRY28');
-          `,
-        }}
-        id="google-analytics-init"
-        strategy="lazyOnload"
-      />
-      <Script
-        id="google-analytics-script"
-        src="https://www.googletagmanager.com/gtag/js?id=G-R4R3XJRY28"
-        strategy="lazyOnload"
-      />
     </html>
   );
 }
