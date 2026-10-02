@@ -14,6 +14,8 @@ import {
 
 vi.mock("@/utilities/payload-client", () => ({ getPayloadClient: vi.fn() }));
 vi.mock("@/utilities/api-telemetry", () => ({ logApiTelemetry: vi.fn() }));
+// Vitest does not compile "use cache"; cacheLife() would throw outside it.
+vi.mock("next/cache", () => ({ cacheLife: vi.fn() }));
 vi.mock("@/utilities/generate-embedding", () => ({
   EMBEDDING_VECTOR_DIMENSIONS: 1536,
   generateEmbedding: vi.fn(),
@@ -91,6 +93,7 @@ describe("search execution", () => {
     execute.mockReset().mockResolvedValue({ rows: [row] });
     vi.mocked(getPayloadClient).mockResolvedValue({
       db: { drizzle: { execute } },
+      logger: { warn: vi.fn() },
     } as never);
     vi.mocked(generateEmbedding).mockResolvedValue({
       vector: Array.from({ length: 1536 }, () => 0),
@@ -149,42 +152,47 @@ describe("search execution", () => {
     expect(generateEmbedding).not.toHaveBeenCalled();
   });
 
-  it("rejects an invalid embedding before executing SQL", async () => {
-    vi.mocked(generateEmbedding).mockResolvedValue({
-      vector: [0],
-      model: "test-model",
-      dimensions: 1,
-    });
+  it.each([
+    ["the provider fails", () => Promise.reject(new Error("Unavailable"))],
+    [
+      "the embedding has the wrong size",
+      () =>
+        Promise.resolve({ vector: [0], model: "test-model", dimensions: 1 }),
+    ],
+  ])("falls back to full-text search when %s", async (_label, embed) => {
+    vi.mocked(generateEmbedding).mockImplementation(embed as never);
+    const response = await GET(
+      new NextRequest("https://www.lyovson.com/api/search?q=books")
+    );
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({ count: 1 });
+    const [[statement]] = execute.mock.calls;
+    const query = new PgDialect().sqlToQuery(statement);
+    // The embedding parameter is NULL, so the SQL skips semantic ranking.
+    expect(query.params).toContain(null);
+    expect(query.params).toContain("books");
+  });
+
+  it("rejects queries longer than 200 characters before any work", async () => {
+    const response = await GET(
+      new NextRequest(`https://www.lyovson.com/api/search?q=${"a".repeat(201)}`)
+    );
+    expect(response.status).toBe(400);
+    expect(generateEmbedding).not.toHaveBeenCalled();
+    expect(execute).not.toHaveBeenCalled();
+  });
+
+  it("reports database failures instead of a successful empty result", async () => {
+    execute.mockRejectedValue(new Error("Unavailable"));
     const response = await GET(
       new NextRequest("https://www.lyovson.com/api/search?q=books")
     );
     expect(response.status).toBe(500);
-    expect(execute).not.toHaveBeenCalled();
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
+    const body = await response.json();
+    expect(body).toMatchObject({ message: "Search failed", results: [] });
+    expect(JSON.stringify(body)).not.toContain("Unavailable");
   });
-
-  it.each(["provider", "database"])(
-    "reports %s failures instead of a successful empty result",
-    async (failure) => {
-      if (failure === "provider") {
-        vi.mocked(generateEmbedding).mockRejectedValue(
-          new Error("Unavailable")
-        );
-      } else {
-        execute.mockRejectedValue(new Error("Unavailable"));
-      }
-      const response = await GET(
-        new NextRequest("https://www.lyovson.com/api/search?q=books")
-      );
-      expect(response.status).toBe(500);
-      expect(response.headers.get("Cache-Control")).toBe("no-store");
-      const body = await response.json();
-      expect(body).toMatchObject({ message: "Search failed", results: [] });
-      expect(JSON.stringify(body)).not.toContain("Unavailable");
-      if (failure === "provider") {
-        expect(execute).not.toHaveBeenCalled();
-      }
-    }
-  );
 });
 
 describe("search result hydration", () => {

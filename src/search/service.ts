@@ -1,4 +1,5 @@
 import { sql } from "@payloadcms/db-vercel-postgres/drizzle";
+import { cacheLife } from "next/cache";
 import { cache } from "react";
 import type { Activity, Note, Post } from "@/payload-types";
 import { getActivityTypeLabel } from "@/utilities/activity-type";
@@ -27,10 +28,10 @@ import type {
 } from "./types";
 
 const NOTE_PREVIEW_MAX_CHARS = 96;
-const SEARCH_FAILURE_STATUS = 500;
 const SEARCH_RRF_K = 60;
 const SEARCH_WINDOW_MULTIPLIER = 2;
 
+export const MAX_SEARCH_QUERY_LENGTH = 200;
 export const MIN_SEARCH_LIMIT = 1;
 export const MAX_SEARCH_LIMIT = 50;
 
@@ -69,6 +70,12 @@ export function validateSearchInput(query: string | null, limit: number) {
     throw new SearchInputError("No search query provided");
   }
 
+  if (query.trim().length > MAX_SEARCH_QUERY_LENGTH) {
+    throw new SearchInputError(
+      `Search query must be at most ${MAX_SEARCH_QUERY_LENGTH} characters`
+    );
+  }
+
   if (
     !Number.isInteger(limit) ||
     limit < MIN_SEARCH_LIMIT ||
@@ -84,20 +91,37 @@ function getSearchWindow(limit: number) {
   return limit * SEARCH_WINDOW_MULTIPLIER;
 }
 
-async function getSearchVectorString(query: string) {
-  const embeddingResult = await generateEmbedding(query);
+// Repeated queries reuse the embedding instead of another provider call.
+// Failures are not cached, so a recovered provider is used on the next request.
+async function getCachedQueryVector(normalizedQuery: string) {
+  "use cache";
+  cacheLife("search");
 
-  if (
-    !embeddingResult?.vector ||
-    embeddingResult.vector.length !== EMBEDDING_VECTOR_DIMENSIONS
-  ) {
-    throw new SearchInputError(
-      "Failed to generate search embedding",
-      SEARCH_FAILURE_STATUS
-    );
+  const embeddingResult = await generateEmbedding(normalizedQuery);
+
+  if (embeddingResult?.vector?.length !== EMBEDDING_VECTOR_DIMENSIONS) {
+    throw new Error("Unexpected search embedding dimensions");
   }
 
   return `[${embeddingResult.vector.join(",")}]`;
+}
+
+/**
+ * The query embedding, or null when the provider is unavailable. With a null
+ * embedding the search SQL skips semantic ranking and still answers from
+ * full-text and trigram matches.
+ */
+async function getSearchVectorString(query: string): Promise<string | null> {
+  try {
+    return await getCachedQueryVector(query.toLowerCase().replace(/\s+/g, " "));
+  } catch (error) {
+    const payload = await getPayloadClient();
+    payload.logger.warn({
+      msg: "search.embedding.unavailable",
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return null;
+  }
 }
 
 function mapHybridSearchRows(rows: HybridSearchRow[]): SearchResult[] {
@@ -172,7 +196,8 @@ async function runScopedHybridSearch(
             ORDER BY p.embedding_vector::vector(1536) <=> ${vectorString}::vector
           ) AS rank
         FROM posts p
-        WHERE p._status = 'published'
+        WHERE ${vectorString}::vector IS NOT NULL
+          AND p._status = 'published'
           AND p.embedding_vector IS NOT NULL
           AND ${postsScope}
         ORDER BY p.embedding_vector::vector(1536) <=> ${vectorString}::vector
@@ -216,7 +241,8 @@ async function runScopedHybridSearch(
             ORDER BY n.embedding_vector::vector(1536) <=> ${vectorString}::vector
           ) AS rank
         FROM notes n
-        WHERE n._status = 'published'
+        WHERE ${vectorString}::vector IS NOT NULL
+          AND n._status = 'published'
           AND n.visibility = 'public'
           AND n.embedding_vector IS NOT NULL
           AND ${notesScope}
@@ -257,7 +283,8 @@ async function runScopedHybridSearch(
             ORDER BY a.embedding_vector::vector(1536) <=> ${vectorString}::vector
           ) AS rank
         FROM activities a
-        WHERE a._status = 'published'
+        WHERE ${vectorString}::vector IS NOT NULL
+          AND a._status = 'published'
           AND a.visibility = 'public'
           AND a.embedding_vector IS NOT NULL
           AND ${activitiesScope}

@@ -41,6 +41,8 @@ describe("request guards", () => {
   it.each([
     ["/posts/example", "GPTBot", true],
     ["/api/search", "python-requests", true],
+    ["/search", "ClaudeBot", true],
+    ["/searchlight", "ClaudeBot", false],
     ["/posts/example", "Googlebot", false],
     ["/posts/example", "Twitterbot", false],
     ["/posts/example", "Mozilla/5.0", false],
