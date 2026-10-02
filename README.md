@@ -21,16 +21,16 @@ mise exec -- pnpm install --frozen-lockfile
 
 Create `.env.local` with the configuration needed for your environment:
 
-| Variable | Purpose |
-| --- | --- |
-| `POSTGRES_URL` | Postgres connection used by Payload |
-| `PAYLOAD_SECRET` | Payload authentication secret |
-| `NEXT_PUBLIC_SERVER_URL` | Site origin for links and metadata |
-| `BLOB_READ_WRITE_TOKEN` | Vercel Blob media storage |
-| `OPENAI_API_KEY` | Embedding generation |
-| `RESEND_API_KEY` | Email delivery |
-| `TENOR_API_KEY` | GIF search in the CMS |
-| `CRON_SECRET` | Authenticated job execution |
+| Variable                 | Purpose                             |
+| ------------------------ | ----------------------------------- |
+| `POSTGRES_URL`           | Postgres connection used by Payload |
+| `PAYLOAD_SECRET`         | Payload authentication secret       |
+| `NEXT_PUBLIC_SERVER_URL` | Site origin for links and metadata  |
+| `BLOB_READ_WRITE_TOKEN`  | Vercel Blob media storage           |
+| `OPENAI_API_KEY`         | Embedding generation                |
+| `RESEND_API_KEY`         | Email delivery                      |
+| `TENOR_API_KEY`          | GIF search in the CMS               |
+| `CRON_SECRET`            | Authenticated job execution         |
 
 Start development with automatic schema changes disabled:
 
@@ -46,6 +46,10 @@ mise exec -- pnpm preview:experience
 ```
 
 The preview runs at `http://localhost:3100`. Use an isolated database for CMS edits or migration work.
+
+## Database discovery
+
+For Neon operations, use Neon MCP and filter by the RoadCorp organization. The existing project lookup is `org-dry-credit-92650987` → `lyovsoncom-neon` (`silent-recipe-86860418`), with recorded main branch `br-frosty-field-04223759`. These identifiers are carried forward from the previous setup notes; confirm the current project, branch, and database before running operations. Use an isolated branch for schema qualification and the read-only preview commands above for public browsing checks.
 
 ## Source layout
 
