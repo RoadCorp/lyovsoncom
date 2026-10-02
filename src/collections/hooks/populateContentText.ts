@@ -5,7 +5,8 @@
  * and stores it in the content_text column for full-text search indexing.
  *
  * The content_text field is then included in the search_vector tsvector column
- * to enable keyword search across the entire note content, not just title.
+ * to enable keyword search across the entire post or note content, not just
+ * the title. Activities index more than their rich text and use their own hook.
  */
 
 import type { CollectionBeforeChangeHook } from "payload";

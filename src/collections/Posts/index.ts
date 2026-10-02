@@ -1,15 +1,15 @@
 import type { CollectionConfig } from "payload";
 import { authenticated } from "@/access/authenticated";
 import { authenticatedOrPublished } from "@/access/authenticatedOrPublished";
-import { embeddingFieldRead } from "@/access/privateFieldRead";
+import { populateContentTextHook } from "@/collections/hooks/populateContentText";
+import { draftVersions, previewAdmin } from "@/collections/shared";
+import { contentTextField, embeddingFields } from "@/fields/embedding";
 import { richEditorConfig } from "@/fields/lexical-configs";
+import { publishedAtField } from "@/fields/publishedAt";
 import { seoField } from "@/fields/seo";
 import { slugField } from "@/fields/slug";
-import { generatePreviewPath } from "@/utilities/generatePreviewPath";
-import { getServerSideURL } from "@/utilities/getURL";
 import { markPostEmbeddingStaleHook } from "@/utilities/mark-embedding-stale";
 import { populateAuthors } from "./hooks/populateAuthors";
-import { populateContentTextHook } from "./hooks/populateContentText";
 import { revalidateDelete, revalidatePost } from "./hooks/revalidatePost";
 
 export const Posts: CollectionConfig<"posts"> = {
@@ -33,24 +33,7 @@ export const Posts: CollectionConfig<"posts"> = {
   admin: {
     group: "Content",
     defaultColumns: ["title", "type", "slug", "updatedAt"],
-    livePreview: {
-      url: ({ data }) => {
-        const path = generatePreviewPath({
-          slug: typeof data?.slug === "string" ? data.slug : "",
-          collection: "posts",
-        });
-
-        return `${getServerSideURL()}${path}`;
-      },
-    },
-    preview: (data) => {
-      const path = generatePreviewPath({
-        slug: typeof data?.slug === "string" ? data.slug : "",
-        collection: "posts",
-      });
-
-      return `${getServerSideURL()}${path}`;
-    },
+    ...previewAdmin("posts"),
     useAsTitle: "title",
   },
   fields: [
@@ -204,27 +187,10 @@ export const Posts: CollectionConfig<"posts"> = {
         },
       ],
     },
-    {
-      name: "publishedAt",
-      type: "date",
-      admin: {
-        date: {
-          pickerAppearance: "dayAndTime",
-        },
-        position: "sidebar",
-        description: "When this post should be published",
-      },
-      hooks: {
-        beforeChange: [
-          ({ siblingData, value }) => {
-            if (siblingData._status === "published" && !value) {
-              return new Date();
-            }
-            return value;
-          },
-        ],
-      },
-    },
+    publishedAtField({
+      description: "When this post should be published",
+      position: "sidebar",
+    }),
     {
       name: "authors",
       type: "relationship",
@@ -276,77 +242,8 @@ export const Posts: CollectionConfig<"posts"> = {
           "Pre-computed recommended post IDs based on semantic similarity",
       },
     },
-    // Extracted plain text from Lexical content for full-text search
-    {
-      name: "content_text",
-      type: "text",
-      access: {
-        read: embeddingFieldRead,
-        update: () => false, // Only updated via hooks
-      },
-      admin: {
-        hidden: true,
-        description:
-          "Plain text extracted from rich text content for full-text search indexing",
-      },
-    },
-    // Pre-computed embedding for semantic search
-    {
-      name: "embedding_vector",
-      type: "text", // This will map to vector(1536) in the database
-      access: {
-        read: embeddingFieldRead,
-        update: () => false, // Only updated via hooks
-      },
-      admin: {
-        hidden: true,
-        description: "Vector embedding for semantic search (pgvector format)",
-      },
-    },
-    {
-      name: "embedding_model",
-      type: "text",
-      access: {
-        read: embeddingFieldRead,
-        update: () => false,
-      },
-      admin: {
-        hidden: true,
-      },
-    },
-    {
-      name: "embedding_dimensions",
-      type: "number",
-      access: {
-        read: embeddingFieldRead,
-        update: () => false,
-      },
-      admin: {
-        hidden: true,
-      },
-    },
-    {
-      name: "embedding_generated_at",
-      type: "date",
-      access: {
-        read: embeddingFieldRead,
-        update: () => false,
-      },
-      admin: {
-        hidden: true,
-      },
-    },
-    {
-      name: "embedding_text_hash",
-      type: "text",
-      access: {
-        read: embeddingFieldRead,
-        update: () => false,
-      },
-      admin: {
-        hidden: true,
-      },
-    },
+    contentTextField(),
+    ...embeddingFields(),
     ...slugField(),
   ],
   hooks: {
@@ -355,14 +252,7 @@ export const Posts: CollectionConfig<"posts"> = {
     afterRead: [populateAuthors],
     afterDelete: [revalidateDelete],
   },
-  versions: {
-    drafts: {
-      autosave: {
-        interval: 30_000,
-      },
-    },
-    maxPerDoc: 5,
-  },
+  versions: draftVersions(),
 };
 
 // NOTE: Migrated from categories/tags to types/topics/projects structure

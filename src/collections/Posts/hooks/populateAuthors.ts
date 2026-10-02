@@ -1,5 +1,6 @@
 import type { CollectionAfterReadHook } from "payload";
 import type { Lyovson } from "@/payload-types";
+import { getRelationId, isPopulated } from "@/utilities/relations";
 
 type PublicAuthor = Pick<Lyovson, "id" | "name" | "username">;
 
@@ -17,7 +18,7 @@ export const populateAuthors: CollectionAfterReadHook = async ({
     const processedIds = new Set<string | number>();
 
     for (const author of doc.authors) {
-      const authorId = typeof author === "object" ? author?.id : author;
+      const authorId = getRelationId(author);
 
       // Skip if we've already processed this author ID
       if (!authorId || processedIds.has(authorId)) {
@@ -27,7 +28,7 @@ export const populateAuthors: CollectionAfterReadHook = async ({
       processedIds.add(authorId);
 
       const authorDoc =
-        typeof author === "object" && author.name && author.username
+        isPopulated(author) && author.name && author.username
           ? author
           : await payload.findByID({
               id: authorId,

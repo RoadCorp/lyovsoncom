@@ -1,18 +1,19 @@
 import type { CollectionConfig } from "payload";
 import { authenticated } from "@/access/authenticated";
 import { authenticatedOrPublishedPublic } from "@/access/authenticatedOrPublishedPublic";
-import { embeddingFieldRead } from "@/access/privateFieldRead";
+import { revalidateContentHooks } from "@/collections/hooks/revalidateContent";
+import { draftVersions } from "@/collections/shared";
+import { contentTextField, embeddingFields } from "@/fields/embedding";
 import { richEditorConfig } from "@/fields/lexical-configs";
+import { publishedAtField } from "@/fields/publishedAt";
 import { seoField } from "@/fields/seo";
 import { slugField } from "@/fields/slug";
 import { formatSlug } from "@/fields/slug/formatSlug";
 import { markActivityEmbeddingStaleHook } from "@/utilities/mark-embedding-stale";
 import { getRelationId } from "@/utilities/relations";
 import { populateContentTextHook } from "./hooks/populateContentText";
-import {
-  revalidateActivity,
-  revalidateActivityDelete,
-} from "./hooks/revalidateActivity";
+
+const revalidateActivity = revalidateContentHooks("activities");
 
 export const Activities: CollectionConfig<"activities"> = {
   slug: "activities",
@@ -169,26 +170,9 @@ export const Activities: CollectionConfig<"activities"> = {
         {
           label: "Metadata",
           fields: [
-            {
-              name: "publishedAt",
-              type: "date",
-              admin: {
-                description: "When this activity should be published",
-                date: {
-                  pickerAppearance: "dayAndTime",
-                },
-              },
-              hooks: {
-                beforeChange: [
-                  ({ siblingData, value }) => {
-                    if (siblingData._status === "published" && !value) {
-                      return new Date();
-                    }
-                    return value;
-                  },
-                ],
-              },
-            },
+            publishedAtField({
+              description: "When this activity should be published",
+            }),
           ],
         },
       ],
@@ -261,89 +245,13 @@ export const Activities: CollectionConfig<"activities"> = {
         },
       },
     }),
-    // Pre-computed embedding for semantic search
-    {
-      name: "embedding_vector",
-      type: "text",
-      access: {
-        read: embeddingFieldRead,
-        update: () => false,
-      },
-      admin: {
-        hidden: true,
-        description: "Vector embedding for semantic search (pgvector format)",
-      },
-    },
-    {
-      name: "embedding_model",
-      type: "text",
-      access: {
-        read: embeddingFieldRead,
-        update: () => false,
-      },
-      admin: {
-        hidden: true,
-      },
-    },
-    {
-      name: "embedding_dimensions",
-      type: "number",
-      access: {
-        read: embeddingFieldRead,
-        update: () => false,
-      },
-      admin: {
-        hidden: true,
-      },
-    },
-    {
-      name: "embedding_generated_at",
-      type: "date",
-      access: {
-        read: embeddingFieldRead,
-        update: () => false,
-      },
-      admin: {
-        hidden: true,
-      },
-    },
-    {
-      name: "embedding_text_hash",
-      type: "text",
-      access: {
-        read: embeddingFieldRead,
-        update: () => false,
-      },
-      admin: {
-        hidden: true,
-      },
-    },
-    // Extracted plain text from Lexical content for full-text search
-    {
-      name: "content_text",
-      type: "text",
-      access: {
-        read: embeddingFieldRead,
-        update: () => false, // Only updated via hooks
-      },
-      admin: {
-        hidden: true,
-        description:
-          "Plain text extracted from activity content for full-text search indexing",
-      },
-    },
+    ...embeddingFields(),
+    contentTextField("activity content"),
   ],
   hooks: {
     beforeChange: [populateContentTextHook, markActivityEmbeddingStaleHook],
-    afterChange: [revalidateActivity],
-    afterDelete: [revalidateActivityDelete],
+    afterChange: [revalidateActivity.afterChange],
+    afterDelete: [revalidateActivity.afterDelete],
   },
-  versions: {
-    drafts: {
-      autosave: {
-        interval: 30_000,
-      },
-    },
-    maxPerDoc: 5,
-  },
+  versions: draftVersions(),
 };

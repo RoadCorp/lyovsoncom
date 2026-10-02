@@ -1,6 +1,7 @@
 import type { CollectionConfig } from "payload";
 import { anyone } from "@/access/anyone";
 import { authenticated } from "@/access/authenticated";
+import { draftVersions } from "@/collections/shared";
 import { slugField } from "@/fields/slug";
 import {
   hasPublicChanges,
@@ -706,12 +707,5 @@ export const References: CollectionConfig<"references"> = {
       },
     ],
   },
-  versions: {
-    drafts: {
-      autosave: {
-        interval: 30_000,
-      },
-    },
-    maxPerDoc: 5,
-  },
+  versions: draftVersions(),
 };

@@ -1,15 +1,17 @@
 import type { CollectionConfig } from "payload";
 import { authenticated } from "@/access/authenticated";
 import { authenticatedOrPublishedPublic } from "@/access/authenticatedOrPublishedPublic";
-import { embeddingFieldRead } from "@/access/privateFieldRead";
+import { populateContentTextHook } from "@/collections/hooks/populateContentText";
+import { revalidateContentHooks } from "@/collections/hooks/revalidateContent";
+import { draftVersions, previewAdmin } from "@/collections/shared";
+import { contentTextField, embeddingFields } from "@/fields/embedding";
 import { noteEditorConfig } from "@/fields/lexical-configs";
+import { publishedAtField } from "@/fields/publishedAt";
 import { seoField } from "@/fields/seo";
 import { slugField } from "@/fields/slug";
-import { generatePreviewPath } from "@/utilities/generatePreviewPath";
-import { getServerSideURL } from "@/utilities/getURL";
 import { markNoteEmbeddingStaleHook } from "@/utilities/mark-embedding-stale";
-import { populateContentTextHook } from "./hooks/populateContentText";
-import { revalidateNote, revalidateNoteDelete } from "./hooks/revalidateNote";
+
+const revalidateNote = revalidateContentHooks("notes");
 
 export const Notes: CollectionConfig<"notes"> = {
   slug: "notes",
@@ -32,24 +34,7 @@ export const Notes: CollectionConfig<"notes"> = {
     group: "Content",
     useAsTitle: "title",
     defaultColumns: ["title", "type", "author", "visibility", "updatedAt"],
-    livePreview: {
-      url: ({ data }) => {
-        const path = generatePreviewPath({
-          slug: typeof data?.slug === "string" ? data.slug : "",
-          collection: "notes",
-        });
-
-        return `${getServerSideURL()}${path}`;
-      },
-    },
-    preview: (data) => {
-      const path = generatePreviewPath({
-        slug: typeof data?.slug === "string" ? data.slug : "",
-        collection: "notes",
-      });
-
-      return `${getServerSideURL()}${path}`;
-    },
+    ...previewAdmin("notes"),
   },
   fields: [
     {
@@ -180,84 +165,11 @@ export const Notes: CollectionConfig<"notes"> = {
         },
       ],
     },
-    {
-      name: "publishedAt",
-      type: "date",
-      admin: {
-        date: {
-          pickerAppearance: "dayAndTime",
-        },
-        position: "sidebar",
-        description: "When this note should be published",
-      },
-      hooks: {
-        beforeChange: [
-          ({ siblingData, value }) => {
-            if (siblingData._status === "published" && !value) {
-              return new Date();
-            }
-            return value;
-          },
-        ],
-      },
-    },
-    // Pre-computed embedding for semantic search (pgvector format)
-    {
-      name: "embedding_vector",
-      type: "text", // Maps to vector(1536) in database
-      access: {
-        read: embeddingFieldRead,
-        update: () => false, // Only updated via hooks
-      },
-      admin: {
-        hidden: true,
-        description: "Vector embedding for semantic search (pgvector format)",
-      },
-    },
-    {
-      name: "embedding_model",
-      type: "text",
-      access: {
-        read: embeddingFieldRead,
-        update: () => false,
-      },
-      admin: {
-        hidden: true,
-      },
-    },
-    {
-      name: "embedding_dimensions",
-      type: "number",
-      access: {
-        read: embeddingFieldRead,
-        update: () => false,
-      },
-      admin: {
-        hidden: true,
-      },
-    },
-    {
-      name: "embedding_generated_at",
-      type: "date",
-      access: {
-        read: embeddingFieldRead,
-        update: () => false,
-      },
-      admin: {
-        hidden: true,
-      },
-    },
-    {
-      name: "embedding_text_hash",
-      type: "text",
-      access: {
-        read: embeddingFieldRead,
-        update: () => false,
-      },
-      admin: {
-        hidden: true,
-      },
-    },
+    publishedAtField({
+      description: "When this note should be published",
+      position: "sidebar",
+    }),
+    ...embeddingFields(),
     // Pre-computed recommendations (stored as JSON array of note IDs)
     {
       name: "recommended_note_ids",
@@ -271,33 +183,13 @@ export const Notes: CollectionConfig<"notes"> = {
           "Pre-computed recommended note IDs based on semantic similarity",
       },
     },
-    // Extracted plain text from Lexical content for full-text search
-    {
-      name: "content_text",
-      type: "text",
-      access: {
-        read: embeddingFieldRead,
-        update: () => false, // Only updated via hooks
-      },
-      admin: {
-        hidden: true,
-        description:
-          "Plain text extracted from rich text content for full-text search indexing",
-      },
-    },
+    contentTextField(),
     ...slugField(),
   ],
   hooks: {
     beforeChange: [populateContentTextHook, markNoteEmbeddingStaleHook],
-    afterChange: [revalidateNote],
-    afterDelete: [revalidateNoteDelete],
+    afterChange: [revalidateNote.afterChange],
+    afterDelete: [revalidateNote.afterDelete],
   },
-  versions: {
-    drafts: {
-      autosave: {
-        interval: 30_000,
-      },
-    },
-    maxPerDoc: 5,
-  },
+  versions: draftVersions(),
 };
