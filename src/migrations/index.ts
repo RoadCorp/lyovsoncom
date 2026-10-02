@@ -18,6 +18,10 @@ import {
   down as migration_20261002_160000_dedupe_relationship_rows_down,
   up as migration_20261002_160000_dedupe_relationship_rows_up,
 } from "./20261002_160000_dedupe_relationship_rows";
+import {
+  down as migration_20261002_170851_remove_plugins_jobs_contacts_sizes_down,
+  up as migration_20261002_170851_remove_plugins_jobs_contacts_sizes_up,
+} from "./20261002_170851_remove_plugins_jobs_contacts_sizes";
 
 export const migrations = [
   {
@@ -44,5 +48,10 @@ export const migrations = [
     up: migration_20261002_160000_dedupe_relationship_rows_up,
     down: migration_20261002_160000_dedupe_relationship_rows_down,
     name: "20261002_160000_dedupe_relationship_rows",
+  },
+  {
+    up: migration_20261002_170851_remove_plugins_jobs_contacts_sizes_up,
+    down: migration_20261002_170851_remove_plugins_jobs_contacts_sizes_down,
+    name: "20261002_170851_remove_plugins_jobs_contacts_sizes",
   },
 ];

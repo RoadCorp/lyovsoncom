@@ -3,7 +3,6 @@ import type { CollectionConfig } from "payload";
 
 import { anyone } from "@/access/anyone";
 import { authenticated } from "@/access/authenticated";
-import { authenticatedFieldRead } from "@/access/privateFieldRead";
 import { seoField } from "@/fields/seo";
 import { slugField } from "@/fields/slug";
 
@@ -26,7 +25,7 @@ export const Projects: CollectionConfig = {
   admin: {
     group: "Organization",
     useAsTitle: "name",
-    defaultColumns: ["name", "slug", "resendAudienceId"],
+    defaultColumns: ["name", "slug"],
   },
   fields: [
     {
@@ -42,27 +41,6 @@ export const Projects: CollectionConfig = {
       name: "image",
       type: "upload",
       relationTo: "media",
-    },
-    {
-      name: "resendAudienceId",
-      access: { read: authenticatedFieldRead },
-      type: "text",
-      label: "Resend Audience ID",
-      defaultValue: process.env.RESEND_AUDIENCE_ID,
-      admin: {
-        description:
-          "The Audience ID from Resend for managing newsletter subscriptions.",
-      },
-    },
-    {
-      name: "contacts",
-      access: { read: authenticatedFieldRead },
-      type: "relationship",
-      relationTo: "contacts",
-      hasMany: true,
-      admin: {
-        description: "List of contacts associated with this project.",
-      },
     },
     seoField,
     ...slugField("name"),

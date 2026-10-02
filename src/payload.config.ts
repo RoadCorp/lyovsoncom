@@ -10,7 +10,6 @@ import { varchar } from "drizzle-orm/pg-core";
 import { buildConfig } from "payload";
 import sharp from "sharp"; // sharp-import
 import { Activities } from "@/collections/Activities";
-import { Contacts } from "@/collections/Contacts";
 import { Lyovsons } from "@/collections/Lyovsons";
 import { Media } from "@/collections/Media";
 import { Notes } from "@/collections/Notes";
@@ -205,7 +204,6 @@ export default buildConfig({
     Topics,
     Projects,
     Lyovsons,
-    Contacts,
     References,
     Activities,
     Notes,
