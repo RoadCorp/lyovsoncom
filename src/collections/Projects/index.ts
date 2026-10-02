@@ -3,6 +3,7 @@ import type { CollectionConfig } from "payload";
 
 import { anyone } from "@/access/anyone";
 import { authenticated } from "@/access/authenticated";
+import { authenticatedFieldRead } from "@/access/privateFieldRead";
 import { seoField } from "@/fields/seo";
 import { slugField } from "@/fields/slug";
 
@@ -36,6 +37,7 @@ export const Projects: CollectionConfig = {
     },
     {
       name: "resendAudienceId",
+      access: { read: authenticatedFieldRead },
       type: "text",
       label: "Resend Audience ID",
       defaultValue: process.env.RESEND_AUDIENCE_ID,
@@ -46,6 +48,7 @@ export const Projects: CollectionConfig = {
     },
     {
       name: "contacts",
+      access: { read: authenticatedFieldRead },
       type: "relationship",
       relationTo: "contacts",
       hasMany: true,

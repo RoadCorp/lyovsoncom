@@ -1,6 +1,7 @@
 import configPromise from "@payload-config";
 import type { NextRequest } from "next/server";
 import { getPayload } from "payload";
+import { TRUSTED_EMBEDDING_READ } from "@/access/privateFieldRead";
 import type { Post } from "@/payload-types";
 import {
   authorizeEmbeddingMutation,
@@ -58,6 +59,7 @@ export async function GET(
       collection: "posts",
       id: Number.parseInt(id, 10),
       overrideAccess: false,
+      context: { [TRUSTED_EMBEDDING_READ]: true },
       depth: 2,
       select: {
         id: true,

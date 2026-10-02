@@ -1,6 +1,7 @@
 import configPromise from "@payload-config";
 import type { NextRequest } from "next/server";
 import { getPayload } from "payload";
+import { TRUSTED_EMBEDDING_READ } from "@/access/privateFieldRead";
 import { logApiTelemetry } from "@/utilities/api-telemetry";
 import {
   authorizeEmbeddingMutation,
@@ -78,11 +79,13 @@ async function getEmbeddingCoverage(
     payload.count({
       collection: "posts",
       overrideAccess: false,
+      context: { [TRUSTED_EMBEDDING_READ]: true },
       where: { _status: { equals: "published" } },
     }),
     payload.count({
       collection: "notes",
       overrideAccess: false,
+      context: { [TRUSTED_EMBEDDING_READ]: true },
       where: {
         _status: { equals: "published" },
         visibility: { equals: "public" },
@@ -91,6 +94,7 @@ async function getEmbeddingCoverage(
     payload.count({
       collection: "activities",
       overrideAccess: false,
+      context: { [TRUSTED_EMBEDDING_READ]: true },
       where: {
         _status: { equals: "published" },
         visibility: { equals: "public" },
@@ -99,6 +103,7 @@ async function getEmbeddingCoverage(
     payload.count({
       collection: "posts",
       overrideAccess: false,
+      context: { [TRUSTED_EMBEDDING_READ]: true },
       where: {
         _status: { equals: "published" },
         embedding_vector: { exists: true },
@@ -107,6 +112,7 @@ async function getEmbeddingCoverage(
     payload.count({
       collection: "notes",
       overrideAccess: false,
+      context: { [TRUSTED_EMBEDDING_READ]: true },
       where: {
         _status: { equals: "published" },
         visibility: { equals: "public" },
@@ -116,6 +122,7 @@ async function getEmbeddingCoverage(
     payload.count({
       collection: "activities",
       overrideAccess: false,
+      context: { [TRUSTED_EMBEDDING_READ]: true },
       where: {
         _status: { equals: "published" },
         visibility: { equals: "public" },
@@ -144,6 +151,7 @@ async function getEmbeddingModelStats(
   const sampledPostEmbeddings = await payload.find({
     collection: "posts",
     overrideAccess: false,
+    context: { [TRUSTED_EMBEDDING_READ]: true },
     where: {
       _status: { equals: "published" },
       embedding_vector: { exists: true },

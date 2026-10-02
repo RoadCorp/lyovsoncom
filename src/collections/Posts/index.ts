@@ -1,6 +1,7 @@
 import type { CollectionConfig } from "payload";
 import { authenticated } from "@/access/authenticated";
 import { authenticatedOrPublished } from "@/access/authenticatedOrPublished";
+import { embeddingFieldRead } from "@/access/privateFieldRead";
 import { richEditorConfig } from "@/fields/lexical-configs";
 import { seoField } from "@/fields/seo";
 import { slugField } from "@/fields/slug";
@@ -270,6 +271,7 @@ export const Posts: CollectionConfig<"posts"> = {
       name: "content_text",
       type: "text",
       access: {
+        read: embeddingFieldRead,
         update: () => false, // Only updated via hooks
       },
       admin: {
@@ -283,6 +285,7 @@ export const Posts: CollectionConfig<"posts"> = {
       name: "embedding_vector",
       type: "text", // This will map to vector(1536) in the database
       access: {
+        read: embeddingFieldRead,
         update: () => false, // Only updated via hooks
       },
       admin: {
@@ -294,6 +297,7 @@ export const Posts: CollectionConfig<"posts"> = {
       name: "embedding_model",
       type: "text",
       access: {
+        read: embeddingFieldRead,
         update: () => false,
       },
       admin: {
@@ -304,6 +308,7 @@ export const Posts: CollectionConfig<"posts"> = {
       name: "embedding_dimensions",
       type: "number",
       access: {
+        read: embeddingFieldRead,
         update: () => false,
       },
       admin: {
@@ -314,6 +319,7 @@ export const Posts: CollectionConfig<"posts"> = {
       name: "embedding_generated_at",
       type: "date",
       access: {
+        read: embeddingFieldRead,
         update: () => false,
       },
       admin: {
@@ -324,6 +330,7 @@ export const Posts: CollectionConfig<"posts"> = {
       name: "embedding_text_hash",
       type: "text",
       access: {
+        read: embeddingFieldRead,
         update: () => false,
       },
       admin: {

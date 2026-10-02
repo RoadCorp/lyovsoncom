@@ -1,7 +1,7 @@
 import type { CollectionConfig } from "payload";
-
 import { authenticated } from "@/access/authenticated";
 import { authenticatedOrPublishedPublic } from "@/access/authenticatedOrPublishedPublic";
+import { embeddingFieldRead } from "@/access/privateFieldRead";
 import { noteEditorConfig } from "@/fields/lexical-configs";
 import { seoField } from "@/fields/seo";
 import { slugField } from "@/fields/slug";
@@ -206,6 +206,7 @@ export const Notes: CollectionConfig = {
       name: "embedding_vector",
       type: "text", // Maps to vector(1536) in database
       access: {
+        read: embeddingFieldRead,
         update: () => false, // Only updated via hooks
       },
       admin: {
@@ -217,6 +218,7 @@ export const Notes: CollectionConfig = {
       name: "embedding_model",
       type: "text",
       access: {
+        read: embeddingFieldRead,
         update: () => false,
       },
       admin: {
@@ -227,6 +229,7 @@ export const Notes: CollectionConfig = {
       name: "embedding_dimensions",
       type: "number",
       access: {
+        read: embeddingFieldRead,
         update: () => false,
       },
       admin: {
@@ -237,6 +240,7 @@ export const Notes: CollectionConfig = {
       name: "embedding_generated_at",
       type: "date",
       access: {
+        read: embeddingFieldRead,
         update: () => false,
       },
       admin: {
@@ -247,6 +251,7 @@ export const Notes: CollectionConfig = {
       name: "embedding_text_hash",
       type: "text",
       access: {
+        read: embeddingFieldRead,
         update: () => false,
       },
       admin: {
@@ -271,6 +276,7 @@ export const Notes: CollectionConfig = {
       name: "content_text",
       type: "text",
       access: {
+        read: embeddingFieldRead,
         update: () => false, // Only updated via hooks
       },
       admin: {

@@ -1,6 +1,7 @@
 import configPromise from "@payload-config";
 import type { NextRequest } from "next/server";
 import { getPayload } from "payload";
+import { TRUSTED_EMBEDDING_READ } from "@/access/privateFieldRead";
 import type { Activity } from "@/payload-types";
 import { getActivityPath } from "@/utilities/activity-path";
 import { getActivityTypeLabel } from "@/utilities/activity-type";
@@ -61,6 +62,7 @@ export async function GET(
       collection: "activities",
       id: Number.parseInt(id, 10),
       overrideAccess: false,
+      context: { [TRUSTED_EMBEDDING_READ]: true },
       depth: 1,
       select: {
         id: true,

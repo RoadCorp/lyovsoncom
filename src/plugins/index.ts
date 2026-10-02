@@ -11,6 +11,7 @@ import {
 } from "@payloadcms/richtext-lexical";
 import type { Plugin } from "payload";
 
+import { authenticated } from "@/access/authenticated";
 import { revalidateRedirects } from "@/hooks/revalidateRedirects";
 import type { Post } from "@/payload-types";
 import { beforeSyncWithSearch } from "@/search/beforeSync";
@@ -69,6 +70,10 @@ export const plugins: Plugin[] = [
       payment: false,
     },
     formOverrides: {
+      // No public page renders these forms; keep them out of the public API.
+      access: {
+        read: authenticated,
+      },
       fields: ({ defaultFields }) => {
         return defaultFields.map((field) => {
           if ("name" in field && field.name === "confirmationMessage") {
