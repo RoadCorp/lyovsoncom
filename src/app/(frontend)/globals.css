@@ -712,6 +712,16 @@
     transform: none;
   }
 
+  .media-fallback {
+    color: color-mix(in oklab, var(--accent-meta) 70%, var(--text-3) 30%);
+    background: linear-gradient(
+      160deg,
+      color-mix(in oklab, var(--surface-2) 88%, var(--accent-meta) 12%),
+      color-mix(in oklab, var(--surface-2) 94%, var(--accent-rail) 6%)
+    );
+    border-radius: calc(var(--radius) - 4px);
+  }
+
   .card-title {
     display: -webkit-box;
     -webkit-box-orient: vertical;

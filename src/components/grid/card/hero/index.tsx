@@ -1,15 +1,22 @@
-import { Brain, Calendar, PenTool, Quote } from "lucide-react";
+import { Brain, Calendar, FileText, PenTool, Quote } from "lucide-react";
 import { ViewTransition } from "react";
+import { AppLink } from "@/components/AppLink";
 import { GridCard } from "@/components/grid";
 import { Media } from "@/components/Media";
 import { CARD_FULL_IMAGE_SIZE } from "@/components/Media/image-sizes";
+import { MediaFallback } from "@/components/Media/MediaFallback";
 import { PostTransitionBoundary } from "@/components/post-transitions/PostTransitionBoundary";
 import { TopicPillList } from "@/components/TopicPill";
 import { cn } from "@/lib/utils";
-import type { Activity, Note, Post } from "@/payload-types";
+import type { Activity, Note, Post, Topic } from "@/payload-types";
 import { formatShortDate } from "@/utilities/date";
 import { dedupeRelationItemsById } from "@/utilities/dedupeRelationItemsById";
-import { getActivityDateSlug } from "@/utilities/routes";
+import {
+  getActivityDateSlug,
+  lyovsonRoute,
+  projectRoute,
+  topicRoute,
+} from "@/utilities/routes";
 import {
   frontendViewTransitionClasses,
   getActivityMediaTransitionName,
@@ -42,6 +49,59 @@ function PostHeroDescription({ description }: { description: string }) {
         {description}
       </p>
     </PostTransitionBoundary>
+  );
+}
+
+/** Byline under the post title: authors, date, project and topics. */
+function PostHeroMeta({ post }: { post: Post }) {
+  const authors = dedupeRelationItemsById(post.populatedAuthors).filter(
+    (author) => typeof author === "object" && author.username
+  );
+  const topics = dedupeRelationItemsById(post.topics).filter(
+    (topic): topic is Topic => typeof topic === "object" && Boolean(topic.slug)
+  );
+  const project =
+    post.project && typeof post.project === "object" && post.project.slug
+      ? post.project
+      : null;
+
+  return (
+    <p className="tone-muted flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm">
+      {authors.map((author) => (
+        <AppLink
+          className="ui-focus-ring underline-offset-4 hover:underline"
+          href={lyovsonRoute(author.username as string)}
+          key={author.id}
+          prefetch={false}
+        >
+          {author.name}
+        </AppLink>
+      ))}
+      {post.publishedAt ? (
+        <time dateTime={post.publishedAt}>
+          {formatShortDate(post.publishedAt)}
+        </time>
+      ) : null}
+      {project ? (
+        <AppLink
+          className="ui-focus-ring underline-offset-4 hover:underline"
+          href={projectRoute(project.slug as string)}
+          prefetch={false}
+        >
+          {project.name}
+        </AppLink>
+      ) : null}
+      {topics.map((topic) => (
+        <AppLink
+          className="ui-focus-ring underline-offset-4 hover:underline"
+          href={topicRoute(topic.slug as string)}
+          key={topic.id}
+          prefetch={false}
+        >
+          #{topic.name}
+        </AppLink>
+      ))}
+    </p>
   );
 }
 
@@ -86,7 +146,17 @@ export const GridCardHero = ({
               />
             </PostTransitionBoundary>
           </GridCardSection>
-        ) : null}
+        ) : (
+          <GridCardSection
+            className={cn(
+              "col-start-1 col-end-4 row-start-1 row-end-4",
+              "g3:col-start-1 g3:col-end-4 g3:row-start-1 g3:row-end-4"
+            )}
+            flush={true}
+          >
+            <MediaFallback icon={FileText} label={post.type || "article"} />
+          </GridCardSection>
+        )}
 
         <GridCardSection className="surface-title-stage col-start-1 g3:col-start-4 col-end-4 g3:col-end-7 g3:row-start-1 row-start-4 g3:row-end-4 row-end-7">
           <div className="flex h-full flex-col items-center justify-center px-4 md:px-8">
@@ -104,6 +174,7 @@ export const GridCardHero = ({
               {post.description ? (
                 <PostHeroDescription description={post.description} />
               ) : null}
+              <PostHeroMeta post={post} />
             </div>
           </div>
         </GridCardSection>

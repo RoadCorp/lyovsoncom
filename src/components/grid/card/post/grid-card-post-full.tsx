@@ -1,8 +1,9 @@
-import { BriefcaseBusiness, Calendar, PenTool } from "lucide-react";
+import { BriefcaseBusiness, Calendar, FileText, PenTool } from "lucide-react";
 import { AppLink } from "@/components/AppLink";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { Media } from "@/components/Media";
 import { CARD_COVER_IMAGE_SIZE } from "@/components/Media/image-sizes";
+import { MediaFallback } from "@/components/Media/MediaFallback";
 import { PostDrillInLink } from "@/components/post-transitions/PostDrillInLink";
 import { PostTransitionBoundary } from "@/components/post-transitions/PostTransitionBoundary";
 import { TopicPillList } from "@/components/TopicPill";
@@ -111,7 +112,14 @@ export const GridCardPostFull = ({
               </PostTransitionBoundary>
             </PostDrillInLink>
           </GridCardSection>
-        ) : null}
+        ) : (
+          <GridCardSection
+            className="col-start-1 col-end-3 row-start-1 row-end-3"
+            flush={true}
+          >
+            <MediaFallback icon={FileText} />
+          </GridCardSection>
+        )}
 
         <GridCardSection className="surface-title-stage col-start-1 col-end-4 row-start-3 row-end-4 flex h-full flex-col justify-center">
           <PostDrillInLink

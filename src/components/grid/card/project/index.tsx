@@ -1,8 +1,10 @@
+import { BriefcaseBusiness } from "lucide-react";
 import { ViewTransition } from "react";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { IntentLink } from "@/components/IntentLink";
 import { Media } from "@/components/Media";
 import { CARD_FULL_IMAGE_SIZE } from "@/components/Media/image-sizes";
+import { MediaFallback } from "@/components/Media/MediaFallback";
 import type { Project } from "@/payload-types";
 import { projectRoute, transitionTypes } from "@/utilities/routes";
 import {
@@ -64,7 +66,14 @@ export const GridCardProject = ({
                 />
               </ViewTransition>
             </GridCardSection>
-          ) : null}
+          ) : (
+            <GridCardSection
+              className="col-start-1 col-end-4 row-start-1 row-end-3"
+              flush={true}
+            >
+              <MediaFallback icon={BriefcaseBusiness} label="Project" />
+            </GridCardSection>
+          )}
           <GridCardSection className="surface-title-stage col-start-1 col-end-4 row-start-3 row-end-4 flex h-full flex-col justify-center">
             <ViewTransition
               name={getProjectTitleTransitionName(slug)}
