@@ -1,6 +1,6 @@
 import { and, eq } from "@payloadcms/db-vercel-postgres/drizzle";
 import { revalidateTag } from "next/cache";
-import type { PayloadRequest } from "payload";
+import type { Payload } from "payload";
 import type { Activity, Note, Post } from "@/payload-types";
 import { getActivityTypeLabel } from "@/utilities/activity-type";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";
@@ -76,247 +76,6 @@ function refreshRecommendationCache(tag: string, profile: "notes" | "posts") {
   }
 }
 
-type EmbeddableCollection = "activities" | "notes" | "posts";
-
-/**
- * Writes the embedding straight to the table (no version row), but only if
- * the document is unchanged since it was read. A save during the provider
- * call leaves the stale marker in place for the next sync.
- */
-async function persistEmbedding(args: {
-  collection: EmbeddableCollection;
-  dimensions: number;
-  id: number;
-  model: string;
-  readUpdatedAt: string;
-  req: PayloadRequest;
-  textHash: string;
-  vector: number[];
-}): Promise<boolean> {
-  const { collection, id, req } = args;
-  const table = req.payload.db.tables[collection];
-  const written = await req.payload.db.drizzle
-    .update(table)
-    .set({
-      embedding_vector: `[${args.vector.join(",")}]`,
-      embedding_model: args.model,
-      embedding_dimensions: args.dimensions,
-      embedding_generated_at: new Date().toISOString(),
-      embedding_text_hash: args.textHash,
-    } as Record<string, unknown>)
-    .where(and(eq(table.id, id), eq(table.updatedAt, args.readUpdatedAt)))
-    .returning({ id: table.id });
-
-  if (written.length === 0) {
-    req.payload.logger.warn(
-      `[Embedding] ${collection} ${id} changed during generation; left stale for the next sync`
-    );
-    return false;
-  }
-
-  return true;
-}
-
-/**
- * Generate embedding for a post and optionally compute recommendations
- */
-export async function generateEmbeddingForPost(
-  postId: number,
-  req: PayloadRequest
-): Promise<{ success: boolean; skipped?: boolean; error?: string }> {
-  try {
-    // Fetch the post (cast needed: Payload's defaultPopulate narrows return types)
-    const post = (await req.payload.findByID({
-      collection: "posts",
-      id: postId,
-      depth: 2,
-    })) as unknown as Post | null;
-
-    // Validation checks
-    if (!post) {
-      req.payload.logger.error(`[Embedding] Post ${postId} not found`);
-      return { success: false, error: "Post not found" };
-    }
-
-    if (post._status !== "published") {
-      req.payload.logger.info(
-        `[Embedding] Post ${postId} is not published, skipping`
-      );
-      return { success: false, error: "Post is not published" };
-    }
-
-    if (!post.content) {
-      req.payload.logger.info(
-        `[Embedding] Post ${postId} has no content, skipping`
-      );
-      return { success: false, error: "Post has no content" };
-    }
-
-    const textContent = buildPostEmbeddingText(post);
-
-    if (!textContent.trim()) {
-      req.payload.logger.info(
-        `[Embedding] Post ${postId} has no text content, skipping`
-      );
-      return { success: false, error: "Post has no text content" };
-    }
-
-    // Check if embedding already up to date
-    const currentTextHash = createTextHash(textContent);
-    if (post.embedding_text_hash === currentTextHash) {
-      req.payload.logger.info(
-        `[Embedding] Post ${postId} embedding already up to date, skipping generation`
-      );
-      return { success: true, skipped: true };
-    }
-
-    // Generate embedding
-    req.payload.logger.info(
-      `[Embedding] Generating embedding for post ${postId}`
-    );
-
-    const { vector, model, dimensions } = await generateEmbedding(textContent);
-    if (
-      model !== EMBEDDING_MODEL ||
-      dimensions !== EMBEDDING_VECTOR_DIMENSIONS
-    ) {
-      return {
-        success: false,
-        error: `Unexpected embedding output: ${model} (${dimensions}D)`,
-      };
-    }
-
-    const written = await persistEmbedding({
-      collection: "posts",
-      id: postId,
-      readUpdatedAt: post.updatedAt,
-      req,
-      textHash: currentTextHash,
-      vector,
-      model,
-      dimensions,
-    });
-    if (!written) {
-      return { success: true, skipped: true };
-    }
-
-    req.payload.logger.info(
-      `[Embedding] ✅ Generated ${dimensions}D embedding for post ${postId}`
-    );
-
-    // Compute recommendations after embedding is saved
-    await computeRecommendationsForPost(postId, req);
-
-    return { success: true, skipped: false };
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    req.payload.logger.error(
-      `[Embedding] Failed to generate embedding for post ${postId}: ${errorMessage}`
-    );
-    return { success: false, error: errorMessage };
-  }
-}
-
-/**
- * Generate embedding for a note
- */
-export async function generateEmbeddingForNote(
-  noteId: number,
-  req: PayloadRequest
-): Promise<{ success: boolean; skipped?: boolean; error?: string }> {
-  try {
-    // Fetch the note (cast needed: Payload's defaultPopulate narrows return types)
-    const note = (await req.payload.findByID({
-      collection: "notes",
-      id: noteId,
-      depth: 1,
-    })) as unknown as Note | null;
-
-    // Validation checks
-    if (!note) {
-      req.payload.logger.error(`[Embedding] Note ${noteId} not found`);
-      return { success: false, error: "Note not found" };
-    }
-
-    if (note._status !== "published") {
-      req.payload.logger.info(
-        `[Embedding] Note ${noteId} is not published, skipping`
-      );
-      return { success: false, error: "Note is not published" };
-    }
-
-    if (!note.content) {
-      req.payload.logger.info(
-        `[Embedding] Note ${noteId} has no content, skipping`
-      );
-      return { success: false, error: "Note has no content" };
-    }
-
-    const textContent = buildNoteEmbeddingText(note);
-
-    if (!textContent.trim()) {
-      req.payload.logger.info(
-        `[Embedding] Note ${noteId} has no text content, skipping`
-      );
-      return { success: false, error: "Note has no text content" };
-    }
-
-    // Check if embedding already up to date
-    const currentTextHash = createTextHash(textContent);
-    if (note.embedding_text_hash === currentTextHash) {
-      req.payload.logger.info(
-        `[Embedding] Note ${noteId} embedding already up to date, skipping generation`
-      );
-      return { success: true, skipped: true };
-    }
-
-    // Generate embedding
-    req.payload.logger.info(
-      `[Embedding] Generating embedding for note ${noteId}`
-    );
-
-    const { vector, model, dimensions } = await generateEmbedding(textContent);
-    if (
-      model !== EMBEDDING_MODEL ||
-      dimensions !== EMBEDDING_VECTOR_DIMENSIONS
-    ) {
-      return {
-        success: false,
-        error: `Unexpected embedding output: ${model} (${dimensions}D)`,
-      };
-    }
-
-    const written = await persistEmbedding({
-      collection: "notes",
-      id: noteId,
-      readUpdatedAt: note.updatedAt,
-      req,
-      textHash: currentTextHash,
-      vector,
-      model,
-      dimensions,
-    });
-    if (!written) {
-      return { success: true, skipped: true };
-    }
-
-    req.payload.logger.info(
-      `[Embedding] ✅ Generated ${dimensions}D embedding for note ${noteId}`
-    );
-
-    // Compute recommendations after embedding is saved
-    await computeRecommendationsForNote(noteId, req);
-
-    return { success: true, skipped: false };
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    req.payload.logger.error(
-      `[Embedding] Failed to generate embedding for note ${noteId}: ${errorMessage}`
-    );
-    return { success: false, error: errorMessage };
-  }
-}
-
 const REFERENCE_TYPE_LABELS: Record<string, string> = {
   book: "Book",
   movie: "Movie",
@@ -365,60 +124,189 @@ export function buildActivityEmbeddingText(activity: Activity): string {
   return textParts.join("\n\n");
 }
 
+export type EmbeddableCollection = "activities" | "notes" | "posts";
+
+export const EMBEDDABLE_COLLECTIONS: readonly EmbeddableCollection[] = [
+  "posts",
+  "notes",
+  "activities",
+];
+
+export function isEmbeddableCollection(
+  value: unknown
+): value is EmbeddableCollection {
+  return EMBEDDABLE_COLLECTIONS.includes(value as EmbeddableCollection);
+}
+
+export interface EmbeddingResult {
+  error?: string;
+  skipped?: boolean;
+  success: boolean;
+}
+
+interface EmbeddableDocs {
+  activities: Activity;
+  notes: Note;
+  posts: Post;
+}
+
+interface EmbeddableSpec<C extends EmbeddableCollection> {
+  buildText: (doc: EmbeddableDocs[C]) => string;
+  /** Relationship depth the embedding text needs (topics, project, reference). */
+  depth: number;
+  label: string;
+  /** Recommendations stored on the document after its embedding changes. */
+  recommendations?: {
+    cacheProfile: "notes" | "posts";
+    cacheTagPrefix: "note" | "post";
+    column: "recommended_note_ids" | "recommended_post_ids";
+    findSimilar: (id: number, limit: number) => Promise<{ id: number }[]>;
+  };
+  requiresContent: boolean;
+}
+
+export const EMBEDDABLE: { [C in EmbeddableCollection]: EmbeddableSpec<C> } = {
+  posts: {
+    buildText: buildPostEmbeddingText,
+    depth: 2,
+    label: "Post",
+    recommendations: {
+      cacheProfile: "posts",
+      cacheTagPrefix: "post",
+      column: "recommended_post_ids",
+      findSimilar: getSimilarPosts,
+    },
+    requiresContent: true,
+  },
+  notes: {
+    buildText: buildNoteEmbeddingText,
+    depth: 1,
+    label: "Note",
+    recommendations: {
+      cacheProfile: "notes",
+      cacheTagPrefix: "note",
+      column: "recommended_note_ids",
+      findSimilar: getSimilarNotes,
+    },
+    requiresContent: true,
+  },
+  activities: {
+    buildText: buildActivityEmbeddingText,
+    depth: 1,
+    label: "Activity",
+    requiresContent: false,
+  },
+};
+
+/** Builds the embedding text for any embeddable document. */
+export function buildEmbeddingText(
+  collection: EmbeddableCollection,
+  doc: Activity | Note | Post
+): string {
+  // The spec map ties each collection to its own document type; TypeScript
+  // can't follow that through a union key, so widen once here.
+  const buildText = EMBEDDABLE[collection].buildText as (
+    doc: Activity | Note | Post
+  ) => string;
+  return buildText(doc);
+}
+
 /**
- * Generate embedding for an activity
+ * Writes the embedding straight to the table (no version row), but only if
+ * the document is unchanged since it was read. A save during the provider
+ * call leaves the stale marker in place for the next sync.
  */
-export async function generateEmbeddingForActivity(
-  activityId: number,
-  req: PayloadRequest
-): Promise<{ success: boolean; skipped?: boolean; error?: string }> {
+async function persistEmbedding(args: {
+  collection: EmbeddableCollection;
+  dimensions: number;
+  id: number;
+  model: string;
+  payload: Payload;
+  readUpdatedAt: string;
+  textHash: string;
+  vector: number[];
+}): Promise<boolean> {
+  const { collection, id, payload } = args;
+  const table = payload.db.tables[collection];
+  const written = await payload.db.drizzle
+    .update(table)
+    .set({
+      embedding_vector: `[${args.vector.join(",")}]`,
+      embedding_model: args.model,
+      embedding_dimensions: args.dimensions,
+      embedding_generated_at: new Date().toISOString(),
+      embedding_text_hash: args.textHash,
+    } as Record<string, unknown>)
+    .where(and(eq(table.id, id), eq(table.updatedAt, args.readUpdatedAt)))
+    .returning({ id: table.id });
+
+  if (written.length === 0) {
+    payload.logger.warn(
+      `[Embedding] ${collection} ${id} changed during generation; left stale for the next sync`
+    );
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Embeds one published document and, for posts and notes, refreshes its
+ * recommendations. Unchanged text is skipped unless `force` is set; the
+ * write is conditional on the document not changing meanwhile.
+ */
+export async function generateEmbeddingFor(
+  collection: EmbeddableCollection,
+  id: number,
+  payload: Payload,
+  { force = false }: { force?: boolean } = {}
+): Promise<EmbeddingResult> {
+  const spec = EMBEDDABLE[collection];
+  const name = `${spec.label.toLowerCase()} ${id}`;
+
   try {
-    // Fetch the activity (cast needed: Payload's defaultPopulate narrows return types)
-    const activity = (await req.payload.findByID({
-      collection: "activities",
-      id: activityId,
-      depth: 1, // Need reference for title
-    })) as unknown as Activity | null;
+    const doc = (await payload.findByID({
+      collection,
+      id,
+      depth: spec.depth,
+    })) as Activity | Note | Post | null;
 
-    // Validation checks
-    if (!activity) {
-      req.payload.logger.error(`[Embedding] Activity ${activityId} not found`);
-      return { success: false, error: "Activity not found" };
+    if (!doc) {
+      payload.logger.error(`[Embedding] ${spec.label} ${id} not found`);
+      return { success: false, error: `${spec.label} not found` };
     }
 
-    if (activity._status !== "published") {
-      req.payload.logger.info(
-        `[Embedding] Activity ${activityId} is not published, skipping`
+    if (doc._status !== "published") {
+      payload.logger.info(
+        `[Embedding] ${spec.label} ${id} is not published, skipping`
       );
-      return { success: false, error: "Activity is not published" };
+      return { success: false, error: `${spec.label} is not published` };
     }
 
-    const textContent = buildActivityEmbeddingText(activity);
+    if (spec.requiresContent && !("content" in doc && doc.content)) {
+      payload.logger.info(
+        `[Embedding] ${spec.label} ${id} has no content, skipping`
+      );
+      return { success: false, error: `${spec.label} has no content` };
+    }
 
+    const textContent = buildEmbeddingText(collection, doc);
     if (!textContent.trim()) {
-      req.payload.logger.info(
-        `[Embedding] Activity ${activityId} has no text content, skipping`
+      payload.logger.info(
+        `[Embedding] ${spec.label} ${id} has no text content, skipping`
       );
-      return { success: false, error: "Activity has no text content" };
+      return { success: false, error: `${spec.label} has no text content` };
     }
 
-    // Check if embedding already up to date
-    const currentTextHash = createTextHash(textContent);
-    const activityWithEmbedding = activity as Activity & {
-      embedding_text_hash?: string | null;
-    };
-    if (activityWithEmbedding.embedding_text_hash === currentTextHash) {
-      req.payload.logger.info(
-        `[Embedding] Activity ${activityId} embedding already up to date, skipping generation`
+    const textHash = createTextHash(textContent);
+    if (!force && doc.embedding_text_hash === textHash) {
+      payload.logger.info(
+        `[Embedding] ${spec.label} ${id} embedding already up to date, skipping generation`
       );
       return { success: true, skipped: true };
     }
 
-    // Generate embedding
-    req.payload.logger.info(
-      `[Embedding] Generating embedding for activity ${activityId}`
-    );
-
+    payload.logger.info(`[Embedding] Generating embedding for ${name}`);
     const { vector, model, dimensions } = await generateEmbedding(textContent);
     if (
       model !== EMBEDDING_MODEL ||
@@ -431,139 +319,89 @@ export async function generateEmbeddingForActivity(
     }
 
     const written = await persistEmbedding({
-      collection: "activities",
-      id: activityId,
-      readUpdatedAt: activity.updatedAt,
-      req,
-      textHash: currentTextHash,
-      vector,
-      model,
+      collection,
       dimensions,
+      id,
+      model,
+      payload,
+      readUpdatedAt: doc.updatedAt,
+      textHash,
+      vector,
     });
     if (!written) {
       return { success: true, skipped: true };
     }
 
-    req.payload.logger.info(
-      `[Embedding] ✅ Generated ${dimensions}D embedding for activity ${activityId}`
+    payload.logger.info(
+      `[Embedding] ✅ Generated ${dimensions}D embedding for ${name}`
     );
+
+    if (spec.recommendations) {
+      await computeRecommendations(collection, id, payload);
+    }
 
     return { success: true, skipped: false };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    req.payload.logger.error(
-      `[Embedding] Failed to generate embedding for activity ${activityId}: ${errorMessage}`
+    payload.logger.error(
+      `[Embedding] Failed to generate embedding for ${name}: ${errorMessage}`
     );
     return { success: false, error: errorMessage };
   }
 }
 
-/**
- * Compute recommendations for a post (helper function)
- */
-async function computeRecommendationsForPost(
-  postId: number,
-  req: PayloadRequest
+/** Stores the nearest documents' ids on a post or note. Non-critical. */
+async function computeRecommendations(
+  collection: EmbeddableCollection,
+  id: number,
+  payload: Payload
 ): Promise<void> {
-  try {
-    // Verify post has embedding
-    const post = await req.payload.findByID({
-      collection: "posts",
-      id: postId,
-      select: {
-        embedding_vector: true,
-        slug: true,
-      },
-    });
-
-    if (!post?.embedding_vector) {
-      req.payload.logger.info(
-        `[Recommendations] Post ${postId} has no embedding, skipping recommendations`
-      );
-      return;
-    }
-
-    // Compute similar posts
-    req.payload.logger.info(
-      `[Recommendations] Computing recommendations for post ${postId}`
-    );
-
-    const similarPosts = await getSimilarPosts(postId, RECOMMENDATION_LIMIT);
-    const recommendedIds = similarPosts.map((p) => p.id);
-
-    // Direct DB update — bypasses version system, no extra version row created
-    const postsTable = req.payload.db.tables.posts;
-    await req.payload.db.drizzle
-      .update(postsTable)
-      .set({ recommended_post_ids: recommendedIds })
-      .where(eq(postsTable.id, postId));
-
-    if (post.slug) {
-      refreshRecommendationCache(`post-${post.slug}`, "posts");
-    }
-
-    req.payload.logger.info(
-      `[Recommendations] ✅ Computed ${recommendedIds.length} recommendations for post ${postId}`
-    );
-  } catch (error) {
-    req.payload.logger.error(
-      `[Recommendations] Failed to compute recommendations for post ${postId}: ${error instanceof Error ? error.message : String(error)}`
-    );
-    // Don't throw - recommendations are non-critical
+  const spec = EMBEDDABLE[collection];
+  const recommendations = spec.recommendations;
+  if (!recommendations) {
+    return;
   }
-}
 
-/**
- * Compute recommendations for a note (helper function)
- */
-async function computeRecommendationsForNote(
-  noteId: number,
-  req: PayloadRequest
-): Promise<void> {
   try {
-    // Verify note has embedding
-    const note = await req.payload.findByID({
-      collection: "notes",
-      id: noteId,
-      select: {
-        embedding_vector: true,
-        slug: true,
-      },
-    });
+    const doc = (await payload.findByID({
+      collection,
+      id,
+      select: { embedding_vector: true, slug: true },
+    })) as { embedding_vector?: unknown; slug?: string | null } | null;
 
-    if (!note?.embedding_vector) {
-      req.payload.logger.info(
-        `[Recommendations] Note ${noteId} has no embedding, skipping recommendations`
+    if (!doc?.embedding_vector) {
+      payload.logger.info(
+        `[Recommendations] ${spec.label} ${id} has no embedding, skipping recommendations`
       );
       return;
     }
 
-    // Compute similar notes
-    req.payload.logger.info(
-      `[Recommendations] Computing recommendations for note ${noteId}`
-    );
+    const similar = await recommendations.findSimilar(id, RECOMMENDATION_LIMIT);
+    const recommendedIds = similar.map((item) => item.id);
 
-    const similarNotes = await getSimilarNotes(noteId, RECOMMENDATION_LIMIT);
-    const recommendedIds = similarNotes.map((n) => n.id);
+    // Direct write: no version row, updatedAt unchanged.
+    const table = payload.db.tables[collection];
+    await payload.db.drizzle
+      .update(table)
+      .set({ [recommendations.column]: recommendedIds } as Record<
+        string,
+        unknown
+      >)
+      .where(eq(table.id, id));
 
-    // Direct DB update — bypasses version system, no extra version row created
-    const notesTable = req.payload.db.tables.notes;
-    await req.payload.db.drizzle
-      .update(notesTable)
-      .set({ recommended_note_ids: recommendedIds })
-      .where(eq(notesTable.id, noteId));
-
-    if (note.slug) {
-      refreshRecommendationCache(`note-${note.slug}`, "notes");
+    if (doc.slug) {
+      refreshRecommendationCache(
+        `${recommendations.cacheTagPrefix}-${doc.slug}`,
+        recommendations.cacheProfile
+      );
     }
 
-    req.payload.logger.info(
-      `[Recommendations] ✅ Computed ${recommendedIds.length} recommendations for note ${noteId}`
+    payload.logger.info(
+      `[Recommendations] ✅ Computed ${recommendedIds.length} recommendations for ${spec.label.toLowerCase()} ${id}`
     );
   } catch (error) {
-    req.payload.logger.error(
-      `[Recommendations] Failed to compute recommendations for note ${noteId}: ${error instanceof Error ? error.message : String(error)}`
+    payload.logger.error(
+      `[Recommendations] Failed to compute recommendations for ${spec.label.toLowerCase()} ${id}: ${error instanceof Error ? error.message : String(error)}`
     );
-    // Don't throw - recommendations are non-critical
   }
 }

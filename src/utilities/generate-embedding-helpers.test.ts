@@ -1,6 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { generateEmbedding } from "./generate-embedding";
-import { generateEmbeddingForPost } from "./generate-embedding-helpers";
+import { createTextHash, generateEmbedding } from "./generate-embedding";
+import {
+  buildEmbeddingText,
+  generateEmbeddingFor,
+} from "./generate-embedding-helpers";
 import { getSimilarPosts } from "./get-similar-posts";
 
 vi.mock("./generate-embedding", async (importOriginal) => ({
@@ -55,7 +58,11 @@ beforeEach(() => {
 describe("post embedding persistence", () => {
   it("leaves a document stale when it changed during generation", async () => {
     const { req, set } = makeReq([]);
-    const result = await generateEmbeddingForPost(29, req as never);
+    const result = await generateEmbeddingFor(
+      "posts",
+      29,
+      req.payload as never
+    );
 
     expect(set).toHaveBeenCalledOnce();
     expect(result).toEqual({ success: true, skipped: true });
@@ -65,9 +72,36 @@ describe("post embedding persistence", () => {
 
   it("stores the embedding when the document is unchanged", async () => {
     const { req } = makeReq([{ id: 29 }]);
-    const result = await generateEmbeddingForPost(29, req as never);
+    const result = await generateEmbeddingFor(
+      "posts",
+      29,
+      req.payload as never
+    );
 
     expect(result).toEqual({ success: true, skipped: false });
     expect(req.payload.logger.warn).not.toHaveBeenCalled();
+  });
+});
+
+describe("unchanged text", () => {
+  it("skips the provider unless forced", async () => {
+    const hash = createTextHash(buildEmbeddingText("posts", post as never));
+    const { req } = makeReq([{ id: 29 }]);
+    req.payload.findByID.mockResolvedValue({
+      ...post,
+      embedding_text_hash: hash,
+    });
+
+    expect(
+      await generateEmbeddingFor("posts", 29, req.payload as never)
+    ).toEqual({ success: true, skipped: true });
+    expect(generateEmbedding).not.toHaveBeenCalled();
+
+    expect(
+      await generateEmbeddingFor("posts", 29, req.payload as never, {
+        force: true,
+      })
+    ).toEqual({ success: true, skipped: false });
+    expect(generateEmbedding).toHaveBeenCalledOnce();
   });
 });
