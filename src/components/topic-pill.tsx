@@ -42,6 +42,8 @@ interface TopicPillListProps {
   allTopicsHref?: string;
   /** Used in link labels: "View posts about …". */
   itemLabel: "notes" | "posts";
+  /** `stack` fills a card's topic well; `inline` sits in a row of text. */
+  layout?: "inline" | "stack";
   /** A card's topic well fits three pills at the minimum touch-target size. */
   max?: number;
   topics: TopicLinkData[];
@@ -52,9 +54,12 @@ const DEFAULT_MAX_TOPICS = 3;
 export function TopicPillList({
   allTopicsHref,
   itemLabel,
+  layout = "stack",
   max = DEFAULT_MAX_TOPICS,
   topics,
 }: TopicPillListProps) {
+  const linkClassName = layout === "stack" ? "w-full" : "shrink-0";
+  const pillClassName = layout === "stack" ? undefined : "w-auto";
   const linkable = topics.filter(
     (topic): topic is TopicLinkData & { slug: string } => Boolean(topic.slug)
   );
@@ -67,26 +72,28 @@ export function TopicPillList({
       {visible.map((topic) => (
         <AppLink
           aria-label={`View ${itemLabel} about ${topic.name}`}
-          className="w-full"
+          className={linkClassName}
           href={topicRoute(topic.slug)}
           key={topic.id}
           prefetch={false}
         >
-          <TopicPill color={topic.color}>{topic.name}</TopicPill>
+          <TopicPill className={pillClassName} color={topic.color}>
+            {topic.name}
+          </TopicPill>
         </AppLink>
       ))}
       {hiddenCount > 0 && allTopicsHref ? (
         <AppLink
           aria-label={`${hiddenCount} more topics`}
-          className="w-full"
+          className={linkClassName}
           href={allTopicsHref}
           prefetch={false}
         >
-          <TopicPill>+{hiddenCount}</TopicPill>
+          <TopicPill className={pillClassName}>+{hiddenCount}</TopicPill>
         </AppLink>
       ) : null}
       {hiddenCount > 0 && !allTopicsHref ? (
-        <TopicPill>
+        <TopicPill className={pillClassName}>
           <span aria-hidden="true">+{hiddenCount}</span>
           <span className="sr-only">
             Also about{" "}

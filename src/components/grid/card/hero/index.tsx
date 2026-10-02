@@ -15,7 +15,6 @@ import {
   getActivityDateSlug,
   lyovsonRoute,
   projectRoute,
-  topicRoute,
 } from "@/utilities/routes";
 import {
   frontendViewTransitionClasses,
@@ -34,26 +33,59 @@ const VERY_LONG_HERO_TITLE = 80;
 function heroTitleSize(title: string | null | undefined) {
   const length = title?.length ?? 0;
   if (length > VERY_LONG_HERO_TITLE) {
-    return "text-xl md:text-2xl";
+    return "text-lg leading-snug md:text-xl";
   }
   if (length > LONG_HERO_TITLE) {
-    return "text-2xl md:text-3xl";
+    return "text-[1.5rem] leading-[1.18] md:text-[1.625rem]";
   }
-  return "text-2xl md:text-3xl lg:text-4xl";
+  return "text-[1.625rem] leading-[1.12] md:text-[2rem]";
 }
 
-function PostHeroDescription({ description }: { description: string }) {
+function PostHeroDescription({
+  description,
+  title,
+}: {
+  description: string;
+  title: string | null | undefined;
+}) {
+  // A long title leaves room for two summary lines instead of three.
+  const lines = (title?.length ?? 0) > LONG_HERO_TITLE ? 2 : 3;
   return (
     <PostTransitionBoundary variant="dek">
-      <p className="tone-muted text-left text-base leading-relaxed">
+      <p
+        className="hero-dek tone-muted text-note leading-relaxed"
+        data-lines={lines}
+      >
         {description}
       </p>
     </PostTransitionBoundary>
   );
 }
 
-/** Byline under the post title: authors, date, project and topics. */
-function PostHeroMeta({ post }: { post: Post }) {
+/** Type and date above the title. */
+function PostHeroEyebrow({ post }: { post: Post }) {
+  const postType = post.type || "article";
+  return (
+    <p className="flex items-center gap-2 font-mono text-label uppercase tracking-[0.16em]">
+      <span className="card-eyebrow" data-post-type={postType}>
+        {postType}
+      </span>
+      {post.publishedAt ? (
+        <>
+          <span aria-hidden="true" className="tone-muted">
+            ·
+          </span>
+          <time className="tone-muted" dateTime={post.publishedAt}>
+            {formatShortDate(post.publishedAt)}
+          </time>
+        </>
+      ) : null}
+    </p>
+  );
+}
+
+/** Byline and topics at the foot of the title panel. */
+function PostHeroFooter({ post }: { post: Post }) {
   const authors = dedupeRelationItemsById(post.populatedAuthors).filter(
     (author) => typeof author === "object" && author.username
   );
@@ -66,42 +98,45 @@ function PostHeroMeta({ post }: { post: Post }) {
       : null;
 
   return (
-    <p className="tone-muted flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm">
-      {authors.map((author) => (
-        <AppLink
-          className="ui-focus-ring underline-offset-4 hover:underline"
-          href={lyovsonRoute(author.username as string)}
-          key={author.id}
-          prefetch={false}
-        >
-          {author.name}
-        </AppLink>
-      ))}
-      {post.publishedAt ? (
-        <time dateTime={post.publishedAt}>
-          {formatShortDate(post.publishedAt)}
-        </time>
+    <footer className="hero-footer flex flex-col gap-3 pt-4">
+      <p className="tone-muted flex flex-wrap items-baseline gap-x-1.5 text-sm">
+        {authors.length > 0 ? <span>By</span> : null}
+        {authors.map((author, index) => (
+          <span key={author.id}>
+            <AppLink
+              className="ui-focus-ring tone-heading font-medium underline-offset-4 hover:underline"
+              href={lyovsonRoute(author.username as string)}
+              prefetch={false}
+            >
+              {author.name}
+            </AppLink>
+            {index < authors.length - 1 ? " and" : ""}
+          </span>
+        ))}
+        {project ? (
+          <>
+            <span>in</span>
+            <AppLink
+              className="ui-focus-ring tone-heading font-medium underline-offset-4 hover:underline"
+              href={projectRoute(project.slug as string)}
+              prefetch={false}
+            >
+              {project.name}
+            </AppLink>
+          </>
+        ) : null}
+      </p>
+      {topics.length > 0 ? (
+        <div className="flex flex-wrap gap-1.5">
+          <TopicPillList
+            itemLabel="posts"
+            layout="inline"
+            max={4}
+            topics={topics}
+          />
+        </div>
       ) : null}
-      {project ? (
-        <AppLink
-          className="ui-focus-ring underline-offset-4 hover:underline"
-          href={projectRoute(project.slug as string)}
-          prefetch={false}
-        >
-          {project.name}
-        </AppLink>
-      ) : null}
-      {topics.map((topic) => (
-        <AppLink
-          className="ui-focus-ring underline-offset-4 hover:underline"
-          href={topicRoute(topic.slug as string)}
-          key={topic.id}
-          prefetch={false}
-        >
-          #{topic.name}
-        </AppLink>
-      ))}
-    </p>
+    </footer>
   );
 }
 
@@ -159,12 +194,13 @@ export const GridCardHero = ({
         )}
 
         <GridCardSection className="surface-title-stage col-start-1 g3:col-start-4 col-end-4 g3:col-end-7 g3:row-start-1 row-start-4 g3:row-end-4 row-end-7">
-          <div className="flex h-full flex-col items-center justify-center px-4 md:px-8">
-            <div className="mx-auto w-full max-w-3xl space-y-4">
+          <div className="flex h-full flex-col gap-4 px-6 py-5 md:px-7 md:py-6">
+            <PostHeroEyebrow post={post} />
+            <div className="flex flex-1 flex-col justify-center gap-3">
               <PostTransitionBoundary slug={post.slug} variant="title">
                 <h1
                   className={cn(
-                    "tone-heading text-center font-bold",
+                    "tone-heading text-balance",
                     heroTitleSize(post.title)
                   )}
                 >
@@ -172,10 +208,13 @@ export const GridCardHero = ({
                 </h1>
               </PostTransitionBoundary>
               {post.description ? (
-                <PostHeroDescription description={post.description} />
+                <PostHeroDescription
+                  description={post.description}
+                  title={post.title}
+                />
               ) : null}
-              <PostHeroMeta post={post} />
             </div>
+            <PostHeroFooter post={post} />
           </div>
         </GridCardSection>
       </GridCard>
