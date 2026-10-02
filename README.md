@@ -32,13 +32,13 @@ Create `.env.local` with the configuration needed for your environment:
 | `TENOR_API_KEY` | GIF search in the CMS |
 | `CRON_SECRET` | Authenticated job execution |
 
-Start development with automatic schema changes disabled:
+Point `POSTGRES_URL` at a Neon development branch, never at the production `main` branch. Then start development:
 
 ```sh
-PAYLOAD_DB_PUSH=false mise exec -- pnpm dev --port 3100
+mise exec -- pnpm dev --port 3100
 ```
 
-`PAYLOAD_DB_PUSH=false` disables schema pushes; it does not prevent application writes. For public browsing checks against an existing database, the preview commands also enforce read-only database transactions and clear the OpenAI and Resend keys:
+Payload's development schema push is off unless `PAYLOAD_DB_PUSH=true`. Apply schema changes with migrations, and enable push only on a disposable database. Disabling push does not prevent application writes. For public browsing checks against an existing database, the preview commands also enforce read-only database transactions and clear the OpenAI and Resend keys:
 
 ```sh
 mise exec -- pnpm preview:experience:build
