@@ -11,7 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:16-alpine
+        # pgvector image: the search migration needs the vector extension
+        image: pgvector/pgvector:pg16
         env:
           POSTGRES_DB: lyovsoncom_ci
           POSTGRES_USER: postgres
