@@ -26,3 +26,4 @@ src/utilities/migrate-*.ts
 
 # Local lint reports
 lint-result.txt
+.claude/worktrees/

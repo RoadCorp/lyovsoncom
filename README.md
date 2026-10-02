@@ -58,8 +58,9 @@ For Neon operations, use Neon MCP and filter by the RoadCorp organization. The e
 - `src/app/api`: search, documentation, and embedding endpoints
 - `src/components/grid`: navigation and content cards
 - `src/blocks`: rich-text block configuration and rendering
-- `src/collections`: `posts`, `notes`, `activities`, `projects`, `topics`, `references`, `lyovsons`, `contacts`, and `media`
-- `src/search`, `src/jobs`, `src/utilities`: search, embedding jobs, content queries, and shared helpers
+- `src/collections`: `posts`, `notes`, `activities`, `projects`, `topics`, `references`, `lyovsons`, and `media`
+- `src/search`, `src/utilities`: hybrid search, embedding generation, content queries, and shared helpers
+- `scripts`: one-off maintenance scripts and the dev-branch stress-content seed
 - `src/migrations`: versioned database migrations
 - `e2e`: browser checks for public pages, navigation, and media
 
@@ -81,7 +82,6 @@ mise exec -- pnpm test:browser
 - [Lint configuration and framework guidance](docs/linting.md)
 - [Test coverage and scope](docs/test-coverage.md)
 - [Public experience coverage](docs/public-experience-coverage.md)
-- [Public experience verification](docs/public-experience-verification.md)
-- [Theme refinement](docs/theme-refinement.md)
-- [View transition audit](docs/view-transition-audit.md)
-- [Embedding system](README-AI-SYSTEM.md)
+- [Archived plans and records](docs/archive/)
+- [Embedding and search system](README-AI-SYSTEM.md)
+- Visual review on a dev branch: `.claude/skills/visual-review/SKILL.md`
