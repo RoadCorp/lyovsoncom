@@ -4,8 +4,8 @@ import { cacheLife, cacheTag } from "next/cache";
 import type { Post } from "@/payload-types";
 import { publishedPostsWhere } from "@/utilities/content-queries";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";
-import { getCanonicalURL } from "@/utilities/getURL";
 import { getPayloadClient } from "@/utilities/payload-client";
+import { getCanonicalSiteOrigin } from "@/utilities/site-config";
 
 const FEED_POST_LIMIT = 50;
 
@@ -119,7 +119,7 @@ export async function getSyndicationFeeds() {
     },
   });
 
-  const siteUrl = getCanonicalURL();
+  const siteUrl = getCanonicalSiteOrigin();
   const updated = new Date();
   const rss = createFeed(siteUrl, updated, "Next.js RSS for Lyóvson.com");
   const atom = createFeed(

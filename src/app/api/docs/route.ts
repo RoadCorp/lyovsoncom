@@ -1,7 +1,7 @@
-import { getCanonicalURL } from "@/utilities/getURL";
+import { getCanonicalSiteOrigin } from "@/utilities/site-config";
 
 export function GET() {
-  const siteUrl = getCanonicalURL();
+  const siteUrl = getCanonicalSiteOrigin();
 
   return Response.json(
     {

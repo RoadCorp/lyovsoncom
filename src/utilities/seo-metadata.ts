@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
+import { absoluteUrl } from "./routes";
 import {
   getCanonicalSiteOrigin,
-  getDefaultOgImageUrl,
   getSocialTitle,
   siteConfig,
 } from "./site-config";
@@ -10,7 +10,7 @@ export const DEFAULT_OPEN_GRAPH_IMAGE_WIDTH = 1200;
 export const DEFAULT_OPEN_GRAPH_IMAGE_HEIGHT = 630;
 
 const DEFAULT_OG_IMAGE = {
-  url: getDefaultOgImageUrl(),
+  url: absoluteUrl(siteConfig.defaultOgImagePath),
   width: DEFAULT_OPEN_GRAPH_IMAGE_WIDTH,
   height: DEFAULT_OPEN_GRAPH_IMAGE_HEIGHT,
   alt: `${siteConfig.name} - Writing, Projects & Research`,

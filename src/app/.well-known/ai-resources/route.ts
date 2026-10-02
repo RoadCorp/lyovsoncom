@@ -1,8 +1,8 @@
 import type { NextRequest } from "next/server";
-import { getCanonicalURL } from "@/utilities/getURL";
+import { getCanonicalSiteOrigin } from "@/utilities/site-config";
 
 export function GET(_request: NextRequest) {
-  const SITE_URL = getCanonicalURL();
+  const SITE_URL = getCanonicalSiteOrigin();
   const now = new Date();
 
   const aiResources = {

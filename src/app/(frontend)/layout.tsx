@@ -6,10 +6,10 @@ import { JsonLd } from "@/components/JsonLd";
 import { Providers } from "@/providers";
 import { browserTheme } from "@/utilities/browserTheme";
 import { getSiteEntitySchemas } from "@/utilities/generate-json-ld";
-import { getCanonicalURL } from "@/utilities/getURL";
 import { LEGACY_BROWSER_CLEANUP_SCRIPT } from "@/utilities/legacy-browser-cleanup";
 import { mergeOpenGraph } from "@/utilities/mergeOpenGraph";
-import { siteConfig } from "@/utilities/site-config";
+import { absoluteUrl, lyovsonRoute, postsRoute } from "@/utilities/routes";
+import { getCanonicalSiteOrigin, siteConfig } from "@/utilities/site-config";
 import { fontVariables } from "./fonts";
 import "./globals.css";
 
@@ -58,7 +58,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(getCanonicalURL()),
+  metadataBase: new URL(getCanonicalSiteOrigin()),
   title: {
     default: siteConfig.name,
     template: `%s | ${siteConfig.name}`,
@@ -66,8 +66,8 @@ export const metadata: Metadata = {
   description: siteConfig.defaultDescription,
   applicationName: siteConfig.name,
   authors: [
-    { name: "Rafa Lyóvson", url: getCanonicalURL("/rafa") },
-    { name: "Jess Lyóvson", url: getCanonicalURL("/jess") },
+    { name: "Rafa Lyóvson", url: absoluteUrl(lyovsonRoute("rafa")) },
+    { name: "Jess Lyóvson", url: absoluteUrl(lyovsonRoute("jess")) },
   ],
   generator: "Next.js",
   keywords: [
@@ -115,12 +115,12 @@ export const metadata: Metadata = {
   ],
   classification: "Blog, Technology, Personal Website",
   category: "Technology",
-  bookmarks: [getCanonicalURL("/posts")],
+  bookmarks: [absoluteUrl(postsRoute())],
 
   openGraph: mergeOpenGraph({
     type: "website",
     locale: "en_US",
-    url: getCanonicalURL(),
+    url: getCanonicalSiteOrigin(),
     siteName: siteConfig.name,
     title: siteConfig.name,
     description: siteConfig.defaultDescription,
@@ -131,7 +131,7 @@ export const metadata: Metadata = {
     site: siteConfig.socialHandle,
   },
   alternates: {
-    canonical: getCanonicalURL(),
+    canonical: getCanonicalSiteOrigin(),
     types: {
       "application/rss+xml": [
         { url: "/feed.xml", title: `${siteConfig.name} RSS Feed` },
@@ -159,7 +159,7 @@ export const metadata: Metadata = {
     "ai-preferred-access": "feeds",
     "ai-content-language": "en",
     "ai-content-topics": "programming,design,philosophy,technology,research",
-    "ai-feed-endpoint": getCanonicalURL("/feed.json"),
+    "ai-feed-endpoint": absoluteUrl("/feed.json"),
     "ai-owner": "Rafa & Jess Lyóvson",
     "ai-contact": "hello@lyovson.com",
   },

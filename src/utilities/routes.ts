@@ -1,5 +1,5 @@
 import type { Route } from "next";
-import { getCanonicalURL } from "./getURL";
+import { getCanonicalSiteOrigin } from "./site-config";
 
 interface ActivityPathInput {
   finishedAt?: string | null;
@@ -257,8 +257,9 @@ export function searchHref(
   return `${route}?${params.toString()}` as `${Route<string>}?${string}`;
 }
 
+/** The single owner of canonical absolute URLs; the bare origin lives in site-config. */
 export function absoluteUrl(path: Route<string> | string) {
-  return new URL(String(path), getCanonicalURL()).toString();
+  return new URL(String(path), getCanonicalSiteOrigin()).toString();
 }
 
 export function postReferenceRoute(relationTo: string, slug: string) {

@@ -1,10 +1,31 @@
 import { cacheLife, cacheTag } from "next/cache";
 import type { PaginatedDocs } from "payload";
+import { PROJECT_POSTS_PER_PAGE } from "@/utilities/archive";
 import { projectPostsWhere } from "@/utilities/content-queries";
 import { getProject } from "@/utilities/get-project";
-import { getPayloadClient } from "@/utilities/payload-client";
-import { type PostSummary, postSummarySelect } from "@/utilities/post-summary";
+import {
+  countPosts,
+  findPostSummaries,
+  type PostSummary,
+} from "@/utilities/post-summary";
 
+async function findProjectPosts(
+  slug: string,
+  limit: number,
+  pageNumber?: number
+): Promise<PaginatedDocs<PostSummary> | null> {
+  const projectId = (await getProject(slug))?.id;
+  if (!projectId) {
+    return null;
+  }
+
+  return findPostSummaries(projectPostsWhere(projectId), {
+    limit,
+    page: pageNumber,
+  });
+}
+
+// The first page keeps its own cache entry (no page tag), unlike topics.
 export async function getProjectPosts(
   slug: string
 ): Promise<PaginatedDocs<PostSummary> | null> {
@@ -14,33 +35,13 @@ export async function getProjectPosts(
   cacheTag(`project-${slug}`);
   cacheLife("posts");
 
-  const payload = await getPayloadClient();
-
-  const project = await getProject(slug);
-
-  if (!project) {
-    return null;
-  }
-
-  const projectId = project.id;
-
-  const result = await payload.find({
-    collection: "posts",
-    select: postSummarySelect,
-    depth: 1,
-    limit: 25,
-    where: projectPostsWhere(projectId),
-    sort: "-publishedAt",
-    overrideAccess: true,
-  });
-
-  return result;
+  return await findProjectPosts(slug, PROJECT_POSTS_PER_PAGE);
 }
 
 export async function getPaginatedProjectPosts(
   slug: string,
   pageNumber: number,
-  limit = 25
+  limit = PROJECT_POSTS_PER_PAGE
 ): Promise<PaginatedDocs<PostSummary> | null> {
   "use cache";
   cacheTag("posts");
@@ -49,28 +50,7 @@ export async function getPaginatedProjectPosts(
   cacheTag(`project-${slug}-page-${pageNumber}`);
   cacheLife("posts");
 
-  const payload = await getPayloadClient();
-
-  const project = await getProject(slug);
-
-  if (!project) {
-    return null;
-  }
-
-  const projectId = project.id;
-
-  const result = await payload.find({
-    collection: "posts",
-    select: postSummarySelect,
-    depth: 1,
-    limit,
-    page: pageNumber,
-    where: projectPostsWhere(projectId),
-    sort: "-publishedAt",
-    overrideAccess: true,
-  });
-
-  return result;
+  return await findProjectPosts(slug, limit, pageNumber);
 }
 
 export async function getProjectPostCount(
@@ -83,20 +63,10 @@ export async function getProjectPostCount(
   cacheTag(`project-${slug}-count`);
   cacheLife("posts");
 
-  const payload = await getPayloadClient();
-
-  const project = await getProject(slug);
-
-  const projectId = project?.id;
+  const projectId = (await getProject(slug))?.id;
   if (!projectId) {
     return null;
   }
 
-  const count = await payload.count({
-    collection: "posts",
-    overrideAccess: true,
-    where: projectPostsWhere(projectId),
-  });
-
-  return count.totalDocs;
+  return countPosts(projectPostsWhere(projectId));
 }

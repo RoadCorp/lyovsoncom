@@ -12,9 +12,6 @@ vi.mock("next/cache", () => ({ cacheLife: vi.fn(), cacheTag: vi.fn() }));
 vi.mock("@/utilities/payload-client", () => ({
   getPayloadClient: () => Promise.resolve({ find }),
 }));
-vi.mock("@/utilities/getURL", () => ({
-  getCanonicalURL: () => "https://www.lyovson.com",
-}));
 
 const publishedAt = "2026-09-01T10:00:00.000Z";
 const post: Post = {
