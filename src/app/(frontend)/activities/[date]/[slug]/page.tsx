@@ -376,7 +376,7 @@ export async function generateMetadata({
 
 export default function ActivityPage(props: Args) {
   return (
-    <PublicPageBoundary detail>
+    <PublicPageBoundary skeleton="activity">
       <ActivityPageContent {...props} />
     </PublicPageBoundary>
   );

@@ -4,7 +4,7 @@ import { LoadingTransition } from "@/components/LoadingTransition";
 export default function Loading() {
   return (
     <LoadingTransition>
-      <SkeletonGrid count={4} />
+      <SkeletonGrid />
     </LoadingTransition>
   );
 }

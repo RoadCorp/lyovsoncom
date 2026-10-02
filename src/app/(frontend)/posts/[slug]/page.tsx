@@ -336,7 +336,7 @@ export async function generateMetadata({
 
 export default function PostPage(props: Args) {
   return (
-    <PublicPageBoundary detail>
+    <PublicPageBoundary skeleton="post">
       <PostPageContent {...props} />
     </PublicPageBoundary>
   );

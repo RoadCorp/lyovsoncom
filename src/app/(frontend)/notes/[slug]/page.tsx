@@ -311,7 +311,7 @@ export async function generateMetadata({
 
 export default function NotePage(props: Args) {
   return (
-    <PublicPageBoundary detail>
+    <PublicPageBoundary skeleton="note">
       <NotePageContent {...props} />
     </PublicPageBoundary>
   );

@@ -1,10 +1,5 @@
-import { SkeletonGrid } from "@/components/grid";
-import { LoadingTransition } from "@/components/LoadingTransition";
+import { PublicPageFallback } from "@/components/PublicPageBoundary";
 
 export default function Loading() {
-  return (
-    <LoadingTransition>
-      <SkeletonGrid count={4} />
-    </LoadingTransition>
-  );
+  return <PublicPageFallback skeleton="activity" />;
 }

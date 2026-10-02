@@ -1,30 +1,47 @@
 import { type ReactNode, Suspense } from "react";
 import { SkeletonGrid } from "@/components/grid/skeleton";
-import { ProfileSkeleton } from "@/components/grid/skeleton/profile-skeleton";
+import {
+  ActivityDetailSkeleton,
+  NoteDetailSkeleton,
+  PostDetailSkeleton,
+} from "@/components/grid/skeleton/detail-skeletons";
 import { LoadingTransition } from "@/components/LoadingTransition";
+
+export type PublicPageSkeleton = "activity" | "archive" | "note" | "post";
+
+const SKELETONS: Record<PublicPageSkeleton, () => ReactNode> = {
+  activity: ActivityDetailSkeleton,
+  archive: () => <SkeletonGrid />,
+  note: NoteDetailSkeleton,
+  post: PostDetailSkeleton,
+};
+
+/**
+ * Fallback for a public page. A route's loading.tsx should render the same
+ * `PublicPageSkeleton`, so the two fallbacks never swap shapes.
+ */
+export function PublicPageFallback({
+  skeleton = "archive",
+}: {
+  skeleton?: PublicPageSkeleton;
+}) {
+  const Skeleton = SKELETONS[skeleton];
+  return (
+    <LoadingTransition>
+      <Skeleton />
+    </LoadingTransition>
+  );
+}
 
 export function PublicPageBoundary({
   children,
-  detail = false,
+  skeleton = "archive",
 }: {
   children: ReactNode;
-  detail?: boolean;
+  skeleton?: PublicPageSkeleton;
 }) {
   return (
-    <Suspense
-      fallback={
-        <LoadingTransition>
-          {detail ? (
-            <>
-              <ProfileSkeleton />
-              <SkeletonGrid count={2} />
-            </>
-          ) : (
-            <SkeletonGrid />
-          )}
-        </LoadingTransition>
-      }
-    >
+    <Suspense fallback={<PublicPageFallback skeleton={skeleton} />}>
       {children}
     </Suspense>
   );
