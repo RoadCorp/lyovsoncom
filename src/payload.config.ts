@@ -30,7 +30,9 @@ import { getServerSideURL } from "@/utilities/getURL";
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 const DEV_POOL_MAX = 3;
-const PROD_POOL_MAX = 1;
+// Neon pooled (pgbouncer) endpoint: a few connections per instance let
+// parallel queries in one request and concurrent requests run together.
+const PROD_POOL_MAX = 5;
 
 export default buildConfig({
   // Development optimizations
