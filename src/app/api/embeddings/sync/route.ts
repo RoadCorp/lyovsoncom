@@ -152,6 +152,9 @@ export async function POST(request: NextRequest) {
         where: getWhereClause(collection, force) as never,
         sort: "-updatedAt",
         limit: limitPerCollection,
+        // The helpers load each document themselves; only ids are needed here.
+        depth: 0,
+        select: {},
       });
 
       summary[collection].queued = docs.docs.length;
