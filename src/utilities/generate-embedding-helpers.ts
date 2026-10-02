@@ -1,4 +1,5 @@
 import { and, eq } from "@payloadcms/db-vercel-postgres/drizzle";
+import { revalidateTag } from "next/cache";
 import type { PayloadRequest } from "payload";
 import type { Activity, Note, Post } from "@/payload-types";
 import { getActivityTypeLabel } from "@/utilities/activity-type";
@@ -60,6 +61,19 @@ export function buildNoteEmbeddingText(note: Note): string {
   ]
     .filter(Boolean)
     .join("\n\n");
+}
+
+/**
+ * Recommendation lists are rendered from the cached post or note, so refresh
+ * that entry (stale-while-revalidate). Outside a request, such as a CLI
+ * script, there is no cache to refresh.
+ */
+function refreshRecommendationCache(tag: string, profile: "notes" | "posts") {
+  try {
+    revalidateTag(tag, profile);
+  } catch {
+    // Not running inside a Next.js request.
+  }
 }
 
 type EmbeddableCollection = "activities" | "notes" | "posts";
@@ -458,6 +472,7 @@ async function computeRecommendationsForPost(
       id: postId,
       select: {
         embedding_vector: true,
+        slug: true,
       },
     });
 
@@ -482,6 +497,10 @@ async function computeRecommendationsForPost(
       .update(postsTable)
       .set({ recommended_post_ids: recommendedIds })
       .where(eq(postsTable.id, postId));
+
+    if (post.slug) {
+      refreshRecommendationCache(`post-${post.slug}`, "posts");
+    }
 
     req.payload.logger.info(
       `[Recommendations] ✅ Computed ${recommendedIds.length} recommendations for post ${postId}`
@@ -508,6 +527,7 @@ async function computeRecommendationsForNote(
       id: noteId,
       select: {
         embedding_vector: true,
+        slug: true,
       },
     });
 
@@ -532,6 +552,10 @@ async function computeRecommendationsForNote(
       .update(notesTable)
       .set({ recommended_note_ids: recommendedIds })
       .where(eq(notesTable.id, noteId));
+
+    if (note.slug) {
+      refreshRecommendationCache(`note-${note.slug}`, "notes");
+    }
 
     req.payload.logger.info(
       `[Recommendations] ✅ Computed ${recommendedIds.length} recommendations for note ${noteId}`

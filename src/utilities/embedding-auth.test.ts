@@ -16,7 +16,7 @@ import {
 import { POST as regenerate } from "@/app/api/embeddings/regenerate/route";
 import { GET as getEmbeddings } from "@/app/api/embeddings/route";
 import { GET as getStatus } from "@/app/api/embeddings/status/route";
-import { POST as sync } from "@/app/api/embeddings/sync/route";
+import { GET as cronSync, POST as sync } from "@/app/api/embeddings/sync/route";
 import { authorizeEmbeddingMutation } from "./embedding-auth";
 
 vi.mock("@payload-config", () => ({ default: {} }));
@@ -96,6 +96,7 @@ describe("embedding endpoint guards", () => {
     ["GET", "", getEmbeddings],
     ["GET", "/status", getStatus],
     ["POST", "/sync", sync],
+    ["GET", "/sync", cronSync],
     ["POST", "/regenerate", regenerate],
     ["GET", "/posts/1", getPost],
     ["POST", "/posts/1", postPost],
@@ -134,4 +135,23 @@ describe("embedding endpoint guards", () => {
       expect(denied.headers.get("Cache-Control")).toBe("no-store");
     }
   );
+});
+
+describe("scheduled embedding sync", () => {
+  it("runs a stale-only sync of every collection for the cron secret", async () => {
+    const find = vi.fn().mockResolvedValue({ docs: [] });
+    vi.mocked(getPayload).mockResolvedValue({ find } as never);
+    const response = await cronSync(
+      new NextRequest("https://www.lyovson.com/api/embeddings/sync", {
+        headers: { authorization: "Bearer test-cron-secret" },
+      })
+    );
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({
+      mode: "stale-only",
+      collections: ["posts", "notes", "activities"],
+      limitPerCollection: 25,
+    });
+    expect(find).toHaveBeenCalledTimes(3);
+  });
 });
