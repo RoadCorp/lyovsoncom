@@ -76,20 +76,12 @@ export function getCanonicalUrl(path = "/") {
   return new URL(path, getCanonicalSiteOrigin()).toString();
 }
 
-export function getRuntimeUrl(path = "/") {
-  return new URL(path, getRuntimeSiteOrigin()).toString();
-}
-
 export function getDefaultOgImageUrl() {
   return getCanonicalUrl(siteConfig.defaultOgImagePath);
 }
 
 export function getSiteLogoUrl() {
   return getCanonicalUrl(siteConfig.logoPath);
-}
-
-export function getAuthorProfileUrl(username: string) {
-  return getCanonicalUrl(`/${username}`);
 }
 
 export function stripSiteBranding(value: string) {

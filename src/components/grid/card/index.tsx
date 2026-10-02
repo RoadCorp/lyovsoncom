@@ -68,26 +68,3 @@ export const GridCard = <T extends ElementType = "div">({
     </Component>
   );
 };
-
-export const GridCardContent = ({
-  children,
-  className,
-  interactive,
-  role,
-  style,
-  ...props
-}: Omit<GridCardProps<"article">, "variant" | "as">) => {
-  return (
-    <GridCard
-      as="article"
-      className={cn("p-6", className)}
-      interactive={interactive}
-      role={role}
-      style={style}
-      variant="content"
-      {...props}
-    >
-      {children}
-    </GridCard>
-  );
-};

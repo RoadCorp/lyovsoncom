@@ -4,7 +4,6 @@ import redirects from "./redirects.js";
 import { getRuntimeSiteOrigin } from "./src/utilities/site-config";
 
 // Webpack optimization regexes
-const TAILWIND_REGEX = /[\\/]node_modules[\\/]tailwindcss[\\/]/;
 
 // Image quality presets for Next.js Image Optimization
 // 75 is the next/image default; cards request 80.
@@ -244,21 +243,6 @@ const nextConfig: NextConfig = {
   },
   turbopack: {
     resolveExtensions: [".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".json"],
-  },
-  // Fallback for builds using --webpack.
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.optimization.splitChunks.cacheGroups = {
-        ...config.optimization.splitChunks.cacheGroups,
-        tailwind: {
-          test: TAILWIND_REGEX,
-          name: "tailwind",
-          chunks: "all",
-          priority: 30,
-        },
-      };
-    }
-    return config;
   },
 };
 

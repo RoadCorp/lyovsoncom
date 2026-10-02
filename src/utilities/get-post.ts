@@ -29,41 +29,6 @@ export async function getPost(slug: string): Promise<Post | null> {
   return (response.docs[0] as Post) || null;
 }
 
-export async function getPostByProjectAndSlug(
-  projectSlug: string,
-  slug: string
-): Promise<Post | null> {
-  "use cache";
-  cacheTag("posts");
-  cacheTag(`post-${slug}`);
-  cacheTag(`project-${projectSlug}`);
-  cacheLife("posts");
-
-  const payload = await getPayloadClient();
-  const response = await payload.find({
-    collection: "posts",
-    depth: 2,
-    select: publicContentSelect,
-    where: {
-      AND: [
-        publishedPostsWhere(),
-        {
-          slug: {
-            equals: slug,
-          },
-        },
-        {
-          "project.slug": {
-            equals: projectSlug,
-          },
-        },
-      ],
-    },
-  });
-
-  return (response.docs[0] as Post) || null;
-}
-
 export async function getLatestPosts(
   limit = 12
 ): Promise<PaginatedDocs<PostSummary>> {

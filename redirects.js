@@ -2,19 +2,6 @@
 const BLOB_TOKEN_PATTERN = /^vercel_blob_rw_([a-z\d]+)_[a-z\d]+$/i;
 
 const redirects = () => {
-  const internetExplorerRedirect = {
-    destination: "/ie-incompatible.html",
-    has: [
-      {
-        type: "header",
-        key: "user-agent",
-        value: "(.*Trident.*)", // all ie browsers
-      },
-    ],
-    permanent: false,
-    source: "/:path((?!ie-incompatible.html$).*)", // all pages except the incompatibility page
-  };
-
   const newsletterArchiveRedirects = [
     {
       source: "/subscription-confirmed",
@@ -140,7 +127,6 @@ const redirects = () => {
   ];
 
   const allRedirects = [
-    internetExplorerRedirect,
     ...mediaRedirects,
     ...canonicalRedirects,
     ...newsletterArchiveRedirects,
