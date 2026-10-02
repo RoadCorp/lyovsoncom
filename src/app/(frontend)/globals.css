@@ -148,6 +148,16 @@
     0 2px 5px color-mix(in oklab, var(--ink) 4%, transparent);
   --shadow-emboss: inset 0 1px 0
     color-mix(in oklab, var(--foam) 65%, transparent);
+  /* One frame per card: the card carries the border and a single soft
+     shadow; the panels inside it are borderless tonal wells. */
+  --surface-well: color-mix(
+    in oklab,
+    var(--surface-2) 70%,
+    var(--surface-3) 30%
+  );
+  --shadow-card:
+    inset 0 1px 0 color-mix(in oklab, var(--foam) 60%, transparent),
+    0 12px 28px -18px color-mix(in oklab, var(--ink) 30%, transparent);
   --focus-ring: 0 0 0 2px var(--ring-offset), 0 0 0 4px var(--ring);
 
   --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -324,6 +334,14 @@
   --page-ambient-4: color-mix(in oklab, var(--paper) 10%, transparent);
 
   --shadow-surface: 0 4px 12px rgb(0 0 0 / 0.16), 0 1px 2px rgb(0 0 0 / 0.12);
+  --surface-well: color-mix(
+    in oklab,
+    var(--surface-2) 60%,
+    var(--surface-3) 40%
+  );
+  --shadow-card:
+    inset 0 1px 0 color-mix(in oklab, white 5%, transparent),
+    0 14px 30px -18px rgb(0 0 0 / 0.6);
   --shadow-surface-strong:
     0 10px 28px rgb(0 0 0 / 0.24), 0 2px 6px rgb(0 0 0 / 0.16);
   --shadow-emboss: inset 0 1px 0
@@ -552,7 +570,6 @@
 
   .surface-card,
   .surface-block,
-  .surface-panel,
   .surface-chip,
   .surface-row,
   .surface-caption,
@@ -570,14 +587,9 @@
     position: relative;
     contain: layout paint style;
     overflow: clip;
-    background: linear-gradient(
-      168deg,
-      color-mix(in oklab, var(--surface-1) 99%, white 1%),
-      color-mix(in oklab, var(--surface-1) 96%, var(--surface-2) 4%) 42%,
-      color-mix(in oklab, var(--surface-1) 95%, var(--surface-3) 5%) 82%,
-      var(--surface-1)
-    );
+    background: var(--surface-1);
     border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
     isolation: isolate;
   }
 
@@ -655,16 +667,6 @@
       0 0.55rem 1rem -0.9rem color-mix(in oklab, black 18%, transparent);
   }
 
-  .dark .surface-card {
-    background: linear-gradient(
-      168deg,
-      color-mix(in oklab, var(--surface-1) 96%, white 4%),
-      color-mix(in oklab, var(--surface-1) 94%, var(--surface-2) 6%) 42%,
-      color-mix(in oklab, var(--surface-1) 92%, var(--surface-3) 8%) 82%,
-      var(--surface-1)
-    );
-  }
-
   .surface-block {
     position: relative;
     overflow: clip;
@@ -682,13 +684,7 @@
     position: relative;
     padding: var(--grid-section-padding);
     overflow: clip;
-    background: linear-gradient(
-      165deg,
-      color-mix(in oklab, var(--surface-2) 98%, white 2%),
-      color-mix(in oklab, var(--surface-2) 95%, var(--surface-3) 5%) 58%,
-      color-mix(in oklab, var(--surface-2) 92%, var(--surface-3) 8%) 100%,
-      var(--surface-2)
-    );
+    background: var(--surface-well);
     border-radius: calc(var(--radius) - 2px);
     isolation: isolate;
   }
@@ -737,18 +733,7 @@
       var(--text-3) 74%,
       var(--accent-meta) 26%
     );
-    background: linear-gradient(
-      160deg,
-      color-mix(in oklab, var(--surface-2) 98%, var(--accent-rail) 2%),
-      color-mix(in oklab, var(--surface-2) 95%, var(--surface-3) 5%) 54%,
-      color-mix(in oklab, var(--surface-2) 97%, var(--accent-meta) 3%)
-    );
-    border-color: color-mix(
-      in oklab,
-      var(--line-1) 80%,
-      var(--accent-rail) 20%
-    );
-    box-shadow: var(--shadow-surface), var(--shadow-emboss);
+    background: var(--surface-well);
   }
 
   /* The title stage leaves room for two lines under the eyebrow; let the
@@ -785,38 +770,11 @@
       var(--text-1) 80%,
       var(--accent-link) 20%
     );
-    background: linear-gradient(
-      170deg,
-      color-mix(in oklab, var(--surface-3) 95%, var(--accent-meta) 5%),
-      color-mix(in oklab, var(--surface-2) 96%, var(--surface-3) 4%) 52%,
-      color-mix(in oklab, var(--surface-2) 98%, var(--accent-code) 2%)
-    );
-    border-color: color-mix(
-      in oklab,
-      var(--line-1) 78%,
-      var(--accent-meta) 22%
-    );
+    background: var(--surface-well);
   }
 
   .surface-nav-stage {
-    background:
-      radial-gradient(
-        120% 110% at 50% 0%,
-        color-mix(in oklab, var(--accent-code) 5%, transparent),
-        transparent 56%
-      ),
-      linear-gradient(
-        158deg,
-        color-mix(in oklab, var(--surface-2) 96%, var(--accent-rail) 4%),
-        color-mix(in oklab, var(--surface-2) 94%, var(--surface-3) 6%) 54%,
-        color-mix(in oklab, var(--surface-2) 98%, var(--accent-quote) 2%)
-      );
-    border-color: color-mix(
-      in oklab,
-      var(--line-1) 80%,
-      var(--accent-rail) 20%
-    );
-    box-shadow: var(--shadow-surface), var(--shadow-emboss);
+    background: var(--surface-well);
   }
 
   .surface-nav-stage .tone-heading {
@@ -825,17 +783,7 @@
   }
 
   .surface-nav-tile {
-    background: linear-gradient(
-      165deg,
-      color-mix(in oklab, var(--surface-3) 96%, var(--accent-meta) 4%),
-      color-mix(in oklab, var(--surface-2) 98%, var(--surface-3) 2%) 58%,
-      color-mix(in oklab, var(--surface-2) 99%, var(--accent-code) 1%)
-    );
-    border-color: color-mix(
-      in oklab,
-      var(--line-1) 76%,
-      var(--accent-meta) 24%
-    );
+    background: var(--surface-well);
   }
 
   .surface-nav-tile :where(.nav-tile-content) > svg {
