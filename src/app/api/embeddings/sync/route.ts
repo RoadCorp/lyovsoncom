@@ -1,7 +1,6 @@
 import configPromise from "@payload-config";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import type { PayloadRequest } from "payload";
 import { getPayload } from "payload";
 import { logApiTelemetry } from "@/utilities/api-telemetry";
 import {
@@ -14,16 +13,14 @@ import {
   EMBEDDING_VECTOR_DIMENSIONS,
 } from "@/utilities/generate-embedding";
 import {
-  generateEmbeddingForActivity,
-  generateEmbeddingForNote,
-  generateEmbeddingForPost,
+  EMBEDDABLE_COLLECTIONS,
+  type EmbeddableCollection,
+  generateEmbeddingFor,
+  isEmbeddableCollection,
 } from "@/utilities/generate-embedding-helpers";
 
 const DEFAULT_LIMIT_PER_COLLECTION = 25;
 const MAX_LIMIT_PER_COLLECTION = 250;
-const EMBEDDABLE_COLLECTIONS = ["posts", "notes", "activities"] as const;
-
-type EmbeddableCollection = (typeof EMBEDDABLE_COLLECTIONS)[number];
 
 interface SyncBody {
   collections?: EmbeddableCollection[];
@@ -44,9 +41,7 @@ function normalizeCollections(value: unknown): EmbeddableCollection[] {
     return [...EMBEDDABLE_COLLECTIONS];
   }
 
-  const valid = value.filter((collection): collection is EmbeddableCollection =>
-    EMBEDDABLE_COLLECTIONS.includes(collection as EmbeddableCollection)
-  );
+  const valid = value.filter(isEmbeddableCollection);
 
   return valid.length > 0 ? valid : [...EMBEDDABLE_COLLECTIONS];
 }
@@ -139,11 +134,6 @@ async function handleSync(
     const limitPerCollection = normalizeLimit(body.limitPerCollection);
     const force = body.force === true;
 
-    const mockReq = {
-      payload,
-      user: null,
-    } as unknown as PayloadRequest;
-
     const summary: Record<EmbeddableCollection, CollectionSummary> = {
       posts: buildCollectionSummary(),
       notes: buildCollectionSummary(),
@@ -171,18 +161,7 @@ async function handleSync(
           continue;
         }
 
-        let result:
-          | Awaited<ReturnType<typeof generateEmbeddingForPost>>
-          | Awaited<ReturnType<typeof generateEmbeddingForNote>>
-          | Awaited<ReturnType<typeof generateEmbeddingForActivity>>;
-
-        if (collection === "posts") {
-          result = await generateEmbeddingForPost(id, mockReq);
-        } else if (collection === "notes") {
-          result = await generateEmbeddingForNote(id, mockReq);
-        } else {
-          result = await generateEmbeddingForActivity(id, mockReq);
-        }
+        const result = await generateEmbeddingFor(collection, id, payload);
 
         summary[collection].processed += 1;
         if (!result.success) {
@@ -250,10 +229,7 @@ async function handleSync(
     });
 
     return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-      },
+      { success: false, error: "Internal server error" },
       { status: 500 }
     );
   }

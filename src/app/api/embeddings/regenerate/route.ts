@@ -1,8 +1,6 @@
 import configPromise from "@payload-config";
-import { eq } from "@payloadcms/db-vercel-postgres/drizzle";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import type { PayloadRequest } from "payload";
 import { getPayload } from "payload";
 import { logApiTelemetry } from "@/utilities/api-telemetry";
 import {
@@ -11,23 +9,17 @@ import {
   hasEmbeddingAuthHint,
 } from "@/utilities/embedding-auth";
 import {
-  generateEmbeddingForActivity,
-  generateEmbeddingForNote,
-  generateEmbeddingForPost,
+  type EmbeddableCollection,
+  generateEmbeddingFor,
+  isEmbeddableCollection,
 } from "@/utilities/generate-embedding-helpers";
 
 interface RegenerateEmbeddingBody {
-  collection?: "posts" | "notes" | "activities";
+  collection?: EmbeddableCollection;
   force?: boolean;
   id?: number | string;
 }
 
-interface EmbeddingResult {
-  error?: string;
-  success: boolean;
-}
-
-/* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Endpoint handles validation + auth + multiple collection paths */
 export async function POST(request: NextRequest) {
   const startedAt = Date.now();
   try {
@@ -63,11 +55,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (
-      collection !== "posts" &&
-      collection !== "notes" &&
-      collection !== "activities"
-    ) {
+    if (!isEmbeddableCollection(collection)) {
       return NextResponse.json(
         { error: 'collection must be "posts", "notes", or "activities"' },
         { status: 400 }
@@ -82,50 +70,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create a mock request object for the helper functions
-    const mockReq = {
-      payload,
-    } as unknown as PayloadRequest;
-
-    // Fetch document to get current embedding info
-    const doc = await payload.findByID({
-      collection: collection as "posts" | "notes" | "activities",
+    const exists = await payload.findByID({
+      collection,
       id: docId,
-      select: {
-        id: true,
-        title: true,
-        embedding_model: true,
-        embedding_dimensions: true,
-      },
+      depth: 0,
+      select: {},
+      disableErrors: true,
     });
 
-    if (!doc) {
+    if (!exists) {
       return NextResponse.json(
         { error: `${collection} not found` },
         { status: 404 }
       );
     }
 
-    // If force is true, clear the hash to force regeneration. Write the column
-    // directly so no version row is created and updatedAt is unchanged.
-    if (force) {
-      const table =
-        payload.db.tables[collection as "posts" | "notes" | "activities"];
-      await payload.db.drizzle
-        .update(table)
-        .set({ embedding_text_hash: null } as Record<string, unknown>)
-        .where(eq(table.id, docId));
-    }
-
-    // Call appropriate helper function
-    let result: EmbeddingResult;
-    if (collection === "posts") {
-      result = await generateEmbeddingForPost(docId, mockReq);
-    } else if (collection === "notes") {
-      result = await generateEmbeddingForNote(docId, mockReq);
-    } else {
-      result = await generateEmbeddingForActivity(docId, mockReq);
-    }
+    // force re-embeds even when the text hash is unchanged.
+    const result = await generateEmbeddingFor(collection, docId, payload, {
+      force: force === true,
+    });
 
     if (!result.success) {
       return NextResponse.json(
@@ -137,20 +100,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Fetch updated document to get embedding details
-    const updatedDoc = await payload.findByID({
-      collection: collection as "posts" | "notes" | "activities",
+    // Fetch the stored embedding details for the response.
+    const updatedEmbedding = (await payload.findByID({
+      collection,
       id: docId,
+      depth: 0,
       select: {
         embedding_model: true,
         embedding_dimensions: true,
-        recommended_post_ids: true,
+        ...(collection === "posts" ? { recommended_post_ids: true } : {}),
       },
-    });
-
-    const updatedEmbedding = updatedDoc as unknown as {
-      embedding_model?: string | null;
+    })) as {
       embedding_dimensions?: number | null;
+      embedding_model?: string | null;
       recommended_post_ids?: unknown;
     };
 
@@ -199,7 +161,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: errorMessage,
+        error: "Internal server error",
       },
       { status: 500 }
     );

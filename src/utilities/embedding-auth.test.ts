@@ -2,17 +2,9 @@ import { NextRequest } from "next/server";
 import { getPayload } from "payload";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  GET as getActivity,
-  POST as postActivity,
-} from "@/app/api/embeddings/activities/[id]/route";
-import {
-  GET as getNote,
-  POST as postNote,
-} from "@/app/api/embeddings/notes/[id]/route";
-import {
-  GET as getPost,
-  POST as postPost,
-} from "@/app/api/embeddings/posts/[id]/route";
+  GET as getDocument,
+  POST as postDocument,
+} from "@/app/api/embeddings/[collection]/[id]/route";
 import { POST as regenerate } from "@/app/api/embeddings/regenerate/route";
 import { GET as getEmbeddings } from "@/app/api/embeddings/route";
 import { GET as getStatus } from "@/app/api/embeddings/status/route";
@@ -28,12 +20,9 @@ vi.mock("./generate-embedding", () => ({
   generateEmbedding: vi.fn(),
   createTextHash: vi.fn(),
 }));
-vi.mock("./generate-embedding-helpers", () => ({
-  buildPostEmbeddingText: vi.fn(),
-  buildNoteEmbeddingText: vi.fn(),
-  generateEmbeddingForPost: vi.fn(),
-  generateEmbeddingForNote: vi.fn(),
-  generateEmbeddingForActivity: vi.fn(),
+vi.mock("./generate-embedding-helpers", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("./generate-embedding-helpers")>()),
+  generateEmbeddingFor: vi.fn(),
 }));
 
 beforeEach(() => {
@@ -98,12 +87,12 @@ describe("embedding endpoint guards", () => {
     ["POST", "/sync", sync],
     ["GET", "/sync", cronSync],
     ["POST", "/regenerate", regenerate],
-    ["GET", "/posts/1", getPost],
-    ["POST", "/posts/1", postPost],
-    ["GET", "/notes/1", getNote],
-    ["POST", "/notes/1", postNote],
-    ["GET", "/activities/1", getActivity],
-    ["POST", "/activities/1", postActivity],
+    ["GET", "/posts/1", getDocument],
+    ["POST", "/posts/1", postDocument],
+    ["GET", "/notes/1", getDocument],
+    ["POST", "/notes/1", postDocument],
+    ["GET", "/activities/1", getDocument],
+    ["POST", "/activities/1", postDocument],
   ] as const)(
     "protects %s /api/embeddings%s from anonymous and invalid credentials",
     async (method, path, handler) => {
@@ -116,9 +105,12 @@ describe("embedding endpoint guards", () => {
             : {}),
         }
       );
-      const response = await handler(request, {
-        params: Promise.resolve({ id: "1" }),
+      // Collection routes read their collection from the path.
+      const params = Promise.resolve({
+        collection: path.split("/")[1] ?? "",
+        id: "1",
       });
+      const response = await handler(request, { params });
       expect(response.status).toBe(401);
       expect(response.headers.get("Cache-Control")).toBe("no-store");
       expect(response.headers.get("X-Robots-Tag")).toContain("noindex");
@@ -128,13 +120,22 @@ describe("embedding endpoint guards", () => {
       const invalidRequest = new NextRequest(request.clone(), {
         headers: { authorization: "Bearer invalid-token" },
       });
-      const denied = await handler(invalidRequest, {
-        params: Promise.resolve({ id: "1" }),
-      });
+      const denied = await handler(invalidRequest, { params });
       expect(denied.status).toBe(401);
       expect(denied.headers.get("Cache-Control")).toBe("no-store");
     }
   );
+});
+
+describe("document embedding route", () => {
+  it("rejects unknown collections before any auth or database work", async () => {
+    const response = await getDocument(
+      new NextRequest("https://www.lyovson.com/api/embeddings/users/1"),
+      { params: Promise.resolve({ collection: "users", id: "1" }) }
+    );
+    expect(response.status).toBe(404);
+    expect(getPayload).not.toHaveBeenCalled();
+  });
 });
 
 describe("scheduled embedding sync", () => {
