@@ -11,23 +11,25 @@
 import type { CollectionBeforeChangeHook, PayloadRequest } from "payload";
 import { getActivityTypeLabel } from "@/utilities/activity-type";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";
+import { getRelationId } from "@/utilities/relations";
 
 async function getReferenceTitle(
   reference: unknown,
   req: PayloadRequest
 ): Promise<string | null> {
-  let referenceId: string | null = null;
-  if (typeof reference === "string") {
-    referenceId = reference;
-  } else if (
+  // Populated references already carry their title.
+  if (
     typeof reference === "object" &&
     reference !== null &&
-    "id" in reference
+    "title" in reference &&
+    typeof reference.title === "string"
   ) {
-    referenceId = String((reference as { id: string }).id);
+    return reference.title;
   }
 
-  if (!referenceId) {
+  const referenceId = getRelationId(reference);
+
+  if (referenceId === null) {
     return null;
   }
 
@@ -35,11 +37,11 @@ async function getReferenceTitle(
     const ref = await req.payload.findByID({
       collection: "references",
       id: referenceId,
+      depth: 0,
+      select: { title: true },
+      req,
     });
-    if (ref && typeof ref === "object" && "title" in ref) {
-      return String((ref as { title: string }).title);
-    }
-    return null;
+    return ref?.title ? String(ref.title) : null;
   } catch {
     return null;
   }
@@ -48,6 +50,7 @@ async function getReferenceTitle(
 export const populateContentTextHook: CollectionBeforeChangeHook = async ({
   data,
   operation,
+  originalDoc,
   req,
 }) => {
   // Only run on create and update operations
@@ -55,15 +58,20 @@ export const populateContentTextHook: CollectionBeforeChangeHook = async ({
     return data;
   }
 
+  // Partial updates only carry changed fields; fall back to the stored doc.
+  const reference = data.reference ?? originalDoc?.reference;
+  const activityType = data.activityType ?? originalDoc?.activityType;
+  const notes = data.notes ?? originalDoc?.notes;
+
   const parts: string[] = [];
 
-  const referenceTitle = await getReferenceTitle(data.reference, req);
+  const referenceTitle = await getReferenceTitle(reference, req);
   if (referenceTitle) {
-    const label = getActivityTypeLabel(data.activityType);
+    const label = getActivityTypeLabel(activityType);
     parts.push(`${label} ${referenceTitle}`);
   }
 
-  const notesText = data.notes ? extractLexicalText(data.notes) : "";
+  const notesText = notes ? extractLexicalText(notes) : "";
   if (notesText) {
     parts.push(notesText);
   }
