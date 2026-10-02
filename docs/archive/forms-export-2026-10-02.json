@@ -1,0 +1,270 @@
+{
+  "exportedAt": "2026-10-02T17:08:03.961Z",
+  "source": "production forms (plugin-form-builder), removed in 6b",
+  "form_submissions": 0,
+  "forms": [
+    {
+      "id": 1,
+      "title": "Contact Form",
+      "submit_button_label": "Submit",
+      "confirmation_type": "message",
+      "confirmation_message": {
+        "root": {
+          "type": "root",
+          "format": "",
+          "indent": 0,
+          "version": 1,
+          "children": [
+            {
+              "tag": "h2",
+              "type": "heading",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "The contact form has been submitted successfully.",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr"
+            }
+          ],
+          "direction": "ltr"
+        }
+      },
+      "redirect_url": null,
+      "updated_at": "2024-11-28T14:19:23.015+00:00",
+      "created_at": "2023-01-12T21:47:41.374+00:00",
+      "emails": [
+        {
+          "_order": 1,
+          "_parent_id": 1,
+          "id": "67487bebb9b0f2180f38ccf5",
+          "email_to": "{{email}}",
+          "cc": null,
+          "bcc": null,
+          "reply_to": null,
+          "email_from": "\"Payload\" <demo@payloadcms.com>",
+          "subject": "You've received a new message.",
+          "message": {
+            "root": {
+              "type": "root",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "format": "",
+                  "indent": 0,
+                  "version": 1,
+                  "children": [
+                    {
+                      "mode": "normal",
+                      "text": "Your contact form submission was successfully received.",
+                      "type": "text",
+                      "style": "",
+                      "detail": 0,
+                      "format": 0,
+                      "version": 1
+                    }
+                  ],
+                  "direction": "ltr",
+                  "textFormat": 0
+                }
+              ],
+              "direction": "ltr"
+            }
+          }
+        }
+      ],
+      "blocks_email": [
+        {
+          "_order": 2,
+          "_parent_id": 1,
+          "_path": "fields",
+          "id": "67487bebb9b0f2180f38ccf2",
+          "name": "email",
+          "label": "Email",
+          "width": 100,
+          "required": true,
+          "block_name": "email"
+        }
+      ],
+      "blocks_text": [
+        {
+          "_order": 1,
+          "_parent_id": 1,
+          "_path": "fields",
+          "id": "67487bebb9b0f2180f38ccf1",
+          "name": "full-name",
+          "label": "Full Name",
+          "width": 100,
+          "default_value": null,
+          "required": true,
+          "block_name": "full-name"
+        }
+      ],
+      "blocks_textarea": [
+        {
+          "_order": 4,
+          "_parent_id": 1,
+          "_path": "fields",
+          "id": "67487bebb9b0f2180f38ccf4",
+          "name": "message",
+          "label": "Message",
+          "width": 100,
+          "default_value": null,
+          "required": true,
+          "block_name": "message"
+        }
+      ],
+      "blocks_number": [
+        {
+          "_order": 3,
+          "_parent_id": 1,
+          "_path": "fields",
+          "id": "67487bebb9b0f2180f38ccf3",
+          "name": "phone",
+          "label": "Phone",
+          "width": 100,
+          "default_value": null,
+          "required": false,
+          "block_name": "phone"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Newsletter Form",
+      "submit_button_label": "Subscribe",
+      "confirmation_type": "message",
+      "confirmation_message": {
+        "root": {
+          "type": "root",
+          "format": "",
+          "indent": 0,
+          "version": 1,
+          "children": [
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "Thank you for subscribing. Please, confirm your subscription.",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": "ltr",
+              "textStyle": "",
+              "textFormat": 0
+            }
+          ],
+          "direction": "ltr"
+        }
+      },
+      "redirect_url": null,
+      "updated_at": "2024-12-11T19:48:12.156+00:00",
+      "created_at": "2024-12-11T19:48:12.156+00:00",
+      "emails": [
+        {
+          "_order": 1,
+          "_parent_id": 2,
+          "id": "6759ec7db321573b6ad51b6a",
+          "email_to": "{{email}}",
+          "cc": null,
+          "bcc": null,
+          "reply_to": null,
+          "email_from": "noreply@mail.lyovson.com",
+          "subject": "{{newsletter}} subscription confirmation",
+          "message": {
+            "root": {
+              "type": "root",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "format": "",
+                  "indent": 0,
+                  "version": 1,
+                  "children": [
+                    {
+                      "mode": "normal",
+                      "text": "Thank you for subscribing to {{newsletter}}",
+                      "type": "text",
+                      "style": "",
+                      "detail": 0,
+                      "format": 0,
+                      "version": 1
+                    },
+                    {
+                      "type": "linebreak",
+                      "version": 1
+                    },
+                    {
+                      "mode": "normal",
+                      "text": "Please confirm your subscription by clicking this <a href=\"#\">link</a>",
+                      "type": "text",
+                      "style": "",
+                      "detail": 0,
+                      "format": 0,
+                      "version": 1
+                    }
+                  ],
+                  "direction": "ltr",
+                  "textStyle": "",
+                  "textFormat": 0
+                }
+              ],
+              "direction": "ltr"
+            }
+          }
+        }
+      ],
+      "blocks_email": [
+        {
+          "_order": 1,
+          "_parent_id": 2,
+          "_path": "fields",
+          "id": "6759ec7db321573b6ad51b68",
+          "name": "email",
+          "label": "Email",
+          "width": null,
+          "required": true,
+          "block_name": null
+        }
+      ],
+      "blocks_text": [
+        {
+          "_order": 2,
+          "_parent_id": 2,
+          "_path": "fields",
+          "id": "6759ec7db321573b6ad51b69",
+          "name": "newsletter",
+          "label": "Newsletter Name",
+          "width": null,
+          "default_value": null,
+          "required": true,
+          "block_name": null
+        }
+      ],
+      "blocks_textarea": null,
+      "blocks_number": null
+    }
+  ]
+}
