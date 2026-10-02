@@ -1,22 +1,19 @@
 import type { LucideIcon } from "lucide-react";
 import {
-  BadgeInfo,
   BriefcaseBusiness,
   FileText,
-  Languages,
   Mail,
   NotebookPen,
   Radio,
   Search,
+  ShieldCheck,
+  Tags,
   UserRound,
   X,
 } from "lucide-react";
 import { ViewTransition } from "react";
 import {
-  aboutRoute,
   activitiesRoute,
-  amRoute,
-  contactRoute,
   lyovsonActivitiesRoute,
   lyovsonBioRoute,
   lyovsonContactRoute,
@@ -25,6 +22,9 @@ import {
   lyovsonPostsRoute,
   notesRoute,
   postsRoute,
+  privacyPolicyRoute,
+  projectsRoute,
+  topicsRoute,
 } from "@/utilities/routes";
 import { GridCardNavItem } from "./grid-card-nav-item";
 import { ThemeSwitcher } from "./theme-switcher";
@@ -57,21 +57,23 @@ function getMenuLinks(routeContext: NavRouteContext): MenuLink[] {
     ];
   }
 
+  // About, AM and Contact stay reachable by URL but are hidden until they
+  // have real content (noindexed and left out of the sitemap too).
   return [
     {
-      href: aboutRoute(),
-      icon: BadgeInfo,
-      label: "About",
+      href: projectsRoute(),
+      icon: BriefcaseBusiness,
+      label: "Projects",
     },
     {
-      href: amRoute(),
-      icon: Languages,
-      label: "AM",
+      href: topicsRoute(),
+      icon: Tags,
+      label: "Topics",
     },
     {
-      href: contactRoute(),
-      icon: Mail,
-      label: "Contact",
+      href: privacyPolicyRoute(),
+      icon: ShieldCheck,
+      label: "Privacy",
     },
   ];
 }

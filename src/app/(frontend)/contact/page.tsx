@@ -20,5 +20,7 @@ export const metadata: Metadata = {
     title: "Contact",
     description: "Contact Lyóvson.com.",
     canonicalPath: "/contact",
+    // Placeholder until written: reachable, but kept out of search.
+    robots: { index: false, follow: true },
   }),
 };

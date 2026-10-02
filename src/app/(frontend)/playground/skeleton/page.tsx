@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
 import { SkeletonCard, SkeletonGrid } from "@/components/grid/skeleton";
+import { RequireUser } from "@/components/RequireUser";
 import { buildSeoMetadata } from "@/utilities/seo-metadata";
 
 export default function SkeletonPlayground() {
+  return <RequireUser>{() => <SkeletonDemo />}</RequireUser>;
+}
+
+function SkeletonDemo() {
   return (
     <>
       {/* Single Skeleton Card */}

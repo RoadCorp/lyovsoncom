@@ -20,5 +20,7 @@ export const metadata: Metadata = {
     title: "About",
     description: "About Lyóvson.com and the shared family site it is becoming.",
     canonicalPath: "/about",
+    // Placeholder until written: reachable, but kept out of search.
+    robots: { index: false, follow: true },
   }),
 };
