@@ -1,7 +1,7 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { activityFullRoute, activityRoute } from "@/utilities/routes";
 
-type Collection = "posts" | "notes" | "activities";
+export type PublicCollection = "posts" | "notes" | "activities";
 interface PublicDocument {
   _status?: "draft" | "published" | null;
   finishedAt?: string | null;
@@ -11,14 +11,14 @@ interface PublicDocument {
   visibility?: string | null;
 }
 
-function isPublic(collection: Collection, doc?: PublicDocument | null) {
+function isPublic(collection: PublicCollection, doc?: PublicDocument | null) {
   return (
     doc?._status === "published" &&
     (collection === "posts" || doc.visibility === "public")
   );
 }
 
-function identity(collection: Collection, doc?: PublicDocument | null) {
+function identity(collection: PublicCollection, doc?: PublicDocument | null) {
   if (!doc?.slug) {
     return null;
   }
@@ -26,7 +26,7 @@ function identity(collection: Collection, doc?: PublicDocument | null) {
 }
 
 function invalidateDocument(
-  collection: Collection,
+  collection: PublicCollection,
   doc: PublicDocument,
   immediate: boolean
 ) {
@@ -46,7 +46,7 @@ function invalidateDocument(
 
 /** Shared tags also cover author feeds, taxonomy counts, recommendations and sitemap. */
 export function revalidatePublicContent(
-  collection: Collection,
+  collection: PublicCollection,
   doc: PublicDocument | null,
   previousDoc?: PublicDocument | null
 ) {

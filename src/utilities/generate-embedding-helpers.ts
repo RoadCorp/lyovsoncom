@@ -12,22 +12,18 @@ import {
 } from "@/utilities/generate-embedding";
 import { getSimilarNotes } from "@/utilities/get-similar-notes";
 import { getSimilarPosts } from "@/utilities/get-similar-posts";
+import { isPopulated } from "@/utilities/relations";
 
 const RECOMMENDATION_LIMIT = 3;
 
 export function buildPostEmbeddingText(post: Post): string {
   const contentText = extractLexicalText(post.content);
   const topicNames = post.topics
-    ?.filter(
-      (t): t is Exclude<typeof t, number> => typeof t === "object" && t !== null
-    )
+    ?.filter(isPopulated)
     .map((t) => t.name)
     .filter(Boolean)
     .join(", ");
-  const projectName =
-    typeof post.project === "object" && post.project !== null
-      ? post.project.name
-      : null;
+  const projectName = isPopulated(post.project) ? post.project.name : null;
 
   return [
     post.title,
@@ -44,9 +40,7 @@ export function buildNoteEmbeddingText(note: Note): string {
   const contentText = extractLexicalText(note.content);
   const noteTypeLabel = note.type === "quote" ? "Quote" : "Thought";
   const topicNames = note.topics
-    ?.filter(
-      (t): t is Exclude<typeof t, number> => typeof t === "object" && t !== null
-    )
+    ?.filter(isPopulated)
     .map((t) => t.name)
     .filter(Boolean)
     .join(", ");
@@ -92,8 +86,9 @@ const REFERENCE_TYPE_LABELS: Record<string, string> = {
 };
 
 export function buildActivityEmbeddingText(activity: Activity): string {
-  const referenceObj =
-    typeof activity.reference === "object" ? activity.reference : null;
+  const referenceObj = isPopulated(activity.reference)
+    ? activity.reference
+    : null;
 
   const activityLabel = getActivityTypeLabel(activity.activityType);
   const referenceType = referenceObj?.type
@@ -105,10 +100,7 @@ export function buildActivityEmbeddingText(activity: Activity): string {
     activity.reviews
       ?.filter((r) => r.note && r.note.trim().length > 0)
       .map((r) => {
-        const lyovsonName =
-          typeof r.lyovson === "object" && r.lyovson !== null
-            ? r.lyovson.name
-            : null;
+        const lyovsonName = isPopulated(r.lyovson) ? r.lyovson.name : null;
         return lyovsonName ? `${lyovsonName}'s note: ${r.note}` : r.note;
       })
       .filter(Boolean) || [];
