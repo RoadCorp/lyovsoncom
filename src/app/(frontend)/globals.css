@@ -164,6 +164,9 @@
   --shadow-card:
     inset 0 1px 0 color-mix(in oklab, var(--foam) 60%, transparent),
     0 12px 28px -18px color-mix(in oklab, var(--ink) 30%, transparent);
+  --shadow-card-hover:
+    inset 0 1px 0 color-mix(in oklab, var(--foam) 60%, transparent),
+    0 16px 32px -16px color-mix(in oklab, var(--ink) 38%, transparent);
   --focus-ring: 0 0 0 2px var(--ring-offset), 0 0 0 4px var(--ring);
 
   --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -352,6 +355,9 @@
   --shadow-card:
     inset 0 1px 0 color-mix(in oklab, white 5%, transparent),
     0 14px 30px -18px rgb(0 0 0 / 0.6);
+  --shadow-card-hover:
+    inset 0 1px 0 color-mix(in oklab, white 6%, transparent),
+    0 18px 34px -16px rgb(0 0 0 / 0.7);
   --shadow-surface-strong:
     0 10px 28px rgb(0 0 0 / 0.24), 0 2px 6px rgb(0 0 0 / 0.16);
   --shadow-emboss: inset 0 1px 0
@@ -1153,6 +1159,38 @@
       );
     }
 
+    /* Item cards answer when their title or image link is hovered; the
+       project card is one link around the whole card. */
+    article.surface-card:has(
+      .surface-title-stage a:hover,
+      a[aria-hidden="true"]:hover
+    ),
+    .ui-interactive:hover > .surface-card {
+      border-color: color-mix(
+        in oklab,
+        var(--line-1) 60%,
+        var(--accent-link) 40%
+      );
+      box-shadow: var(--shadow-card-hover);
+    }
+
+    .ui-interactive:hover > .surface-card .card-title,
+    article.surface-card:has(
+        .surface-title-stage a:hover,
+        a[aria-hidden="true"]:hover
+      )
+      .card-title {
+      color: var(--accent-link);
+    }
+
+    article.surface-card:has(
+        .surface-title-stage a:hover,
+        a[aria-hidden="true"]:hover
+      )
+      .topic-pill {
+      filter: saturate(1.3);
+    }
+
     .surface-nav-tile.ui-interactive:not(:disabled):hover::before,
     .surface-title-stage:has(a:hover)::before,
     .ui-interactive:hover > .surface-row::before {
@@ -1413,6 +1451,7 @@
         .surface-emphasis,
         .surface-chip
       ):hover,
+    .ui-interactive:hover > .surface-card,
     .ui-inline-action:hover,
     .ui-action-button:not(:disabled):hover {
       transform: translateY(-1px);
@@ -2380,6 +2419,37 @@
 ::view-transition-new(.vt-pagination-prev) {
   --vt-direction: -1;
   animation: vt-page-in var(--vt-content-duration) var(--vt-ease) both;
+}
+
+/* Back and Forward have no view transition; fade the restored page in
+   (src/components/HistoryFade.tsx). */
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-history-fade] main > * {
+    animation: vt-fade-in 120ms ease-out both;
+  }
+}
+
+/* Theme switch: the new theme grows as a circle from the Theme button
+   (src/utilities/theme-reveal.ts sets the origin and radius). */
+:root[data-theme-reveal]::view-transition-old(root),
+:root[data-theme-reveal]::view-transition-new(root) {
+  mix-blend-mode: normal;
+  animation: none;
+}
+
+:root[data-theme-reveal]::view-transition-new(root) {
+  animation: theme-reveal 420ms var(--vt-ease) both;
+}
+
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0 at var(--theme-reveal-x) var(--theme-reveal-y));
+  }
+  to {
+    clip-path: circle(
+      var(--theme-reveal-r) at var(--theme-reveal-x) var(--theme-reveal-y)
+    );
+  }
 }
 
 @keyframes vt-rise-in {

@@ -1,4 +1,8 @@
-import type { ComponentPropsWithoutRef, ReactNode } from "react";
+import type {
+  ComponentPropsWithoutRef,
+  MouseEventHandler,
+  ReactNode,
+} from "react";
 import { AppLink } from "@/components/AppLink";
 import { cn } from "@/lib/utils";
 import { transitionTypes } from "@/utilities/routes";
@@ -22,7 +26,7 @@ type GridCardNavItemButtonProps = GridCardNavItemBaseProps &
     "aria-controls" | "aria-expanded" | "aria-label" | "aria-pressed"
   > & {
     variant: "button";
-    onClick: () => void;
+    onClick: MouseEventHandler<HTMLButtonElement>;
     disabled?: boolean;
   };
 
