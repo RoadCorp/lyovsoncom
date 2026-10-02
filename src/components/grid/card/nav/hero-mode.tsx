@@ -96,6 +96,7 @@ export const HeroMode = ({
         link={links.left}
       />
       <GridCardNavItem
+        aria-expanded={false}
         className="surface-nav-tile col-start-2 col-end-3 row-start-3 row-end-4"
         disabled={disabled}
         id="nav-menu-trigger"

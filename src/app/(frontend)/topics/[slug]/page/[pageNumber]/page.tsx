@@ -115,6 +115,9 @@ async function PageContent({ params: paramsPromise }: Args) {
 
   return (
     <>
+      <h1 className="sr-only">
+        {topicName} - Page {sanitizedPageNumber}
+      </h1>
       <JsonLd data={collectionPageSchema} />
       <CollectionArchive posts={posts} />
       {totalPages > 1 && page ? (

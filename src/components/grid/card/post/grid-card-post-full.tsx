@@ -85,16 +85,18 @@ export const GridCardPostFull = ({
 
   return (
     <PostTransitionBoundary variant="cardShell">
-      <GridCard className={className}>
+      <GridCard as="article" className={className}>
         {featuredImage && typeof featuredImage !== "string" ? (
           <GridCardSection
             className="col-start-1 col-end-3 row-start-1 row-end-3"
             flush={true}
           >
+            {/* Pointer shortcut only: the title link is the card's one tab stop. */}
             <PostDrillInLink
-              aria-label={`Read "${title}"`}
-              className="ui-focus-ring group block h-full overflow-hidden rounded-lg"
+              aria-hidden="true"
+              className="group block h-full overflow-hidden rounded-lg"
               href={postHref}
+              tabIndex={-1}
             >
               <PostTransitionBoundary slug={slug} variant="media">
                 <Media
@@ -116,7 +118,10 @@ export const GridCardPostFull = ({
             className="ui-focus-ring group flex h-full flex-col items-center justify-center gap-2"
             href={postHref}
           >
-            <span className="tone-muted font-mono text-[0.6875rem] uppercase tracking-[0.16em]">
+            <span
+              aria-hidden="true"
+              className="tone-muted font-mono text-[0.6875rem] uppercase tracking-[0.16em]"
+            >
               {postType}
             </span>
             <PostTransitionBoundary slug={slug} variant="title">
