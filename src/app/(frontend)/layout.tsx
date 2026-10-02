@@ -43,7 +43,8 @@ const fontMono = localFont({
     "Courier New",
     "monospace",
   ],
-  preload: true,
+  // Labels and code only; not worth three preloads on every page.
+  preload: false,
 });
 
 const fontSerif = localFont({
@@ -77,24 +78,12 @@ const fontSerif = localFont({
   preload: false,
 });
 
+// IBM Plex Sans ships as one variable file (weights 100–700). Declaring it
+// once loads it once and gives real bold instead of synthesized weights.
 const fontSans = localFont({
-  src: [
-    {
-      path: "./fonts/ibm-plex-sans-400-latin.woff2",
-      weight: "400",
-      style: "normal",
-    },
-    {
-      path: "./fonts/ibm-plex-sans-500-latin.woff2",
-      weight: "500",
-      style: "normal",
-    },
-    {
-      path: "./fonts/ibm-plex-sans-600-latin.woff2",
-      weight: "600",
-      style: "normal",
-    },
-  ],
+  src: "./fonts/ibm-plex-sans-variable-latin.woff2",
+  weight: "100 700",
+  style: "normal",
   variable: "--font-sans",
   display: "swap",
   fallback: [

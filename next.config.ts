@@ -62,6 +62,9 @@ const nextConfig: NextConfig = {
     ],
     // Add quality configuration to fix Next.js 16 warnings
     qualities: IMAGE_QUALITIES,
+    // AVIF first: typically 30-50% smaller than WebP. The slower first encode
+    // is paid once per variant, which is then cached for 30 days.
+    formats: ["image/avif", "image/webp"],
     // Optimize image sizes for 400px grid system
     // Includes 400px (1x), 800px (2x retina), 1200px (3x high-DPI)
     // This ensures Next.js serves appropriately-sized images for our grid cards
