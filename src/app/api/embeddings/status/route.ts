@@ -12,6 +12,10 @@ import {
   EMBEDDING_MODEL,
   EMBEDDING_VECTOR_DIMENSIONS,
 } from "@/utilities/generate-embedding";
+import {
+  EMBEDDABLE,
+  EMBEDDABLE_COLLECTIONS,
+} from "@/utilities/generate-embedding-helpers";
 
 interface EmbeddingDoc {
   embedding_dimensions?: number | null;
@@ -68,81 +72,38 @@ function createCollectionEmbeddingStats(
 async function getEmbeddingCoverage(
   payload: Awaited<ReturnType<typeof getPayload>>
 ) {
-  const [
-    allPostsCount,
-    allNotesCount,
-    allActivitiesCount,
-    postsWithEmbeddingsCount,
-    notesWithEmbeddingsCount,
-    activitiesWithEmbeddingsCount,
-  ] = await Promise.all([
-    payload.count({
-      collection: "posts",
-      overrideAccess: false,
-      context: { [TRUSTED_EMBEDDING_READ]: true },
-      where: { _status: { equals: "published" } },
-    }),
-    payload.count({
-      collection: "notes",
-      overrideAccess: false,
-      context: { [TRUSTED_EMBEDDING_READ]: true },
-      where: {
-        _status: { equals: "published" },
-        visibility: { equals: "public" },
-      },
-    }),
-    payload.count({
-      collection: "activities",
-      overrideAccess: false,
-      context: { [TRUSTED_EMBEDDING_READ]: true },
-      where: {
-        _status: { equals: "published" },
-        visibility: { equals: "public" },
-      },
-    }),
-    payload.count({
-      collection: "posts",
-      overrideAccess: false,
-      context: { [TRUSTED_EMBEDDING_READ]: true },
-      where: {
-        _status: { equals: "published" },
-        embedding_vector: { exists: true },
-      },
-    }),
-    payload.count({
-      collection: "notes",
-      overrideAccess: false,
-      context: { [TRUSTED_EMBEDDING_READ]: true },
-      where: {
-        _status: { equals: "published" },
-        visibility: { equals: "public" },
-        embedding_vector: { exists: true },
-      },
-    }),
-    payload.count({
-      collection: "activities",
-      overrideAccess: false,
-      context: { [TRUSTED_EMBEDDING_READ]: true },
-      where: {
-        _status: { equals: "published" },
-        visibility: { equals: "public" },
-        embedding_vector: { exists: true },
-      },
-    }),
-  ]);
+  const counts = await Promise.all(
+    EMBEDDABLE_COLLECTIONS.map(async (collection) => {
+      const where = EMBEDDABLE[collection].publicWhere;
+      const query = {
+        collection,
+        overrideAccess: false,
+        context: { [TRUSTED_EMBEDDING_READ]: true },
+      } as const;
+      const [published, withEmbeddings] = await Promise.all([
+        payload.count({ ...query, where }),
+        payload.count({
+          ...query,
+          where: { and: [where, { embedding_vector: { exists: true } }] },
+        }),
+      ]);
+      return [
+        collection,
+        published.totalDocs,
+        withEmbeddings.totalDocs,
+      ] as const;
+    })
+  );
 
-  return {
-    published: {
-      posts: allPostsCount.totalDocs,
-      notes: allNotesCount.totalDocs,
-      activities: allActivitiesCount.totalDocs,
-    },
-    withEmbeddings: {
-      posts: postsWithEmbeddingsCount.totalDocs,
-      notes: notesWithEmbeddingsCount.totalDocs,
-      activities: activitiesWithEmbeddingsCount.totalDocs,
-    },
-  } satisfies EmbeddingCoverage;
+  const coverage: EmbeddingCoverage = {
+    published: { posts: 0, notes: 0, activities: 0 },
+    withEmbeddings: { posts: 0, notes: 0, activities: 0 },
+  };
+  for (const [collection, published, withEmbeddings] of counts) {
+    coverage.published[collection] = published;
+    coverage.withEmbeddings[collection] = withEmbeddings;
+  }
+  return coverage;
 }
 
 async function getEmbeddingModelStats(
