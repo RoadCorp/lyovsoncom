@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { getSocialImage } from "./seo-metadata";
 
+const OPTIMIZED_BLOB_URL =
+  /\/_next\/image\?url=https%3A%2F%2Fabc123\.public\.blob\.vercel-storage\.com%2FFinding%2520the%2520Truth%2520wide\.png&w=1200&q=75$/;
+
 describe("social preview images", () => {
   it("serves Blob uploads through the optimizer at the Open Graph width", () => {
     const image = getSocialImage({
@@ -9,9 +12,7 @@ describe("social preview images", () => {
       height: 1260,
       alt: "Cover",
     });
-    expect(image.url).toMatch(
-      /\/_next\/image\?url=https%3A%2F%2Fabc123\.public\.blob\.vercel-storage\.com%2FFinding%2520the%2520Truth%2520wide\.png&w=1200&q=75$/
-    );
+    expect(image.url).toMatch(OPTIMIZED_BLOB_URL);
     expect(image).toMatchObject({ width: 1200, height: 630, alt: "Cover" });
   });
 
