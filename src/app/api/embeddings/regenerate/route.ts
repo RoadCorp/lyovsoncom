@@ -1,4 +1,5 @@
 import configPromise from "@payload-config";
+import { eq } from "@payloadcms/db-vercel-postgres/drizzle";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import type { PayloadRequest } from "payload";
@@ -105,20 +106,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // If force is true, clear the hash to force regeneration
+    // If force is true, clear the hash to force regeneration. Write the column
+    // directly so no version row is created and updatedAt is unchanged.
     if (force) {
-      await payload.update({
-        collection: collection as "posts" | "notes" | "activities",
-        id: docId,
-        data: {
-          embedding_text_hash: null,
-        },
-        context: {
-          skipEmbeddingGeneration: true,
-          skipRecommendationCompute: collection === "posts",
-          skipRevalidation: true,
-        },
-      });
+      const table =
+        payload.db.tables[collection as "posts" | "notes" | "activities"];
+      await payload.db.drizzle
+        .update(table)
+        .set({ embedding_text_hash: null } as Record<string, unknown>)
+        .where(eq(table.id, docId));
     }
 
     // Call appropriate helper function

@@ -129,11 +129,12 @@ async function persistEmbedding({
   });
 }
 
-// Create a hash of the text content for change detection
+// Hash exactly what is embedded, so edits past the limit don't trigger a
+// paid re-embed that would produce the same vector.
 export function createTextHash(text: string): string {
   return crypto
     .createHash("sha256")
-    .update(text)
+    .update(text.slice(0, EMBEDDING_TEXT_LIMIT))
     .digest("hex")
     .slice(0, HASH_PREFIX_LENGTH);
 }

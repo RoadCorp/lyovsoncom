@@ -1,4 +1,4 @@
-import { eq } from "@payloadcms/db-vercel-postgres/drizzle";
+import { and, eq } from "@payloadcms/db-vercel-postgres/drizzle";
 import type { PayloadRequest } from "payload";
 import type { Activity, Note, Post } from "@/payload-types";
 import { getActivityTypeLabel } from "@/utilities/activity-type";
@@ -60,6 +60,47 @@ export function buildNoteEmbeddingText(note: Note): string {
   ]
     .filter(Boolean)
     .join("\n\n");
+}
+
+type EmbeddableCollection = "activities" | "notes" | "posts";
+
+/**
+ * Writes the embedding straight to the table (no version row), but only if
+ * the document is unchanged since it was read. A save during the provider
+ * call leaves the stale marker in place for the next sync.
+ */
+async function persistEmbedding(args: {
+  collection: EmbeddableCollection;
+  dimensions: number;
+  id: number;
+  model: string;
+  readUpdatedAt: string;
+  req: PayloadRequest;
+  textHash: string;
+  vector: number[];
+}): Promise<boolean> {
+  const { collection, id, req } = args;
+  const table = req.payload.db.tables[collection];
+  const written = await req.payload.db.drizzle
+    .update(table)
+    .set({
+      embedding_vector: `[${args.vector.join(",")}]`,
+      embedding_model: args.model,
+      embedding_dimensions: args.dimensions,
+      embedding_generated_at: new Date().toISOString(),
+      embedding_text_hash: args.textHash,
+    } as Record<string, unknown>)
+    .where(and(eq(table.id, id), eq(table.updatedAt, args.readUpdatedAt)))
+    .returning({ id: table.id });
+
+  if (written.length === 0) {
+    req.payload.logger.warn(
+      `[Embedding] ${collection} ${id} changed during generation; left stale for the next sync`
+    );
+    return false;
+  }
+
+  return true;
 }
 
 /**
@@ -131,18 +172,19 @@ export async function generateEmbeddingForPost(
       };
     }
 
-    // Direct DB update — bypasses version system, no extra version row created
-    const postsTable = req.payload.db.tables.posts;
-    await req.payload.db.drizzle
-      .update(postsTable)
-      .set({
-        embedding_vector: `[${vector.join(",")}]`,
-        embedding_model: model,
-        embedding_dimensions: dimensions,
-        embedding_generated_at: new Date().toISOString(),
-        embedding_text_hash: currentTextHash,
-      })
-      .where(eq(postsTable.id, postId));
+    const written = await persistEmbedding({
+      collection: "posts",
+      id: postId,
+      readUpdatedAt: post.updatedAt,
+      req,
+      textHash: currentTextHash,
+      vector,
+      model,
+      dimensions,
+    });
+    if (!written) {
+      return { success: true, skipped: true };
+    }
 
     req.payload.logger.info(
       `[Embedding] ✅ Generated ${dimensions}D embedding for post ${postId}`
@@ -230,18 +272,19 @@ export async function generateEmbeddingForNote(
       };
     }
 
-    // Direct DB update — bypasses version system, no extra version row created
-    const notesTable = req.payload.db.tables.notes;
-    await req.payload.db.drizzle
-      .update(notesTable)
-      .set({
-        embedding_vector: `[${vector.join(",")}]`,
-        embedding_model: model,
-        embedding_dimensions: dimensions,
-        embedding_generated_at: new Date().toISOString(),
-        embedding_text_hash: currentTextHash,
-      })
-      .where(eq(notesTable.id, noteId));
+    const written = await persistEmbedding({
+      collection: "notes",
+      id: noteId,
+      readUpdatedAt: note.updatedAt,
+      req,
+      textHash: currentTextHash,
+      vector,
+      model,
+      dimensions,
+    });
+    if (!written) {
+      return { success: true, skipped: true };
+    }
 
     req.payload.logger.info(
       `[Embedding] ✅ Generated ${dimensions}D embedding for note ${noteId}`
@@ -373,18 +416,19 @@ export async function generateEmbeddingForActivity(
       };
     }
 
-    // Direct DB update — bypasses version system, no extra version row created
-    const activitiesTable = req.payload.db.tables.activities;
-    await req.payload.db.drizzle
-      .update(activitiesTable)
-      .set({
-        embedding_vector: `[${vector.join(",")}]`,
-        embedding_model: model,
-        embedding_dimensions: dimensions,
-        embedding_generated_at: new Date().toISOString(),
-        embedding_text_hash: currentTextHash,
-      } as Record<string, unknown>)
-      .where(eq(activitiesTable.id, activityId));
+    const written = await persistEmbedding({
+      collection: "activities",
+      id: activityId,
+      readUpdatedAt: activity.updatedAt,
+      req,
+      textHash: currentTextHash,
+      vector,
+      model,
+      dimensions,
+    });
+    if (!written) {
+      return { success: true, skipped: true };
+    }
 
     req.payload.logger.info(
       `[Embedding] ✅ Generated ${dimensions}D embedding for activity ${activityId}`
