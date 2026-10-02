@@ -78,6 +78,19 @@ const fontSerif = localFont({
   preload: false,
 });
 
+// Display face for titles and headings: only Plex Serif 600, preloaded
+// because it is above the fold. Declared for 600–700 so `font-bold` uses
+// this file instead of synthesizing bold from it.
+const fontDisplay = localFont({
+  src: "./fonts/ibm-plex-serif-600-latin.woff2",
+  weight: "600 700",
+  style: "normal",
+  variable: "--font-display",
+  display: "swap",
+  fallback: ["ui-serif", "Georgia", "Cambria", "Times New Roman", "serif"],
+  preload: true,
+});
+
 // IBM Plex Sans ships as one variable file (weights 100–700). Declaring it
 // once loads it once and gives real bold instead of synthesized weights.
 const fontSans = localFont({
@@ -107,7 +120,12 @@ export default function RootLayout({
 }) {
   return (
     <html
-      className={cn(fontMono.variable, fontSerif.variable, fontSans.variable)}
+      className={cn(
+        fontMono.variable,
+        fontSerif.variable,
+        fontDisplay.variable,
+        fontSans.variable
+      )}
       lang="en"
       suppressHydrationWarning
     >

@@ -17,7 +17,7 @@ export function MediaFallback({ icon: Icon, label }: MediaFallbackProps) {
     >
       <Icon className="h-12 w-12" strokeWidth={1.25} />
       {label ? (
-        <span className="font-mono text-[0.6875rem] uppercase tracking-[0.16em]">
+        <span className="font-mono text-label uppercase tracking-[0.16em]">
           {label}
         </span>
       ) : null}

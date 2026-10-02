@@ -109,7 +109,7 @@ export function GridCardActivityReview({
             />
             <p
               className={cn(
-                "review-note-copy overflow-hidden text-pretty break-words pr-6 pl-4 text-left text-[15px] italic leading-relaxed",
+                "review-note-copy overflow-hidden text-pretty break-words pr-6 pl-4 text-left font-serif text-note not-italic leading-relaxed",
                 "whitespace-pre-line tracking-[-0.01em]"
               )}
             >

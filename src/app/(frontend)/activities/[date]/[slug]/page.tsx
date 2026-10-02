@@ -229,7 +229,7 @@ async function ActivityPageContent({ params: paramsPromise }: Args) {
                 key={participant.id}
               >
                 <User aria-hidden="true" className="tone-heading h-5 w-5" />
-                <span className="tone-muted text-[0.6875rem]">
+                <span className="tone-muted text-label">
                   {participant.name?.split(" ").at(0) || "?"}
                 </span>
               </div>
@@ -247,7 +247,7 @@ async function ActivityPageContent({ params: paramsPromise }: Args) {
               <span className="tone-heading font-bold text-2xl leading-none">
                 {finishDateParts.day}
               </span>
-              <span className="tone-muted text-[0.6875rem] uppercase tracking-wider">
+              <span className="tone-muted text-label uppercase tracking-wider">
                 {finishDateParts.monthYear}
               </span>
             </time>
