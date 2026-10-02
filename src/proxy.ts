@@ -5,6 +5,11 @@ import {
   isHostileProbePath,
   shouldBlockExpensiveBotRequest,
 } from "@/utilities/request-guards";
+import { isUnknownProfilePath } from "@/utilities/top-level-routes";
+
+// No route matches two segments under an unknown first segment, so this
+// renders global-not-found with a real 404 status.
+const NOT_FOUND_PATH = "/__not-found/__";
 
 function isLocalHost(host: string | null) {
   if (!host) {
@@ -40,6 +45,10 @@ export function proxy(request: NextRequest) {
         "X-Robots-Tag": "noindex, nofollow, noarchive",
       },
     });
+  }
+
+  if (isUnknownProfilePath(pathname)) {
+    return NextResponse.rewrite(new URL(NOT_FOUND_PATH, request.url));
   }
 
   const response = NextResponse.next();
