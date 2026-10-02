@@ -17,7 +17,7 @@ export function PlaceholderPageCard({
   return (
     <GridCard
       className={cn(
-        "g2:col-start-2 g2:col-end-3 g2:row-auto g2:row-start-2",
+        "g2:col-start-2 g2:col-end-3 g2:row-start-1 self-start",
         "g3:col-start-2 g3:col-end-4 g3:w-[var(--grid-card-2x1)]",
         "aspect-auto h-auto",
         className

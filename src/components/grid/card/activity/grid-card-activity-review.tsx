@@ -1,4 +1,4 @@
-import { Quote, Star, User } from "lucide-react";
+import { Quote, Star, StarHalf, User } from "lucide-react";
 import { AppLink } from "@/components/AppLink";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { cn } from "@/lib/utils";
@@ -17,20 +17,20 @@ interface GridCardActivityReviewProps {
 }
 
 const RATING_MAX = 10;
-const STARS_PER_ROW = 5;
+const STAR_COUNT = 5;
+const POINTS_PER_STAR = RATING_MAX / STAR_COUNT;
 const REVIEW_EXCERPT_MAX_CHARS = 520;
 
 function buildStarKeys(prefix: string, count: number): string[] {
   return Array.from({ length: count }, (_, index) => `${prefix}-${index + 1}`);
 }
 
+// Ten points on five stars (with halves): two rows of five used to show
+// 5/10 as a full first row, which read as five out of five.
 function renderRating(rating: number) {
-  const fullStars = rating;
-  const emptyStars = RATING_MAX - rating;
-  const fullTopRow = Math.min(fullStars, STARS_PER_ROW);
-  const emptyTopRow = Math.max(0, STARS_PER_ROW - fullStars);
-  const fullBottomRow = Math.max(0, fullStars - STARS_PER_ROW);
-  const emptyBottomRow = Math.min(emptyStars, STARS_PER_ROW);
+  const fullStars = Math.floor(rating / POINTS_PER_STAR);
+  const halfStars = rating % POINTS_PER_STAR === 0 ? 0 : 1;
+  const emptyStars = STAR_COUNT - fullStars - halfStars;
 
   return (
     <div
@@ -45,40 +45,27 @@ function renderRating(rating: number) {
         </span>
         <span className="tone-muted text-xs">/{RATING_MAX}</span>
       </div>
-      {/* 10 stars in two rows of 5 */}
-      <div className="flex flex-col gap-0.5">
-        <div className="flex items-center justify-center gap-0.5">
-          {buildStarKeys("full-top", fullTopRow).map((starKey) => (
-            <Star
-              aria-hidden="true"
-              className="review-score-star h-3 w-3 fill-current"
-              key={starKey}
-            />
-          ))}
-          {buildStarKeys("empty-top", emptyTopRow).map((starKey) => (
-            <Star
-              aria-hidden="true"
-              className="review-score-star-empty h-3 w-3 opacity-35"
-              key={starKey}
-            />
-          ))}
-        </div>
-        <div className="flex items-center justify-center gap-0.5">
-          {buildStarKeys("full-bottom", fullBottomRow).map((starKey) => (
-            <Star
-              aria-hidden="true"
-              className="review-score-star h-3 w-3 fill-current"
-              key={starKey}
-            />
-          ))}
-          {buildStarKeys("empty-bottom", emptyBottomRow).map((starKey) => (
-            <Star
-              aria-hidden="true"
-              className="review-score-star-empty h-3 w-3 opacity-35"
-              key={starKey}
-            />
-          ))}
-        </div>
+      <div className="flex items-center justify-center gap-0.5">
+        {buildStarKeys("full", fullStars).map((starKey) => (
+          <Star
+            aria-hidden="true"
+            className="review-score-star h-3.5 w-3.5 fill-current"
+            key={starKey}
+          />
+        ))}
+        {halfStars ? (
+          <span aria-hidden="true" className="relative h-3.5 w-3.5">
+            <Star className="review-score-star-empty absolute inset-0 h-3.5 w-3.5 opacity-35" />
+            <StarHalf className="review-score-star absolute inset-0 h-3.5 w-3.5 fill-current" />
+          </span>
+        ) : null}
+        {buildStarKeys("empty", emptyStars).map((starKey) => (
+          <Star
+            aria-hidden="true"
+            className="review-score-star-empty h-3.5 w-3.5 opacity-35"
+            key={starKey}
+          />
+        ))}
       </div>
     </div>
   );
