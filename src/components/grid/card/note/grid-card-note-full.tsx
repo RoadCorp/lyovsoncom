@@ -1,16 +1,15 @@
 import { Brain, Calendar, PenTool, Quote } from "lucide-react";
 import { ViewTransition } from "react";
-import { AppLink } from "@/components/AppLink";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { IntentLink } from "@/components/IntentLink";
-import { TopicPill } from "@/components/TopicPill";
+import { TopicPillList } from "@/components/TopicPill";
 import type { Note, Topic } from "@/payload-types";
 import { formatShortDate } from "@/utilities/date";
 import {
   extractLexicalText,
   extractLexicalTextWithNewlines,
 } from "@/utilities/extract-lexical-text";
-import { noteRoute, topicRoute, transitionTypes } from "@/utilities/routes";
+import { noteRoute, transitionTypes } from "@/utilities/routes";
 import {
   frontendViewTransitionClasses,
   getNoteContentTransitionName,
@@ -119,8 +118,9 @@ function NoteQuoteContent({
     <div className="relative flex h-full flex-col justify-start px-6 py-6">
       <p
         className={[
-          "tone-heading overflow-hidden break-words pr-10 text-left text-[15px] italic leading-snug",
-          isTruncated ? QUOTE_TRUNCATION_MASK_CLASS : "",
+          "tone-heading min-h-0 flex-1 overflow-hidden break-words pr-10 text-left text-[15px] italic leading-snug",
+          // Always fade: text can overflow the card before the excerpt limit.
+          QUOTE_TRUNCATION_MASK_CLASS,
           isPoem ? "whitespace-pre-line" : "whitespace-normal",
         ]
           .filter(Boolean)
@@ -158,9 +158,10 @@ function NoteThoughtContent({
     <div className="relative flex h-full flex-col justify-start px-6 py-6">
       <p
         className={[
-          "tone-heading overflow-hidden text-pretty break-words pr-10 text-left text-[15px] leading-relaxed",
+          "tone-heading min-h-0 flex-1 overflow-hidden text-pretty break-words pr-10 text-left text-[15px] leading-relaxed",
           "tracking-[-0.01em]",
-          isTruncated ? THOUGHT_TRUNCATION_MASK_CLASS : "",
+          // Always fade: text can overflow the card before the excerpt limit.
+          THOUGHT_TRUNCATION_MASK_CLASS,
           isMultiLineThought ? "whitespace-pre-line" : "whitespace-normal",
         ]
           .filter(Boolean)
@@ -255,23 +256,11 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
         {...frontendViewTransitionClasses.sharedMeta}
       >
         <GridCardSection className="surface-rail-panel card-rail-stack card-topic-stack col-start-1 col-end-2 row-start-3 row-end-4 h-full">
-          {uniqueTopics.map((topic) => {
-            if (!topic.slug) {
-              return null;
-            }
-
-            return (
-              <AppLink
-                aria-label={`View notes about ${topic.name}`}
-                className={"w-full"}
-                href={topicRoute(topic.slug)}
-                key={topic.id}
-                prefetch={false}
-              >
-                <TopicPill>{topic.name}</TopicPill>
-              </AppLink>
-            );
-          })}
+          <TopicPillList
+            allTopicsHref={noteRoute(noteSlug)}
+            itemLabel="notes"
+            topics={uniqueTopics}
+          />
         </GridCardSection>
       </ViewTransition>
 

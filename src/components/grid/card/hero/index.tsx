@@ -1,16 +1,15 @@
 import { Brain, Calendar, PenTool, Quote } from "lucide-react";
 import { ViewTransition } from "react";
-import { AppLink } from "@/components/AppLink";
 import { GridCard } from "@/components/grid";
 import { Media } from "@/components/Media";
 import { CARD_FULL_IMAGE_SIZE } from "@/components/Media/image-sizes";
 import { PostTransitionBoundary } from "@/components/post-transitions/PostTransitionBoundary";
-import { TopicPill } from "@/components/TopicPill";
+import { TopicPillList } from "@/components/TopicPill";
 import { cn } from "@/lib/utils";
 import type { Activity, Note, Post } from "@/payload-types";
 import { formatShortDate } from "@/utilities/date";
 import { dedupeRelationItemsById } from "@/utilities/dedupeRelationItemsById";
-import { getActivityDateSlug, topicRoute } from "@/utilities/routes";
+import { getActivityDateSlug } from "@/utilities/routes";
 import {
   frontendViewTransitionClasses,
   getActivityMediaTransitionName,
@@ -19,6 +18,22 @@ import {
   getNoteTitleTransitionName,
 } from "@/utilities/view-transitions";
 import { GridCardSection } from "../section";
+
+const LONG_HERO_TITLE = 50;
+const VERY_LONG_HERO_TITLE = 80;
+
+// The hero title panel has a fixed height, so long titles step down a size
+// instead of overflowing it (they are page headings, so they aren't clamped).
+function heroTitleSize(title: string | null | undefined) {
+  const length = title?.length ?? 0;
+  if (length > VERY_LONG_HERO_TITLE) {
+    return "text-xl md:text-2xl";
+  }
+  if (length > LONG_HERO_TITLE) {
+    return "text-2xl md:text-3xl";
+  }
+  return "text-2xl md:text-3xl lg:text-4xl";
+}
 
 function PostHeroDescription({ description }: { description: string }) {
   return (
@@ -77,7 +92,12 @@ export const GridCardHero = ({
           <div className="flex h-full flex-col items-center justify-center px-4 md:px-8">
             <div className="mx-auto w-full max-w-3xl space-y-4">
               <PostTransitionBoundary slug={post.slug} variant="title">
-                <h1 className="tone-heading text-center font-bold text-2xl md:text-3xl lg:text-4xl">
+                <h1
+                  className={cn(
+                    "tone-heading text-center font-bold",
+                    heroTitleSize(post.title)
+                  )}
+                >
                   {post.title}
                 </h1>
               </PostTransitionBoundary>
@@ -128,23 +148,12 @@ export const GridCardHeroNote = ({
         {...frontendViewTransitionClasses.sharedMeta}
       >
         <GridCardSection className="surface-rail-panel card-rail-stack card-topic-stack col-start-1 col-end-2 row-start-3 row-end-4 h-full">
-          {dedupeRelationItemsById(note.topics).map((topic) => {
-            if (typeof topic !== "object" || !topic.slug || !topic.id) {
-              return null;
-            }
-
-            return (
-              <AppLink
-                aria-label={`View notes about ${topic.name}`}
-                className="w-full"
-                href={topicRoute(topic.slug)}
-                key={topic.id}
-                prefetch={false}
-              >
-                <TopicPill>{topic.name}</TopicPill>
-              </AppLink>
-            );
-          })}
+          <TopicPillList
+            itemLabel="notes"
+            topics={dedupeRelationItemsById(note.topics).filter(
+              (topic) => typeof topic === "object"
+            )}
+          />
         </GridCardSection>
       </ViewTransition>
 
@@ -252,7 +261,12 @@ export const GridCardHeroActivity = ({
               name={getActivityTitleTransitionName(dateSlug, activity.slug)}
               {...frontendViewTransitionClasses.sharedTitle}
             >
-              <h1 className="tone-heading text-center font-bold text-2xl md:text-3xl lg:text-4xl">
+              <h1
+                className={cn(
+                  "tone-heading text-center font-bold",
+                  heroTitleSize(title)
+                )}
+              >
                 {title}
               </h1>
             </ViewTransition>

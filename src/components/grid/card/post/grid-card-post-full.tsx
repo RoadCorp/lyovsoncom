@@ -5,16 +5,11 @@ import { Media } from "@/components/Media";
 import { CARD_COVER_IMAGE_SIZE } from "@/components/Media/image-sizes";
 import { PostDrillInLink } from "@/components/post-transitions/PostDrillInLink";
 import { PostTransitionBoundary } from "@/components/post-transitions/PostTransitionBoundary";
-import { TopicPill } from "@/components/TopicPill";
+import { TopicPillList } from "@/components/TopicPill";
 import { formatShortDate } from "@/utilities/date";
 import { dedupeRelationItemsById } from "@/utilities/dedupeRelationItemsById";
 import type { PostSummary } from "@/utilities/post-summary";
-import {
-  lyovsonRoute,
-  postRoute,
-  projectRoute,
-  topicRoute,
-} from "@/utilities/routes";
+import { lyovsonRoute, postRoute, projectRoute } from "@/utilities/routes";
 
 export interface GridCardPostProps {
   className?: string;
@@ -121,7 +116,7 @@ export const GridCardPostFull = ({
             className="ui-focus-ring group flex h-full flex-col items-center justify-center gap-2"
             href={postHref}
           >
-            <span className="tone-muted font-mono text-[0.65rem] uppercase tracking-[0.16em]">
+            <span className="tone-muted font-mono text-[0.6875rem] uppercase tracking-[0.16em]">
               {postType}
             </span>
             <PostTransitionBoundary slug={slug} variant="title">
@@ -133,23 +128,13 @@ export const GridCardPostFull = ({
         </GridCardSection>
 
         <GridCardSection className="surface-rail-panel card-rail-stack card-topic-stack col-start-3 col-end-4 row-start-1 row-end-2">
-          {dedupeRelationItemsById(topics).map((topic) => {
-            if (typeof topic !== "object" || !topic.slug || !topic.id) {
-              return null;
-            }
-
-            return (
-              <AppLink
-                aria-label={`View posts about ${topic.name}`}
-                className={"w-full"}
-                href={topicRoute(topic.slug)}
-                key={topic.id}
-                prefetch={false}
-              >
-                <TopicPill>{topic.name}</TopicPill>
-              </AppLink>
-            );
-          })}
+          <TopicPillList
+            allTopicsHref={postHref}
+            itemLabel="posts"
+            topics={dedupeRelationItemsById(topics).filter(
+              (topic) => typeof topic === "object"
+            )}
+          />
         </GridCardSection>
 
         <GridCardSection className="surface-rail-panel card-rail-stack card-meta-stack col-start-3 col-end-4 row-start-2 row-end-3">
