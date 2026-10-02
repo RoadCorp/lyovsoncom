@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
+import { Grid, GridCardNav, GridCardNotFound } from "@/components/grid";
+import { Providers } from "@/providers";
 import { buildNotFoundMetadata } from "@/utilities/seo-metadata";
+import { fontVariables } from "./(frontend)/fonts";
+import "./(frontend)/globals.css";
 
 export const metadata: Metadata = {
   ...buildNotFoundMetadata({
@@ -8,30 +12,20 @@ export const metadata: Metadata = {
   }),
 };
 
+// Unmatched URLs render outside the root layout, so this rebuilds the same
+// shell: fonts, theme, the grid and the nav card.
 export default function GlobalNotFound() {
   return (
-    <html lang="en">
+    <html className={fontVariables} lang="en" suppressHydrationWarning>
       <body>
-        <main
-          style={{
-            alignItems: "center",
-            display: "flex",
-            fontFamily:
-              "system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif",
-            height: "100dvh",
-            justifyContent: "center",
-            margin: 0,
-            padding: "2rem",
-            textAlign: "center",
-          }}
-        >
-          <div>
-            <h1 style={{ fontSize: "2rem", margin: 0 }}>404</h1>
-            <p style={{ marginTop: "0.5rem", opacity: 0.75 }}>
-              This page could not be found.
-            </p>
-          </div>
-        </main>
+        <a className="skip-link ui-focus-ring" href="#main-content">
+          Skip to content
+        </a>
+        <Providers>
+          <Grid nav={<GridCardNav />}>
+            <GridCardNotFound />
+          </Grid>
+        </Providers>
       </body>
     </html>
   );

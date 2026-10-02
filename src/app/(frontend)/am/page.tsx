@@ -20,5 +20,7 @@ export const metadata: Metadata = {
     title: "AM",
     description: "Future Armenian articles section on Lyóvson.com.",
     canonicalPath: "/am",
+    // Placeholder until written: reachable, but kept out of search.
+    robots: { index: false, follow: true },
   }),
 };

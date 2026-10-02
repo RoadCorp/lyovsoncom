@@ -263,25 +263,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.9,
     },
-    // Utility pages - medium priority
     {
-      url: `${SITE_URL}/about`,
+      url: `${SITE_URL}/topics`,
       lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.6,
+      changeFrequency: "weekly",
+      priority: 0.8,
     },
-    {
-      url: `${SITE_URL}/am`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
-      url: `${SITE_URL}/contact`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
+    // Utility pages - medium priority (About, AM and Contact are noindexed
+    // placeholders and stay out until they have content)
     {
       url: `${SITE_URL}/privacy-policy`,
       lastModified: now,

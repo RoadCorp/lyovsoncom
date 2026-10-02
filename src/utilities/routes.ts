@@ -72,6 +72,10 @@ export function contactRoute() {
   return typedRoute("/contact");
 }
 
+export function privacyPolicyRoute() {
+  return typedRoute("/privacy-policy");
+}
+
 export function homepageRoute(pageNumber: number) {
   return pageNumber <= 1 ? homeRoute() : typedRoute(`/page/${pageNumber}`);
 }
@@ -161,6 +165,10 @@ export function projectPageRoute(projectSlug: string, pageNumber: number) {
   return pageNumber <= 1
     ? projectRoute(projectSlug)
     : typedRoute(`/projects/${projectSlug}/page/${pageNumber}`);
+}
+
+export function topicsRoute() {
+  return typedRoute("/topics");
 }
 
 export function topicRoute(slug: string) {
