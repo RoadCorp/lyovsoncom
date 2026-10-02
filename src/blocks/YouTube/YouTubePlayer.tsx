@@ -59,7 +59,7 @@ export const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
           className="absolute inset-0 h-full w-full rounded-lg"
-          src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
+          src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`}
           title="YouTube video player"
         />
       ) : (

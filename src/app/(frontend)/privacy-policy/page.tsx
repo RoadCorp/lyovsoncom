@@ -21,243 +21,118 @@ export default function PrivacyPolicy() {
 
           <section className="surface-panel surface-docs-panel">
             <p className="tone-muted text-sm">
-              <strong>Effective Date:</strong> March 19, 2024
-              <br />
-              <strong>Last Updated:</strong> March 19, 2024
+              <strong>Last Updated:</strong> October 2, 2026
             </p>
 
             <p>
-              At <strong>Lyovson.com</strong>, we are committed to protecting
-              your privacy and ensuring transparency about how we collect, use,
-              and share your information. This Privacy Policy explains what data
-              we collect, how we use it, and your rights regarding your personal
-              data.
-            </p>
-
-            <p>
-              By using <strong>Lyovson.com</strong>, you agree to the practices
-              described in this Privacy Policy.
+              <strong>Lyovson.com</strong> is the personal website of Rafa and
+              Jess Lyóvson. We collect as little as we can: there are no
+              accounts for readers, no sign-up forms, no advertising and no
+              tracking cookies.
             </p>
           </section>
 
           <section>
-            <h2>1. Information We Collect</h2>
+            <h2>1. What We Collect</h2>
 
-            <h3>1.1 Personal Data You Provide</h3>
-            <ul>
-              <li>
-                <strong>When You Sign Up:</strong> Name, email address, and
-                other registration details.
-              </li>
-              <li>
-                <strong>When You Contact Us:</strong> Information you provide
-                via contact forms or emails.
-              </li>
-            </ul>
-
-            <h3>1.2 Automatically Collected Data</h3>
-            <p>We use cookies and tracking tools to collect:</p>
-            <ul>
-              <li>IP Address (anonymized)</li>
-              <li>Browser Type and Version</li>
-              <li>Pages Visited and Time Spent on the site</li>
-              <li>Device Information (e.g., desktop, mobile)</li>
-              <li>Location Data (general, not precise)</li>
-            </ul>
-
-            <h3>1.3 Cookies and Tracking Technologies</h3>
-            <p>We use:</p>
-            <ul>
-              <li>
-                <strong>Google Analytics:</strong> For understanding site usage
-                and improving user experience.
-              </li>
-              <li>
-                <strong>Microsoft Clarity:</strong> For session recordings and
-                heatmaps to optimize site design.
-              </li>
-              <li>
-                <strong>Vercel Analytics:</strong> For performance metrics.
-              </li>
-            </ul>
+            <h3>1.1 Analytics</h3>
             <p>
-              Cookies help us enhance your experience and analyze site traffic.
+              We use <strong>Vercel Web Analytics</strong> to count page views.
+              It does not use cookies or store anything on your device. It
+              records the page you visit, the referring site, your browser,
+              operating system, device type and country. Visits are grouped with
+              a hash of the request that changes every day, so you are not
+              identified or followed across days or sites.
+            </p>
+
+            <h3>1.2 Server Logs</h3>
+            <p>
+              Our host, <strong>Vercel</strong>, processes your IP address and
+              request details (such as the page requested and your browser) to
+              deliver the site, keep it secure and diagnose errors. These logs
+              are kept for a short period by Vercel.
+            </p>
+
+            <h3>1.3 Search</h3>
+            <p>
+              When you use the site search, the text you search for is sent to{" "}
+              <strong>OpenAI</strong> to find related content. It is not linked
+              to you, and we do not use it for anything else.
+            </p>
+
+            <h3>1.4 Your Device</h3>
+            <p>
+              Your light or dark theme choice is saved in your browser&rsquo;s
+              local storage. It never leaves your device.
+            </p>
+
+            <h3>1.5 Emails You Send Us</h3>
+            <p>
+              If you email us, we keep your message and address only to reply to
+              you. Newsletter sign-ups are closed; if you subscribed in the
+              past, email us and we will delete your address.
             </p>
           </section>
 
           <section>
-            <h2>2. How We Use Your Information</h2>
-            <p>We use the collected information for the following purposes:</p>
+            <h2>2. Embedded Content</h2>
+            <p>
+              Some posts include content from other services. Your browser
+              contacts them directly, and their own privacy policies apply:
+            </p>
             <ul>
               <li>
-                <strong>Site Improvement:</strong> To understand how users
-                interact with our content.
+                <strong>YouTube</strong> videos load from YouTube&rsquo;s
+                privacy-enhanced domain, and only after you press play.
               </li>
               <li>
-                <strong>Personalization:</strong> To tailor content to your
-                preferences.
+                <strong>X (Twitter)</strong> posts load their images and videos
+                from X.
               </li>
               <li>
-                <strong>Communication:</strong> To respond to inquiries or
-                provide updates.
-              </li>
-              <li>
-                <strong>Security:</strong> To protect the integrity of our
-                website.
-              </li>
-              <li>
-                <strong>Compliance:</strong> To meet legal obligations.
+                <strong>GIFs</strong> load from Tenor (Google).
               </li>
             </ul>
           </section>
 
           <section>
-            <h2>3. How We Share Your Information</h2>
+            <h2>3. Sharing</h2>
             <p>
-              We do <strong>not</strong> sell or trade your personal data. We
-              may share information with:
-            </p>
-
-            <h3>3.1 Service Providers</h3>
-            <ul>
-              <li>
-                <strong>Google Analytics</strong> (analytics)
-              </li>
-              <li>
-                <strong>Microsoft Clarity</strong> (session insights)
-              </li>
-              <li>
-                <strong>Cloudflare</strong> (site security and performance)
-              </li>
-            </ul>
-
-            <h3>3.2 Legal Compliance</h3>
-            <p>When required by law or to protect our legal rights.</p>
-          </section>
-
-          <section>
-            <h2>4. Your Privacy Rights</h2>
-
-            <h3>GDPR (EU) Rights</h3>
-            <p>
-              If you are in the European Economic Area (EEA), you have the right
-              to:
-            </p>
-            <ul>
-              <li>
-                <strong>Access</strong> your personal data
-              </li>
-              <li>
-                <strong>Correct</strong> inaccurate information
-              </li>
-              <li>
-                <strong>Delete</strong> your data (&ldquo;Right to be
-                Forgotten&rdquo;)
-              </li>
-              <li>
-                <strong>Restrict Processing</strong> of your data
-              </li>
-              <li>
-                <strong>Data Portability</strong>
-              </li>
-              <li>
-                <strong>Object</strong> to processing
-              </li>
-            </ul>
-
-            <h3>CCPA (California) Rights</h3>
-            <p>If you are a California resident, you have the right to:</p>
-            <ul>
-              <li>
-                <strong>Know</strong> what personal data we collect
-              </li>
-              <li>
-                <strong>Delete</strong> your personal data
-              </li>
-              <li>
-                <strong>Opt-Out</strong> of the sale of your personal data (we
-                do not sell data)
-              </li>
-            </ul>
-
-            <p>
-              To exercise these rights, please contact us at{" "}
-              <strong>privacy@lyovson.com</strong>.
+              We do <strong>not</strong> sell, rent or trade personal data. The
+              only services that process it are Vercel (hosting and analytics),
+              Neon (our database host, which stores site content, not visitor
+              data) and OpenAI (search queries), plus the embedded services
+              above. We may disclose information if the law requires it.
             </p>
           </section>
 
           <section>
-            <h2>5. Cookies and Tracking Preferences</h2>
+            <h2>4. Your Rights</h2>
             <p>
-              You can manage your cookie preferences via the Cookie Consent
-              Banner on our site or through your browser settings.
-            </p>
-            <ul>
-              <li>
-                <strong>Opt-Out of Google Analytics:</strong>{" "}
-                <a href="https://tools.google.com/dlpage/gaoptout">
-                  Google Analytics Opt-Out
-                </a>
-              </li>
-              <li>
-                <strong>Manage Cookies:</strong> Adjust your settings in our
-                Cookie Preferences modal.
-              </li>
-            </ul>
-          </section>
-
-          <section>
-            <h2>6. Data Security</h2>
-            <p>
-              We implement reasonable security measures to protect your data.
-              However, no method of transmission over the internet is 100%
-              secure. Please use the site responsibly.
+              Depending on where you live, including under the GDPR and CCPA,
+              you may have the right to access, correct, delete, restrict or
+              object to the processing of your personal data, and to complain to
+              a data protection authority. Because we do not identify visitors,
+              we usually hold nothing that can be linked to you. To ask anyway,
+              email us.
             </p>
           </section>
 
           <section>
-            <h2>7. Data Retention</h2>
+            <h2>5. Changes to This Policy</h2>
             <p>
-              We retain your personal data only for as long as necessary to
-              fulfill the purposes outlined in this policy or as required by
-              law.
+              If we change how the site handles data, we will update this page
+              and the date above.
             </p>
           </section>
 
           <section>
-            <h2>8. Third-Party Links</h2>
+            <h2>6. Contact Us</h2>
             <p>
-              Our site may contain links to external websites. We are not
-              responsible for their privacy practices.
+              <strong>Email:</strong>{" "}
+              <a href="mailto:hello@lyovson.com">hello@lyovson.com</a>
             </p>
           </section>
-
-          <section>
-            <h2>9. Changes to This Privacy Policy</h2>
-            <p>
-              We may update this Privacy Policy from time to time. Changes will
-              be posted on this page with an updated &ldquo;Effective
-              Date.&rdquo;
-            </p>
-          </section>
-
-          <section>
-            <h2>10. Contact Us</h2>
-            <p>
-              If you have any questions about this Privacy Policy or your data
-              rights, please contact:
-            </p>
-            <p>
-              <strong>Email:</strong> privacy@lyovson.com
-              <br />
-              <strong>Website:</strong>{" "}
-              <a href="https://www.lyovson.com">https://www.lyovson.com</a>
-            </p>
-          </section>
-
-          <footer className="tone-muted border-border border-t pt-6 text-sm">
-            <p>This Privacy Policy was last updated on March 19, 2024.</p>
-          </footer>
         </article>
       </GridCardSection>
     </GridCard>
@@ -268,7 +143,7 @@ export const metadata: Metadata = {
   ...buildSeoMetadata({
     title: "Privacy Policy",
     description:
-      "Privacy Policy for Lyovson.com - Learn how we collect, use, and protect your personal information. GDPR and CCPA compliant.",
+      "How Lyovson.com handles data: cookieless analytics, no sign-ups or tracking, and what embedded content and search share with other services.",
     canonicalPath: "/privacy-policy",
     keywords: [
       "privacy policy",
@@ -287,7 +162,7 @@ export const metadata: Metadata = {
     other: {
       "document:type": "legal",
       "document:category": "privacy-policy",
-      "document:last-updated": "2024-03-19",
+      "document:last-updated": "2026-10-02",
     },
   }),
 };

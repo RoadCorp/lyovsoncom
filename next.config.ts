@@ -76,11 +76,11 @@ const nextConfig: NextConfig = {
   async headers() {
     const contentSecurityPolicy = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.google-analytics.com *.googletagmanager.com *.vercel-scripts.com",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.vercel-scripts.com",
       "style-src 'self' 'unsafe-inline' fonts.googleapis.com",
       "font-src 'self' fonts.gstatic.com data:",
       [
-        "img-src 'self' data: blob: *.vercel-insights.com *.google-analytics.com *.googletagmanager.com pbs.twimg.com abs.twimg.com *.twimg.com media.tenor.com",
+        "img-src 'self' data: blob: *.vercel-insights.com pbs.twimg.com abs.twimg.com *.twimg.com media.tenor.com",
         VERCEL_BLOB_CSP_SOURCE,
       ]
         .filter(Boolean)
@@ -91,8 +91,8 @@ const nextConfig: NextConfig = {
       ]
         .filter(Boolean)
         .join(" "),
-      "connect-src 'self' *.vercel-insights.com *.google-analytics.com *.googletagmanager.com cdn.syndication.twimg.com vitals.vercel-insights.com",
-      "frame-src 'self' www.youtube.com youtube.com",
+      "connect-src 'self' *.vercel-insights.com cdn.syndication.twimg.com vitals.vercel-insights.com",
+      "frame-src 'self' www.youtube-nocookie.com",
       "worker-src 'self' blob:",
       "child-src 'self' blob:",
       "object-src 'none'",
