@@ -39,8 +39,16 @@ describe("request guards", () => {
   );
 
   it.each([
-    ["/posts/example", "GPTBot", true],
+    ["/posts/example", "GPTBot", false],
+    ["/", "ClaudeBot", false],
+    ["/rafa/notes", "PerplexityBot", false],
+    ["/api/posts", "GPTBot", true],
+    ["/admin", "ClaudeBot", true],
+    ["/playground/skeleton", "CCBot", true],
+    ["/rafa/search", "GPTBot", true],
+    ["/posts/example", "python-requests", true],
     ["/api/search", "python-requests", true],
+    ["/admin/login", "curl/8.7.1", true],
     ["/search", "ClaudeBot", true],
     ["/searchlight", "ClaudeBot", false],
     ["/posts/example", "Googlebot", false],

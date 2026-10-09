@@ -13,6 +13,10 @@ const SOCIAL_PREVIEW_USER_AGENT_PATTERN =
 const EXPENSIVE_PUBLIC_PATH_PATTERN =
   /^\/($|activities(?:\/|$)|ai-docs(?:\/|$)|api(?:\/|$)|jess(?:\/|$)|notes(?:\/|$)|page(?:\/|$)|posts(?:\/|$)|projects(?:\/|$)|rafa(?:\/|$)|search(?:\/|$)|topics(?:\/|$)|_next\/image(?:\?|$))/;
 
+// Uncached or private surfaces: closed to every bot, AI crawlers included.
+const BOT_RESTRICTED_PATH_PATTERN =
+  /^\/(?:admin|api|playground|(?:[^/]+\/)?search)(?:\/|$)/;
+
 const HOSTILE_PROBE_PATH_PATTERN =
   /^\/(?:(?:[^/]+\/)*\.env(?:$|[./_-].*)|(?:[^/]+\/)*[^/]+\.(?:php[0-9]*|phtml|phar|py)(?:$|[/?])|(?:[^/]+\/)*[^/]+\.(?:dat|bak|backup|old|orig|save|sql|sqlite|db|zip|tar|tgz|gz|rar|7z|log|ini|conf)(?:$|[/?])|\.git(?:\/|$)|wp-(?:admin|content|includes|login)(?:\/|\.php|$)|wordpress(?:\/|$)|server-status(?:\/|$)|actuator(?:\/|$))/;
 
@@ -44,6 +48,10 @@ export function isExpensivePublicPath(pathname: string) {
   return EXPENSIVE_PUBLIC_PATH_PATTERN.test(pathname);
 }
 
+export function isBotRestrictedPath(pathname: string) {
+  return BOT_RESTRICTED_PATH_PATTERN.test(pathname);
+}
+
 export function shouldBlockExpensiveBotRequest(
   pathname: string,
   userAgent: string
@@ -55,8 +63,10 @@ export function shouldBlockExpensiveBotRequest(
     return false;
   }
 
-  return (
-    isExpensivePublicPath(pathname) &&
-    (isAiCrawlerUserAgent(userAgent) || isScriptedClientUserAgent(userAgent))
-  );
+  if (isScriptedClientUserAgent(userAgent)) {
+    return isExpensivePublicPath(pathname) || isBotRestrictedPath(pathname);
+  }
+
+  // AI crawlers may read public pages, which the CDN serves from cache.
+  return isAiCrawlerUserAgent(userAgent) && isBotRestrictedPath(pathname);
 }

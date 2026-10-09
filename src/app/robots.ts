@@ -45,33 +45,6 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
         disallow: sharedDisallowRules,
         crawlDelay: 1,
       },
-      // AI and research bots may use cached discovery/feed surfaces only.
-      {
-        userAgent: [
-          "GPTBot",
-          "OAI-SearchBot",
-          "Google-Extended",
-          "CCBot",
-          "ChatGPT-User",
-          "FacebookBot",
-          "Claude-Web",
-          "ClaudeBot",
-          "meta-externalagent",
-          "PerplexityBot",
-          "YouBot",
-          "Bytespider",
-          "Applebot-Extended",
-        ],
-        allow: [
-          "/feed.xml",
-          "/feed.json",
-          "/atom.xml",
-          "/llms.txt",
-          "/robots.txt",
-          "/sitemap.xml",
-        ],
-        disallow: ["/", ...sharedDisallowRules],
-      },
       // Social media crawlers
       {
         userAgent: ["facebookexternalhit", "Twitterbot", "LinkedInBot"],
@@ -83,6 +56,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
       {
         userAgent: ["archive.org_bot", "ia_archiver", "Wayback"],
         allow: "/",
+        disallow: sharedDisallowRules,
         crawlDelay: 10,
       },
     ],
