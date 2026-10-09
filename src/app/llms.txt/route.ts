@@ -16,6 +16,9 @@ ${siteConfig.name} is a personal website showcasing technical writing, creative 
 
 - [Writing & Articles](${siteUrl}/posts): essays and articles
 - [Projects & Research](${siteUrl}/projects): ongoing projects and their posts
+- [Notes](${siteUrl}/notes): thoughts and quotes
+- [Activities](${siteUrl}/activities): what we read, watch, listen to, play, visit and learn, with reviews
+- [Topics](${siteUrl}/topics): everything grouped by topic
 - [Rafa Lyóvson](${siteUrl}/rafa): posts, notes and activities
 - [Jess Lyóvson](${siteUrl}/jess): posts, notes and activities
 
