@@ -2640,7 +2640,6 @@
 }
 
 @layer base {
-  /* biome-ignore lint/style/noDescendingSpecificity: Tailwind base reset intentionally applies globally after component styles. */
   * {
     @apply border-border outline-ring/50;
   }

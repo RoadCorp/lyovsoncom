@@ -236,7 +236,6 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     exposeTestingApiInProductionBuild: process.env.NEXT_TEST_MODE === "1",
-    appNewScrollHandler: true,
     cachedNavigations: true,
     // Needed when using multiple root layouts so unmatched routes don't fall back
     // to the default framework 404 metadata pipeline.
