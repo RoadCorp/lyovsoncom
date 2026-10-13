@@ -1,0 +1,5 @@
+{
+  "name": "Lyovson.com",
+  "install": "bash .cursor/install.sh",
+  "ports": [{ "name": "web", "port": 3100 }]
+}
