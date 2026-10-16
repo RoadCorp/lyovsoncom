@@ -6,10 +6,11 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { CollectionArchive } from "@/components/CollectionArchive";
 import { GridCardProjectHero } from "@/components/grid";
-import { GridCardProject } from "@/components/grid/card/project";
 import {
   GridCardProjectFacts,
   GridCardProjectHighlights,
+  GridCardProjectStack,
+  GridCardRelatedProjects,
   ProjectCaseStudy,
   ProjectGallery,
 } from "@/components/grid/card/project/details";
@@ -165,10 +166,9 @@ async function CaseStudyContent({
         )}
       >
         <GridCardProjectFacts project={project} />
+        <GridCardProjectStack stack={project.stack ?? []} />
         <GridCardProjectHighlights highlights={highlights} />
-        {moreWork.map((work) => (
-          <GridCardProject key={work.id} project={work} />
-        ))}
+        <GridCardRelatedProjects projects={moreWork} />
       </aside>
 
       {posts.docs.length > 0 ? <CollectionArchive posts={posts.docs} /> : null}

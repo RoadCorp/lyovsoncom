@@ -1,10 +1,20 @@
-import { BriefcaseBusiness, ExternalLink } from "lucide-react";
+import {
+  BriefcaseBusiness,
+  Building2,
+  Calendar,
+  ExternalLink,
+} from "lucide-react";
 import { ViewTransition } from "react";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { IntentLink } from "@/components/intent-link";
 import { Media } from "@/components/Media";
-import { CARD_FULL_IMAGE_SIZE } from "@/components/Media/image-sizes";
+import {
+  CARD_COVER_IMAGE_SIZE,
+  CARD_FULL_IMAGE_SIZE,
+} from "@/components/Media/image-sizes";
 import { MediaFallback } from "@/components/Media/media-fallback";
+import { TechPill } from "@/components/tech-pill";
+import { TopicPill } from "@/components/topic-pill";
 import type { Project } from "@/payload-types";
 import type { ProjectCardData } from "@/utilities/get-projects";
 import {
@@ -18,6 +28,52 @@ import {
   getProjectMediaTransitionName,
   getProjectTitleTransitionName,
 } from "@/utilities/view-transitions";
+
+// A card's rail fits three pills, like a post card's topics.
+const MAX_CARD_STACK = 3;
+
+/** Top of the stack and the project's years and client, like a post's rail. */
+function ProjectCardRail({
+  client,
+  stack,
+  years,
+}: {
+  client?: string | null;
+  stack: string[];
+  years: string | null;
+}) {
+  // Leave room for the "+N" pill instead of clipping a fourth entry.
+  const visible =
+    stack.length > MAX_CARD_STACK ? stack.slice(0, MAX_CARD_STACK - 1) : stack;
+  const hidden = stack.length - visible.length;
+
+  return (
+    <>
+      <GridCardSection className="surface-rail-panel card-rail-stack card-topic-stack col-start-3 col-end-4 row-start-1 row-end-2">
+        {visible.map((item) => (
+          <TechPill className="w-full" key={item} name={item} />
+        ))}
+        {hidden > 0 ? <TopicPill>+{hidden}</TopicPill> : null}
+      </GridCardSection>
+      <GridCardSection className="surface-rail-panel card-rail-stack card-meta-stack col-start-3 col-end-4 row-start-2 row-end-3">
+        {years ? (
+          <div className="tone-muted flex items-center gap-2 text-xs">
+            <Calendar aria-hidden="true" className="h-5 w-5 shrink-0" />
+            <span>{years}</span>
+          </div>
+        ) : null}
+        {client ? (
+          <div className="tone-muted flex items-center gap-2 text-xs">
+            <Building2 aria-hidden="true" className="h-5 w-5 shrink-0" />
+            <span className="line-clamp-2 text-[0.6875rem] leading-tight">
+              {client}
+            </span>
+          </div>
+        ) : null}
+      </GridCardSection>
+    </>
+  );
+}
 
 export interface GridCardProjectProps {
   className?: string;
@@ -39,6 +95,14 @@ export const GridCardProject = ({
 
   const projectHref = projectRoute(slug);
   const years = formatProjectYears(project);
+  const stack = project.stack?.filter(Boolean) ?? [];
+  const host = getProjectHost(project.url);
+  // Portfolio work gets the post card's rail; a post series keeps the
+  // full-width image.
+  const hasRail = stack.length > 0 || Boolean(years);
+  const mediaPlacement = hasRail
+    ? "col-start-1 col-end-3 row-start-1 row-end-3"
+    : "col-start-1 col-end-4 row-start-1 row-end-3";
 
   return (
     <ViewTransition
@@ -53,34 +117,45 @@ export const GridCardProject = ({
       >
         <GridCard as="article" className={className}>
           {project.image && typeof project.image !== "string" ? (
-            <GridCardSection
-              className="col-start-1 col-end-4 row-start-1 row-end-3"
-              flush={true}
-            >
+            <GridCardSection className={mediaPlacement} flush={true}>
               <ViewTransition
                 name={getProjectMediaTransitionName(slug)}
                 {...frontendViewTransitionClasses.sharedMedia}
               >
                 <Media
                   className="media-frame flex h-full items-center justify-center"
-                  imgClassName="h-full object-cover"
+                  imgClassName="h-full object-cover object-top"
                   pictureClassName="h-full"
                   resource={project.image}
-                  size={CARD_FULL_IMAGE_SIZE}
+                  size={hasRail ? CARD_COVER_IMAGE_SIZE : CARD_FULL_IMAGE_SIZE}
                   {...(loading ? { loading } : {})}
                   {...(priority ? { priority } : {})}
                 />
               </ViewTransition>
             </GridCardSection>
           ) : (
-            <GridCardSection
-              className="col-start-1 col-end-4 row-start-1 row-end-3"
-              flush={true}
-            >
+            <GridCardSection className={mediaPlacement} flush={true}>
               <MediaFallback icon={BriefcaseBusiness} label="Project" />
             </GridCardSection>
           )}
+
+          {hasRail ? (
+            <ProjectCardRail
+              client={project.client}
+              stack={stack}
+              years={years}
+            />
+          ) : null}
+
           <GridCardSection className="surface-title-stage col-start-1 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1.5">
+            {hasRail && host ? (
+              <span
+                aria-hidden="true"
+                className="card-eyebrow font-mono text-label uppercase tracking-[0.16em]"
+              >
+                {host}
+              </span>
+            ) : null}
             <ViewTransition
               name={getProjectTitleTransitionName(slug)}
               {...frontendViewTransitionClasses.sharedTitle}
@@ -89,7 +164,7 @@ export const GridCardProject = ({
                 {name}
               </h2>
             </ViewTransition>
-            {years ? (
+            {!hasRail && years ? (
               <p className="card-eyebrow font-mono text-label uppercase tracking-[0.16em]">
                 {years}
               </p>

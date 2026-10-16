@@ -1,96 +1,135 @@
-import { Building2, Calendar, Code2, PenTool } from "lucide-react";
+import {
+  BriefcaseBusiness,
+  Building2,
+  Calendar,
+  Code2,
+  type LucideIcon,
+  PenTool,
+} from "lucide-react";
 import type { CSSProperties } from "react";
 import { GridCard, GridCardSection } from "@/components/grid";
+import { IntentLink } from "@/components/intent-link";
 import { Media } from "@/components/Media";
 import {
   CARD_FULL_IMAGE_SIZE,
+  CARD_THUMBNAIL_IMAGE_SIZE,
   CARD_WIDE_IMAGE_SIZE,
 } from "@/components/Media/image-sizes";
 import RichText from "@/components/RichText";
+import { TechPill } from "@/components/tech-pill";
 import { cn } from "@/lib/utils";
 import type { Media as MediaDoc, Project } from "@/payload-types";
 import { formatShortDate } from "@/utilities/date";
+import type { ProjectCardData } from "@/utilities/get-projects";
 import {
   formatProjectYears,
   getProjectHost,
 } from "@/utilities/project-display";
+import { projectRoute, transitionTypes } from "@/utilities/routes";
 
 type CaseStudySection = NonNullable<Project["caseStudy"]>[number];
 type GalleryItem = NonNullable<Project["gallery"]>[number];
 type Highlight = NonNullable<Project["highlights"]>[number];
 
-/** Client, role, timeline, stack and source code, beside the case study. */
-export function GridCardProjectFacts({ project }: { project: Project }) {
+interface Fact {
+  href?: string;
+  icon: LucideIcon;
+  term: string;
+  value: string;
+}
+
+function getFacts(project: Project): Fact[] {
   const years = formatProjectYears(project);
   const repositoryHost = getProjectHost(project.repository);
-  const stack = project.stack?.filter(Boolean) ?? [];
-  const facts = [
+  const facts: (Fact | null)[] = [
     project.client
-      ? { icon: Building2, term: "Client", label: project.client }
+      ? { icon: Building2, term: "Client", value: project.client }
       : null,
-    project.role ? { icon: PenTool, term: "Role", label: project.role } : null,
-    years ? { icon: Calendar, term: "Timeline", label: years } : null,
-  ].filter((fact) => fact !== null);
+    project.role ? { icon: PenTool, term: "Role", value: project.role } : null,
+    years ? { icon: Calendar, term: "Timeline", value: years } : null,
+    project.repository && repositoryHost
+      ? {
+          href: project.repository,
+          icon: Code2,
+          term: "Source",
+          value: repositoryHost,
+        }
+      : null,
+  ];
+  return facts.filter((fact) => fact !== null);
+}
 
-  // The hero already shows role and years; the card earns its place only
-  // with something the hero doesn't say.
-  if (!(project.client || stack.length > 0 || repositoryHost)) {
+/** Client, role, timeline and source, one labelled row each. */
+export function GridCardProjectFacts({ project }: { project: Project }) {
+  const facts = getFacts(project);
+  // With a single fact the card would only repeat the hero.
+  if (facts.length < 2) {
     return null;
   }
 
   return (
-    <GridCard frameLabel="Project">
-      <GridCardSection
-        className={cn(
-          "surface-rail-panel card-rail-stack card-meta-stack col-start-1 col-end-4 row-start-1 px-5",
-          stack.length > 0 ? "row-end-3" : "row-end-4"
-        )}
-      >
-        <dl className="contents">
-          {facts.map(({ icon: Icon, label, term }) => (
-            <div
-              className="tone-muted flex items-center gap-2 text-sm"
-              key={term}
-            >
-              <Icon aria-hidden="true" className="h-5 w-5 shrink-0" />
-              <dt className="sr-only">{term}</dt>
-              <dd className="min-w-0">{label}</dd>
-            </div>
-          ))}
-        </dl>
-        {project.repository && repositoryHost ? (
-          <a
-            aria-label={`Source code on ${repositoryHost} (opens in a new tab)`}
-            className="ui-meta-link ui-focus-ring text-sm"
-            href={project.repository}
-            rel="noopener"
-            target="_blank"
-          >
-            <Code2 aria-hidden="true" className="h-5 w-5" />
-            <span>Source on {repositoryHost}</span>
-          </a>
-        ) : null}
-      </GridCardSection>
-
-      {stack.length > 0 ? (
-        <GridCardSection className="surface-rail-panel card-rail-stack col-start-1 col-end-4 row-start-3 row-end-4 px-4">
-          <ul
-            aria-label="Built with"
-            className="flex flex-wrap content-center justify-center gap-1.5"
-          >
-            {stack.map((item) => (
-              <li className="surface-chip surface-tag" key={item}>
-                {item}
-              </li>
-            ))}
-          </ul>
+    <GridCard
+      frameLabel="Project"
+      style={{ "--grid-internal-rows": facts.length } as CSSProperties}
+    >
+      {facts.map(({ href, icon: Icon, term, value }) => (
+        <GridCardSection
+          className="surface-row col-start-1 col-end-4 flex items-center gap-3 px-4"
+          key={term}
+        >
+          <Icon aria-hidden="true" className="card-eyebrow h-5 w-5 shrink-0" />
+          <dl className="flex min-w-0 flex-col gap-0.5">
+            <dt className="card-eyebrow font-mono text-label uppercase tracking-[0.16em]">
+              {term}
+            </dt>
+            <dd className="tone-heading line-clamp-2 font-medium text-sm">
+              {href ? (
+                <a
+                  aria-label={`${term}: ${value} (opens in a new tab)`}
+                  className="ui-focus-ring underline-offset-4 hover:underline"
+                  href={href}
+                  rel="noopener"
+                  target="_blank"
+                >
+                  {value}
+                </a>
+              ) : (
+                value
+              )}
+            </dd>
+          </dl>
         </GridCardSection>
-      ) : null}
+      ))}
     </GridCard>
   );
 }
 
-/** Up to four measured numbers, two per row. */
+/** The stack as linked pills with each tool's mark and colour. */
+export function GridCardProjectStack({ stack }: { stack: string[] }) {
+  const items = stack.filter(Boolean);
+  if (items.length === 0) {
+    return null;
+  }
+
+  return (
+    <GridCard frameLabel="Stack">
+      <GridCardSection className="surface-rail-panel col-start-1 col-end-4 row-start-1 row-end-4 flex items-center p-4">
+        <ul
+          aria-label="Built with"
+          className="grid w-full grid-cols-2 content-center gap-2"
+        >
+          {items.map((item) => (
+            <li className="min-w-0" key={item}>
+              <TechPill linked={true} name={item} size="lg" />
+            </li>
+          ))}
+        </ul>
+      </GridCardSection>
+    </GridCard>
+  );
+}
+
+/** Up to four measured numbers, two per row; live ones say so. */
 export function GridCardProjectHighlights({
   highlights,
 }: {
@@ -116,20 +155,98 @@ export function GridCardProjectHighlights({
       {highlights.map((highlight, index) => (
         <GridCardSection
           className={cn(
-            "flex flex-col items-center justify-center gap-1 px-3 text-center",
+            "surface-title-stage relative flex flex-col items-center justify-center gap-2 px-3 text-center",
             // An odd last highlight spans the bottom row.
             highlights.length === 3 && index === 2 && "col-span-2"
           )}
           key={highlight.id ?? highlight.label}
         >
-          <span className="tone-heading font-bold text-3xl leading-none">
+          {highlight.live ? (
+            <span className="surface-chip surface-tag absolute top-2 right-2">
+              Live
+              <span className="sr-only">, updated daily</span>
+            </span>
+          ) : null}
+          <span
+            className={cn(
+              "tone-heading font-bold tabular-nums leading-none",
+              highlights.length > 1 ? "text-4xl" : "text-6xl"
+            )}
+          >
             {highlight.value}
           </span>
-          <span className="tone-muted text-label uppercase tracking-wider">
+          <span className="card-eyebrow font-mono text-label uppercase tracking-[0.16em]">
             {highlight.label}
           </span>
         </GridCardSection>
       ))}
+    </GridCard>
+  );
+}
+
+/** Other work by the same people, in the rows of the related-posts card. */
+export function GridCardRelatedProjects({
+  projects,
+}: {
+  projects: ProjectCardData[];
+}) {
+  const linkable = projects.filter(
+    (project): project is ProjectCardData & { slug: string } =>
+      Boolean(project.slug)
+  );
+  if (linkable.length === 0) {
+    return null;
+  }
+
+  return (
+    <GridCard frameLabel="Related">
+      {linkable.map((project, index) => {
+        const years = formatProjectYears(project);
+        return (
+          <IntentLink
+            aria-label={`View ${project.name} project`}
+            className={cn(
+              "ui-focus-ring group ui-interactive col-start-1 col-end-4",
+              `row-start-${index + 1} row-end-${index + 2}`
+            )}
+            href={projectRoute(project.slug)}
+            key={project.id}
+            transitionTypes={[transitionTypes.drillIn]}
+          >
+            <GridCardSection
+              className="surface-row grid h-full grid-cols-3 grid-rows-1 gap-2"
+              flush={true}
+            >
+              {typeof project.image === "object" && project.image ? (
+                <Media
+                  className="media-frame flex h-full items-center justify-center"
+                  imgClassName="h-full object-cover"
+                  pictureClassName="row-start-1 row-end-2 col-start-1 col-end-2 h-full"
+                  resource={project.image}
+                  size={CARD_THUMBNAIL_IMAGE_SIZE}
+                />
+              ) : (
+                <div className="col-start-1 col-end-2 row-start-1 row-end-2 flex h-full items-center justify-center">
+                  <BriefcaseBusiness
+                    aria-hidden="true"
+                    className="tone-muted h-8 w-8"
+                  />
+                </div>
+              )}
+              <div className="col-start-2 col-end-4 row-start-1 row-end-2 flex min-w-0 flex-col justify-center gap-1 pr-3">
+                <h2 className="tone-heading ui-group-hover-dim line-clamp-2 font-medium">
+                  {project.name}
+                </h2>
+                {years ? (
+                  <span className="card-eyebrow font-mono text-label uppercase tracking-[0.16em]">
+                    {years}
+                  </span>
+                ) : null}
+              </div>
+            </GridCardSection>
+          </IntentLink>
+        );
+      })}
     </GridCard>
   );
 }
