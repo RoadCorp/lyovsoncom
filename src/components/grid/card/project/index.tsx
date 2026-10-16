@@ -53,7 +53,14 @@ function ProjectCardRail({
         {visible.map((item) => (
           <TechPill className="w-full" key={item} name={item} />
         ))}
-        {hidden > 0 ? <TopicPill>+{hidden}</TopicPill> : null}
+        {hidden > 0 ? (
+          <TopicPill>
+            <span aria-hidden="true">+{hidden}</span>
+            <span className="sr-only">
+              Also built with {stack.slice(visible.length).join(", ")}
+            </span>
+          </TopicPill>
+        ) : null}
       </GridCardSection>
       <GridCardSection className="surface-rail-panel card-rail-stack card-meta-stack col-start-3 col-end-4 row-start-2 row-end-3">
         {years ? (
