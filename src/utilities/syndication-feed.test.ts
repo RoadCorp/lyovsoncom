@@ -25,6 +25,7 @@ const post: Post = {
   updatedAt: publishedAt,
   populatedAuthors: [{ id: "1", name: "Rafa Lyóvson", username: "rafa" }],
   project: {
+    _status: "published",
     id: 1,
     name: "Reading",
     slug: "reading",

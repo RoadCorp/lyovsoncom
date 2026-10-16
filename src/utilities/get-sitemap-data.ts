@@ -41,12 +41,14 @@ export async function getSitemapData() {
       }),
       payload.find({
         collection: "projects",
+        depth: 0,
         overrideAccess: false,
         pagination: false,
         select: {
           id: true,
           slug: true,
           updatedAt: true,
+          people: true,
         },
       }),
       payload.find({

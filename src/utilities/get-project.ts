@@ -1,5 +1,6 @@
 import { cacheLife, cacheTag } from "next/cache";
 import type { Project } from "@/payload-types";
+import { publishedProjectsWhere } from "@/utilities/content-queries";
 import { getPayloadClient } from "@/utilities/payload-client";
 
 export async function getProject(slug: string): Promise<Project | null> {
@@ -15,6 +16,7 @@ export async function getProject(slug: string): Promise<Project | null> {
       slug: {
         equals: slug,
       },
+      ...publishedProjectsWhere(),
     },
     limit: 1,
   });

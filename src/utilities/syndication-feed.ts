@@ -5,6 +5,7 @@ import type { Post } from "@/payload-types";
 import { publishedPostsWhere } from "@/utilities/content-queries";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";
 import { getPayloadClient } from "@/utilities/payload-client";
+import { getPublishedProject } from "@/utilities/public-project";
 import { getCanonicalSiteOrigin } from "@/utilities/site-config";
 
 const FEED_POST_LIMIT = 50;
@@ -51,10 +52,7 @@ function getFeedItem(
 ): Item {
   const link = `${siteUrl}/posts/${post.slug}`;
   const primaryAuthor = post.populatedAuthors?.at(0);
-  const projectSlug =
-    post.project && typeof post.project === "object"
-      ? post.project.slug || ""
-      : "";
+  const projectSlug = getPublishedProject(post.project)?.slug ?? "";
   const fullContent = extractLexicalText(post.content);
   const description =
     post.description || fullContent || "Read the full article on Lyóvson.com";

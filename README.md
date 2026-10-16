@@ -1,6 +1,6 @@
 # Lyóvson.com
 
-The website of Rafa and Jess Lyóvson: posts, notes, projects, and activities in a shared card grid.
+The website of Rafa and Jess Lyóvson: posts, notes, projects, portfolio case studies, and activities in a shared card grid.
 
 ## Stack
 
@@ -60,7 +60,7 @@ For Neon operations, use Neon MCP and filter by the RoadCorp organization. The e
 - `src/blocks`: rich-text block configuration and rendering
 - `src/collections`: `posts`, `notes`, `activities`, `projects`, `topics`, `references`, `lyovsons`, and `media`
 - `src/search`, `src/utilities`: hybrid search, embedding generation, content queries, and shared helpers
-- `scripts`: one-off maintenance scripts and the dev-branch stress-content seed
+- `scripts`: one-off maintenance scripts, the dev-branch stress-content seed, and the portfolio screenshot capture
 - `src/migrations`: versioned database migrations
 - `e2e`: browser checks for public pages, navigation, and media
 

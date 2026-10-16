@@ -1,4 +1,4 @@
-import { BriefcaseBusiness } from "lucide-react";
+import { BriefcaseBusiness, ExternalLink } from "lucide-react";
 import { ViewTransition } from "react";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { IntentLink } from "@/components/intent-link";
@@ -6,6 +6,11 @@ import { Media } from "@/components/Media";
 import { CARD_FULL_IMAGE_SIZE } from "@/components/Media/image-sizes";
 import { MediaFallback } from "@/components/Media/media-fallback";
 import type { Project } from "@/payload-types";
+import type { ProjectCardData } from "@/utilities/get-projects";
+import {
+  formatProjectYears,
+  getProjectHost,
+} from "@/utilities/project-display";
 import { projectRoute, transitionTypes } from "@/utilities/routes";
 import {
   frontendViewTransitionClasses,
@@ -18,7 +23,7 @@ export interface GridCardProjectProps {
   className?: string;
   loading?: "lazy" | "eager";
   priority?: boolean;
-  project: Project;
+  project: ProjectCardData;
 }
 
 export const GridCardProject = ({
@@ -33,6 +38,7 @@ export const GridCardProject = ({
   }
 
   const projectHref = projectRoute(slug);
+  const years = formatProjectYears(project);
 
   return (
     <ViewTransition
@@ -74,7 +80,7 @@ export const GridCardProject = ({
               <MediaFallback icon={BriefcaseBusiness} label="Project" />
             </GridCardSection>
           )}
-          <GridCardSection className="surface-title-stage col-start-1 col-end-4 row-start-3 row-end-4 flex h-full flex-col justify-center">
+          <GridCardSection className="surface-title-stage col-start-1 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1.5">
             <ViewTransition
               name={getProjectTitleTransitionName(slug)}
               {...frontendViewTransitionClasses.sharedTitle}
@@ -83,6 +89,11 @@ export const GridCardProject = ({
                 {name}
               </h2>
             </ViewTransition>
+            {years ? (
+              <p className="card-eyebrow font-mono text-label uppercase tracking-[0.16em]">
+                {years}
+              </p>
+            ) : null}
           </GridCardSection>
         </GridCard>
       </IntentLink>
@@ -95,12 +106,17 @@ export const GridCardProjectHero = ({
   project,
 }: {
   className?: string;
-  project: Project;
+  project: ProjectCardData & Pick<Project, "url">;
 }) => {
   const { description, image, name, slug } = project;
   if (!slug) {
     return null;
   }
+
+  const meta = [project.role, formatProjectYears(project)]
+    .filter(Boolean)
+    .join(" · ");
+  const host = getProjectHost(project.url);
 
   return (
     <ViewTransition
@@ -138,7 +154,14 @@ export const GridCardProjectHero = ({
               />
             </ViewTransition>
           </GridCardSection>
-        ) : null}
+        ) : (
+          <GridCardSection
+            className="col-start-1 g3:col-start-1 col-end-4 g3:col-end-4 g3:row-start-1 row-start-1 g3:row-end-4 row-end-4"
+            flush={true}
+          >
+            <MediaFallback icon={BriefcaseBusiness} label="Project" />
+          </GridCardSection>
+        )}
 
         <GridCardSection className="surface-title-stage col-start-1 g3:col-start-4 col-end-4 g3:col-end-7 g3:row-start-1 row-start-4 g3:row-end-4 row-end-7">
           <div className="flex h-full flex-col items-center justify-center px-4 md:px-8">
@@ -147,14 +170,33 @@ export const GridCardProjectHero = ({
                 name={getProjectTitleTransitionName(slug)}
                 {...frontendViewTransitionClasses.sharedTitle}
               >
-                <h2 className="tone-heading text-center font-bold text-2xl md:text-3xl lg:text-4xl">
+                <h2 className="tone-heading line-clamp-3 text-center font-bold text-2xl md:text-3xl lg:text-4xl">
                   {name}
                 </h2>
               </ViewTransition>
+              {meta ? (
+                <p className="card-eyebrow text-center font-mono text-label uppercase tracking-[0.16em]">
+                  {meta}
+                </p>
+              ) : null}
               {description ? (
                 <p className="tone-muted text-left text-base leading-relaxed">
                   {description}
                 </p>
+              ) : null}
+              {project.url && host ? (
+                <div className="flex justify-center">
+                  <a
+                    aria-label={`Visit ${host} (opens in a new tab)`}
+                    className="ui-action-button ui-focus-ring ui-interactive"
+                    href={project.url}
+                    rel="noopener"
+                    target="_blank"
+                  >
+                    <span>Visit {host}</span>
+                    <ExternalLink aria-hidden="true" className="h-4 w-4" />
+                  </a>
+                </div>
               ) : null}
             </div>
           </div>

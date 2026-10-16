@@ -24,8 +24,9 @@ import {
   type EmbeddableCollection,
   isEmbeddableCollection,
 } from "@/utilities/generate-embedding-helpers";
+import { getPublishedProject } from "@/utilities/public-project";
 import { isPopulated } from "@/utilities/relations";
-import { absoluteUrl } from "@/utilities/routes";
+import { absoluteUrl, projectRoute } from "@/utilities/routes";
 
 const MAX_EMBEDDINGS_LIMIT = 100;
 
@@ -60,6 +61,7 @@ function bulkExtras(collection: EmbeddableCollection, doc: EmbeddableDoc) {
     return {};
   }
   const post = doc as Post;
+  const project = getPublishedProject(post.project);
   return {
     topics: post.topics
       ?.map((topic) => (isPopulated(topic) ? topic.name : topic))
@@ -70,9 +72,7 @@ function bulkExtras(collection: EmbeddableCollection, doc: EmbeddableDoc) {
         name: String(author.name),
         username: author.username ? String(author.username) : "",
       })),
-    project: isPopulated(post.project)
-      ? { name: post.project.name, slug: post.project.slug }
-      : null,
+    project: project ? { name: project.name, slug: project.slug } : null,
   };
 }
 
@@ -96,7 +96,7 @@ async function embedProject(payload: Payload, id: number) {
     id: project.id,
     title: project.name || "",
     slug: project.slug,
-    url: absoluteUrl(`/${project.slug}`),
+    url: project.slug ? absoluteUrl(projectRoute(project.slug)) : null,
     updatedAt: project.updatedAt,
     ...result,
   };

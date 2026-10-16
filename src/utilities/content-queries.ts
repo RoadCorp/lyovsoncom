@@ -36,6 +36,37 @@ export function publicActivitiesWhere(): Where {
   };
 }
 
+export function publishedProjectsWhere(): Where {
+  return {
+    _status: {
+      equals: "published",
+    },
+  };
+}
+
+/** Published projects that credit this person. */
+export function lyovsonPortfolioWhere(lyovsonId: number): Where {
+  return {
+    people: {
+      contains: lyovsonId,
+    },
+    ...publishedProjectsWhere(),
+  };
+}
+
+/** Other published projects that credit any of these people. */
+export function moreWorkWhere(peopleIds: number[], excludeId: number): Where {
+  return {
+    people: {
+      in: peopleIds,
+    },
+    id: {
+      not_equals: excludeId,
+    },
+    ...publishedProjectsWhere(),
+  };
+}
+
 export function projectPostsWhere(projectId: number): Where {
   return {
     project: {

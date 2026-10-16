@@ -22,6 +22,10 @@ import {
   down as migration_20261002_170851_remove_plugins_jobs_contacts_sizes_down,
   up as migration_20261002_170851_remove_plugins_jobs_contacts_sizes_up,
 } from "./20261002_170851_remove_plugins_jobs_contacts_sizes";
+import {
+  down as migration_20261016_132922_portfolio_projects_down,
+  up as migration_20261016_132922_portfolio_projects_up,
+} from "./20261016_132922_portfolio_projects";
 
 export const migrations = [
   {
@@ -53,5 +57,10 @@ export const migrations = [
     up: migration_20261002_170851_remove_plugins_jobs_contacts_sizes_up,
     down: migration_20261002_170851_remove_plugins_jobs_contacts_sizes_down,
     name: "20261002_170851_remove_plugins_jobs_contacts_sizes",
+  },
+  {
+    up: migration_20261016_132922_portfolio_projects_up,
+    down: migration_20261016_132922_portfolio_projects_down,
+    name: "20261016_132922_portfolio_projects",
   },
 ];

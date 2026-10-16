@@ -38,9 +38,9 @@ Paid provider success, real pgvector ranking/SQL execution, authenticated CMS ed
 
 ## Latest local verification
 
-- October 2, 2026: 166 Vitest cases passed across 17 files.
-- 73 Playwright cases passed across Chromium, WebKit and Firefox against the read-only preview.
-- The build generated all routes, and type checking, SEO checks and lint (zero warnings) passed.
+- October 16, 2026 (portfolio case studies): 203 Vitest cases passed across 20 files.
+- 73 Playwright cases passed across Chromium, WebKit and Firefox against the read-only preview of a seeded dev branch.
+- The build generated all routes, and type checking, SEO checks and lint (zero warnings) passed. axe found no violations on a case study, a portfolio and a post-series project in both themes at desktop and phone width.
 - The audit's design and motion work was also checked outside the suite with scripted probes. They covered axe on 17 routes in both themes, one `startViewTransition` per navigation, the Back fade in all three engines, a single skeleton per detail route, and title overflow. The probes live in the session that ran them. The repeatable parts are the crawl diff and screenshots in `.claude/skills/visual-review`.
 
 ## Run

@@ -3,3 +3,5 @@
 export const CARD_COVER_IMAGE_SIZE = "250px";
 export const CARD_FULL_IMAGE_SIZE = "400px";
 export const CARD_THUMBNAIL_IMAGE_SIZE = "120px";
+// A 2×1 surface: two grid units plus the gap between them.
+export const CARD_WIDE_IMAGE_SIZE = "816px";

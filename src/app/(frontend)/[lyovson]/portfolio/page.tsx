@@ -30,7 +30,7 @@ async function PageContent({ params }: PageProps) {
 
   const collectionPageSchema = generateCollectionPageSchema({
     name: `${user.name} - Portfolio`,
-    description: `Project portfolio inferred from published work by ${user.name}.`,
+    description: `Sites and projects by ${user.name}.`,
     url: absoluteUrl(`/${username}/portfolio`),
     itemCount: projects.length,
     items: projects
@@ -46,12 +46,16 @@ async function PageContent({ params }: PageProps) {
       <JsonLd data={collectionPageSchema} />
 
       {projects.length > 0 ? (
-        projects.map((project) => (
-          <GridCardProject key={project.id} project={project} />
+        projects.map((project, index) => (
+          <GridCardProject
+            key={project.id}
+            priority={index === 0}
+            project={project}
+          />
         ))
       ) : (
         <GridCardEmptyState
-          description={`No project-linked posts were found for ${user.name} yet.`}
+          description={`${user.name} hasn't added any projects yet.`}
           title="Portfolio Coming Soon"
         />
       )}
@@ -71,12 +75,16 @@ export async function generateMetadata({
 
   const name = response.user.name || username;
   const title = `${name} Portfolio`;
-  const description = `Project portfolio inferred from published work by ${name}.`;
+  const description = `Sites and projects by ${name}, with how each was designed and built.`;
 
   return buildLyovsonMetadata({
     title,
     description,
     canonicalPath: `/${username}/portfolio`,
+    // An empty portfolio has nothing to index; the sitemap skips it too.
+    ...(response.projects.length === 0
+      ? { robots: { index: false, follow: true } }
+      : {}),
   });
 }
 

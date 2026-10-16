@@ -657,8 +657,86 @@ export interface Topic {
 export interface Project {
   id: number;
   name: string;
+  /**
+   * One-line summary shown on cards, under the title and in search results
+   */
   description?: string | null;
+  /**
+   * Cover image. For portfolio work, use the light-theme desktop screenshot
+   */
   image?: (number | null) | Media;
+  /**
+   * Shown on each person's portfolio
+   */
+  people?: (number | Lyovson)[] | null;
+  url?: string | null;
+  /**
+   * Optional, public repositories only
+   */
+  repository?: string | null;
+  /**
+   * Who the work was for
+   */
+  client?: string | null;
+  /**
+   * What was done, e.g. Design & engineering
+   */
+  role?: string | null;
+  startedAt?: string | null;
+  /**
+   * Leave empty while the work is ongoing
+   */
+  endedAt?: string | null;
+  /**
+   * Technologies, e.g. Next.js, Payload, Postgres
+   */
+  stack?: string[] | null;
+  /**
+   * Up to four measured numbers, e.g. 3 languages. Never estimates.
+   */
+  highlights?:
+    | {
+        value: string;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  caseStudy?:
+    | {
+        heading: string;
+        content: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  gallery?:
+    | {
+        image: number | Media;
+        /**
+         * What the screenshot shows, for screen readers
+         */
+        alt: string;
+        caption?: string | null;
+        /**
+         * When the screenshot was taken
+         */
+        capturedAt?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * Optional explicit overrides for search and social metadata. Leave blank to use content defaults.
    */
@@ -676,10 +754,88 @@ export interface Project {
      */
     image?: (number | null) | Media;
   };
+  /**
+   * Set automatically on first publish
+   */
+  publishedAt?: string | null;
   slug?: string | null;
   slugLock?: boolean | null;
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Lyovson family members
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "lyovsons".
+ */
+export interface Lyovson {
+  id: number;
+  /**
+   * Profile picture for this user
+   */
+  avatar?: (number | null) | Media;
+  /**
+   * Preferred font family for this user's page
+   */
+  font?: ('sans' | 'serif' | 'mono') | null;
+  /**
+   * Full name of the user
+   */
+  name: string;
+  username: string;
+  /**
+   * A short tagline or quote (like X/Facebook bio)
+   */
+  quote?: string | null;
+  /**
+   * A brief biography or description about this user
+   */
+  bio?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Social media profiles and links
+   */
+  socialLinks?:
+    | {
+        platform: 'x' | 'linkedin' | 'github' | 'instagram' | 'facebook' | 'youtube' | 'website';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  email?: string | null;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'lyovsons';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -803,79 +959,6 @@ export interface Note {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
-}
-/**
- * Lyovson family members
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "lyovsons".
- */
-export interface Lyovson {
-  id: number;
-  /**
-   * Profile picture for this user
-   */
-  avatar?: (number | null) | Media;
-  /**
-   * Preferred font family for this user's page
-   */
-  font?: ('sans' | 'serif' | 'mono') | null;
-  /**
-   * Full name of the user
-   */
-  name: string;
-  username: string;
-  /**
-   * A short tagline or quote (like X/Facebook bio)
-   */
-  quote?: string | null;
-  /**
-   * A brief biography or description about this user
-   */
-  bio?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  /**
-   * Social media profiles and links
-   */
-  socialLinks?:
-    | {
-        platform: 'x' | 'linkedin' | 'github' | 'instagram' | 'facebook' | 'youtube' | 'website';
-        url: string;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt: string;
-  createdAt: string;
-  email?: string | null;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  resetPasswordRequestedAt?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
-  collection: 'lyovsons';
 }
 /**
  * Log reading, watching, listening, playing, visiting, and learning activities
@@ -1203,6 +1286,37 @@ export interface ProjectsSelect<T extends boolean = true> {
   name?: T;
   description?: T;
   image?: T;
+  people?: T;
+  url?: T;
+  repository?: T;
+  client?: T;
+  role?: T;
+  startedAt?: T;
+  endedAt?: T;
+  stack?: T;
+  highlights?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        id?: T;
+      };
+  caseStudy?:
+    | T
+    | {
+        heading?: T;
+        content?: T;
+        id?: T;
+      };
+  gallery?:
+    | T
+    | {
+        image?: T;
+        alt?: T;
+        caption?: T;
+        capturedAt?: T;
+        id?: T;
+      };
   seo?:
     | T
     | {
@@ -1210,10 +1324,12 @@ export interface ProjectsSelect<T extends boolean = true> {
         description?: T;
         image?: T;
       };
+  publishedAt?: T;
   slug?: T;
   slugLock?: T;
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

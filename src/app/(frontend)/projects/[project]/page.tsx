@@ -6,16 +6,28 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { CollectionArchive } from "@/components/CollectionArchive";
 import { GridCardProjectHero } from "@/components/grid";
+import { GridCardProject } from "@/components/grid/card/project";
+import {
+  GridCardProjectFacts,
+  GridCardProjectHighlights,
+  ProjectCaseStudy,
+  ProjectGallery,
+} from "@/components/grid/card/project/details";
 import { JsonLd } from "@/components/json-ld";
 import { Pagination } from "@/components/Pagination";
-import type { Media, Project } from "@/payload-types";
+import { cn } from "@/lib/utils";
+import type { Lyovson, Media, Project } from "@/payload-types";
+import { publishedProjectsWhere } from "@/utilities/content-queries";
 import { ensureStaticParams } from "@/utilities/ensure-static-params";
 import {
+  generateArticleSchema,
   generateBreadcrumbSchema,
   generateCollectionPageSchema,
 } from "@/utilities/generate-json-ld";
 import { getProject } from "@/utilities/get-project";
 import { getProjectPosts } from "@/utilities/get-project-posts";
+import { getMoreWork } from "@/utilities/get-projects";
+import { getLyovsonPersonInput } from "@/utilities/lyovson-person";
 import { getPayloadClient } from "@/utilities/payload-client";
 import {
   absoluteUrl,
@@ -57,6 +69,118 @@ function getProjectSeoImage(project: ProjectWithSeo) {
   return null;
 }
 
+function getCasePeople(project: Project) {
+  return (project.people ?? []).filter(
+    (person): person is Lyovson => typeof person === "object" && person !== null
+  );
+}
+
+async function CaseStudyContent({
+  project,
+  posts,
+}: {
+  posts: NonNullable<Awaited<ReturnType<typeof getProjectPosts>>>;
+  project: Project & { slug: string };
+}) {
+  const people = getCasePeople(project);
+  const moreWork = await getMoreWork(
+    project.id,
+    people.map((person) => person.id)
+  );
+  const seoImage = getProjectSeoImage(project as ProjectWithSeo);
+  const creators = people
+    .map((person) => getLyovsonPersonInput(person))
+    .filter((person) => person !== null);
+  const sections = project.caseStudy ?? [];
+  const gallery = project.gallery ?? [];
+  const hasGallery = gallery.some(
+    (item) => typeof item.image === "object" && item.image !== null
+  );
+
+  const articleSchema = generateArticleSchema({
+    title: project.name,
+    description: project.description || undefined,
+    slug: project.slug,
+    url: absoluteUrl(projectRoute(project.slug)),
+    publishedAt: project.publishedAt || undefined,
+    updatedAt: project.updatedAt || undefined,
+    imageUrl: seoImage?.url ? absoluteUrl(seoImage.url) : undefined,
+    imageWidth: seoImage?.width || undefined,
+    imageHeight: seoImage?.height || undefined,
+    authors: creators,
+    keywords: project.stack ?? undefined,
+    about: project.url
+      ? {
+          name: project.name,
+          url: project.url,
+          creators,
+          dateCreated: project.startedAt || undefined,
+          keywords: project.stack ?? undefined,
+        }
+      : undefined,
+  });
+
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Projects", url: absoluteUrl(projectsRoute()) },
+    { name: project.name },
+  ]);
+
+  return (
+    <>
+      <h1 className="sr-only">{project.name}</h1>
+      <JsonLd data={articleSchema} />
+      <JsonLd data={breadcrumbSchema} />
+      <GridCardProjectHero project={project} />
+
+      <ProjectCaseStudy
+        className={cn(
+          "g2:col-start-2 g2:col-end-3 g2:row-auto g2:row-start-3",
+          "g3:col-end-4 g3:row-start-2 g3:w-[var(--grid-card-2x1)]"
+        )}
+        sections={sections}
+      />
+
+      {hasGallery ? (
+        <ProjectGallery
+          className={cn(
+            "col-start-1 col-end-2 row-start-5",
+            "g2:col-start-2 g2:col-end-3 g2:row-start-4",
+            "g3:col-end-4 g3:row-start-3 g3:w-[var(--grid-card-2x1)]"
+          )}
+          items={gallery}
+        />
+      ) : null}
+
+      <aside
+        aria-label={`About ${project.name}`}
+        className={cn(
+          "col-start-1 col-end-2 grid auto-rows-max gap-4 self-start",
+          hasGallery ? "row-start-6 row-end-7" : "row-start-5 row-end-6",
+          "g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-5"
+        )}
+      >
+        <GridCardProjectFacts project={project} />
+        <GridCardProjectHighlights highlights={project.highlights ?? []} />
+        {moreWork.map((work) => (
+          <GridCardProject key={work.id} project={work} />
+        ))}
+      </aside>
+
+      {posts.docs.length > 0 ? <CollectionArchive posts={posts.docs} /> : null}
+      {posts.totalPages > 1 && posts.page ? (
+        <Pagination
+          getPageHref={(pageNumber) =>
+            projectPageRoute(project.slug, pageNumber)
+          }
+          page={posts.page}
+          totalPages={posts.totalPages}
+        />
+      ) : null}
+    </>
+  );
+}
+
 async function PageContent({ params: paramsPromise }: PageProps) {
   const { project: projectSlug } = await paramsPromise;
 
@@ -68,6 +192,15 @@ async function PageContent({ params: paramsPromise }: PageProps) {
   const response = await getProjectPosts(projectSlug);
   if (!response) {
     return notFound();
+  }
+
+  if (project.caseStudy?.length && project.slug) {
+    return (
+      <CaseStudyContent
+        posts={response}
+        project={project as Project & { slug: string }}
+      />
+    );
   }
 
   const { docs, page, totalPages } = response;
@@ -123,10 +256,13 @@ export async function generateMetadata({
   }
   const projectWithSeo = project as ProjectWithSeo;
 
+  const isCaseStudy = Boolean(project.caseStudy?.length);
   const description =
     projectWithSeo.seo?.description ||
     project.description ||
-    `Posts and content from the ${project.name} project`;
+    (isCaseStudy
+      ? `${project.name}: how it was designed and built`
+      : `Posts and content from the ${project.name} project`);
   const title = projectWithSeo.seo?.title || project.name;
   const seoImage = getProjectSeoImage(projectWithSeo);
 
@@ -134,14 +270,9 @@ export async function generateMetadata({
     title,
     description,
     canonicalPath: projectRoute(projectSlug),
-    keywords: [
-      project.name,
-      "project",
-      "collection",
-      "posts",
-      "articles",
-      "Lyóvson",
-    ],
+    keywords: isCaseStudy
+      ? [project.name, "case study", ...(project.stack ?? []), "Lyóvson"]
+      : [project.name, "project", "collection", "posts", "articles", "Lyóvson"],
     image: seoImage?.url
       ? {
           url: absoluteUrl(seoImage.url),
@@ -166,7 +297,10 @@ export async function generateStaticParams() {
   const payload = await getPayloadClient();
   const response = await payload.find({
     collection: "projects",
+    depth: 0,
     limit: 1000,
+    select: { slug: true },
+    where: publishedProjectsWhere(),
   });
 
   return ensureStaticParams(

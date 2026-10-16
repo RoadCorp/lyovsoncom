@@ -27,3 +27,6 @@ src/utilities/migrate-*.ts
 # Local lint reports
 lint-result.txt
 .claude/worktrees/
+
+# Portfolio screenshots captured by scripts/capture-portfolio-screenshots.mjs
+tmp/

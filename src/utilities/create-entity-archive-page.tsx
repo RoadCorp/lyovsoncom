@@ -9,6 +9,7 @@ import { JsonLd } from "@/components/json-ld";
 import { Pagination } from "@/components/Pagination";
 import { PublicPageBoundary } from "@/components/public-page-boundary";
 import { getPaginatedStaticParams } from "@/utilities/archive";
+import { publishedProjectsWhere } from "@/utilities/content-queries";
 import { ensureStaticParams } from "@/utilities/ensure-static-params";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getProjectPostCount } from "@/utilities/get-project-posts";
@@ -36,7 +37,10 @@ async function listProjectSlugs() {
   const payload = await getPayloadClient();
   const projects = await payload.find({
     collection: "projects",
+    depth: 0,
     limit: 1000,
+    select: { slug: true },
+    where: publishedProjectsWhere(),
   });
 
   return projects.docs.flatMap((project) =>

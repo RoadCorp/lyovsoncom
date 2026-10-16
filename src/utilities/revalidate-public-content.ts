@@ -1,7 +1,7 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { activityFullRoute, activityRoute } from "@/utilities/routes";
 
-export type PublicCollection = "posts" | "notes" | "activities";
+export type PublicCollection = "posts" | "notes" | "activities" | "projects";
 interface PublicDocument {
   _status?: "draft" | "published" | null;
   finishedAt?: string | null;
@@ -11,10 +11,13 @@ interface PublicDocument {
   visibility?: string | null;
 }
 
+// Only notes and activities have a visibility field.
+const ALWAYS_VISIBLE = new Set<PublicCollection>(["posts", "projects"]);
+
 function isPublic(collection: PublicCollection, doc?: PublicDocument | null) {
   return (
     doc?._status === "published" &&
-    (collection === "posts" || doc.visibility === "public")
+    (ALWAYS_VISIBLE.has(collection) || doc.visibility === "public")
   );
 }
 

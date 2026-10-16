@@ -1,10 +1,13 @@
 import { cacheLife, cacheTag } from "next/cache";
-import type { Project } from "@/payload-types";
-import { lyovsonPostsWhere } from "@/utilities/content-queries";
+import { lyovsonPortfolioWhere } from "@/utilities/content-queries";
 import {
   getLyovsonProfile,
   type PublicProfile,
 } from "@/utilities/get-lyovson-profile";
+import {
+  type ProjectCardData,
+  projectCardSelect,
+} from "@/utilities/get-projects";
 import {
   countLyovsonContent,
   findLyovsonActivities,
@@ -33,7 +36,7 @@ export interface LyovsonFeedResponse {
 }
 
 export interface LyovsonPortfolioResponse {
-  projects: Project[];
+  projects: ProjectCardData[];
   user: PublicProfile;
 }
 
@@ -227,12 +230,11 @@ export async function getLyovsonPortfolioProjects(
 ): Promise<LyovsonPortfolioResponse | null> {
   "use cache";
 
-  cacheTag("posts");
   cacheTag("projects");
   cacheTag("lyovsons");
   cacheTag(`lyovson-${username}`);
   cacheTag(`lyovson-${username}-portfolio`);
-  cacheLife("posts");
+  cacheLife("projects");
 
   const user = await getLyovsonProfile(username);
   if (!user) {
@@ -241,43 +243,20 @@ export async function getLyovsonPortfolioProjects(
 
   const payload = await getPayloadClient();
 
-  const posts = await payload.find({
-    collection: "posts",
-    select: { project: true },
+  const projects = await payload.find({
+    collection: "projects",
+    depth: 1,
     pagination: false,
-    depth: 2,
-    limit: 500,
-    where: {
-      AND: [
-        lyovsonPostsWhere(user.id),
-        {
-          project: {
-            exists: true,
-          },
-        },
-      ],
-    },
-    sort: "-publishedAt",
+    select: projectCardSelect,
+    // Postgres sorts missing dates first when descending; portfolio
+    // projects require a start month, so publishedAt only breaks ties.
+    sort: ["-startedAt", "-publishedAt"],
+    where: lyovsonPortfolioWhere(user.id),
     overrideAccess: true,
   });
 
-  const uniqueProjects = new Map<string, Project>();
-
-  for (const post of posts.docs) {
-    if (!post.project || typeof post.project !== "object") {
-      continue;
-    }
-
-    const project = post.project as Project;
-    const projectId = String(project.id);
-
-    if (!uniqueProjects.has(projectId)) {
-      uniqueProjects.set(projectId, project);
-    }
-  }
-
   return {
     user,
-    projects: [...uniqueProjects.values()],
+    projects: projects.docs,
   };
 }

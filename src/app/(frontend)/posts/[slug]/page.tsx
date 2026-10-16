@@ -29,6 +29,7 @@ import { getPost } from "@/utilities/get-post";
 import { getRelatedPosts } from "@/utilities/get-related-content";
 import { getLyovsonPersonInput } from "@/utilities/lyovson-person";
 import { getPayloadClient } from "@/utilities/payload-client";
+import { getPublishedProject } from "@/utilities/public-project";
 import { absoluteUrl, postRoute, postsRoute } from "@/utilities/routes";
 import {
   buildNotFoundMetadata,
@@ -75,9 +76,7 @@ function getPostMetaImage(post: PostWithLegacyMeta) {
 }
 
 function getPostSectionSlug(post: Post) {
-  return post.project && typeof post.project === "object" && post.project.slug
-    ? post.project.slug
-    : null;
+  return getPublishedProject(post.project)?.slug ?? null;
 }
 
 function getPostTwitterCreator(post: Post) {

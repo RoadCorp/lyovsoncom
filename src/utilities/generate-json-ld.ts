@@ -76,14 +76,24 @@ const websiteData: WebSiteSchema = {
 /**
  * Parameters for generating an Article schema
  */
+interface ArticleAuthorParams {
+  avatarUrl?: string;
+  bio?: string;
+  name: string;
+  sameAs?: string[];
+  username: string;
+}
+
 interface ArticleDataParams {
-  authors?: Array<{
-    avatarUrl?: string;
-    bio?: string;
+  /** For case studies: the site the article describes. */
+  about?: {
+    creators?: ArticleAuthorParams[];
+    dateCreated?: string;
+    keywords?: string[];
     name: string;
-    sameAs?: string[];
-    username: string;
-  }>;
+    url: string;
+  };
+  authors?: ArticleAuthorParams[];
   description?: string;
   imageHeight?: number;
   imageUrl?: string;
@@ -172,6 +182,20 @@ export function generateArticleSchema(data: ArticleDataParams): ArticleSchema {
       "@id": articleUrl,
     },
     keywords: data.keywords?.join(", "),
+    about: data.about
+      ? {
+          "@type": "WebSite",
+          name: data.about.name,
+          url: data.about.url,
+          creator: data.about.creators?.length
+            ? data.about.creators.map((creator) =>
+                generatePersonSchema(creator)
+              )
+            : undefined,
+          dateCreated: data.about.dateCreated,
+          keywords: data.about.keywords?.join(", "),
+        }
+      : undefined,
     wordCount: data.wordCount,
     inLanguage: "en-US",
   };

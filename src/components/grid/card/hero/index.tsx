@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import type { Activity, Note, Post, Topic } from "@/payload-types";
 import { formatShortDate } from "@/utilities/date";
 import { dedupeRelationItemsById } from "@/utilities/dedupe-relation-items-by-id";
+import { getPublishedProject } from "@/utilities/public-project";
 import {
   activitiesRoute,
   getActivityDateSlug,
@@ -123,10 +124,7 @@ function PostHeroFooter({ post }: { post: Post }) {
   const topics = dedupeRelationItemsById(post.topics).filter(
     (topic): topic is Topic => typeof topic === "object" && Boolean(topic.slug)
   );
-  const project =
-    post.project && typeof post.project === "object" && post.project.slug
-      ? post.project
-      : null;
+  const project = getPublishedProject(post.project);
 
   return (
     <footer className="hero-footer flex flex-col gap-3 pt-4">
@@ -149,7 +147,7 @@ function PostHeroFooter({ post }: { post: Post }) {
             <span>in</span>
             <AppLink
               className="ui-focus-ring tone-heading font-medium underline-offset-4 hover:underline"
-              href={projectRoute(project.slug as string)}
+              href={projectRoute(project.slug)}
               prefetch={false}
             >
               {project.name}

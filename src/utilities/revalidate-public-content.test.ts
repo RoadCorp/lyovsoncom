@@ -1,6 +1,7 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { revalidatePost } from "@/collections/Posts/hooks/revalidate-post";
+import { revalidateProject } from "@/collections/Projects/hooks";
 import {
   hasPublicChanges,
   isDraftOnlySave,
@@ -122,6 +123,48 @@ describe("draft and autosave saves", () => {
     expect(isDraftOnlySave({ query: { draft: "true" } }, published)).toBe(
       false
     );
+  });
+});
+
+describe("project publication", () => {
+  const project = {
+    _status: "published",
+    name: "Avenews",
+    slug: "avenews",
+  } as const;
+  const runHook = (
+    doc: Record<string, unknown>,
+    query: Record<string, string> = {}
+  ) =>
+    revalidateProject({
+      context: {},
+      doc,
+      previousDoc: project,
+      req: { query },
+    } as never);
+
+  it("withdraws the old page and post links on unpublish", () => {
+    runHook({ ...project, _status: "draft" });
+    expect(revalidateTag).toHaveBeenCalledWith("projects", { expire: 0 });
+    expect(revalidateTag).toHaveBeenCalledWith("project-avenews", {
+      expire: 0,
+    });
+    expect(revalidatePath).toHaveBeenCalledWith("/projects/avenews");
+    expect(revalidateTag).toHaveBeenCalledWith("posts", { expire: 0 });
+  });
+
+  it("leaves the published project cached on autosave", () => {
+    runHook(
+      { ...project, _status: "draft" },
+      { autosave: "true", draft: "true" }
+    );
+    expect(revalidateTag).not.toHaveBeenCalled();
+  });
+
+  it("keeps post caches when only case-study fields change", () => {
+    runHook({ ...project, role: "Design & engineering" });
+    expect(revalidateTag).toHaveBeenCalledWith("project-avenews", "projects");
+    expect(revalidateTag).not.toHaveBeenCalledWith("posts", expect.anything());
   });
 });
 

@@ -10,6 +10,7 @@ import { TopicPillList } from "@/components/topic-pill";
 import { formatShortDate } from "@/utilities/date";
 import { dedupeRelationItemsById } from "@/utilities/dedupe-relation-items-by-id";
 import type { PostSummary } from "@/utilities/post-summary";
+import { getPublishedProject } from "@/utilities/public-project";
 import { lyovsonRoute, postRoute, projectRoute } from "@/utilities/routes";
 
 export interface GridCardPostProps {
@@ -32,29 +33,16 @@ interface ProjectLinkData {
 function getProjectLinkData(
   project: PostSummary["project"]
 ): ProjectLinkData | null {
-  if (!project) {
+  const published = getPublishedProject(project);
+  if (!published) {
     return null;
   }
 
-  if (typeof project === "number" || typeof project === "string") {
-    return {
-      href: "/projects",
-      key: project,
-      label: "Project",
-    };
-  }
-
-  const projectName =
-    typeof project.name === "string" && project.name.trim().length > 0
-      ? project.name
-      : "Project";
+  const projectName = published.name?.trim() || "Project";
 
   return {
-    href:
-      typeof project.slug === "string" && project.slug.trim().length > 0
-        ? projectRoute(project.slug)
-        : "/projects",
-    key: project.id ?? projectName,
+    href: projectRoute(published.slug),
+    key: published.id ?? projectName,
     label: projectName,
   };
 }
@@ -188,7 +176,9 @@ export const GridCardPostFull = ({
               prefetch={false}
             >
               <BriefcaseBusiness aria-hidden="true" className="h-5 w-5" />
-              <span className="font-medium text-xs">{projectLink.label}</span>
+              <span className="line-clamp-2 font-medium text-xs">
+                {projectLink.label}
+              </span>
             </AppLink>
           ) : null}
         </GridCardSection>

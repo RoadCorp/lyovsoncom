@@ -38,7 +38,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
 
     width = fullWidth || 0;
     height = fullHeight || 0;
-    alt = altFromResource || "";
+    alt = altFromProps || altFromResource || "";
 
     src = url || "";
   }

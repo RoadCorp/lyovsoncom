@@ -17,6 +17,7 @@ import {
   TOPIC_POSTS_PER_PAGE,
 } from "@/utilities/archive";
 import { getLyovsonFeedCounts } from "@/utilities/get-lyovson-feed";
+import { getRelationId } from "@/utilities/relations";
 import {
   absoluteUrl,
   activitiesPageRoute,
@@ -294,7 +295,8 @@ function getActivityRoutes(activities: Activity[], now: Date): Sitemap {
 
 async function getLyovsonRoutes(
   username: string,
-  lastModified: Date
+  lastModified: Date,
+  hasPortfolio: boolean
 ): Promise<Sitemap> {
   const counts = await getLyovsonFeedCounts(username);
   const archives: [(pageNumber: number) => string, number, number][] = [
@@ -334,12 +336,17 @@ async function getLyovsonRoutes(
       "monthly",
       0.7
     ),
-    sitemapEntry(
-      absoluteUrl(lyovsonPortfolioRoute(username)),
-      lastModified,
-      "weekly",
-      0.7
-    ),
+    // An empty portfolio is noindex, so it stays out of the sitemap.
+    ...(hasPortfolio
+      ? [
+          sitemapEntry(
+            absoluteUrl(lyovsonPortfolioRoute(username)),
+            lastModified,
+            "weekly",
+            0.7
+          ),
+        ]
+      : []),
     sitemapEntry(
       absoluteUrl(lyovsonContactRoute(username)),
       lastModified,
@@ -379,15 +386,20 @@ async function getLyovsonRoutes(
 /** Author pages discovered from the CMS. */
 async function getAllLyovsonRoutes(
   lyovsons: Lyovson[],
+  projects: Project[],
   now: Date
 ): Promise<Sitemap> {
+  const credited = new Set(
+    projects.flatMap((project) => (project.people ?? []).map(getRelationId))
+  );
   const routeGroups = await Promise.all(
     lyovsons
       .filter((lyovson) => Boolean(lyovson?.username))
       .map((lyovson) =>
         getLyovsonRoutes(
           lyovson.username,
-          lyovson.updatedAt ? new Date(lyovson.updatedAt) : now
+          lyovson.updatedAt ? new Date(lyovson.updatedAt) : now,
+          credited.has(lyovson.id)
         )
       )
   );
@@ -424,6 +436,6 @@ export async function getContentRoutes(
     ...getTopicRoutes(topics, topicPostCounts),
     ...getNoteRoutes(notes, now),
     ...getActivityRoutes(activities, now),
-    ...(await getAllLyovsonRoutes(lyovsons, now)),
+    ...(await getAllLyovsonRoutes(lyovsons, projects, now)),
   ];
 }

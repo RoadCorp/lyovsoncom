@@ -111,7 +111,7 @@ test("author context survives section changes and a journey beyond route retenti
   await page.goto("/");
   await page.getByRole("link", { name: "Rafa", exact: true }).first().click();
   await expect(page).toHaveURL((url) => url.pathname === "/rafa");
-  for (const section of ["Posts", "Notes", "Activities"]) {
+  for (const section of ["Posts", "Notes", "Activities", "Portfolio"]) {
     await page.getByRole("button", { name: "Menu", exact: true }).click();
     await page
       .getByRole("link", { name: section, exact: true })
@@ -125,6 +125,7 @@ test("author context survives section changes and a journey beyond route retenti
   await page.getByRole("link", { name: "Jess", exact: true }).first().click();
   await expect(page).toHaveURL((url) => url.pathname === "/jess");
   for (const route of [
+    "/rafa/portfolio",
     "/rafa/activities",
     "/rafa/notes",
     "/rafa/posts",

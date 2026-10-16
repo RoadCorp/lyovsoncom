@@ -46,6 +46,16 @@ export type OrganizationSchema = BaseSchema & {
   email?: string;
 };
 
+// The site a case study is about (nested, so no @context).
+export interface AboutWebSite {
+  "@type": "WebSite";
+  creator?: PersonSchema[];
+  dateCreated?: string;
+  keywords?: string;
+  name: string;
+  url: string;
+}
+
 // Article schema for blog posts
 export type ArticleSchema = BaseSchema & {
   "@type": "Article" | "BlogPosting" | "TechArticle";
@@ -62,6 +72,7 @@ export type ArticleSchema = BaseSchema & {
   };
   keywords?: string;
   articleSection?: string;
+  about?: AboutWebSite;
   wordCount?: number;
   inLanguage?: string;
 };
