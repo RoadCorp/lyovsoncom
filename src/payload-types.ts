@@ -692,12 +692,16 @@ export interface Project {
    */
   stack?: string[] | null;
   /**
-   * Up to four measured numbers, e.g. 3 languages. Never estimates.
+   * Up to four measured numbers, e.g. 3 languages. Never estimates. Numbers that grow can read a live source; the typed value shows if it can't be read.
    */
   highlights?:
     | {
         value: string;
         label: string;
+        /**
+         * Optional: read the current number, refreshed daily
+         */
+        live?: ('lyovson-posts' | 'lyovson-activities' | 'avenews-publications' | 'concernedeu-releases') | null;
         id?: string | null;
       }[]
     | null;
@@ -1299,6 +1303,7 @@ export interface ProjectsSelect<T extends boolean = true> {
     | {
         value?: T;
         label?: T;
+        live?: T;
         id?: T;
       };
   caseStudy?:

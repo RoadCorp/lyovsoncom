@@ -27,6 +27,7 @@ import {
 import { getProject } from "@/utilities/get-project";
 import { getProjectPosts } from "@/utilities/get-project-posts";
 import { getMoreWork } from "@/utilities/get-projects";
+import { resolveHighlights } from "@/utilities/live-metrics";
 import { getLyovsonPersonInput } from "@/utilities/lyovson-person";
 import { getPayloadClient } from "@/utilities/payload-client";
 import {
@@ -83,10 +84,13 @@ async function CaseStudyContent({
   project: Project & { slug: string };
 }) {
   const people = getCasePeople(project);
-  const moreWork = await getMoreWork(
-    project.id,
-    people.map((person) => person.id)
-  );
+  const [moreWork, highlights] = await Promise.all([
+    getMoreWork(
+      project.id,
+      people.map((person) => person.id)
+    ),
+    resolveHighlights(project.highlights ?? []),
+  ]);
   const seoImage = getProjectSeoImage(project as ProjectWithSeo);
   const creators = people
     .map((person) => getLyovsonPersonInput(person))
@@ -161,7 +165,7 @@ async function CaseStudyContent({
         )}
       >
         <GridCardProjectFacts project={project} />
-        <GridCardProjectHighlights highlights={project.highlights ?? []} />
+        <GridCardProjectHighlights highlights={highlights} />
         {moreWork.map((work) => (
           <GridCardProject key={work.id} project={work} />
         ))}

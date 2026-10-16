@@ -26,6 +26,10 @@ import {
   down as migration_20261016_132922_portfolio_projects_down,
   up as migration_20261016_132922_portfolio_projects_up,
 } from "./20261016_132922_portfolio_projects";
+import {
+  down as migration_20261016_145009_live_highlights_down,
+  up as migration_20261016_145009_live_highlights_up,
+} from "./20261016_145009_live_highlights";
 
 export const migrations = [
   {
@@ -62,5 +66,10 @@ export const migrations = [
     up: migration_20261016_132922_portfolio_projects_up,
     down: migration_20261016_132922_portfolio_projects_down,
     name: "20261016_132922_portfolio_projects",
+  },
+  {
+    up: migration_20261016_145009_live_highlights_up,
+    down: migration_20261016_145009_live_highlights_down,
+    name: "20261016_145009_live_highlights",
   },
 ];

@@ -7,6 +7,7 @@ import { richEditorConfig } from "@/fields/lexical-configs";
 import { publishedAtField } from "@/fields/published-at";
 import { seoField } from "@/fields/seo";
 import { slugField } from "@/fields/slug";
+import { LIVE_METRICS } from "@/utilities/live-metric-options";
 import { revalidateDeletedProject, revalidateProject } from "./hooks";
 
 const MAX_HIGHLIGHTS = 4;
@@ -164,7 +165,7 @@ export const Projects: CollectionConfig<"projects"> = {
               maxRows: MAX_HIGHLIGHTS,
               admin: {
                 description:
-                  "Up to four measured numbers, e.g. 3 languages. Never estimates.",
+                  "Up to four measured numbers, e.g. 3 languages. Never estimates. Numbers that grow can read a live source; the typed value shows if it can't be read.",
               },
               fields: [
                 {
@@ -172,6 +173,18 @@ export const Projects: CollectionConfig<"projects"> = {
                   fields: [
                     { name: "value", type: "text", required: true },
                     { name: "label", type: "text", required: true },
+                    {
+                      name: "live",
+                      type: "select",
+                      label: "Live source",
+                      options: Object.entries(LIVE_METRICS).map(
+                        ([value, label]) => ({ label, value })
+                      ),
+                      admin: {
+                        description:
+                          "Optional: read the current number, refreshed daily",
+                      },
+                    },
                   ],
                 },
               ],
