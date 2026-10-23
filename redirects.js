@@ -88,6 +88,13 @@ const redirects = () => {
       destination: "/posts/siri--gemini-somehow-it-makes-sense",
       permanent: true,
     },
+    // Published Oct 22 with a trailing hyphen (title ended in a space) and
+    // already shared on X.
+    {
+      source: "/posts/laurel-the-woman-who-collects-worlds-",
+      destination: "/posts/laurel-the-woman-who-collects-worlds",
+      permanent: true,
+    },
   ];
 
   // Redirect old project index pages to new format

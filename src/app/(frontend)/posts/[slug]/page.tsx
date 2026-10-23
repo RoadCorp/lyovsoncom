@@ -27,7 +27,10 @@ import {
 } from "@/utilities/generate-json-ld";
 import { getPost } from "@/utilities/get-post";
 import { getRelatedPosts } from "@/utilities/get-related-content";
-import { getLyovsonPersonInput } from "@/utilities/lyovson-person";
+import {
+  getLyovsonPersonInput,
+  getLyovsonSameAs,
+} from "@/utilities/lyovson-person";
 import { getPayloadClient } from "@/utilities/payload-client";
 import { getPublishedProject } from "@/utilities/public-project";
 import { absoluteUrl, postRoute, postsRoute } from "@/utilities/routes";
@@ -79,10 +82,20 @@ function getPostSectionSlug(post: Post) {
   return getPublishedProject(post.project)?.slug ?? null;
 }
 
+const X_PROFILE_PATTERN =
+  /^https?:\/\/(?:www\.)?(?:x|twitter)\.com\/(\w+)\/?$/i;
+
+/** The first author's X handle; their site username is not an X account. */
 function getPostTwitterCreator(post: Post) {
-  return post.populatedAuthors?.[0]?.username
-    ? `@${post.populatedAuthors[0].username}`
-    : "@lyovson";
+  const author = post.authors?.[0];
+  const sameAs =
+    typeof author === "object" && author !== null
+      ? getLyovsonSameAs(author as Lyovson)
+      : undefined;
+  const handle = sameAs
+    ?.map((url) => url.match(X_PROFILE_PATTERN)?.[1])
+    .find(Boolean);
+  return handle ? `@${handle}` : undefined;
 }
 
 function getPostOtherMetadata(post: Post, keywords: string[] | undefined) {

@@ -1,9 +1,14 @@
 import type { FieldHook } from "payload";
 
+// Trims edge hyphens (a title ending in a space gave "/posts/laurel-…-worlds-")
+// but keeps inner "--": collapsing would rename live URLs like
+// /posts/stress--success the next time the locked slug re-syncs.
 export const formatSlug = (val: string): string =>
   val
+    .trim()
     .replace(/ /g, "-")
     .replace(/[^\w-]+/g, "")
+    .replace(/^-+|-+$/g, "")
     .toLowerCase();
 
 function getFallbackData({
