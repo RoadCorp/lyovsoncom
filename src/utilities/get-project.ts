@@ -1,7 +1,14 @@
 import { cacheLife, cacheTag } from "next/cache";
-import type { Project } from "@/payload-types";
+import type { Project, ProjectsSelect } from "@/payload-types";
 import { publishedProjectsWhere } from "@/utilities/content-queries";
 import { getPayloadClient } from "@/utilities/payload-client";
+
+// Payload's authorship stamps never render. With overrideAccess they would
+// populate editor accounts into the cached project.
+const publicProjectSelect = {
+  createdBy: false,
+  updatedBy: false,
+} as const satisfies ProjectsSelect<false>;
 
 export async function getProject(slug: string): Promise<Project | null> {
   "use cache";
@@ -20,6 +27,7 @@ export async function getProject(slug: string): Promise<Project | null> {
       ...publishedProjectsWhere(),
     },
     limit: 1,
+    select: publicProjectSelect,
     // Case studies render their people, and Lyovsons are an auth collection
     // that anonymous access cannot read.
     overrideAccess: true,
