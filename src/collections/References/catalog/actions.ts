@@ -1,6 +1,7 @@
 "use server";
 
 import { headers } from "next/headers";
+import { isLyovson } from "@/access/is-lyovson";
 import { getPayloadClient } from "@/utilities/payload-client";
 import { type CatalogItem, type ReferenceType, SOURCE_LABELS } from "./shared";
 import {
@@ -16,11 +17,11 @@ import {
   searchWikidata,
 } from "./wikidata";
 
-// Server actions are publicly callable, so each one checks for a CMS user.
+// Server actions are publicly callable, so each one checks for a Lyovson.
 async function requireUser() {
   const payload = await getPayloadClient();
   const { user } = await payload.auth({ headers: await headers() });
-  if (!user) {
+  if (!isLyovson(user)) {
     throw new Error("Unauthorized");
   }
   return { payload, user };
