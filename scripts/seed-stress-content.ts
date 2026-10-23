@@ -119,6 +119,7 @@ const [{ docs: topics }, { docs: people }, { docs: images }] =
       depth: 0,
       limit: TOPIC_COUNT,
       select: {},
+      overrideAccess: true,
     }),
     payload.find({
       collection: "lyovsons",
@@ -126,6 +127,7 @@ const [{ docs: topics }, { docs: people }, { docs: images }] =
       limit: 2,
       select: {},
       sort: "id",
+      overrideAccess: true,
     }),
     payload.find({
       collection: "media",
@@ -133,6 +135,7 @@ const [{ docs: topics }, { docs: people }, { docs: images }] =
       limit: 200,
       select: { width: true, height: true },
       where: { mimeType: { like: "image/" } },
+      overrideAccess: true,
     }),
   ]);
 const authors = people.slice(0, 1);
@@ -154,6 +157,7 @@ async function upsert(
     depth: 0,
     limit: 1,
     select: {},
+    overrideAccess: true,
   });
   const common = {
     collection,

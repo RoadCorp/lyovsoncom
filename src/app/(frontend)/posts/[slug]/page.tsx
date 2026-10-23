@@ -283,6 +283,7 @@ export async function generateStaticParams() {
       slug: true,
     },
     where: publishedPostsWhere(),
+    overrideAccess: true,
   });
 
   return ensureStaticParams(

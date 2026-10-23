@@ -76,6 +76,7 @@ export async function POST(request: NextRequest) {
       depth: 0,
       select: {},
       disableErrors: true,
+      overrideAccess: true,
     });
 
     if (!exists) {
@@ -110,6 +111,7 @@ export async function POST(request: NextRequest) {
         embedding_dimensions: true,
         ...(collection === "posts" ? { recommended_post_ids: true } : {}),
       },
+      overrideAccess: true,
     })) as {
       embedding_dimensions?: number | null;
       embedding_model?: string | null;

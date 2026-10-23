@@ -40,6 +40,7 @@ async function getReferenceTitle(
       depth: 0,
       select: { title: true },
       req,
+      overrideAccess: true,
     });
     return ref?.title ? String(ref.title) : null;
   } catch {

@@ -40,6 +40,7 @@ export async function getProjects(): Promise<ProjectCardData[] | null> {
     select: projectCardSelect,
     sort: "-createdAt",
     where: publishedProjectsWhere(),
+    overrideAccess: true,
   });
 
   if (!projects?.docs?.[0]) {
@@ -72,6 +73,7 @@ export async function getMoreWork(
     select: projectCardSelect,
     sort: ["-startedAt", "-publishedAt"],
     where: moreWorkWhere(peopleIds, projectId),
+    overrideAccess: true,
   });
 
   return projects.docs;

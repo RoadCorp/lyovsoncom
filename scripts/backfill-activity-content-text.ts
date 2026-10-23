@@ -9,12 +9,12 @@
  * versions, embedding stale markers or cache invalidation run.
  */
 import configPromise from "@payload-config";
-import { createLocalReq, getPayload } from "payload";
+import { createPayloadRequest, getPayload } from "payload";
 import { populateContentTextHook } from "@/collections/Activities/hooks/populate-content-text";
 
 const write = process.env.BACKFILL_WRITE === "1";
 const payload = await getPayload({ config: await configPromise });
-const req = await createLocalReq({}, payload);
+const req = await createPayloadRequest({ payload });
 
 const { docs } = await payload.find({
   collection: "activities",

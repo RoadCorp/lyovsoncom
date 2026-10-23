@@ -213,6 +213,7 @@ export async function hydrateSearchResults(results: SearchResult[]) {
           depth: 1,
           select: publicContentSelect,
           limit: postsResults.length,
+          overrideAccess: true,
         })
       : Promise.resolve({ docs: [] as Post[] }),
     notesResults.length > 0
@@ -231,6 +232,7 @@ export async function hydrateSearchResults(results: SearchResult[]) {
           depth: 1,
           select: publicContentSelect,
           limit: notesResults.length,
+          overrideAccess: true,
         })
       : Promise.resolve({ docs: [] as Note[] }),
     activitiesResults.length > 0

@@ -43,6 +43,8 @@ export const Projects: CollectionConfig<"projects"> = {
     create: authenticated,
     delete: authenticated,
     read: authenticatedOrPublished,
+    // Payload 4 lets versions inherit `read`; keep drafts and history private.
+    readVersions: authenticated,
     update: authenticated,
   },
   admin: {
@@ -267,4 +269,5 @@ export const Projects: CollectionConfig<"projects"> = {
     afterDelete: [revalidateDeletedProject],
   },
   versions: draftVersions(),
+  authorship: false,
 };

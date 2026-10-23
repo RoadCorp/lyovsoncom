@@ -27,6 +27,8 @@ export const References: CollectionConfig<"references"> = {
     create: authenticated,
     delete: authenticated,
     read: anyone,
+    // Payload 4 lets versions inherit `read`; keep drafts and history private.
+    readVersions: authenticated,
     update: authenticated,
   },
   defaultPopulate: {
@@ -144,4 +146,5 @@ export const References: CollectionConfig<"references"> = {
     ],
   },
   versions: draftVersions(),
+  authorship: false,
 };

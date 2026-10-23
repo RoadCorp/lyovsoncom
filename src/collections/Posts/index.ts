@@ -28,6 +28,8 @@ export const Posts: CollectionConfig<"posts"> = {
     create: authenticated,
     delete: authenticated,
     read: authenticatedOrPublished,
+    // Payload 4 lets versions inherit `read`; keep drafts and history private.
+    readVersions: authenticated,
     update: authenticated,
   },
   admin: {
@@ -253,6 +255,7 @@ export const Posts: CollectionConfig<"posts"> = {
     afterDelete: [revalidateDelete],
   },
   versions: draftVersions(),
+  authorship: false,
 };
 
 // NOTE: Migrated from categories/tags to types/topics/projects structure

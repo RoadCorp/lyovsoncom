@@ -1,11 +1,11 @@
 {
   "name": "lyovsoncom",
   "version": "3.0.0",
-  "description": "The official website of Rafa and Jess Lyóvson",
+  "description": "The official website of Rafa and Jess Ly\u00f3vson",
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
+    "build": "cross-env NODE_OPTIONS=--no-deprecation payload build",
     "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
     "dev:https": "cross-env NODE_OPTIONS=--no-deprecation next dev --experimental-https",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
@@ -88,7 +88,8 @@
     "overrides": {
       "undici@<7.29.1": "^7.29.1",
       "fast-uri@<3.1.8": "^3.1.8",
-      "esbuild@<0.25.0": "^0.25.12"
+      "esbuild@<0.25.0": "^0.25.12",
+      "@payloadcms/transformer-sharp>sharp": "$sharp"
     }
   }
 }

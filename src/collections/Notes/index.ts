@@ -19,6 +19,8 @@ export const Notes: CollectionConfig<"notes"> = {
     create: authenticated,
     delete: authenticated,
     read: authenticatedOrPublishedPublic,
+    // Payload 4 lets versions inherit `read`; keep drafts and history private.
+    readVersions: authenticated,
     update: authenticated,
   },
   defaultPopulate: {
@@ -192,4 +194,5 @@ export const Notes: CollectionConfig<"notes"> = {
     afterDelete: [revalidateNote.afterDelete],
   },
   versions: draftVersions(),
+  authorship: false,
 };

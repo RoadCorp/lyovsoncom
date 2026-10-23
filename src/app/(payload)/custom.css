@@ -1,0 +1,225 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+/*
+ * Payload 4 palette: semantic --color-* tokens read the --ramp-* palette in
+ * both themes, so overriding the ramps re-tints the whole admin. The blue
+ * ramp is the brand (accent) colour, the grey ramp the cool neutrals.
+ */
+:root {
+  --font-body: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
+
+  --ramp-grey-100: oklch(0.965 0.007 228);
+  --ramp-grey-200: oklch(0.916 0.012 226);
+  --ramp-grey-300: oklch(0.884 0.014 228);
+  --ramp-grey-500: oklch(0.548 0.016 237);
+  --ramp-grey-600: oklch(0.386 0.019 238);
+  --ramp-grey-700: oklch(0.334 0.019 238);
+  --ramp-grey-800: oklch(0.286 0.018 240);
+  --ramp-grey-900: oklch(0.238 0.018 240);
+
+  --ramp-blue-200: oklch(0.934 0.04 249);
+  --ramp-blue-300: oklch(0.858 0.082 252);
+  --ramp-blue-400: oklch(0.734 0.122 260);
+  --ramp-blue-500: oklch(0.61 0.136 264);
+  --ramp-blue-600: oklch(0.526 0.13 265);
+  --ramp-blue-700: oklch(0.438 0.112 267);
+  --ramp-blue-800: oklch(0.346 0.086 269);
+  --ramp-blue-900: oklch(0.252 0.055 272);
+  --ramp-blue-1000: oklch(0.206 0.04 274);
+
+  --color-bg: oklch(0.985 0.004 230);
+  --color-bg-elevated: oklch(0.985 0.004 230);
+
+  --admin-surface-1: var(--color-bg);
+  --admin-surface-2: var(--color-bg-secondary);
+  --admin-surface-3: var(--color-bg-tertiary);
+  --admin-line-1: var(--color-border);
+  --admin-line-2: var(--ramp-grey-300);
+  --admin-text-1: var(--color-text);
+  --admin-text-2: var(--color-text-secondary);
+  --admin-text-3: var(--color-text-tertiary);
+  --admin-accent: var(--color-bg-brand);
+  --admin-accent-soft: color-mix(in oklch, var(--color-bg-brand) 14%, var(--color-bg));
+  --admin-danger-soft: color-mix(in oklch, oklch(0.72 0.1589 10.2758) 14%, var(--color-bg));
+  --admin-shadow:
+    0 16px 36px oklch(0.2 0.02 250 / 0.12),
+    0 2px 6px oklch(0.2 0.02 250 / 0.06);
+  --admin-shadow-strong:
+    0 22px 48px oklch(0.2 0.02 250 / 0.16),
+    0 6px 12px oklch(0.2 0.02 250 / 0.08);
+}
+
+[data-theme='dark'] {
+  --color-bg: var(--ramp-grey-800);
+  --color-bg-elevated: var(--ramp-grey-900);
+
+  --admin-line-2: var(--ramp-grey-500);
+  --admin-accent-soft: color-mix(in oklch, var(--color-bg-brand) 16%, var(--color-bg));
+  --admin-danger-soft: color-mix(in oklch, oklch(0.72 0.1589 10.2758) 16%, var(--color-bg));
+  --admin-shadow:
+    0 18px 42px oklch(0 0 0 / 0.34),
+    0 4px 10px oklch(0 0 0 / 0.22);
+  --admin-shadow-strong:
+    0 24px 54px oklch(0 0 0 / 0.42),
+    0 8px 16px oklch(0 0 0 / 0.28);
+}
+
+code,
+pre,
+.code-field,
+.rich-text code {
+  font-family: var(--font-mono);
+}
+
+::selection {
+  background: color-mix(in oklch, var(--color-bg-brand) 28%, transparent);
+  color: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--admin-line-2);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--admin-text-3);
+}
+
+*:focus-visible {
+  outline: 2px solid color-mix(in oklch, var(--color-bg-brand) 60%, transparent);
+  outline-offset: 2px;
+}
+
+.nav {
+  border-right: 1px solid var(--color-border);
+  background: linear-gradient(180deg, var(--color-bg), var(--color-bg-secondary));
+}
+
+.nav-group__toggle {
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.gif-picker__preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  margin-bottom: 16px;
+  background: var(--admin-surface-2);
+  border: 1px solid var(--admin-line-1);
+  border-radius: 10px;
+  box-shadow: var(--admin-shadow);
+}
+
+.gif-picker__thumb {
+  position: relative;
+  width: 120px;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--admin-surface-3);
+  border: 1px solid var(--admin-line-1);
+  border-radius: 8px;
+}
+
+.gif-picker__thumb-image,
+.gif-picker__result-image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.gif-picker__thumb-placeholder,
+.gif-picker__empty {
+  color: var(--admin-text-3);
+  text-align: center;
+}
+
+.gif-picker__thumb-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+  padding: 12px;
+  font-size: 12px;
+}
+
+.gif-picker__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.gif-picker__search {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.gif-picker__search-input {
+  flex: 1;
+}
+
+.gif-picker__error {
+  padding: 12px;
+  margin-bottom: 16px;
+  color: color-mix(in oklch, oklch(0.55 0.15 12) 82%, var(--admin-text-1));
+  background: var(--admin-danger-soft);
+  border: 1px solid color-mix(in oklch, oklch(0.72 0.1589 10.2758) 36%, var(--admin-line-1));
+  border-radius: 8px;
+}
+
+.gif-picker__results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.gif-picker__result {
+  padding: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--admin-surface-1);
+  border: 2px solid var(--admin-line-1);
+  border-radius: 10px;
+  box-shadow: var(--admin-shadow);
+  transition:
+    transform 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    background-color 150ms ease;
+}
+
+.gif-picker__result:hover,
+.gif-picker__result:focus-visible {
+  border-color: var(--admin-line-2);
+  box-shadow: var(--admin-shadow-strong);
+  transform: translateY(-1px);
+}
+
+.gif-picker__result--selected {
+  background: var(--admin-accent-soft);
+  border-color: var(--admin-accent);
+}
+
+.gif-picker__empty {
+  padding: 24px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gif-picker__result {
+    transition: none !important;
+  }
+}

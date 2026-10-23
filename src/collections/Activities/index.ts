@@ -20,6 +20,8 @@ export const Activities: CollectionConfig<"activities"> = {
     create: authenticated,
     delete: authenticated,
     read: authenticatedOrPublishedPublic,
+    // Payload 4 lets versions inherit `read`; keep drafts and history private.
+    readVersions: authenticated,
     update: authenticated,
   },
   defaultPopulate: {
@@ -202,4 +204,5 @@ export const Activities: CollectionConfig<"activities"> = {
     afterDelete: [revalidateActivity.afterDelete],
   },
   versions: draftVersions(),
+  authorship: false,
 };

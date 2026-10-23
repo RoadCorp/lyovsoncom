@@ -56,6 +56,7 @@ export const Topics: CollectionConfig<"topics"> = {
           const parentTopic = await req.payload.findByID({
             collection: "topics",
             id: data.parent,
+            overrideAccess: true,
           });
           if (parentTopic && "color" in parentTopic && parentTopic.color) {
             data.color = parentTopic.color;
@@ -95,4 +96,6 @@ export const Topics: CollectionConfig<"topics"> = {
       },
     ],
   },
+  versions: false,
+  authorship: false,
 };

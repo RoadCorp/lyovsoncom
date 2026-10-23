@@ -272,6 +272,7 @@ export async function generateEmbeddingFor(
       collection,
       id,
       depth: spec.depth,
+      overrideAccess: true,
     })) as Activity | Note | Post | null;
 
     if (!doc) {
@@ -370,6 +371,7 @@ async function computeRecommendations(
       collection,
       id,
       select: { embedding_vector: true, slug: true },
+      overrideAccess: true,
     })) as { embedding_vector?: unknown; slug?: string | null } | null;
 
     if (!doc?.embedding_vector) {

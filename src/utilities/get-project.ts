@@ -19,6 +19,7 @@ export async function getProject(slug: string): Promise<Project | null> {
       ...publishedProjectsWhere(),
     },
     limit: 1,
+    overrideAccess: true,
   });
 
   return (response.docs[0] as Project) || null;

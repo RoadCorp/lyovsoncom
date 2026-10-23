@@ -115,6 +115,7 @@ export async function getSyndicationFeeds() {
       content: true,
       topics: true,
     },
+    overrideAccess: true,
   });
 
   const siteUrl = getCanonicalSiteOrigin();

@@ -1,7 +1,7 @@
 "use client";
 import { useTheme } from "@payloadcms/ui";
 import Image from "next/image";
-import "./view-site-link.scss";
+import "./view-site-link.css";
 
 export default function ViewSiteLink() {
   const { theme } = useTheme();

@@ -205,4 +205,6 @@ export const Lyovsons: CollectionConfig<"lyovsons"> = {
     ],
   },
   timestamps: true,
+  versions: false,
+  authorship: false,
 };

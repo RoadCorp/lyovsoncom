@@ -21,7 +21,7 @@ export default function AdminLogo() {
       <Image alt="Lyovson.com Logo" height={200} src={logoSrc} width={200} />
       <span
         style={{
-          color: "var(--theme-text)",
+          color: "var(--color-text)",
           fontFamily: "'IBM Plex Sans', sans-serif",
           fontSize: "24px",
           fontWeight: 600,

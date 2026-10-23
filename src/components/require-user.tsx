@@ -1,7 +1,7 @@
 import config from "@payload-config";
 import { headers as nextHeaders } from "next/headers";
 import { redirect } from "next/navigation";
-import { getPayload, type TypedUser } from "payload";
+import { getPayload, type User } from "payload";
 import { type ReactNode, Suspense } from "react";
 import { SkeletonCard } from "@/components/grid";
 
@@ -13,7 +13,7 @@ import { SkeletonCard } from "@/components/grid";
 export function RequireUser({
   children,
 }: {
-  children: (user: TypedUser) => ReactNode;
+  children: (user: User) => ReactNode;
 }) {
   return (
     <Suspense fallback={<SkeletonCard />}>
@@ -22,11 +22,7 @@ export function RequireUser({
   );
 }
 
-async function UserGate({
-  children,
-}: {
-  children: (user: TypedUser) => ReactNode;
-}) {
+async function UserGate({ children }: { children: (user: User) => ReactNode }) {
   const payload = await getPayload({ config });
   const { user } = await payload.auth({ headers: await nextHeaders() });
 

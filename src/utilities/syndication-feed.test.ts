@@ -48,7 +48,17 @@ const post: Post = {
       direction: "ltr",
       format: "",
       indent: 0,
-      children: [{ type: "text", version: 1, text: "The complete article." }],
+      children: [
+        {
+          type: "text",
+          version: 1,
+          text: "The complete article.",
+          detail: 0,
+          format: 0,
+          mode: "normal",
+          style: "",
+        },
+      ],
     },
   },
 };

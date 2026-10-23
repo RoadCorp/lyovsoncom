@@ -5,9 +5,10 @@ import { fileURLToPath } from "node:url";
 import { vercelPostgresAdapter } from "@payloadcms/db-vercel-postgres";
 import { resendAdapter } from "@payloadcms/email-resend";
 import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
+import { sharpTransformer } from "@payloadcms/transformer-sharp";
 import { sql } from "drizzle-orm";
 import { varchar } from "drizzle-orm/pg-core";
-import { buildConfig } from "payload";
+import { buildConfig, type CollectionConfig } from "payload";
 import sharp from "sharp"; // sharp-import
 import { Activities } from "@/collections/Activities";
 import { Lyovsons } from "@/collections/Lyovsons";
@@ -198,6 +199,9 @@ export default buildConfig({
       },
     ],
   }),
+  // Payload 4 + TypeScript 6+: a slug-typed config's `defaultPopulate` no
+  // longer assigns to the untyped array, so widen here and keep each
+  // collection's own `CollectionConfig<slug>` checks.
   collections: [
     Posts,
     Media,
@@ -207,15 +211,43 @@ export default buildConfig({
     References,
     Activities,
     Notes,
-  ],
+  ] as CollectionConfig[],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [],
   // The admin and site use REST and the local API only.
   graphQL: { disable: true },
+  // Payload 4 lowered the default depth to 1; keep 3.x population.
+  defaultDepth: 2,
   // Cap relationship population for every API request (the site uses <= 2).
   maxDepth: 2,
-  plugins: [
-    ...plugins,
+  plugins: [...plugins],
+  email: resendAdapter({
+    defaultFromAddress: "notifications@mail.lyovson.com",
+    defaultFromName: "Lyovsons",
+    apiKey: process.env.RESEND_API_KEY || "",
+  }),
+  secret: process.env.PAYLOAD_SECRET || "",
+  typescript: {
+    outputFile: path.resolve(dirname, "payload-types.ts"),
+  },
+  upload: {
+    transformers: [
+      sharpTransformer({
+        sharp,
+        collections: {
+          media: {
+            variants: [
+              {
+                name: "thumbnail",
+                width: 300,
+              },
+            ],
+          },
+        },
+      }),
+    ],
+  },
+  storage: [
     vercelBlobStorage({
       collections: {
         media: {
@@ -225,14 +257,4 @@ export default buildConfig({
       token: process.env.BLOB_READ_WRITE_TOKEN || "",
     }),
   ],
-  email: resendAdapter({
-    defaultFromAddress: "notifications@mail.lyovson.com",
-    defaultFromName: "Lyovsons",
-    apiKey: process.env.RESEND_API_KEY || "",
-  }),
-  secret: process.env.PAYLOAD_SECRET || "",
-  sharp,
-  typescript: {
-    outputFile: path.resolve(dirname, "payload-types.ts"),
-  },
 });

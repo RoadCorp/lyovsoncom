@@ -16,6 +16,7 @@ async function getReferenceTitle(
     const reference = (await req.payload.findByID({
       collection: "references",
       id: referenceId,
+      overrideAccess: true,
     })) as unknown as { title?: string };
     return reference?.title || null;
   } catch (error) {

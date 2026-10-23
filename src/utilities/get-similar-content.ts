@@ -33,6 +33,7 @@ export async function getSimilarContent<
     select: {
       embedding_vector: true,
     },
+    overrideAccess: true,
   });
 
   if (!current?.embedding_vector) {
@@ -81,6 +82,7 @@ export async function getSimilarContent<
         collection,
         id: doc.id,
         depth: 1,
+        overrideAccess: true,
       })
     )
   );

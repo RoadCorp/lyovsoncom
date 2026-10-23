@@ -12,7 +12,7 @@ import type React from "react";
 import { useCallback, useEffect } from "react";
 
 import { formatSlug } from "./format-slug";
-import "./index.scss";
+import "./index.css";
 
 type SlugComponentProps = {
   fieldToUse: string;
@@ -81,7 +81,11 @@ export const SlugComponent: React.FC<SlugComponentProps> = ({
       <div className="label-wrapper">
         <FieldLabel htmlFor={`field-${path}`} label={label} />
 
-        <Button buttonStyle="none" className="lock-button" onClick={handleLock}>
+        <Button
+          buttonStyle="ghost"
+          className="lock-button"
+          onClick={handleLock}
+        >
           {checkboxValue ? "Unlock" : "Lock"}
         </Button>
       </div>

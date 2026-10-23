@@ -1,0 +1,16 @@
+.login-return-link {
+  display: block;
+  margin-top: var(--spacer-3);
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+  text-align: center;
+  letter-spacing: -0.005em;
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.login-return-link:hover {
+  color: var(--color-text-brand);
+  text-decoration: underline;
+}
