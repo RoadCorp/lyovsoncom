@@ -7,6 +7,7 @@ import { Media } from "@/components/Media";
 import { CARD_THUMBNAIL_IMAGE_SIZE } from "@/components/Media/image-sizes";
 import { cn } from "@/lib/utils";
 import type { Reference } from "@/payload-types";
+import { extractLexicalText } from "@/utilities/extract-lexical-text";
 
 export interface GridCardReferencesProps {
   className?: string;
@@ -60,6 +61,10 @@ export const GridCardReferences = ({
           typeof reference.image === "object" && reference.image !== null
             ? reference.image
             : null;
+        // Commons photos and logos carry the credit their licence asks for.
+        const credit = imageObj?.caption
+          ? extractLexicalText(imageObj.caption)
+          : "";
 
         const content = (
           <GridCardSection
@@ -69,7 +74,14 @@ export const GridCardReferences = ({
             {imageObj ? (
               <Media
                 className="media-frame flex h-full items-center justify-center"
-                imgClassName="object-cover h-full"
+                imgClassName={
+                  // Organizations carry logos, which must not be cropped and
+                  // are drawn for white; the important flag beats ImageMedia's
+                  // inline object-fit.
+                  reference.type === "organization"
+                    ? "h-full bg-white object-contain! p-3"
+                    : "h-full object-cover"
+                }
                 pictureClassName="row-start-1 row-end-2 col-start-1 col-end-2 h-full"
                 resource={imageObj}
                 size={CARD_THUMBNAIL_IMAGE_SIZE}
@@ -97,6 +109,11 @@ export const GridCardReferences = ({
               </div>
               {byline ? (
                 <p className="tone-muted line-clamp-1 text-xs">{byline}</p>
+              ) : null}
+              {credit ? (
+                <p className="tone-muted line-clamp-1 text-[0.6875rem]">
+                  {credit}
+                </p>
               ) : null}
               <div className="flex items-center gap-2">
                 <span className="surface-chip surface-tag">{typeLabel}</span>

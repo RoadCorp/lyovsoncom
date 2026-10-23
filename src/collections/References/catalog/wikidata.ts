@@ -1,4 +1,4 @@
-import { type CatalogItem, fetchJson, MAX_RESULTS } from "./shared";
+import { type CatalogItem, fetchJson, MAX_RESULTS, yearOf } from "./shared";
 
 // Wikidata is free, keyless and CC0. It is the search for people,
 // organizations, series and anything without its own catalog, and every
@@ -102,17 +102,125 @@ export async function matchWikidata(item: CatalogItem) {
   return (await findByCatalogId(item)) ?? (await findByTitle(item));
 }
 
-/** The English description, e.g. "video streaming service by Apple Inc.". */
-export async function getWikidataDescription(id: string) {
+/** Who made a work, in the order a byline should prefer. */
+const CREATOR_PROPERTIES = ["P50", "P178", "P57", "P175", "P170"];
+const MAX_CREATORS = 2;
+
+interface Claim {
+  mainsnak: { datavalue?: { value: unknown } };
+  rank: "preferred" | "normal" | "deprecated";
+}
+
+interface Entity {
+  claims?: Record<string, Claim[]>;
+  descriptions?: { en?: { value: string } };
+  labels?: { en?: { value: string } };
+}
+
+async function getEntities(ids: string[], props: string) {
   const params = new URLSearchParams({
     action: "wbgetentities",
     format: "json",
-    ids: id,
+    ids: ids.join("|"),
     languages: "en",
-    props: "descriptions",
+    props,
   });
-  const { entities } = await fetchJson<{
-    entities: Record<string, { descriptions?: { en?: { value: string } } }>;
-  }>(`${API}?${params}`);
-  return entities[id]?.descriptions?.en?.value;
+  const { entities } = await fetchJson<{ entities: Record<string, Entity> }>(
+    `${API}?${params}`
+  );
+  return entities;
+}
+
+/** The preferred values of a property, else its normal ones. */
+function values(entity: Entity, property: string) {
+  const claims = (entity.claims?.[property] ?? []).filter(
+    (claim) => claim.rank !== "deprecated" && claim.mainsnak.datavalue
+  );
+  const preferred = claims.filter((claim) => claim.rank === "preferred");
+  return (preferred.length > 0 ? preferred : claims).map(
+    (claim) => claim.mainsnak.datavalue?.value
+  );
+}
+
+/**
+ * What a catalog doesn't carry: the English description, an image (a Steam
+ * app for games, a Commons logo or photo otherwise), and for items picked
+ * from Wikidata itself, the creator and year.
+ */
+export async function getWikidataFacts(id: string) {
+  const entity = (await getEntities([id], "claims|descriptions"))[id];
+  if (!entity) {
+    return {};
+  }
+  const [steamAppId] = values(entity, "P1733") as string[];
+  const [logo] = values(entity, "P154") as string[];
+  const [photo] = values(entity, "P18") as string[];
+  const [date] = [...values(entity, "P577"), ...values(entity, "P571")] as {
+    time: string;
+  }[];
+  const creatorIds = (
+    CREATOR_PROPERTIES.map((property) => values(entity, property)).find(
+      (found) => found.length > 0
+    ) ?? []
+  )
+    .slice(0, MAX_CREATORS)
+    .map((value) => (value as { id: string }).id);
+  const creators =
+    creatorIds.length > 0
+      ? await getEntities(creatorIds, "labels").then((labels) =>
+          creatorIds.map((creatorId) => labels[creatorId]?.labels?.en?.value)
+        )
+      : [];
+
+  return {
+    commonsFile: logo ?? photo,
+    creator: creators.filter(Boolean).join(", ") || undefined,
+    description: entity.descriptions?.en?.value,
+    steamAppId,
+    // Wikidata times look like "+2011-11-11T00:00:00Z".
+    year: date ? yearOf(date.time.slice(1)) : undefined,
+  };
+}
+
+interface CommonsPage {
+  imageinfo?: {
+    extmetadata?: Record<string, { value: string } | undefined>;
+    thumburl?: string;
+  }[];
+}
+
+const TAGS = /<[^>]+>/g;
+const SPACES = /\s+/g;
+const MAX_ARTIST_LENGTH = 80;
+
+/** An 800px rendering of a Commons file, with the credit its licence asks for. */
+export async function getCommonsImage(file: string) {
+  const params = new URLSearchParams({
+    action: "query",
+    format: "json",
+    iiextmetadatafilter: "Artist|LicenseShortName",
+    iiprop: "url|extmetadata",
+    iiurlwidth: "800",
+    prop: "imageinfo",
+    titles: `File:${file}`,
+  });
+  const { query } = await fetchJson<{
+    query: { pages: Record<string, CommonsPage> };
+  }>(`https://commons.wikimedia.org/w/api.php?${params}`);
+  const info = Object.values(query.pages)[0]?.imageinfo?.[0];
+  if (!info?.thumburl) {
+    return;
+  }
+  const artist = info.extmetadata?.Artist?.value
+    .replace(TAGS, "")
+    .replace(SPACES, " ")
+    .trim()
+    .slice(0, MAX_ARTIST_LENGTH);
+  const license = info.extmetadata?.LicenseShortName?.value;
+  return {
+    credit: [artist, license, "via Wikimedia Commons"]
+      .filter(Boolean)
+      .join(", "),
+    url: info.thumburl,
+  };
 }

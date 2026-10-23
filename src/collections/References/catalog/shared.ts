@@ -30,7 +30,7 @@ export const SOURCE_LABELS: Record<CatalogSource, string> = {
 };
 
 // Open Library, MusicBrainz and Wikidata ask clients to name themselves.
-const USER_AGENT =
+export const USER_AGENT =
   "lyovson.com/1.0 (https://www.lyovson.com; rafa@lyovson.com)";
 const TIMEOUT_MS = 8000;
 export const MAX_RESULTS = 8;
