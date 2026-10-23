@@ -29,9 +29,6 @@ importers:
       '@payloadcms/next':
         specifier: 4.0.0-beta.4
         version: 4.0.0-beta.4(@types/react@19.3.0)(graphql@16.14.2)(monaco-editor@0.52.2)(next@16.4.1(@opentelemetry/api@1.9.0)(@playwright/test@1.64.0)(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sass@1.77.4))(payload@4.0.0-beta.4(bufferutil@4.1.0)(graphql@16.14.2)(typescript@7.0.2)(utf-8-validate@6.0.6))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(typescript@7.0.2)
-      '@payloadcms/plugin-nested-docs':
-        specifier: 4.0.0-beta.4
-        version: 4.0.0-beta.4(payload@4.0.0-beta.4(bufferutil@4.1.0)(graphql@16.14.2)(typescript@7.0.2)(utf-8-validate@6.0.6))
       '@payloadcms/richtext-lexical':
         specifier: 4.0.0-beta.4
         version: 4.0.0-beta.4(@faceless-ui/modal@3.0.2(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@faceless-ui/scroll-info@2.0.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@types/react@19.3.0)(bufferutil@4.1.0)(monaco-editor@0.52.2)(payload@4.0.0-beta.4(bufferutil@4.1.0)(graphql@16.14.2)(typescript@7.0.2)(utf-8-validate@6.0.6))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(typescript@7.0.2)(utf-8-validate@6.0.6)(yjs@13.6.27)
@@ -1269,11 +1266,6 @@ packages:
       payload: 4.0.0-beta.4
       react: ^19.0.1 || ^19.1.2 || ^19.2.1
       react-dom: ^19.0.1 || ^19.1.2 || ^19.2.1
-
-  '@payloadcms/plugin-nested-docs@4.0.0-beta.4':
-    resolution: {integrity: sha512-jOWMgHO6s6bpYmRPZ7DbiDxPYiNTh6Y1wVHaozV5XFqi0b/m7wdO4SthvvqZib+JWfFSgPIyvdwyaVQQTPuXow==}
-    peerDependencies:
-      payload: 4.0.0-beta.4
 
   '@payloadcms/richtext-lexical@4.0.0-beta.4':
     resolution: {integrity: sha512-5YOj8fAd0kl7EZRv6XMkkJWWiX2PvIOo9Uwu+PI4GDY6qJyVTX2oO78kNYPDevYfY4P0tfZEn+TBItsHWD1SCg==}
@@ -5572,10 +5564,6 @@ snapshots:
       - monaco-editor
       - supports-color
       - typescript
-
-  '@payloadcms/plugin-nested-docs@4.0.0-beta.4(payload@4.0.0-beta.4(bufferutil@4.1.0)(graphql@16.14.2)(typescript@7.0.2)(utf-8-validate@6.0.6))':
-    dependencies:
-      payload: 4.0.0-beta.4(bufferutil@4.1.0)(graphql@16.14.2)(typescript@7.0.2)(utf-8-validate@6.0.6)
 
   '@payloadcms/richtext-lexical@4.0.0-beta.4(@faceless-ui/modal@3.0.2(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@faceless-ui/scroll-info@2.0.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@types/react@19.3.0)(bufferutil@4.1.0)(monaco-editor@0.52.2)(payload@4.0.0-beta.4(bufferutil@4.1.0)(graphql@16.14.2)(typescript@7.0.2)(utf-8-validate@6.0.6))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(typescript@7.0.2)(utf-8-validate@6.0.6)(yjs@13.6.27)':
     dependencies:

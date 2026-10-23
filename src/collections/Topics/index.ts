@@ -24,6 +24,11 @@ export const Topics: CollectionConfig = {
     readVersions: authenticated,
     update: authenticated,
   },
+  // Topics nest under a parent topic; the admin gets Payload's tree view.
+  hierarchy: {
+    parentFieldName: "parent",
+    slugField: "slug",
+  },
   admin: {
     group: "Organization",
     useAsTitle: "name",

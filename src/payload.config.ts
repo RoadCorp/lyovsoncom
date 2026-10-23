@@ -20,7 +20,6 @@ import { References } from "@/collections/References";
 import { Topics } from "@/collections/Topics";
 import { tsvector } from "@/db/custom-types";
 import { defaultLexical } from "@/fields/default-lexical";
-import { plugins } from "@/plugins";
 import { getServerSideURL } from "@/utilities/get-url";
 
 const filename = fileURLToPath(import.meta.url);
@@ -217,7 +216,6 @@ export default buildConfig({
   graphQL: { disable: true },
   // Cap relationship population for every API request (the site uses <= 2).
   maxDepth: 2,
-  plugins: [...plugins],
   email: resendAdapter({
     defaultFromAddress: "notifications@mail.lyovson.com",
     defaultFromName: "Lyovsons",
