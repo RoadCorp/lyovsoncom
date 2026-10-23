@@ -213,7 +213,13 @@ async function checkJsonLdCoverage() {
 
 async function checkSitemapExclusions() {
   const issues = [];
-  const source = await readRelativeFile("src/app/sitemap.ts");
+  const source = (
+    await Promise.all(
+      ["src/app/sitemap.xml/route.ts", "src/utilities/sitemap-routes.ts"].map(
+        readRelativeFile
+      )
+    )
+  ).join("\n");
 
   for (const route of noindexExcludedFromSitemap) {
     if (source.includes(route)) {
