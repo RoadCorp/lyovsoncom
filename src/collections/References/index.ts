@@ -21,7 +21,7 @@ import { screenFields } from "./fields/screen";
 import { referenceTypeField } from "./fields/type";
 import { webFields } from "./fields/web";
 
-export const References: CollectionConfig<"references"> = {
+export const References: CollectionConfig = {
   slug: "references",
   access: {
     create: authenticated,
@@ -117,7 +117,7 @@ export const References: CollectionConfig<"references"> = {
         },
       ],
     },
-    ...slugField(),
+    slugField(),
   ],
   hooks: {
     afterChange: [
@@ -146,5 +146,4 @@ export const References: CollectionConfig<"references"> = {
     ],
   },
   versions: draftVersions(),
-  authorship: false,
 };

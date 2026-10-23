@@ -8,6 +8,7 @@ import {
   sql,
 } from "@payloadcms/db-vercel-postgres/drizzle";
 import { getPayload } from "payload";
+import { TRUSTED_EMBEDDING_READ } from "@/access/private-field-read";
 import type { Note, Post } from "@/payload-types";
 import { EMBEDDING_VECTOR_DIMENSIONS } from "@/utilities/generate-embedding";
 
@@ -33,7 +34,8 @@ export async function getSimilarContent<
     select: {
       embedding_vector: true,
     },
-    overrideAccess: true,
+    // The vector is a private field; this read only ranks, never renders it.
+    context: { [TRUSTED_EMBEDDING_READ]: true },
   });
 
   if (!current?.embedding_vector) {
@@ -82,7 +84,7 @@ export async function getSimilarContent<
         collection,
         id: doc.id,
         depth: 1,
-        overrideAccess: true,
+        disableErrors: true,
       })
     )
   );

@@ -6,7 +6,7 @@ import { authenticated } from "@/access/authenticated";
 import { seoField } from "@/fields/seo";
 import { slugField } from "@/fields/slug";
 
-export const Topics: CollectionConfig<"topics"> = {
+export const Topics: CollectionConfig = {
   slug: "topics",
   // Fields returned when another document references this one.
   defaultPopulate: {
@@ -20,6 +20,8 @@ export const Topics: CollectionConfig<"topics"> = {
     create: authenticated,
     delete: authenticated,
     read: anyone,
+    // Payload 4 lets versions inherit `read`; keep history private.
+    readVersions: authenticated,
     update: authenticated,
   },
   admin: {
@@ -46,7 +48,7 @@ export const Topics: CollectionConfig<"topics"> = {
       },
     },
     seoField,
-    ...slugField("name"),
+    slugField("name"),
   ],
   hooks: {
     beforeChange: [
@@ -96,6 +98,4 @@ export const Topics: CollectionConfig<"topics"> = {
       },
     ],
   },
-  versions: false,
-  authorship: false,
 };

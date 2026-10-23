@@ -309,8 +309,15 @@ export interface Post {
   embedding_dimensions?: number | null;
   embedding_generated_at?: string | null;
   embedding_text_hash?: string | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
+  slug: string;
+  createdBy?: {
+    relationTo: 'lyovsons';
+    value: number | Lyovson;
+  } | null;
+  updatedBy?: {
+    relationTo: 'lyovsons';
+    value: number | Lyovson;
+  } | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -325,6 +332,14 @@ export interface Media {
   caption?: LexicalRichText<LexicalNodes_AD327369> | null;
   prefix?: string | null;
   _objectKey?: string | null;
+  createdBy?: {
+    relationTo: 'lyovsons';
+    value: number | Lyovson;
+  } | null;
+  updatedBy?: {
+    relationTo: 'lyovsons';
+    value: number | Lyovson;
+  } | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -358,6 +373,73 @@ export interface Media {
       _objectKey?: string | null;
     };
   };
+}
+/**
+ * Lyovson family members
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "lyovsons".
+ */
+export interface Lyovson {
+  id: number;
+  /**
+   * Profile picture for this user
+   */
+  avatar?: (number | null) | Media;
+  /**
+   * Preferred font family for this user's page
+   */
+  font?: ('sans' | 'serif' | 'mono') | null;
+  /**
+   * Full name of the user
+   */
+  name: string;
+  username: string;
+  /**
+   * A short tagline or quote (like X/Facebook bio)
+   */
+  quote?: string | null;
+  /**
+   * A brief biography or description about this user
+   */
+  bio?: LexicalRichText<LexicalNodes_52AC8EA2> | null;
+  /**
+   * Social media profiles and links
+   */
+  socialLinks?:
+    | {
+        platform: 'x' | 'linkedin' | 'github' | 'instagram' | 'facebook' | 'youtube' | 'website';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  createdBy?: {
+    relationTo: 'lyovsons';
+    value: number | Lyovson;
+  } | null;
+  updatedBy?: {
+    relationTo: 'lyovsons';
+    value: number | Lyovson;
+  } | null;
+  updatedAt: string;
+  createdAt: string;
+  email?: string | null;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'lyovsons';
 }
 /**
  * Unified references for people, companies, works, and web media
@@ -643,8 +725,15 @@ export interface Reference {
    * Tags for this reference
    */
   tags?: string[] | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
+  slug: string;
+  createdBy?: {
+    relationTo: 'lyovsons';
+    value: number | Lyovson;
+  } | null;
+  updatedBy?: {
+    relationTo: 'lyovsons';
+    value: number | Lyovson;
+  } | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -678,8 +767,7 @@ export interface Topic {
      */
     image?: (number | null) | Media;
   };
-  slug?: string | null;
-  slugLock?: boolean | null;
+  slug: string;
   parent?: (number | null) | Topic;
   breadcrumbs?:
     | {
@@ -689,6 +777,14 @@ export interface Topic {
         id?: string | null;
       }[]
     | null;
+  createdBy?: {
+    relationTo: 'lyovsons';
+    value: number | Lyovson;
+  } | null;
+  updatedBy?: {
+    relationTo: 'lyovsons';
+    value: number | Lyovson;
+  } | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -790,70 +886,18 @@ export interface Project {
    * Set automatically on first publish
    */
   publishedAt?: string | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
+  slug: string;
+  createdBy?: {
+    relationTo: 'lyovsons';
+    value: number | Lyovson;
+  } | null;
+  updatedBy?: {
+    relationTo: 'lyovsons';
+    value: number | Lyovson;
+  } | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
-}
-/**
- * Lyovson family members
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "lyovsons".
- */
-export interface Lyovson {
-  id: number;
-  /**
-   * Profile picture for this user
-   */
-  avatar?: (number | null) | Media;
-  /**
-   * Preferred font family for this user's page
-   */
-  font?: ('sans' | 'serif' | 'mono') | null;
-  /**
-   * Full name of the user
-   */
-  name: string;
-  username: string;
-  /**
-   * A short tagline or quote (like X/Facebook bio)
-   */
-  quote?: string | null;
-  /**
-   * A brief biography or description about this user
-   */
-  bio?: LexicalRichText<LexicalNodes_52AC8EA2> | null;
-  /**
-   * Social media profiles and links
-   */
-  socialLinks?:
-    | {
-        platform: 'x' | 'linkedin' | 'github' | 'instagram' | 'facebook' | 'youtube' | 'website';
-        url: string;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt: string;
-  createdAt: string;
-  email?: string | null;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  resetPasswordRequestedAt?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
-  collection: 'lyovsons';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -958,8 +1002,15 @@ export interface Note {
    * Plain text extracted from rich text content for full-text search indexing
    */
   content_text?: string | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
+  slug: string;
+  createdBy?: {
+    relationTo: 'lyovsons';
+    value: number | Lyovson;
+  } | null;
+  updatedBy?: {
+    relationTo: 'lyovsons';
+    value: number | Lyovson;
+  } | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -1043,7 +1094,6 @@ export interface Activity {
   publishedAt?: string | null;
   slugSource?: string | null;
   slug?: string | null;
-  slugLock?: boolean | null;
   /**
    * Vector embedding for semantic search (pgvector format)
    */
@@ -1056,6 +1106,14 @@ export interface Activity {
    * Plain text extracted from activity content for full-text search indexing
    */
   content_text?: string | null;
+  createdBy?: {
+    relationTo: 'lyovsons';
+    value: number | Lyovson;
+  } | null;
+  updatedBy?: {
+    relationTo: 'lyovsons';
+    value: number | Lyovson;
+  } | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -1222,7 +1280,8 @@ export interface PostsSelect<T extends boolean = true> {
   embedding_generated_at?: T;
   embedding_text_hash?: T;
   slug?: T;
-  slugLock?: T;
+  createdBy?: T;
+  updatedBy?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -1236,6 +1295,8 @@ export interface MediaSelect<T extends boolean = true> {
   caption?: T;
   prefix?: T;
   _objectKey?: T;
+  createdBy?: T;
+  updatedBy?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -1292,7 +1353,6 @@ export interface TopicsSelect<T extends boolean = true> {
         image?: T;
       };
   slug?: T;
-  slugLock?: T;
   parent?: T;
   breadcrumbs?:
     | T
@@ -1302,6 +1362,8 @@ export interface TopicsSelect<T extends boolean = true> {
         label?: T;
         id?: T;
       };
+  createdBy?: T;
+  updatedBy?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1354,7 +1416,8 @@ export interface ProjectsSelect<T extends boolean = true> {
       };
   publishedAt?: T;
   slug?: T;
-  slugLock?: T;
+  createdBy?: T;
+  updatedBy?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -1377,6 +1440,8 @@ export interface LyovsonsSelect<T extends boolean = true> {
         url?: T;
         id?: T;
       };
+  createdBy?: T;
+  updatedBy?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -1468,7 +1533,8 @@ export interface ReferencesSelect<T extends boolean = true> {
       };
   tags?: T;
   slug?: T;
-  slugLock?: T;
+  createdBy?: T;
+  updatedBy?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -1503,13 +1569,14 @@ export interface ActivitiesSelect<T extends boolean = true> {
   publishedAt?: T;
   slugSource?: T;
   slug?: T;
-  slugLock?: T;
   embedding_vector?: T;
   embedding_model?: T;
   embedding_dimensions?: T;
   embedding_generated_at?: T;
   embedding_text_hash?: T;
   content_text?: T;
+  createdBy?: T;
+  updatedBy?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -1545,7 +1612,8 @@ export interface NotesSelect<T extends boolean = true> {
   recommended_note_ids?: T;
   content_text?: T;
   slug?: T;
-  slugLock?: T;
+  createdBy?: T;
+  updatedBy?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

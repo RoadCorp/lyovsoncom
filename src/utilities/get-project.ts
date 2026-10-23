@@ -12,6 +12,7 @@ export async function getProject(slug: string): Promise<Project | null> {
   const payload = await getPayloadClient();
   const response = await payload.find({
     collection: "projects",
+    depth: 2,
     where: {
       slug: {
         equals: slug,
@@ -19,6 +20,8 @@ export async function getProject(slug: string): Promise<Project | null> {
       ...publishedProjectsWhere(),
     },
     limit: 1,
+    // Case studies render their people, and Lyovsons are an auth collection
+    // that anonymous access cannot read.
     overrideAccess: true,
   });
 

@@ -24,7 +24,6 @@ export async function getPost(slug: string): Promise<Post | null> {
     limit: 1,
     depth: 2,
     select: publicContentSelect,
-    overrideAccess: true,
   });
 
   return (response.docs[0] as Post) || null;
@@ -46,7 +45,6 @@ export async function getLatestPosts(
     limit,
     sort: "-publishedAt",
     where: publishedPostsWhere(),
-    overrideAccess: true,
   });
 
   return result;
@@ -70,7 +68,6 @@ export async function getPaginatedPosts(
     page: pageNumber,
     sort: "-publishedAt",
     where: publishedPostsWhere(),
-    overrideAccess: true,
   });
 
   return result;
@@ -86,6 +83,5 @@ export async function getPostCount() {
   return await payload.count({
     collection: "posts",
     where: publishedPostsWhere(),
-    overrideAccess: true,
   });
 }

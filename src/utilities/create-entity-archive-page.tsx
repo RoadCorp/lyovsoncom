@@ -41,7 +41,6 @@ async function listProjectSlugs() {
     limit: 1000,
     select: { slug: true },
     where: publishedProjectsWhere(),
-    overrideAccess: true,
   });
 
   return projects.docs.flatMap((project) =>

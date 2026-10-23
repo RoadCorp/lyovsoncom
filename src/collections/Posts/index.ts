@@ -12,7 +12,7 @@ import { markPostEmbeddingStaleHook } from "@/utilities/mark-embedding-stale";
 import { populateAuthors } from "./hooks/populate-authors";
 import { revalidateDelete, revalidatePost } from "./hooks/revalidate-post";
 
-export const Posts: CollectionConfig<"posts"> = {
+export const Posts: CollectionConfig = {
   slug: "posts",
   // Fields returned when another document references this one.
   defaultPopulate: {
@@ -246,7 +246,7 @@ export const Posts: CollectionConfig<"posts"> = {
     },
     contentTextField(),
     ...embeddingFields(),
-    ...slugField(),
+    slugField(),
   ],
   hooks: {
     beforeChange: [populateContentTextHook, markPostEmbeddingStaleHook],
@@ -255,7 +255,6 @@ export const Posts: CollectionConfig<"posts"> = {
     afterDelete: [revalidateDelete],
   },
   versions: draftVersions(),
-  authorship: false,
 };
 
 // NOTE: Migrated from categories/tags to types/topics/projects structure

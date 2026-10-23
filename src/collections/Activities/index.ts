@@ -7,14 +7,13 @@ import { contentTextField, embeddingFields } from "@/fields/embedding";
 import { richEditorConfig } from "@/fields/lexical-configs";
 import { publishedAtField } from "@/fields/published-at";
 import { seoField } from "@/fields/seo";
-import { slugField } from "@/fields/slug";
 import { markActivityEmbeddingStaleHook } from "@/utilities/mark-embedding-stale";
 import { populateContentTextHook } from "./hooks/populate-content-text";
 import { populateSlugSourceHook } from "./hooks/populate-slug-source";
 
 const revalidateActivity = revalidateContentHooks("activities");
 
-export const Activities: CollectionConfig<"activities"> = {
+export const Activities: CollectionConfig = {
   slug: "activities",
   access: {
     create: authenticated,
@@ -188,13 +187,16 @@ export const Activities: CollectionConfig<"activities"> = {
         beforeValidate: [populateSlugSourceHook],
       },
     },
-    ...slugField("slugSource", {
-      slugOverrides: {
-        admin: {
-          hidden: true,
-        },
+    // Set by populateSlugSourceHook from the referenced work. Not Payload's
+    // unique slug field: the URL is scoped by date, so repeats are expected.
+    {
+      name: "slug",
+      type: "text",
+      index: true,
+      admin: {
+        hidden: true,
       },
-    }),
+    },
     ...embeddingFields(),
     contentTextField("activity content"),
   ],
@@ -204,5 +206,4 @@ export const Activities: CollectionConfig<"activities"> = {
     afterDelete: [revalidateActivity.afterDelete],
   },
   versions: draftVersions(),
-  authorship: false,
 };

@@ -253,7 +253,6 @@ export async function generateStaticParams() {
         equals: "published",
       },
     },
-    overrideAccess: true,
   });
 
   return ensureStaticParams(

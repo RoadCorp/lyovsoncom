@@ -13,7 +13,7 @@ import { markNoteEmbeddingStaleHook } from "@/utilities/mark-embedding-stale";
 
 const revalidateNote = revalidateContentHooks("notes");
 
-export const Notes: CollectionConfig<"notes"> = {
+export const Notes: CollectionConfig = {
   slug: "notes",
   access: {
     create: authenticated,
@@ -186,7 +186,7 @@ export const Notes: CollectionConfig<"notes"> = {
       },
     },
     contentTextField(),
-    ...slugField(),
+    slugField(),
   ],
   hooks: {
     beforeChange: [populateContentTextHook, markNoteEmbeddingStaleHook],
@@ -194,5 +194,4 @@ export const Notes: CollectionConfig<"notes"> = {
     afterDelete: [revalidateNote.afterDelete],
   },
   versions: draftVersions(),
-  authorship: false,
 };

@@ -58,9 +58,7 @@ describe("embedding stale marker", () => {
   });
 
   it("ignores fields that a partial update leaves out", () => {
-    expect(
-      save({ _status: "published", slugLock: true }).embedding_text_hash
-    ).toBeUndefined();
+    expect(save({ _status: "published" }).embedding_text_hash).toBeUndefined();
   });
 
   it("marks content stale when it is first published", () => {

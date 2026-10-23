@@ -27,7 +27,7 @@ const monthPicker = {
   },
 } as const;
 
-export const Projects: CollectionConfig<"projects"> = {
+export const Projects: CollectionConfig = {
   slug: "projects",
   // Fields returned when another document references this one. Every post
   // summary populates its project, so keep this to what post cards render.
@@ -262,12 +262,11 @@ export const Projects: CollectionConfig<"projects"> = {
       description: "Set automatically on first publish",
       position: "sidebar",
     }),
-    ...slugField("name"),
+    slugField("name"),
   ],
   hooks: {
     afterChange: [revalidateProject],
     afterDelete: [revalidateDeletedProject],
   },
   versions: draftVersions(),
-  authorship: false,
 };

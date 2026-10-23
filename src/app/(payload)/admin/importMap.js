@@ -11,9 +11,13 @@ import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { UnderlineFeatureClient as UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { ParagraphFeatureClient as ParagraphFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
+import { MediaBlockPreview as MediaBlockPreview_4ee5c4e0bb6064edfbffe66359ba1166 } from '@/blocks/MediaBlock/admin-preview'
+import { YouTubePreview as YouTubePreview_68265acffab40d9fd1aea1148802f38f } from '@/blocks/YouTube/admin-preview'
+import { XPostPreview as XPostPreview_1b0a7904774f0e4b1670edad237c97f0 } from '@/blocks/XPost/admin-preview'
+import { QuotePreview as QuotePreview_bfc2c5fb36cfb31b8c0a84e22379eba7 } from '@/blocks/Quote/admin-preview'
 import { GifPicker as GifPicker_6d0747c0f1aab9fdcb3853ebe15b2e15 } from '@/blocks/GIF/gif-picker'
+import { GIFPreview as GIFPreview_09162d99e649edc0946f976d78a721f6 } from '@/blocks/GIF/admin-preview'
 import { HeadingFeatureClient as HeadingFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
-import { SlugComponent as SlugComponent_3a40a28053fdc7f295f2ddfa7a528d90 } from '@/fields/slug/slug-component'
 import { LLMInstructionsMenuItem as LLMInstructionsMenuItem_3817bf644402e67bfe6577f60ef982de } from '@payloadcms/ui'
 import { LLMInstructionsDescription as LLMInstructionsDescription_3817bf644402e67bfe6577f60ef982de } from '@payloadcms/ui'
 import { OrderedListFeatureClient as OrderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
@@ -23,7 +27,6 @@ import { default as default_0430f5fb3b8132a602107d7535a2a344 } from '@/component
 import { default as default_334250e18ce0b45af3e0c04bb6fe8307 } from '@/components/admin/logo'
 import { default as default_cb2a1950465b657675d3ed6492a8aaaa } from '@/components/admin/login-text'
 import { default as default_f85383ab19f610e83cfd30dec064bc51 } from '@/components/admin/view-site-link'
-import { AdminFontProvider as AdminFontProvider_0f0b46895dbb48b6dc2c7b624e6547f1 } from '@/components/admin/admin-font-provider'
 import { WelcomeWidget as WelcomeWidget_ab83ff7e88da8d3530831f296ec4756a } from '@payloadcms/ui/rsc'
 import { CollectionCards as CollectionCards_ab83ff7e88da8d3530831f296ec4756a } from '@payloadcms/ui/rsc'
 import { CollectionQueryWidget as CollectionQueryWidget_ab83ff7e88da8d3530831f296ec4756a } from '@payloadcms/ui/rsc'
@@ -50,9 +53,13 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#UnderlineFeatureClient": UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#ParagraphFeatureClient": ParagraphFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  "@/blocks/MediaBlock/admin-preview#MediaBlockPreview": MediaBlockPreview_4ee5c4e0bb6064edfbffe66359ba1166,
+  "@/blocks/YouTube/admin-preview#YouTubePreview": YouTubePreview_68265acffab40d9fd1aea1148802f38f,
+  "@/blocks/XPost/admin-preview#XPostPreview": XPostPreview_1b0a7904774f0e4b1670edad237c97f0,
+  "@/blocks/Quote/admin-preview#QuotePreview": QuotePreview_bfc2c5fb36cfb31b8c0a84e22379eba7,
   "@/blocks/GIF/gif-picker#GifPicker": GifPicker_6d0747c0f1aab9fdcb3853ebe15b2e15,
+  "@/blocks/GIF/admin-preview#GIFPreview": GIFPreview_09162d99e649edc0946f976d78a721f6,
   "@payloadcms/richtext-lexical/client#HeadingFeatureClient": HeadingFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
-  "@/fields/slug/slug-component#SlugComponent": SlugComponent_3a40a28053fdc7f295f2ddfa7a528d90,
   "@payloadcms/ui#LLMInstructionsMenuItem": LLMInstructionsMenuItem_3817bf644402e67bfe6577f60ef982de,
   "@payloadcms/ui#LLMInstructionsDescription": LLMInstructionsDescription_3817bf644402e67bfe6577f60ef982de,
   "@payloadcms/richtext-lexical/client#OrderedListFeatureClient": OrderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
@@ -62,7 +69,6 @@ export const importMap = {
   "@/components/admin/logo#default": default_334250e18ce0b45af3e0c04bb6fe8307,
   "@/components/admin/login-text#default": default_cb2a1950465b657675d3ed6492a8aaaa,
   "@/components/admin/view-site-link#default": default_f85383ab19f610e83cfd30dec064bc51,
-  "@/components/admin/admin-font-provider#AdminFontProvider": AdminFontProvider_0f0b46895dbb48b6dc2c7b624e6547f1,
   "@payloadcms/ui/rsc#WelcomeWidget": WelcomeWidget_ab83ff7e88da8d3530831f296ec4756a,
   "@payloadcms/ui/rsc#CollectionCards": CollectionCards_ab83ff7e88da8d3530831f296ec4756a,
   "@payloadcms/ui/rsc#CollectionQueryWidget": CollectionQueryWidget_ab83ff7e88da8d3530831f296ec4756a,

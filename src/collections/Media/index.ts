@@ -16,12 +16,14 @@ import {
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
-export const Media: CollectionConfig<"media"> = {
+export const Media: CollectionConfig = {
   slug: "media",
   access: {
     create: authenticated,
     delete: authenticated,
     read: anyone,
+    // Payload 4 lets versions inherit `read`; keep history private.
+    readVersions: authenticated,
     update: authenticated,
   },
   admin: {
@@ -76,6 +78,4 @@ export const Media: CollectionConfig<"media"> = {
     staticDir: path.resolve(dirname, "../../public/media"),
     adminThumbnail: "thumbnail",
   },
-  versions: false,
-  authorship: false,
 };

@@ -23,7 +23,6 @@ export async function getNote(slug: string): Promise<Note | null> {
     },
     limit: 1,
     depth: 2,
-    overrideAccess: true,
   });
 
   return (response.docs[0] as Note) || null;

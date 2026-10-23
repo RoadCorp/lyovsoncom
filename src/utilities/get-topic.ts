@@ -20,7 +20,6 @@ export async function getTopic(slug: string): Promise<Topic | null> {
       },
     },
     limit: 1,
-    overrideAccess: true,
   });
 
   return (response.docs[0] as Topic) || null;
@@ -36,7 +35,6 @@ export async function getAllTopics(): Promise<PaginatedDocs<Topic>> {
     collection: "topics",
     limit: 1000,
     sort: "name:asc",
-    overrideAccess: true,
   });
 
   return {
@@ -69,7 +67,6 @@ export async function getTopicIndex(): Promise<TopicIndexEntry[]> {
       pagination: false,
       select: { color: true, name: true, slug: true },
       sort: "name:asc",
-      overrideAccess: true,
     }),
     payload.find({
       collection: "posts",
@@ -78,7 +75,6 @@ export async function getTopicIndex(): Promise<TopicIndexEntry[]> {
       pagination: false,
       select: { topics: true },
       where: publishedPostsWhere(),
-      overrideAccess: true,
     }),
   ]);
 

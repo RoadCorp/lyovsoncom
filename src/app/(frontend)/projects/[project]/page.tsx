@@ -305,7 +305,6 @@ export async function generateStaticParams() {
     limit: 1000,
     select: { slug: true },
     where: publishedProjectsWhere(),
-    overrideAccess: true,
   });
 
   return ensureStaticParams(
