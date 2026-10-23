@@ -111,7 +111,10 @@ export const GridCardReferences = ({
                 <p className="tone-muted line-clamp-1 text-xs">{byline}</p>
               ) : null}
               {credit ? (
-                <p className="tone-muted line-clamp-1 text-[0.6875rem]">
+                <p
+                  className="tone-muted line-clamp-2 text-[0.6875rem]"
+                  title={credit}
+                >
                   {credit}
                 </p>
               ) : null}

@@ -389,6 +389,7 @@ export const GridCardHeroActivity = ({
           >
             <Media
               className="media-frame flex h-full items-center justify-center"
+              credit={true}
               imgClassName="h-full object-cover"
               pictureClassName="h-full"
               priority={true}

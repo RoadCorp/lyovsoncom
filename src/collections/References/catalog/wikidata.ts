@@ -167,9 +167,12 @@ export async function getWikidataFacts(id: string) {
     .map((value) => (value as { id: string }).id);
   const creators =
     creatorIds.length > 0
-      ? await getEntities(creatorIds, "labels").then((labels) =>
-          creatorIds.map((creatorId) => labels[creatorId]?.labels?.en?.value)
-        )
+      ? await getEntities(creatorIds, "labels")
+          .then((labels) =>
+            creatorIds.map((creatorId) => labels[creatorId]?.labels?.en?.value)
+          )
+          // A failed label lookup costs the creator, not the other facts.
+          .catch(() => [])
       : [];
 
   return {
@@ -177,8 +180,8 @@ export async function getWikidataFacts(id: string) {
     creator: creators.filter(Boolean).join(", ") || undefined,
     description: entity.descriptions?.en?.value,
     steamAppId,
-    // Wikidata times look like "+2011-11-11T00:00:00Z".
-    year: date ? yearOf(date.time.slice(1)) : undefined,
+    // Wikidata times look like "+2011-11-11T00:00:00Z"; skip BCE dates.
+    year: date?.time.startsWith("+") ? yearOf(date.time.slice(1)) : undefined,
   };
 }
 
@@ -190,6 +193,15 @@ interface CommonsPage {
 }
 
 const TAGS = /<[^>]+>/g;
+const ENTITIES = /&(?:#(\d+)|#x([\da-f]+)|(amp|apos|gt|lt|nbsp|quot));/gi;
+const NAMED_ENTITIES: Record<string, string> = {
+  amp: "&",
+  apos: "'",
+  gt: ">",
+  lt: "<",
+  nbsp: " ",
+  quot: '"',
+};
 const SPACES = /\s+/g;
 const MAX_ARTIST_LENGTH = 80;
 
@@ -213,14 +225,30 @@ export async function getCommonsImage(file: string) {
   }
   const artist = info.extmetadata?.Artist?.value
     .replace(TAGS, "")
+    .replace(ENTITIES, (_, decimal, hex, name) =>
+      name
+        ? NAMED_ENTITIES[name.toLowerCase()]
+        : String.fromCodePoint(
+            Number.parseInt(decimal ?? hex, decimal ? 10 : 16)
+          )
+    )
     .replace(SPACES, " ")
-    .trim()
-    .slice(0, MAX_ARTIST_LENGTH);
+    .trim();
+  const shortArtist =
+    artist && artist.length > MAX_ARTIST_LENGTH
+      ? `${artist.slice(0, MAX_ARTIST_LENGTH - 1).trimEnd()}…`
+      : artist;
   const license = info.extmetadata?.LicenseShortName?.value;
   return {
-    credit: [artist, license, "via Wikimedia Commons"]
+    // The licence leads so a clamped line still shows it.
+    credit: [
+      license,
+      shortArtist
+        ? `${shortArtist}, via Wikimedia Commons`
+        : "Wikimedia Commons",
+    ]
       .filter(Boolean)
-      .join(", "),
+      .join(" · "),
     url: info.thumburl,
   };
 }

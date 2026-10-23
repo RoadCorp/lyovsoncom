@@ -120,6 +120,7 @@ export const GridCardActivityFull = ({
             >
               <Media
                 className="media-frame flex h-full items-center justify-center"
+                credit={true}
                 imgClassName="h-full w-full object-cover"
                 pictureClassName="h-full w-full"
                 resource={referenceImage}

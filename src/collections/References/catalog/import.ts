@@ -192,7 +192,8 @@ export async function importCatalogItem(
   return {
     catalogId: item.sourceId,
     catalogSource: item.source,
-    creator: item.creator ?? facts.creator ?? null,
+    // Catalogs send "" when they list no creator.
+    creator: item.creator || facts.creator || null,
     // Keep a hand-written description when Wikidata has none.
     ...(description ? { description } : {}),
     ...(image ? { image } : {}),
