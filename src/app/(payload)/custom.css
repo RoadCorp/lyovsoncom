@@ -288,6 +288,12 @@ pre,
   padding: 24px;
 }
 
+.gif-picker__attribution {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--admin-text-3);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .gif-picker__result {
     transition: none !important;

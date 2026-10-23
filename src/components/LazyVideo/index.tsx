@@ -18,7 +18,7 @@ export const LazyVideo = ({
   mp4Src,
   webmSrc,
   poster,
-  aspectRatio = "1 / 1",
+  aspectRatio,
   className,
   alt = "Video content",
 }: LazyVideoProps) => {
@@ -66,7 +66,8 @@ export const LazyVideo = ({
       muted
       playsInline
       poster={poster}
-      preload="none"
+      // Without a poster, load the first frame once in view.
+      preload={poster ? "none" : "metadata"}
       ref={videoRef}
       style={{ aspectRatio }}
     >

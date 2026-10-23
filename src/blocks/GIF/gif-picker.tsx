@@ -8,17 +8,17 @@ import {
   useFormFields,
 } from "@payloadcms/ui";
 import type React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import { searchGifs } from "./actions";
-import { extractVideoUrls, type TenorResult } from "./tenor";
+import { getGiphyApiKey } from "./actions";
+import { extractVideoUrls, type GiphyResult, searchGiphy } from "./giphy";
 
 /**
  * GIF Picker Component for Payload Admin
  *
- * Provides an integrated Tenor GIF search interface directly in the
- * Lexical editor's GIF block. Users can search and select GIFs without
- * leaving the admin panel.
+ * Searches GIPHY from the browser inside the Lexical editor's GIF block.
+ * A pick stores GIPHY's media URLs (hotlinked, like YouTube and X embeds)
+ * and replaces any uploaded file.
  */
 
 // Component
@@ -28,6 +28,7 @@ export const GifPicker: React.FC = () => {
   const webmUrlFieldPath = "webmUrl";
   const posterUrlFieldPath = "posterUrl";
   const aspectRatioFieldPath = "aspectRatio";
+  const sourceUrlFieldPath = "sourceUrl";
 
   // Form integration
   const { dispatchFields } = useForm();
@@ -42,11 +43,12 @@ export const GifPicker: React.FC = () => {
 
   // Local state
   const [searchTerm, setSearchTerm] = useState("");
-  const [results, setResults] = useState<TenorResult[]>([]);
+  const [results, setResults] = useState<GiphyResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedGifId, setSelectedGifId] = useState<string | null>(null);
   const [showSearchMode, setShowSearchMode] = useState(false);
+  const apiKeyRef = useRef<string | null>(null);
 
   // Handlers
   const handleSearch = useCallback(async () => {
@@ -58,7 +60,8 @@ export const GifPicker: React.FC = () => {
     setError(null);
 
     try {
-      const gifs = await searchGifs(searchTerm);
+      apiKeyRef.current ??= await getGiphyApiKey();
+      const gifs = await searchGiphy(apiKeyRef.current, searchTerm);
       setResults(gifs);
     } catch (err) {
       setError(
@@ -73,7 +76,7 @@ export const GifPicker: React.FC = () => {
   }, [searchTerm]);
 
   const handleSelectGif = useCallback(
-    (result: TenorResult) => {
+    (result: GiphyResult) => {
       // Extract video URLs and metadata
       const videoData = extractVideoUrls(result);
 
@@ -87,7 +90,7 @@ export const GifPicker: React.FC = () => {
       dispatchFields({
         type: "UPDATE",
         path: webmUrlFieldPath,
-        value: videoData.webmUrl || null,
+        value: null,
       });
 
       dispatchFields({
@@ -101,6 +104,16 @@ export const GifPicker: React.FC = () => {
         path: aspectRatioFieldPath,
         value: videoData.aspectRatio,
       });
+
+      dispatchFields({
+        type: "UPDATE",
+        path: sourceUrlFieldPath,
+        value: videoData.sourceUrl,
+      });
+
+      // A pick replaces an uploaded file.
+      dispatchFields({ type: "UPDATE", path: "media", value: null });
+      dispatchFields({ type: "UPDATE", path: "poster", value: null });
 
       // Mark as selected, close search, and switch to preview mode
       setSelectedGifId(result.id);
@@ -122,6 +135,7 @@ export const GifPicker: React.FC = () => {
     dispatchFields({ type: "UPDATE", path: webmUrlFieldPath, value: null });
     dispatchFields({ type: "UPDATE", path: posterUrlFieldPath, value: null });
     dispatchFields({ type: "UPDATE", path: aspectRatioFieldPath, value: null });
+    dispatchFields({ type: "UPDATE", path: sourceUrlFieldPath, value: null });
     setShowSearchMode(false);
     setSelectedGifId(null);
   }, [dispatchFields]);
@@ -191,7 +205,7 @@ export const GifPicker: React.FC = () => {
         </>
       ) : (
         <>
-          <FieldLabel label="Search Tenor GIFs" />
+          <FieldLabel label="Search GIPHY" />
 
           <div className="gif-picker__search">
             <div className="gif-picker__search-input">
@@ -220,6 +234,7 @@ export const GifPicker: React.FC = () => {
             <div className="gif-picker__results">
               {results.map((result) => {
                 const isSelected = selectedGifId === result.id;
+                const thumb = result.images.fixed_width;
                 const resultClassName = isSelected
                   ? "gif-picker__result gif-picker__result--selected"
                   : "gif-picker__result";
@@ -233,17 +248,19 @@ export const GifPicker: React.FC = () => {
                   >
                     {/* biome-ignore lint/performance/noImgElement: Payload admin component cannot use Next.js Image */}
                     <img
-                      alt="GIF preview"
+                      alt={result.title || "GIF preview"}
                       className="gif-picker__result-image"
-                      height={result.media_formats.tinygif.dims[1]}
-                      src={result.media_formats.tinygif.url}
-                      width={result.media_formats.tinygif.dims[0]}
+                      height={Number(thumb.height)}
+                      src={thumb.webp || thumb.url}
+                      width={Number(thumb.width)}
                     />
                   </button>
                 );
               })}
             </div>
           )}
+
+          <p className="gif-picker__attribution">Powered by GIPHY</p>
 
           {!loading && results.length === 0 && searchTerm && !error && (
             <div className="gif-picker__empty">

@@ -11,6 +11,7 @@ declare global {
       CRON_SECRET?: string;
       FACEBOOK_APP_ID?: string;
       FACEBOOK_DOMAIN_VERIFICATION?: string;
+      GIPHY_API_KEY?: string;
       GOOGLE_SITE_VERIFICATION?: string;
       NEXT_PUBLIC_SERVER_URL?: string;
       NEXT_TEST_MODE?: string;
@@ -19,7 +20,6 @@ declare global {
       PAYLOAD_SECRET: string;
       POSTGRES_URL: string;
       RESEND_API_KEY?: string;
-      TENOR_API_KEY?: string;
       VERCEL?: string;
       VERCEL_ENV?: "development" | "preview" | "production";
       VERCEL_PROJECT_PRODUCTION_URL?: string;

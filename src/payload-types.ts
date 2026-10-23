@@ -1830,10 +1830,22 @@ export interface QuoteBlock {
 export interface GIFBlock {
   id: string;
   blockType: 'gif';
-  mp4Url: string;
-  webmUrl?: string | null;
-  posterUrl: string;
+  /**
+   * An MP4, WebM or animated GIF file.
+   */
+  media?: (number | null) | Media;
+  /**
+   * A still frame, shown before the video loads and with reduced motion.
+   */
+  poster?: (number | null) | Media;
+  /**
+   * Width / height, e.g. 16:9. Leave empty to use the file's.
+   */
   aspectRatio?: string | null;
+  mp4Url?: string | null;
+  webmUrl?: string | null;
+  posterUrl?: string | null;
+  sourceUrl?: string | null;
   caption?: LexicalRichText<LexicalNodes_AD327369> | null;
   blockName?: string | null;
 }

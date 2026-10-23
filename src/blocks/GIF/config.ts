@@ -23,9 +23,44 @@ export const GIF: Block = {
       },
     },
     {
+      name: "media",
+      type: "upload",
+      relationTo: "media",
+      label: "Or upload a GIF or video",
+      filterOptions: {
+        or: [
+          { mimeType: { equals: "image/gif" } },
+          { mimeType: { like: "video/" } },
+        ],
+      },
+      admin: {
+        description: "An MP4, WebM or animated GIF file.",
+      },
+    },
+    {
+      name: "poster",
+      type: "upload",
+      relationTo: "media",
+      label: "Poster (optional)",
+      filterOptions: { mimeType: { like: "image/" } },
+      admin: {
+        description:
+          "A still frame, shown before the video loads and with reduced motion.",
+      },
+    },
+    {
+      name: "aspectRatio",
+      type: "text",
+      admin: {
+        description:
+          "Width / height, e.g. 16:9. Leave empty to use the file's.",
+      },
+    },
+    // Hotlinked GIPHY picks, and older Tenor blocks that
+    // scripts/replace-tenor-gifs.ts could not match on GIPHY.
+    {
       name: "mp4Url",
       type: "text",
-      required: true,
       admin: {
         hidden: true,
       },
@@ -40,13 +75,12 @@ export const GIF: Block = {
     {
       name: "posterUrl",
       type: "text",
-      required: true,
       admin: {
         hidden: true,
       },
     },
     {
-      name: "aspectRatio",
+      name: "sourceUrl",
       type: "text",
       admin: {
         hidden: true,
