@@ -21,6 +21,8 @@ export const References: CollectionConfig = {
     create: authenticated,
     delete: authenticated,
     read: anyone,
+    // Payload 4 lets versions inherit `read`; keep history private.
+    readVersions: authenticated,
     update: authenticated,
   },
   defaultPopulate: {

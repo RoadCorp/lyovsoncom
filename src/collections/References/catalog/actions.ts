@@ -75,12 +75,32 @@ export async function searchCatalog(type: ReferenceType, query: string) {
   }
 }
 
+// Covers are fetched only from the catalogs' own image hosts.
+const COVER_HOSTS = [
+  "covers.openlibrary.org",
+  "coverartarchive.org",
+  "image.tmdb.org",
+  "images.igdb.com",
+  ".mzstatic.com",
+];
+const MAX_COVER_BYTES = 10 * 1024 * 1024;
+
+function isCatalogImage(url: string) {
+  const { hostname, protocol } = new URL(url);
+  return (
+    protocol === "https:" &&
+    COVER_HOSTS.some((host) =>
+      host.startsWith(".") ? hostname.endsWith(host) : hostname === host
+    )
+  );
+}
+
 /** Copies a cover into Media so the site never hotlinks a catalog. */
 async function saveCover(
   { payload, user }: Awaited<ReturnType<typeof requireUser>>,
   item: CatalogItem
 ) {
-  if (!item.imageUrl) {
+  if (!(item.imageUrl && isCatalogImage(item.imageUrl))) {
     return;
   }
   const response = await fetch(item.imageUrl, {
@@ -90,7 +110,13 @@ async function saveCover(
   if (!(response?.ok && mimetype.startsWith("image/"))) {
     return;
   }
+  if (Number(response.headers.get("content-length")) > MAX_COVER_BYTES) {
+    return;
+  }
   const data = Buffer.from(await response.arrayBuffer());
+  if (data.length > MAX_COVER_BYTES) {
+    return;
+  }
   const extension = mimetype.split("/")[1]?.replace("jpeg", "jpg") ?? "jpg";
   const media = await payload.create({
     collection: "media",
@@ -110,7 +136,7 @@ async function saveCover(
 /**
  * The reference fields for a picked result: the catalog's details, its
  * Wikidata item and description when one matches, and the cover in Media
- * unless the reference already has an image.
+ * when asked for one.
  */
 export async function importCatalogItem(item: CatalogItem, withCover: boolean) {
   const session = await requireUser();
@@ -136,7 +162,8 @@ export async function importCatalogItem(item: CatalogItem, withCover: boolean) {
     catalogId: item.sourceId,
     catalogSource: item.source,
     creator: item.creator ?? null,
-    description: description || null,
+    // Keep a hand-written description when Wikidata has none.
+    ...(description ? { description } : {}),
     ...(image ? { image } : {}),
     title: item.title,
     url: item.url,

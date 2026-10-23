@@ -13,15 +13,23 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
     WHERE r.title IS NULL
       AND NOT EXISTS (SELECT 1 FROM "activities" a WHERE a.reference_id = r.id)
       AND NOT EXISTS (SELECT 1 FROM "posts_rels" p WHERE p.references_id = r.id)
-      AND NOT EXISTS (SELECT 1 FROM "notes_rels" n WHERE n.references_id = r.id);
+      AND NOT EXISTS (SELECT 1 FROM "notes_rels" n WHERE n.references_id = r.id)
+      AND NOT EXISTS (SELECT 1 FROM "notes" n WHERE n.source_reference_id = r.id)
+      AND NOT EXISTS (SELECT 1 FROM "references" s WHERE s.series_id = r.id)
+      AND NOT EXISTS (SELECT 1 FROM "_activities_v" a WHERE a.version_reference_id = r.id)
+      AND NOT EXISTS (SELECT 1 FROM "_posts_v_rels" p WHERE p.references_id = r.id)
+      AND NOT EXISTS (SELECT 1 FROM "_notes_v_rels" n WHERE n.references_id = r.id)
+      AND NOT EXISTS (SELECT 1 FROM "_notes_v" n WHERE n.version_source_reference_id = r.id);
   DELETE FROM "_references_v"
     WHERE version_title IS NULL OR version_type IS NULL OR version_slug IS NULL;
   UPDATE "references"
     SET type = 'other'
-    WHERE type::text NOT IN ('book', 'movie', 'tvShow', 'videoGame', 'music', 'podcast', 'series', 'person', 'course');
+    WHERE type IS NULL
+      OR type::text NOT IN ('book', 'movie', 'tvShow', 'videoGame', 'music', 'podcast', 'series', 'person', 'course');
   UPDATE "_references_v"
     SET version_type = 'other'
-    WHERE version_type::text NOT IN ('book', 'movie', 'tvShow', 'videoGame', 'music', 'podcast', 'series', 'person', 'course');`);
+    WHERE version_type IS NULL
+      OR version_type::text NOT IN ('book', 'movie', 'tvShow', 'videoGame', 'music', 'podcast', 'series', 'person', 'course');`);
 
   await db.execute(sql`
    CREATE TYPE "public"."enum_references_catalog_source" AS ENUM('openLibrary', 'tmdb', 'igdb', 'musicBrainz', 'itunes', 'wikidata');

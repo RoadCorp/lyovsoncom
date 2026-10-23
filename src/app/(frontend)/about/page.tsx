@@ -9,7 +9,7 @@ export default function AboutPage() {
     <PlaceholderPageCard
       description="A shared place for the Lyóvson family story, values, and the shape of the site."
       eyebrow="About"
-      note="This page is intentionally lightweight for the menu redesign. It gives the new global navigation a stable destination while the full About page content is still being developed."
+      note="This page is intentionally lightweight for the menu redesign. It gives the new global navigation a stable destination while the full About page content is still being developed. Film and TV details and posters come from TMDB. This website uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB."
       title="About Lyóvson.com"
     />
   );
