@@ -50,7 +50,9 @@ function revalidateProjectOutput(
   revalidatePublicContent("projects", doc, previousDoc);
 
   const wasOrIsPublished =
-    doc?._status === "published" || previousDoc?._status === "published";
+    doc?._status === "published" ||
+    previousDoc?._status === "published" ||
+    Boolean(doc?.deletedAt) !== Boolean(previousDoc?.deletedAt);
   if (!(wasOrIsPublished && changedForPosts(doc, previousDoc))) {
     return;
   }

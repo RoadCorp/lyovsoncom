@@ -57,19 +57,25 @@ export function revalidatePublicContent(
 ) {
   const currentPublic = isPublic(collection, doc);
   const previousPublic = isPublic(collection, previousDoc);
-  if (!(currentPublic || previousPublic)) {
+  // Trashing or restoring can carry the latest draft instead of the live
+  // document, so its status can't tell whether the site showed it.
+  const trashChanged =
+    Boolean(doc?.deletedAt) !== Boolean(previousDoc?.deletedAt);
+  const withdrawn = previousPublic || trashChanged;
+  if (!(currentPublic || withdrawn)) {
     return;
   }
   const changedPath =
     identity(collection, doc) !== identity(collection, previousDoc);
-  const immediate = currentPublic !== previousPublic || changedPath;
+  const immediate =
+    trashChanged || currentPublic !== previousPublic || changedPath;
   revalidateTag(collection, immediate ? { expire: 0 } : collection);
   revalidateTag("homepage", immediate ? { expire: 0 } : "homepage");
   revalidateTag("sitemap", immediate ? { expire: 0 } : "sitemap");
   if (currentPublic && doc) {
     invalidateDocument(collection, doc, immediate);
   }
-  if (previousPublic && previousDoc && (!currentPublic || changedPath)) {
+  if (withdrawn && previousDoc && (!currentPublic || changedPath)) {
     invalidateDocument(collection, previousDoc, true);
   }
   if (immediate) {
@@ -78,7 +84,7 @@ export function revalidatePublicContent(
   }
   // Withdrawn content must not remain in the server's generated feed response.
   // An already downloaded feed/browser page cannot be remotely erased.
-  if (previousPublic && !currentPublic) {
+  if (withdrawn && !currentPublic) {
     for (const path of ["/feed.xml", "/atom.xml", "/feed.json"]) {
       revalidatePath(path);
     }

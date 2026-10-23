@@ -9,6 +9,10 @@ export const authenticatedOrPublishedPublic: Access = ({ req: { user } }) => {
     _status: {
       equals: "published",
     },
+    // `?trash=true` would otherwise list trashed documents.
+    deletedAt: {
+      exists: false,
+    },
     visibility: {
       equals: "public",
     },

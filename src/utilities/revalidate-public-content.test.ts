@@ -46,10 +46,12 @@ describe("public publication freshness", () => {
     }
   );
   it("withdraws a published document moved to the trash", () => {
+    // Payload passes the latest version, here a newer draft of the live post.
+    const draft = { ...note, _status: "draft" as const };
     revalidatePublicContent(
       "posts",
-      { ...note, deletedAt: "2026-10-23T15:00:00Z" },
-      note
+      { ...draft, deletedAt: "2026-10-23T15:00:00Z" },
+      draft
     );
     expect(revalidateTag).toHaveBeenCalledWith("posts", { expire: 0 });
     expect(revalidateTag).toHaveBeenCalledWith("post-a-note", { expire: 0 });

@@ -228,6 +228,7 @@ function rankedResults(scopes: ScopePredicates) {
       LEFT JOIN posts_fulltext_search ON p.id = posts_fulltext_search.id
       LEFT JOIN posts_fuzzy_search ON p.id = posts_fuzzy_search.id
       WHERE p._status = 'published'
+        AND p.deleted_at IS NULL
         AND ${scopes.posts}
         AND (
           posts_semantic_search.id IS NOT NULL
@@ -257,6 +258,7 @@ function rankedResults(scopes: ScopePredicates) {
       LEFT JOIN notes_fulltext_search ON n.id = notes_fulltext_search.id
       LEFT JOIN notes_fuzzy_search ON n.id = notes_fuzzy_search.id
       WHERE n._status = 'published'
+        AND n.deleted_at IS NULL
         AND n.visibility = 'public'
         AND ${scopes.notes}
         AND (
@@ -287,6 +289,7 @@ function rankedResults(scopes: ScopePredicates) {
       LEFT JOIN activities_fulltext_search ON a.id = activities_fulltext_search.id
       LEFT JOIN activities_fuzzy_search ON a.id = activities_fuzzy_search.id
       WHERE a._status = 'published'
+        AND a.deleted_at IS NULL
         AND a.visibility = 'public'
         AND ${scopes.activities}
         AND (
@@ -322,10 +325,18 @@ export function globalHybridSearchSql({
   query,
   vectorString,
 }: HybridSearchSqlParams): SQL {
-  return sql`SELECT * FROM hybrid_search_content(
+  // The database function predates the trash, so trashed hits are dropped here.
+  return sql`SELECT r.* FROM hybrid_search_content(
       ${query},
       ${vectorString}::vector,
       ${limit},
       ${SEARCH_RRF_K}
+    ) r
+    WHERE NOT EXISTS (
+      SELECT 1 FROM posts p WHERE r.collection = 'posts' AND p.id = r.id AND p.deleted_at IS NOT NULL
+      UNION ALL
+      SELECT 1 FROM notes n WHERE r.collection = 'notes' AND n.id = r.id AND n.deleted_at IS NOT NULL
+      UNION ALL
+      SELECT 1 FROM activities a WHERE r.collection = 'activities' AND a.id = r.id AND a.deleted_at IS NOT NULL
     )`;
 }
