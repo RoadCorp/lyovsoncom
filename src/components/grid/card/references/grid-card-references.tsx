@@ -1,18 +1,8 @@
-import {
-  Book,
-  Building2,
-  ExternalLink,
-  Film,
-  Gamepad2,
-  GraduationCap,
-  Link as LinkIcon,
-  Mic,
-  Music,
-  User,
-  Video,
-} from "lucide-react";
+import { ExternalLink } from "lucide-react";
 
+import { REFERENCE_TYPE_LABELS } from "@/collections/References/fields/type";
 import { GridCard, GridCardSection } from "@/components/grid";
+import { getActivityReferenceIcon } from "@/components/grid/card/activity/shared";
 import { Media } from "@/components/Media";
 import { CARD_THUMBNAIL_IMAGE_SIZE } from "@/components/Media/image-sizes";
 import { cn } from "@/lib/utils";
@@ -25,46 +15,6 @@ export interface GridCardReferencesProps {
 
 const MAX_STAGGER_INDEX = 6;
 const MAX_VISIBLE_REFERENCES = 3;
-
-const referenceTypeIcons: Partial<Record<Reference["type"], typeof Book>> = {
-  book: Book,
-  movie: Film,
-  tvShow: Film,
-  videoGame: Gamepad2,
-  music: Music,
-  podcast: Mic,
-  series: Book,
-  person: User,
-  company: Building2,
-  website: LinkIcon,
-  article: LinkIcon,
-  video: Video,
-  repository: LinkIcon,
-  tool: LinkIcon,
-  social: LinkIcon,
-  course: GraduationCap,
-  other: LinkIcon,
-};
-
-const referenceTypeLabels: Partial<Record<Reference["type"], string>> = {
-  book: "Book",
-  movie: "Movie",
-  tvShow: "TV Show",
-  videoGame: "Game",
-  music: "Music",
-  podcast: "Podcast",
-  series: "Series",
-  person: "Person",
-  company: "Company",
-  website: "Website",
-  article: "Article",
-  video: "Video",
-  repository: "Repository",
-  tool: "Tool",
-  social: "Social",
-  course: "Course",
-  other: "Other",
-};
 
 function getStaggerClass(index: number): string {
   return `reveal-stagger-${Math.min(index + 1, MAX_STAGGER_INDEX)}`;
@@ -97,8 +47,11 @@ export const GridCardReferences = ({
   return (
     <GridCard className={cn(className)} frameLabel="References">
       {visibleReferences.map((reference, index) => {
-        const IconComponent = referenceTypeIcons[reference.type] ?? LinkIcon;
-        const typeLabel = referenceTypeLabels[reference.type] ?? "Reference";
+        const IconComponent = getActivityReferenceIcon(reference.type);
+        const typeLabel = REFERENCE_TYPE_LABELS[reference.type] ?? "Reference";
+        const byline = [reference.creator, reference.year]
+          .filter(Boolean)
+          .join(", ");
         const isExternal = hasExternalUrl(reference);
         const rowClass = `row-start-${index + 1} row-end-${index + 2}`;
         const staggerClass = getStaggerClass(index);
@@ -142,6 +95,9 @@ export const GridCardReferences = ({
                   />
                 ) : null}
               </div>
+              {byline ? (
+                <p className="tone-muted line-clamp-1 text-xs">{byline}</p>
+              ) : null}
               <div className="flex items-center gap-2">
                 <span className="surface-chip surface-tag">{typeLabel}</span>
               </div>

@@ -54,6 +54,10 @@ import {
   down as migration_20261023_173048_topic_hierarchy_down,
   up as migration_20261023_173048_topic_hierarchy_up,
 } from "./20261023_173048_topic_hierarchy";
+import {
+  down as migration_20261023_181124_reference_system_v2_down,
+  up as migration_20261023_181124_reference_system_v2_up,
+} from "./20261023_181124_reference_system_v2";
 
 export const migrations = [
   {
@@ -125,5 +129,10 @@ export const migrations = [
     up: migration_20261023_173048_topic_hierarchy_up,
     down: migration_20261023_173048_topic_hierarchy_down,
     name: "20261023_173048_topic_hierarchy",
+  },
+  {
+    up: migration_20261023_181124_reference_system_v2_up,
+    down: migration_20261023_181124_reference_system_v2_down,
+    name: "20261023_181124_reference_system_v2",
   },
 ];

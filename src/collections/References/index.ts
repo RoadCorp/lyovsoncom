@@ -1,34 +1,26 @@
 import type { CollectionConfig } from "payload";
 import { anyone } from "@/access/anyone";
 import { authenticated } from "@/access/authenticated";
-import { draftVersions } from "@/collections/shared";
 import { slugField } from "@/fields/slug";
 import {
   hasPublicChanges,
-  isDraftOnlySave,
   revalidatePublicDependencies,
 } from "@/utilities/revalidate-public-content";
-import { bookFields } from "./fields/book";
-import { companyFields } from "./fields/company";
-import { courseFields } from "./fields/course";
-import { externalIdsField } from "./fields/external-ids";
-import { gameFields } from "./fields/game";
-import { linksField } from "./fields/links";
-import { musicFields } from "./fields/music";
-import { personFields } from "./fields/person";
-import { podcastFields } from "./fields/podcast";
-import { screenFields } from "./fields/screen";
 import { referenceTypeField } from "./fields/type";
-import { webFields } from "./fields/web";
 
+const WIKIDATA_ID = /^Q\d+$/;
+
+/**
+ * The works, people and organizations content points to. Most are filled
+ * from a catalog search (see ./catalog); every field stays editable by hand
+ * for things no catalog has.
+ */
 export const References: CollectionConfig = {
   slug: "references",
   access: {
     create: authenticated,
     delete: authenticated,
     read: anyone,
-    // Payload 4 lets versions inherit `read`; keep drafts and history private.
-    readVersions: authenticated,
     update: authenticated,
   },
   defaultPopulate: {
@@ -37,83 +29,135 @@ export const References: CollectionConfig = {
     image: true,
     description: true,
     type: true,
+    creator: true,
+    year: true,
+    url: true,
+    wikidataId: true,
   },
   admin: {
     group: "Organization",
     useAsTitle: "title",
-    defaultColumns: ["title", "type", "updatedAt"],
-    description:
-      "Unified references for people, companies, works, and web media",
+    defaultColumns: ["title", "type", "creator", "year", "updatedAt"],
+    description: "Books, films, music, games, people and organizations",
   },
   fields: [
+    referenceTypeField,
+    {
+      name: "catalogSearch",
+      type: "ui",
+      admin: {
+        components: {
+          Field: "@/collections/References/catalog/picker#CatalogPicker",
+        },
+      },
+    },
     {
       name: "title",
       type: "text",
       required: true,
+    },
+    {
+      type: "row",
+      fields: [
+        {
+          name: "creator",
+          type: "text",
+          admin: {
+            description: "Author, director, artist, studio or host",
+          },
+        },
+        {
+          name: "year",
+          type: "number",
+          min: 0,
+          max: 9999,
+          admin: { width: "30%" },
+        },
+      ],
+    },
+    {
+      name: "description",
+      type: "textarea",
       admin: {
-        description: "The title or name of this reference",
+        description: "One line; filled from Wikidata",
       },
     },
-    referenceTypeField,
+    {
+      name: "url",
+      type: "text",
+      label: "Link",
+      admin: {
+        description: "Where the reference links: its catalog or official page",
+      },
+    },
+    {
+      name: "series",
+      type: "relationship",
+      relationTo: "references",
+      filterOptions: { type: { equals: "series" } },
+      admin: {
+        description: "The series or franchise this belongs to",
+        condition: (data) =>
+          !["series", "person", "organization"].includes(data?.type),
+      },
+    },
+    {
+      name: "format",
+      type: "select",
+      options: [
+        { label: "Hardcover", value: "hardcover" },
+        { label: "Paperback", value: "paperback" },
+        { label: "Ebook", value: "ebook" },
+        { label: "Audiobook", value: "audiobook" },
+      ],
+      admin: {
+        condition: (data) => data?.type === "book",
+      },
+    },
     {
       name: "image",
       type: "upload",
       relationTo: "media",
-      required: true,
       admin: {
         position: "sidebar",
-        description: "Image for this reference (cover, photo, logo, etc.)",
+        description: "Cover, poster, photo or logo; copied from the catalog",
       },
     },
     {
-      type: "tabs",
-      tabs: [
+      name: "wikidataId",
+      type: "text",
+      label: "Wikidata item",
+      index: true,
+      validate: (value: unknown) =>
+        !value ||
+        (typeof value === "string" && WIKIDATA_ID.test(value)) ||
+        "A Wikidata item id, e.g. Q42",
+      admin: {
+        position: "sidebar",
+        placeholder: "Q42",
+      },
+    },
+    {
+      type: "row",
+      admin: { position: "sidebar" },
+      fields: [
         {
-          label: "Overview",
-          fields: [
-            {
-              name: "description",
-              type: "textarea",
-              admin: {
-                description: "Brief description or summary",
-              },
-            },
+          name: "catalogSource",
+          type: "select",
+          label: "Catalog",
+          options: [
+            { label: "Open Library", value: "openLibrary" },
+            { label: "TMDB", value: "tmdb" },
+            { label: "IGDB", value: "igdb" },
+            { label: "MusicBrainz", value: "musicBrainz" },
+            { label: "Apple Podcasts", value: "itunes" },
+            { label: "Wikidata", value: "wikidata" },
           ],
         },
         {
-          label: "Details",
-          fields: [
-            ...bookFields,
-            ...screenFields,
-            ...gameFields,
-            ...musicFields,
-            ...podcastFields,
-            ...personFields,
-            ...companyFields,
-            ...webFields,
-            ...courseFields,
-          ],
-        },
-        {
-          label: "Web/Links",
-          fields: [linksField],
-        },
-        {
-          label: "IDs",
-          fields: [externalIdsField],
-        },
-        {
-          label: "Metadata",
-          fields: [
-            {
-              name: "tags",
-              type: "text",
-              hasMany: true,
-              admin: {
-                description: "Tags for this reference",
-              },
-            },
-          ],
+          name: "catalogId",
+          type: "text",
+          label: "Catalog id",
         },
       ],
     },
@@ -121,13 +165,11 @@ export const References: CollectionConfig = {
   ],
   hooks: {
     afterChange: [
-      ({ context, doc, operation, previousDoc, req }) => {
-        // A new reference isn't rendered until content links to it, and
-        // draft saves (autosave every 30s) don't change the published one.
+      ({ context, doc, operation, previousDoc }) => {
+        // A new reference isn't rendered until content links to it.
         if (
           context?.skipRevalidation ||
           operation === "create" ||
-          isDraftOnlySave(req, doc) ||
           !hasPublicChanges(doc, previousDoc)
         ) {
           return doc;
@@ -145,5 +187,4 @@ export const References: CollectionConfig = {
       },
     ],
   },
-  versions: draftVersions(),
 };

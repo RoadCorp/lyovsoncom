@@ -9,9 +9,7 @@ import {
   MapPin,
   Mic,
   Music,
-  Trophy,
   User,
-  Video,
 } from "lucide-react";
 import type { Activity, Reference } from "@/payload-types";
 import { getActivityTypeLabel as getSharedActivityTypeLabel } from "@/utilities/activity-type";
@@ -29,9 +27,7 @@ const referenceTypeIcons: Partial<Record<Reference["type"], LucideIcon>> = {
   podcast: Mic,
   series: Book,
   person: User,
-  company: Building2,
-  video: Video,
-  match: Trophy,
+  organization: Building2,
   course: GraduationCap,
 };
 

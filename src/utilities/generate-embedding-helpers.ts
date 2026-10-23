@@ -1,6 +1,7 @@
 import { and, eq } from "@payloadcms/db-vercel-postgres/drizzle";
 import { revalidateTag } from "next/cache";
 import type { Payload, Where } from "payload";
+import { REFERENCE_TYPE_LABELS } from "@/collections/References/fields/type";
 import type { Activity, Note, Post } from "@/payload-types";
 import { getActivityTypeLabel } from "@/utilities/activity-type";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";
@@ -70,21 +71,6 @@ function refreshRecommendationCache(tag: string, profile: "notes" | "posts") {
   }
 }
 
-const REFERENCE_TYPE_LABELS: Record<string, string> = {
-  book: "Book",
-  movie: "Movie",
-  tvShow: "TV Show",
-  videoGame: "Video Game",
-  music: "Music",
-  podcast: "Podcast",
-  series: "Series",
-  person: "Person",
-  company: "Company",
-  video: "Video",
-  match: "Match",
-  course: "Course",
-};
-
 export function buildActivityEmbeddingText(activity: Activity): string {
   const referenceObj = isPopulated(activity.reference)
     ? activity.reference
@@ -108,6 +94,7 @@ export function buildActivityEmbeddingText(activity: Activity): string {
   const textParts = [
     referenceObj?.title ? `${activityLabel} ${referenceObj.title}` : "Activity",
     referenceType ? `Type: ${referenceType}` : null,
+    referenceObj?.creator ? `By ${referenceObj.creator}` : null,
     referenceObj?.description ? referenceObj.description : null,
     notesText ? `Notes: ${notesText}` : null,
     ...reviewTexts,

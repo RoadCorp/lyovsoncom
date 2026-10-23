@@ -87,6 +87,9 @@ const nextConfig: NextConfig = {
       "font-src 'self' fonts.gstatic.com data:",
       [
         "img-src 'self' data: blob: *.vercel-insights.com pbs.twimg.com abs.twimg.com *.twimg.com *.giphy.com",
+        // Reference catalog thumbnails in the admin search; Open Library and
+        // the Cover Art Archive redirect to archive.org.
+        "covers.openlibrary.org coverartarchive.org archive.org *.archive.org image.tmdb.org images.igdb.com *.mzstatic.com",
         VERCEL_BLOB_CSP_SOURCE,
       ]
         .filter(Boolean)

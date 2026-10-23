@@ -443,7 +443,7 @@ export interface Lyovson {
   collection: 'lyovsons';
 }
 /**
- * Unified references for people, companies, works, and web media
+ * Books, films, music, games, people and organizations
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "references".
@@ -451,11 +451,7 @@ export interface Lyovson {
 export interface Reference {
   id: number;
   /**
-   * The title or name of this reference
-   */
-  title: string;
-  /**
-   * What type of reference is this?
+   * Books search Open Library, films and shows TMDB, games IGDB, music MusicBrainz, podcasts Apple Podcasts; the rest Wikidata
    */
   type:
     | 'book'
@@ -466,266 +462,35 @@ export interface Reference {
     | 'podcast'
     | 'series'
     | 'person'
-    | 'company'
-    | 'website'
-    | 'article'
-    | 'video'
-    | 'repository'
-    | 'tool'
-    | 'social'
+    | 'organization'
     | 'course'
-    | 'match'
     | 'other';
+  title: string;
   /**
-   * Image for this reference (cover, photo, logo, etc.)
+   * Author, director, artist, studio or host
    */
-  image: number | Media;
+  creator?: string | null;
+  year?: number | null;
   /**
-   * Brief description or summary
+   * One line; filled from Wikidata
    */
   description?: string | null;
   /**
-   * ISBN number
-   */
-  isbn?: string | null;
-  /**
-   * Publisher name
-   */
-  publisher?: string | null;
-  /**
-   * Number of pages
-   */
-  pageCount?: number | null;
-  /**
-   * Language
-   */
-  language?: string | null;
-  /**
-   * Book format
-   */
-  format?: ('hardcover' | 'paperback' | 'ebook' | 'audiobook') | null;
-  /**
-   * Series this item belongs to
-   */
-  series?: (number | null) | Reference;
-  /**
-   * Runtime in minutes
-   */
-  runtime?: number | null;
-  /**
-   * MPAA rating
-   */
-  mpaaRating?: ('g' | 'pg' | 'pg13' | 'r' | 'nc17' | 'nr') | null;
-  /**
-   * Network or streaming service
-   */
-  networkOrService?: string | null;
-  /**
-   * Show status
-   */
-  status?: ('ongoing' | 'ended' | 'cancelled') | null;
-  /**
-   * Season number
-   */
-  seasonNumber?: number | null;
-  /**
-   * Episode number
-   */
-  episodeNumber?: number | null;
-  /**
-   * Gaming platforms
-   */
-  platforms?: ('pc' | 'playstation' | 'xbox' | 'switch' | 'mobile' | 'vr')[] | null;
-  /**
-   * ESRB rating
-   */
-  esrbRating?: ('e' | 'e10' | 't' | 'm' | 'ao') | null;
-  /**
-   * Metacritic score
-   */
-  metacriticScore?: number | null;
-  /**
-   * Game developer
-   */
-  developer?: string | null;
-  /**
-   * Album this song belongs to
-   */
-  album?: (number | null) | Reference;
-  /**
-   * Track number
-   */
-  trackNumber?: number | null;
-  /**
-   * Record label
-   */
-  label?: string | null;
-  /**
-   * Barcode/UPC
-   */
-  barcode?: string | null;
-  /**
-   * Podcast show this episode belongs to
-   */
-  show?: (number | null) | Reference;
-  /**
-   * What roles does this person have?
-   */
-  roles?: ('author' | 'director' | 'actor' | 'musician' | 'developer' | 'host' | 'publicFigure')[] | null;
-  /**
-   * Birth date
-   */
-  birthDate?: string | null;
-  /**
-   * Death date
-   */
-  deathDate?: string | null;
-  /**
-   * Nationality
-   */
-  nationality?: string | null;
-  /**
-   * Personal or professional website
-   */
-  website?: string | null;
-  /**
-   * Social media links and profiles
-   */
-  socialLinks?:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
-  /**
-   * Industry
-   */
-  industry?: string | null;
-  /**
-   * Founded date
-   */
-  foundedDate?: string | null;
-  /**
-   * URL for this web/media reference
+   * Where the reference links: its catalog or official page
    */
   url?: string | null;
   /**
-   * Site or platform name
+   * The series or franchise this belongs to
    */
-  siteName?: string | null;
+  series?: (number | null) | Reference;
+  format?: ('hardcover' | 'paperback' | 'ebook' | 'audiobook') | null;
   /**
-   * Article author
+   * Cover, poster, photo or logo; copied from the catalog
    */
-  author?: string | null;
-  /**
-   * Publication date
-   */
-  publishedAt?: string | null;
-  /**
-   * Video platform (YouTube, Vimeo, etc.)
-   */
-  platform?: string | null;
-  /**
-   * Video ID
-   */
-  videoId?: string | null;
-  /**
-   * Instructor or creator name
-   */
-  instructor?: string | null;
-  /**
-   * Platform offering the course
-   */
-  coursePlatform?:
-    | (
-        | 'udemy'
-        | 'coursera'
-        | 'frontendMasters'
-        | 'masterclass'
-        | 'pluralsight'
-        | 'edx'
-        | 'skillshare'
-        | 'linkedinLearning'
-        | 'egghead'
-        | 'youtube'
-        | 'other'
-      )
-    | null;
-  /**
-   * Total duration (e.g. '12h 30m', '8 weeks')
-   */
-  courseDuration?: string | null;
-  /**
-   * Difficulty level
-   */
-  courseLevel?: ('beginner' | 'intermediate' | 'advanced') | null;
-  /**
-   * URL to the course
-   */
-  courseUrl?: string | null;
-  /**
-   * Additional links (purchase, streaming, etc.)
-   */
-  links?:
-    | {
-        label: string;
-        url: string;
-        kind?: ('purchase' | 'streaming' | 'official' | 'social' | 'other') | null;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * External service IDs
-   */
-  externalIds?: {
-    /**
-     * IMDB ID
-     */
-    imdbId?: string | null;
-    /**
-     * TVDB ID
-     */
-    tvdbId?: string | null;
-    /**
-     * Spotify ID
-     */
-    spotifyId?: string | null;
-    /**
-     * Apple Music ID
-     */
-    appleMusicId?: string | null;
-    /**
-     * Spotify URL
-     */
-    spotifyUrl?: string | null;
-    /**
-     * Apple Podcasts URL
-     */
-    applePodcastsUrl?: string | null;
-    /**
-     * Website URL
-     */
-    websiteUrl?: string | null;
-    /**
-     * Steam ID
-     */
-    steamId?: string | null;
-    /**
-     * IGDB ID
-     */
-    igdbId?: string | null;
-    /**
-     * Google Books ID
-     */
-    googleBooksId?: string | null;
-  };
-  /**
-   * Tags for this reference
-   */
-  tags?: string[] | null;
+  image?: (number | null) | Media;
+  wikidataId?: string | null;
+  catalogSource?: ('openLibrary' | 'tmdb' | 'igdb' | 'musicBrainz' | 'itunes' | 'wikidata') | null;
+  catalogId?: string | null;
   slug: string;
   createdBy?: {
     relationTo: 'lyovsons';
@@ -737,7 +502,6 @@ export interface Reference {
   } | null;
   updatedAt: string;
   createdAt: string;
-  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1464,79 +1228,23 @@ export interface LyovsonsSelect<T extends boolean = true> {
  * via the `definition` "references_select".
  */
 export interface ReferencesSelect<T extends boolean = true> {
-  title?: T;
   type?: T;
-  image?: T;
+  title?: T;
+  creator?: T;
+  year?: T;
   description?: T;
-  isbn?: T;
-  publisher?: T;
-  pageCount?: T;
-  language?: T;
-  format?: T;
-  series?: T;
-  runtime?: T;
-  mpaaRating?: T;
-  networkOrService?: T;
-  status?: T;
-  seasonNumber?: T;
-  episodeNumber?: T;
-  platforms?: T;
-  esrbRating?: T;
-  metacriticScore?: T;
-  developer?: T;
-  album?: T;
-  trackNumber?: T;
-  label?: T;
-  barcode?: T;
-  show?: T;
-  roles?: T;
-  birthDate?: T;
-  deathDate?: T;
-  nationality?: T;
-  website?: T;
-  socialLinks?: T;
-  industry?: T;
-  foundedDate?: T;
   url?: T;
-  siteName?: T;
-  author?: T;
-  publishedAt?: T;
-  platform?: T;
-  videoId?: T;
-  instructor?: T;
-  coursePlatform?: T;
-  courseDuration?: T;
-  courseLevel?: T;
-  courseUrl?: T;
-  links?:
-    | T
-    | {
-        label?: T;
-        url?: T;
-        kind?: T;
-        id?: T;
-      };
-  externalIds?:
-    | T
-    | {
-        imdbId?: T;
-        tvdbId?: T;
-        spotifyId?: T;
-        appleMusicId?: T;
-        spotifyUrl?: T;
-        applePodcastsUrl?: T;
-        websiteUrl?: T;
-        steamId?: T;
-        igdbId?: T;
-        googleBooksId?: T;
-      };
-  tags?: T;
+  series?: T;
+  format?: T;
+  image?: T;
+  wikidataId?: T;
+  catalogSource?: T;
+  catalogId?: T;
   slug?: T;
   createdBy?: T;
   updatedBy?: T;
   updatedAt?: T;
   createdAt?: T;
-  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -20,6 +20,9 @@ declare global {
       PAYLOAD_SECRET: string;
       POSTGRES_URL: string;
       RESEND_API_KEY?: string;
+      TMDB_READ_TOKEN?: string;
+      TWITCH_CLIENT_ID?: string;
+      TWITCH_CLIENT_SECRET?: string;
       VERCEL?: string;
       VERCEL_ENV?: "development" | "preview" | "production";
       VERCEL_PROJECT_PRODUCTION_URL?: string;
