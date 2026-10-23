@@ -1,4 +1,5 @@
 import type { FieldAccess } from "payload";
+import { isLyovson } from "./is-lyovson";
 
 /**
  * Request-context flag for server routes that have already authorized the
@@ -9,8 +10,8 @@ export const TRUSTED_EMBEDDING_READ = "trustedEmbeddingRead";
 
 /** Hides a field from anonymous REST/GraphQL and access-checked reads. */
 export const authenticatedFieldRead: FieldAccess = ({ req: { user } }) =>
-  Boolean(user);
+  isLyovson(user);
 
-/** Embedding and search-text fields: signed-in users or trusted routes. */
+/** Embedding and search-text fields: Lyovsons or trusted routes. */
 export const embeddingFieldRead: FieldAccess = ({ req }) =>
-  Boolean(req.user) || req.context?.[TRUSTED_EMBEDDING_READ] === true;
+  isLyovson(req.user) || req.context?.[TRUSTED_EMBEDDING_READ] === true;

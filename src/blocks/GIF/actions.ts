@@ -1,6 +1,7 @@
 "use server";
 
 import { headers } from "next/headers";
+import { isLyovson } from "@/access/is-lyovson";
 import { getPayloadClient } from "@/utilities/payload-client";
 
 /**
@@ -12,7 +13,7 @@ export async function getGiphyApiKey(): Promise<string> {
   const payload = await getPayloadClient();
   const { user } = await payload.auth({ headers: await headers() });
 
-  if (!user) {
+  if (!isLyovson(user)) {
     throw new Error("Unauthorized");
   }
 

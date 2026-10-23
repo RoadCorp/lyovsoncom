@@ -1,5 +1,6 @@
 import type { NextRequest } from "next/server";
 import type { Payload } from "payload";
+import { isLyovson } from "@/access/is-lyovson";
 import { isCronRequest } from "./cron-auth";
 
 interface EmbeddingMutationAuthResult {
@@ -41,7 +42,7 @@ export async function authorizeEmbeddingMutation(
 
   try {
     const { user } = await payload.auth({ headers: request.headers });
-    if (user) {
+    if (isLyovson(user)) {
       return { authorized: true };
     }
   } catch {

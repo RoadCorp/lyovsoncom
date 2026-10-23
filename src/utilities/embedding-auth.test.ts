@@ -58,7 +58,9 @@ describe("embedding authorization", () => {
   );
 
   it("passes session cookies to Payload and accepts its authenticated user", async () => {
-    const auth = vi.fn().mockResolvedValue({ user: { id: 1 } });
+    const auth = vi
+      .fn()
+      .mockResolvedValue({ user: { collection: "lyovsons", id: 1 } });
     const request = new NextRequest("https://www.lyovson.com/api/embeddings", {
       headers: { cookie: "payload-token=test-session" },
     });
@@ -66,6 +68,18 @@ describe("embedding authorization", () => {
       await authorizeEmbeddingMutation(request, { auth } as never)
     ).toEqual({ authorized: true });
     expect(auth).toHaveBeenCalledWith({ headers: request.headers });
+  });
+
+  it("rejects a user from another auth collection", async () => {
+    const auth = vi
+      .fn()
+      .mockResolvedValue({ user: { collection: "agents", id: 1 } });
+    const request = new NextRequest("https://www.lyovson.com/api/embeddings", {
+      headers: { authorization: "users API-Key test" },
+    });
+    expect(
+      await authorizeEmbeddingMutation(request, { auth } as never)
+    ).toMatchObject({ authorized: false });
   });
 
   it("fails closed when session verification throws", async () => {

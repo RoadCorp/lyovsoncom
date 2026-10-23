@@ -3,10 +3,11 @@ import { headers as nextHeaders } from "next/headers";
 import { redirect } from "next/navigation";
 import { getPayload, type User } from "payload";
 import { type ReactNode, Suspense } from "react";
+import { isLyovson } from "@/access/is-lyovson";
 import { SkeletonCard } from "@/components/grid";
 
 /**
- * Renders its children only for a signed-in Payload user and sends everyone
+ * Renders its children only for a signed-in Lyovson and sends everyone
  * else to the admin login. Use it in the page itself: layouts and pages
  * render in parallel, so a layout check can't keep a page's output private.
  */
@@ -26,7 +27,7 @@ async function UserGate({ children }: { children: (user: User) => ReactNode }) {
   const payload = await getPayload({ config });
   const { user } = await payload.auth({ headers: await nextHeaders() });
 
-  if (!user) {
+  if (!isLyovson(user)) {
     redirect("/admin");
   }
 
