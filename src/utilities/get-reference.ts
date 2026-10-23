@@ -142,7 +142,11 @@ export function hubHasOwnWords({ activities, notes, posts }: ReferenceHub) {
 /** Slugs of every reference, for static params and the sitemap. */
 export async function getReferenceSlugs() {
   "use cache";
+  // Creating a reference refreshes no tag; publishing what cites it does.
   cacheTag("references");
+  cacheTag("activities");
+  cacheTag("posts");
+  cacheTag("notes");
   cacheLife("static");
 
   const payload = await getPayloadClient();
