@@ -20,6 +20,10 @@ const validateUrl = (value: unknown) => {
   return HTTP_URL.test(value) || "Enter a full http(s) URL";
 };
 
+// A writing series is a column of posts: no code, screenshots or tech stack.
+const notSeries = (data: Partial<{ kind: string | null }>) =>
+  data.kind !== "series";
+
 const monthPicker = {
   date: {
     pickerAppearance: "monthOnly",
@@ -50,13 +54,28 @@ export const Projects: CollectionConfig = {
   admin: {
     group: "Organization",
     useAsTitle: "name",
-    defaultColumns: ["name", "slug", "people", "_status"],
+    defaultColumns: ["name", "kind", "people", "_status"],
   },
   fields: [
     {
       name: "name",
       type: "text",
       required: true,
+    },
+    {
+      name: "kind",
+      type: "select",
+      required: true,
+      defaultValue: "website",
+      options: [
+        { label: "Website or app", value: "website" },
+        { label: "Writing series", value: "series" },
+        { label: "Other", value: "other" },
+      ],
+      admin: {
+        position: "sidebar",
+        description: "Sets the fields shown here and the structured data",
+      },
     },
     {
       name: "description",
@@ -80,8 +99,7 @@ export const Projects: CollectionConfig = {
       tabs: [
         {
           label: "Portfolio",
-          description:
-            "Credit people to show this project on their portfolio. Leave empty for post series.",
+          description: "Credit people to show this project on their portfolio",
           fields: [
             {
               name: "people",
@@ -107,7 +125,10 @@ export const Projects: CollectionConfig = {
                   type: "text",
                   label: "Repository URL",
                   validate: validateUrl,
-                  admin: { description: "Optional, public repositories only" },
+                  admin: {
+                    condition: notSeries,
+                    description: "Optional, public repositories only",
+                  },
                 },
               ],
             },
@@ -158,6 +179,7 @@ export const Projects: CollectionConfig = {
               type: "text",
               hasMany: true,
               admin: {
+                condition: notSeries,
                 description: "Technologies, e.g. Next.js, Payload, Postgres",
               },
             },
@@ -216,6 +238,7 @@ export const Projects: CollectionConfig = {
         },
         {
           label: "Gallery",
+          admin: { condition: notSeries },
           fields: [
             {
               name: "gallery",

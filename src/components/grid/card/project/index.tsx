@@ -103,10 +103,13 @@ export const GridCardProject = ({
   const projectHref = projectRoute(slug);
   const years = formatProjectYears(project);
   const stack = project.stack?.filter(Boolean) ?? [];
-  const host = getProjectHost(project.url);
-  // Portfolio work gets the post card's rail; a post series keeps the
+  // A series has no site of its own to name, so it names what it is.
+  const eyebrow =
+    project.kind === "series" ? "Writing series" : getProjectHost(project.url);
+  // Portfolio work gets the post card's rail; a writing series keeps the
   // full-width image.
-  const hasRail = stack.length > 0 || Boolean(years);
+  const hasRail =
+    project.kind !== "series" && (stack.length > 0 || Boolean(years));
   const mediaPlacement = hasRail
     ? "col-start-1 col-end-3 row-start-1 row-end-3"
     : "col-start-1 col-end-4 row-start-1 row-end-3";
@@ -155,12 +158,12 @@ export const GridCardProject = ({
           ) : null}
 
           <GridCardSection className="surface-title-stage col-start-1 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1.5">
-            {hasRail && host ? (
+            {eyebrow ? (
               <span
                 aria-hidden="true"
                 className="card-eyebrow font-mono text-label uppercase tracking-[0.16em]"
               >
-                {host}
+                {eyebrow}
               </span>
             ) : null}
             <ViewTransition

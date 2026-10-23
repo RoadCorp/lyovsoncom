@@ -114,15 +114,16 @@ async function CaseStudyContent({
     imageHeight: seoImage?.height || undefined,
     authors: creators,
     keywords: project.stack ?? undefined,
-    about: project.url
-      ? {
-          name: project.name,
-          url: project.url,
-          creators,
-          dateCreated: project.startedAt || undefined,
-          keywords: project.stack ?? undefined,
-        }
-      : undefined,
+    about:
+      project.kind === "website" && project.url
+        ? {
+            name: project.name,
+            url: project.url,
+            creators,
+            dateCreated: project.startedAt || undefined,
+            keywords: project.stack ?? undefined,
+          }
+        : undefined,
   });
 
   const breadcrumbSchema = generateBreadcrumbSchema([
@@ -209,6 +210,17 @@ async function PageContent({ params: paramsPromise }: PageProps) {
 
   const { docs, page, totalPages } = response;
   const collectionPageSchema = generateCollectionPageSchema({
+    about:
+      project.kind === "series"
+        ? {
+            name: project.name,
+            creators: getCasePeople(project)
+              .map((person) => getLyovsonPersonInput(person))
+              .filter((person) => person !== null),
+            startDate: project.startedAt || undefined,
+            endDate: project.endedAt || undefined,
+          }
+        : undefined,
     name: project.name,
     description: project.description || `Posts from ${project.name}`,
     url: absoluteUrl(projectRoute(projectSlug)),

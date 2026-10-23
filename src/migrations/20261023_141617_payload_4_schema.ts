@@ -261,18 +261,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
   CREATE UNIQUE INDEX "topics_slug_idx" ON "topics" USING btree ("slug");
   CREATE UNIQUE INDEX "projects_slug_idx" ON "projects" USING btree ("slug");
   CREATE UNIQUE INDEX "references_slug_idx" ON "references" USING btree ("slug");
-  CREATE UNIQUE INDEX "notes_slug_idx" ON "notes" USING btree ("slug");
-  ALTER TABLE "posts" DROP COLUMN "slug_lock";
-  ALTER TABLE "_posts_v" DROP COLUMN "version_slug_lock";
-  ALTER TABLE "topics" DROP COLUMN "slug_lock";
-  ALTER TABLE "projects" DROP COLUMN "slug_lock";
-  ALTER TABLE "_projects_v" DROP COLUMN "version_slug_lock";
-  ALTER TABLE "references" DROP COLUMN "slug_lock";
-  ALTER TABLE "_references_v" DROP COLUMN "version_slug_lock";
-  ALTER TABLE "activities" DROP COLUMN "slug_lock";
-  ALTER TABLE "_activities_v" DROP COLUMN "version_slug_lock";
-  ALTER TABLE "notes" DROP COLUMN "slug_lock";
-  ALTER TABLE "_notes_v" DROP COLUMN "version_slug_lock";`);
+  CREATE UNIQUE INDEX "notes_slug_idx" ON "notes" USING btree ("slug");`);
 }
 
 export async function down({ db }: MigrateDownArgs): Promise<void> {
@@ -314,17 +303,6 @@ export async function down({ db }: MigrateDownArgs): Promise<void> {
   DROP INDEX "references_slug_idx";
   DROP INDEX "notes_slug_idx";
   ALTER TABLE "topics" ALTER COLUMN "slug" DROP NOT NULL;
-  ALTER TABLE "posts" ADD COLUMN "slug_lock" boolean DEFAULT true;
-  ALTER TABLE "_posts_v" ADD COLUMN "version_slug_lock" boolean DEFAULT true;
-  ALTER TABLE "topics" ADD COLUMN "slug_lock" boolean DEFAULT true;
-  ALTER TABLE "projects" ADD COLUMN "slug_lock" boolean DEFAULT true;
-  ALTER TABLE "_projects_v" ADD COLUMN "version_slug_lock" boolean DEFAULT true;
-  ALTER TABLE "references" ADD COLUMN "slug_lock" boolean DEFAULT true;
-  ALTER TABLE "_references_v" ADD COLUMN "version_slug_lock" boolean DEFAULT true;
-  ALTER TABLE "activities" ADD COLUMN "slug_lock" boolean DEFAULT true;
-  ALTER TABLE "_activities_v" ADD COLUMN "version_slug_lock" boolean DEFAULT true;
-  ALTER TABLE "notes" ADD COLUMN "slug_lock" boolean DEFAULT true;
-  ALTER TABLE "_notes_v" ADD COLUMN "version_slug_lock" boolean DEFAULT true;
   CREATE INDEX "posts_slug_idx" ON "posts" USING btree ("slug");
   CREATE INDEX "topics_slug_idx" ON "topics" USING btree ("slug");
   CREATE INDEX "projects_slug_idx" ON "projects" USING btree ("slug");

@@ -320,6 +320,13 @@ export function generateBreadcrumbSchema(
  * Parameters for generating a CollectionPage schema
  */
 interface CollectionPageDataParams {
+  /** For a writing series: the series the listed posts belong to. */
+  about?: {
+    creators?: ArticleAuthorParams[];
+    endDate?: string;
+    name: string;
+    startDate?: string;
+  };
   description?: string;
   itemCount?: number;
   items?: Array<{ url: string }>;
@@ -360,6 +367,20 @@ export function generateCollectionPageSchema(
     name: data.name,
     description: data.description,
     url: data.url,
+    about: data.about
+      ? {
+          "@type": "CreativeWorkSeries",
+          name: data.about.name,
+          url: data.url,
+          author: data.about.creators?.length
+            ? data.about.creators.map((creator) =>
+                generatePersonSchema(creator)
+              )
+            : undefined,
+          startDate: data.about.startDate,
+          endDate: data.about.endDate,
+        }
+      : undefined,
     mainEntity:
       data.itemCount === undefined
         ? undefined
