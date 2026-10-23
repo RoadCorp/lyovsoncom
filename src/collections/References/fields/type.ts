@@ -11,6 +11,7 @@ const options = [
   { label: "Person", value: "person" },
   { label: "Organization", value: "organization" },
   { label: "Course", value: "course" },
+  { label: "Software", value: "software" },
   { label: "Other", value: "other" },
 ] as const;
 

@@ -6,6 +6,7 @@ import {
 } from "@/utilities/generate-embedding-helpers";
 import {
   absoluteUrl,
+  activitiesRoute,
   activityRoute,
   noteRoute,
   postRoute,
@@ -55,7 +56,7 @@ export function describeEmbeddableDoc(
       title: reference?.title
         ? `${getActivityTypeLabel(activity.activityType)} ${reference.title}`
         : "Activity",
-      url: absoluteUrl(path ?? `/activities/unknown/${activity.slug}`),
+      url: absoluteUrl(path ?? activitiesRoute()),
       content: activity.notes,
     };
   }

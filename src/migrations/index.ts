@@ -58,6 +58,10 @@ import {
   down as migration_20261023_181124_reference_system_v2_down,
   up as migration_20261023_181124_reference_system_v2_up,
 } from "./20261023_181124_reference_system_v2";
+import {
+  down as migration_20261023_221810_reference_hubs_down,
+  up as migration_20261023_221810_reference_hubs_up,
+} from "./20261023_221810_reference_hubs";
 
 export const migrations = [
   {
@@ -134,5 +138,10 @@ export const migrations = [
     up: migration_20261023_181124_reference_system_v2_up,
     down: migration_20261023_181124_reference_system_v2_down,
     name: "20261023_181124_reference_system_v2",
+  },
+  {
+    up: migration_20261023_221810_reference_hubs_up,
+    down: migration_20261023_221810_reference_hubs_down,
+    name: "20261023_221810_reference_hubs",
   },
 ];

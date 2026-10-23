@@ -68,6 +68,23 @@ export const Activities: CollectionConfig = {
       },
     },
     {
+      // A reference is the work; the format is the copy this activity used,
+      // so a reread on audio stays on the same hub.
+      name: "format",
+      type: "select",
+      options: [
+        { label: "Print", value: "print" },
+        { label: "Ebook", value: "ebook" },
+        { label: "Audiobook", value: "audiobook" },
+        { label: "Full-cast audio", value: "fullCast" },
+      ],
+      admin: {
+        position: "sidebar",
+        condition: (data) =>
+          data?.activityType === "read" || data?.activityType === "listen",
+      },
+    },
+    {
       name: "participants",
       type: "relationship",
       relationTo: "lyovsons",

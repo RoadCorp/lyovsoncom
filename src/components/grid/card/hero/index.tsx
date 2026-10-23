@@ -2,11 +2,13 @@ import {
   ArrowLeft,
   Brain,
   Calendar,
+  ExternalLink,
   FileText,
   PenTool,
   Quote,
 } from "lucide-react";
 import { ViewTransition } from "react";
+import { REFERENCE_TYPE_LABELS } from "@/collections/References/fields/type";
 import { AppLink } from "@/components/app-link";
 import { GridCard } from "@/components/grid";
 import { IntentLink } from "@/components/intent-link";
@@ -16,13 +18,11 @@ import { MediaFallback } from "@/components/Media/media-fallback";
 import { PostTransitionBoundary } from "@/components/post-transitions/post-transition-boundary";
 import { TopicPillList } from "@/components/topic-pill";
 import { cn } from "@/lib/utils";
-import type { Activity, Note, Post, Topic } from "@/payload-types";
+import type { Note, Post, Reference, Topic } from "@/payload-types";
 import { formatShortDate } from "@/utilities/date";
 import { dedupeRelationItemsById } from "@/utilities/dedupe-relation-items-by-id";
 import { getPublishedProject } from "@/utilities/public-project";
 import {
-  activitiesRoute,
-  getActivityDateSlug,
   lyovsonRoute,
   notesRoute,
   postsRoute,
@@ -31,11 +31,12 @@ import {
 } from "@/utilities/routes";
 import {
   frontendViewTransitionClasses,
-  getActivityMediaTransitionName,
-  getActivityTitleTransitionName,
   getNoteMetaTransitionName,
   getNoteTitleTransitionName,
+  getReferenceMediaTransitionName,
+  getReferenceTitleTransitionName,
 } from "@/utilities/view-transitions";
+import { getActivityReferenceIcon } from "../activity/shared";
 import { GridCardSection } from "../section";
 
 const LONG_HERO_TITLE = 50;
@@ -342,28 +343,34 @@ export const GridCardHeroNote = ({
   );
 };
 
-export const GridCardHeroActivity = ({
+/** "wikipedia.org" from a reference's external link, for its label. */
+function linkHost(url: string) {
+  try {
+    return new URL(url).hostname.replace(WWW_PREFIX, "");
+  } catch {
+    return null;
+  }
+}
+
+const WWW_PREFIX = /^www\./;
+
+export const GridCardHeroReference = ({
   className,
-  activity,
-  title,
+  reference,
 }: {
   className?: string;
-  activity: Activity;
-  title: string;
+  reference: Reference;
 }) => {
-  const referenceObj =
-    typeof activity.reference === "object" ? activity.reference : null;
-
-  const referenceImage =
-    referenceObj?.image && typeof referenceObj.image === "object"
-      ? referenceObj.image
-      : null;
-
-  if (!activity.slug) {
+  if (!reference.slug) {
     return null;
   }
 
-  const dateSlug = getActivityDateSlug(activity);
+  const image =
+    reference.image && typeof reference.image === "object"
+      ? reference.image
+      : null;
+  const typeLabel = REFERENCE_TYPE_LABELS[reference.type] ?? "Reference";
+  const host = reference.url ? linkHost(reference.url) : null;
 
   return (
     <GridCard
@@ -375,51 +382,90 @@ export const GridCardHeroActivity = ({
         className
       )}
     >
-      {referenceImage ? (
-        <GridCardSection
-          className={cn(
-            "col-start-1 col-end-4 row-start-1 row-end-4",
-            "g3:col-start-1 g3:col-end-4 g3:row-start-1 g3:row-end-4"
-          )}
-          flush={true}
+      <GridCardSection
+        className={cn(
+          "col-start-1 col-end-4 row-start-1 row-end-4",
+          "g3:col-start-1 g3:col-end-4 g3:row-start-1 g3:row-end-4"
+        )}
+        flush={true}
+      >
+        <ViewTransition
+          name={getReferenceMediaTransitionName(reference.slug)}
+          {...frontendViewTransitionClasses.sharedMedia}
         >
-          <ViewTransition
-            name={getActivityMediaTransitionName(dateSlug, activity.slug)}
-            {...frontendViewTransitionClasses.sharedMedia}
-          >
+          {image ? (
             <Media
               className="media-frame flex h-full items-center justify-center"
               credit={true}
-              imgClassName="h-full object-cover"
+              imgClassName={
+                // Logos must not be cropped and are drawn for white; the
+                // important flag beats ImageMedia's inline object-fit.
+                reference.type === "organization"
+                  ? "h-full bg-white object-contain! p-8"
+                  : "h-full object-cover"
+              }
               pictureClassName="h-full"
               priority={true}
-              resource={referenceImage}
+              resource={image}
               size={CARD_FULL_IMAGE_SIZE}
             />
-          </ViewTransition>
-        </GridCardSection>
-      ) : null}
+          ) : (
+            <MediaFallback
+              icon={getActivityReferenceIcon(reference.type)}
+              label={typeLabel}
+            />
+          )}
+        </ViewTransition>
+      </GridCardSection>
 
       <GridCardSection className="surface-title-stage col-start-1 g3:col-start-4 col-end-4 g3:col-end-7 g3:row-start-1 row-start-4 g3:row-end-4 row-end-7">
-        <div className="absolute top-3 right-4">
-          <HeroBackLink href={activitiesRoute()} label="Activities" />
-        </div>
-        <div className="flex h-full flex-col items-center justify-center px-4 md:px-8">
-          <div className="mx-auto w-full max-w-3xl space-y-4">
+        <div className="flex h-full flex-col gap-4 px-6 py-5 md:px-7 md:py-6">
+          <p className="flex items-center gap-2 font-mono text-label uppercase tracking-[0.16em]">
+            <span className="card-eyebrow">{typeLabel}</span>
+            {reference.year ? (
+              <>
+                <span aria-hidden="true" className="tone-muted">
+                  ·
+                </span>
+                <span className="tone-muted">{reference.year}</span>
+              </>
+            ) : null}
+          </p>
+          <div className="flex flex-1 flex-col justify-center gap-3">
             <ViewTransition
-              name={getActivityTitleTransitionName(dateSlug, activity.slug)}
+              name={getReferenceTitleTransitionName(reference.slug)}
               {...frontendViewTransitionClasses.sharedTitle}
             >
               <h1
                 className={cn(
-                  "tone-heading text-center font-bold",
-                  heroTitleSize(title)
+                  "tone-heading text-balance",
+                  heroTitleSize(reference.title)
                 )}
               >
-                {title}
+                {reference.title}
               </h1>
             </ViewTransition>
+            {reference.creator ? (
+              <p className="tone-muted text-sm">{reference.creator}</p>
+            ) : null}
+            {reference.description ? (
+              <p className="tone-muted line-clamp-3 text-sm">
+                {reference.description}
+              </p>
+            ) : null}
           </div>
+          {reference.url && host ? (
+            <a
+              className="ui-meta-link ui-focus-ring inline-flex items-center gap-1.5 self-start font-mono text-label uppercase tracking-[0.16em]"
+              href={reference.url}
+              rel="noopener"
+              target="_blank"
+            >
+              {host}
+              <ExternalLink aria-hidden="true" className="h-3.5 w-3.5" />
+              <span className="sr-only">(opens in a new tab)</span>
+            </a>
+          ) : null}
         </div>
       </GridCardSection>
     </GridCard>

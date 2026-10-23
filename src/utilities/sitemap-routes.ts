@@ -17,12 +17,17 @@ import {
   TOPIC_POSTS_PER_PAGE,
 } from "@/utilities/archive";
 import { getLyovsonFeedCounts } from "@/utilities/get-lyovson-feed";
+import {
+  getReferenceHub,
+  getReferenceSlugs,
+  hubHasOwnWords,
+  type ReferenceHub,
+} from "@/utilities/get-reference";
 import { getRelationId } from "@/utilities/relations";
 import {
   absoluteUrl,
   activitiesPageRoute,
   activitiesRoute,
-  activityUrl,
   lyovsonActivitiesPageRoute,
   lyovsonActivitiesRoute,
   lyovsonBioRoute,
@@ -44,6 +49,7 @@ import {
   projectPageRoute,
   projectsRoute,
   projectUrl,
+  referenceUrl,
   topicPageRoute,
   topicRoute,
   topicsRoute,
@@ -269,17 +275,9 @@ function getNoteRoutes(notes: Note[], now: Date): Sitemap {
   return routes;
 }
 
+// Activities live on their reference hubs; getReferenceRoutes lists those.
 function getActivityRoutes(activities: Activity[], now: Date): Sitemap {
   const routes: Sitemap = [];
-  for (const activity of activities) {
-    const url = activity ? activityUrl(activity) : null;
-    if (url) {
-      routes.push(
-        sitemapEntry(url, new Date(activity.updatedAt), "weekly", 0.8)
-      );
-    }
-  }
-
   routes.push(
     ...paginatedRoutes({
       pageRoute: activitiesPageRoute,
@@ -290,6 +288,44 @@ function getActivityRoutes(activities: Activity[], now: Date): Sitemap {
     })
   );
   return routes;
+}
+
+/** The newest edit among a hub's reference and what it lists. */
+function hubLastModified({
+  activities,
+  notes,
+  posts,
+  reference,
+}: ReferenceHub) {
+  const dates = [
+    reference.updatedAt,
+    ...activities.map((activity) => activity.updatedAt),
+    ...notes.map((note) => note.updatedAt),
+    // Post summaries carry no updatedAt.
+    ...posts.map((post) => post.publishedAt ?? post.createdAt),
+  ];
+  return new Date(Math.max(...dates.map((date) => new Date(date).getTime())));
+}
+
+/** Only hubs with the Lyovsons' own words; the rest are noindex. */
+async function getReferenceRoutes(): Promise<Sitemap> {
+  const slugs = await getReferenceSlugs();
+  const hubs = await Promise.all(
+    slugs.map(({ slug }) => getReferenceHub(slug))
+  );
+
+  return hubs.flatMap((hub) =>
+    hub?.reference.slug && hubHasOwnWords(hub)
+      ? [
+          sitemapEntry(
+            referenceUrl(hub.reference.slug),
+            hubLastModified(hub),
+            "weekly",
+            0.8
+          ),
+        ]
+      : []
+  );
 }
 
 async function getLyovsonRoutes(
@@ -435,6 +471,7 @@ export async function getContentRoutes(
     ...getTopicRoutes(topics, topicPostCounts),
     ...getNoteRoutes(notes, now),
     ...getActivityRoutes(activities, now),
+    ...(await getReferenceRoutes()),
     ...(await getAllLyovsonRoutes(lyovsons, projects, now)),
   ];
 }

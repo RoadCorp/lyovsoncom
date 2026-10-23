@@ -104,19 +104,6 @@ export const References: CollectionConfig = {
       },
     },
     {
-      name: "format",
-      type: "select",
-      options: [
-        { label: "Hardcover", value: "hardcover" },
-        { label: "Paperback", value: "paperback" },
-        { label: "Ebook", value: "ebook" },
-        { label: "Audiobook", value: "audiobook" },
-      ],
-      admin: {
-        condition: (data) => data?.type === "book",
-      },
-    },
-    {
       name: "image",
       type: "upload",
       relationTo: "media",

@@ -40,9 +40,11 @@ export function toArchiveItems(
 
 function ArchiveCard({
   item,
+  morph,
   priority,
 }: {
   item: ArchiveItem;
+  morph: boolean;
   priority: boolean;
 }) {
   switch (item.type) {
@@ -51,20 +53,43 @@ function ArchiveCard({
     case "note":
       return <GridCardNoteFull note={item.data} priority={priority} />;
     case "activity":
-      return <GridCardActivityFull activity={item.data} priority={priority} />;
+      return (
+        <GridCardActivityFull
+          activity={item.data}
+          morph={morph}
+          priority={priority}
+        />
+      );
     default:
       return null;
   }
 }
 
 export function ArchiveItems({ items }: ArchiveItemsProps) {
-  return items.map((item, index) => (
-    <ViewTransition
-      key={`${item.type}-${item.data.id}`}
-      name={getArchiveCardTransitionName(item.type, item.data.id)}
-      {...frontendViewTransitionClasses.archiveCard}
-    >
-      <ArchiveCard item={item} priority={index === 0} />
-    </ViewTransition>
-  ));
+  // Activities share their reference's transition names, which must be unique
+  // on a page, so only the first activity of each reference morphs.
+  const seenReferences = new Set<number>();
+
+  return items.map((item, index) => {
+    let morph = true;
+    if (item.type === "activity") {
+      const reference = item.data.reference;
+      const referenceId =
+        typeof reference === "object" ? reference?.id : reference;
+      if (referenceId) {
+        morph = !seenReferences.has(referenceId);
+        seenReferences.add(referenceId);
+      }
+    }
+
+    return (
+      <ViewTransition
+        key={`${item.type}-${item.data.id}`}
+        name={getArchiveCardTransitionName(item.type, item.data.id)}
+        {...frontendViewTransitionClasses.archiveCard}
+      >
+        <ArchiveCard item={item} morph={morph} priority={index === 0} />
+      </ViewTransition>
+    );
+  });
 }

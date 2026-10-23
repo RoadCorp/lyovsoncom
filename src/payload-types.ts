@@ -468,6 +468,7 @@ export interface Reference {
     | 'person'
     | 'organization'
     | 'course'
+    | 'software'
     | 'other';
   title: string;
   /**
@@ -487,7 +488,6 @@ export interface Reference {
    * The series or franchise this belongs to
    */
   series?: (number | null) | Reference;
-  format?: ('hardcover' | 'paperback' | 'ebook' | 'audiobook') | null;
   /**
    * Cover, poster, photo or logo; copied from the catalog
    */
@@ -800,6 +800,7 @@ export interface Activity {
    * Filled from the reference type; change it if needed
    */
   activityType: 'read' | 'watch' | 'listen' | 'play' | 'visit' | 'learn';
+  format?: ('print' | 'ebook' | 'audiobook' | 'fullCast') | null;
   /**
    * Who participated in this activity?
    */
@@ -1240,7 +1241,6 @@ export interface ReferencesSelect<T extends boolean = true> {
   description?: T;
   url?: T;
   series?: T;
-  format?: T;
   image?: T;
   wikidataId?: T;
   catalogSource?: T;
@@ -1258,6 +1258,7 @@ export interface ReferencesSelect<T extends boolean = true> {
 export interface ActivitiesSelect<T extends boolean = true> {
   reference?: T;
   activityType?: T;
+  format?: T;
   participants?: T;
   startedAt?: T;
   finishedAt?: T;

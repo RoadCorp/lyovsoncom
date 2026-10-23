@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import {
+  AppWindow,
   Book,
   Building2,
   Film,
@@ -29,6 +30,7 @@ const referenceTypeIcons: Partial<Record<Reference["type"], LucideIcon>> = {
   person: User,
   organization: Building2,
   course: GraduationCap,
+  software: AppWindow,
 };
 
 const activityTypeIcons: Record<Activity["activityType"], LucideIcon> = {

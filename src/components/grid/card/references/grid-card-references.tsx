@@ -1,12 +1,12 @@
-import { ExternalLink } from "lucide-react";
-
 import { REFERENCE_TYPE_LABELS } from "@/collections/References/fields/type";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { getActivityReferenceIcon } from "@/components/grid/card/activity/shared";
+import { IntentLink } from "@/components/intent-link";
 import { Media } from "@/components/Media";
 import { CARD_THUMBNAIL_IMAGE_SIZE } from "@/components/Media/image-sizes";
 import { cn } from "@/lib/utils";
 import type { Reference } from "@/payload-types";
+import { referenceRoute, transitionTypes } from "@/utilities/routes";
 
 export interface GridCardReferencesProps {
   className?: string;
@@ -18,12 +18,6 @@ const MAX_VISIBLE_REFERENCES = 3;
 
 function getStaggerClass(index: number): string {
   return `reveal-stagger-${Math.min(index + 1, MAX_STAGGER_INDEX)}`;
-}
-
-function hasExternalUrl(
-  reference: Reference
-): reference is Reference & { url: string } {
-  return typeof reference.url === "string" && reference.url.trim().length > 0;
 }
 
 export const GridCardReferences = ({
@@ -52,7 +46,6 @@ export const GridCardReferences = ({
         const byline = [reference.creator, reference.year]
           .filter(Boolean)
           .join(", ");
-        const isExternal = hasExternalUrl(reference);
         const rowClass = `row-start-${index + 1} row-end-${index + 2}`;
         const staggerClass = getStaggerClass(index);
 
@@ -92,17 +85,9 @@ export const GridCardReferences = ({
             )}
 
             <div className="col-start-2 col-end-4 row-start-1 row-end-2 flex min-w-0 flex-col justify-center gap-1 pr-4">
-              <div className="flex items-start justify-between gap-3">
-                <h2 className="tone-heading ui-group-hover-dim line-clamp-2 font-medium text-sm">
-                  {reference.title}
-                </h2>
-                {isExternal ? (
-                  <ExternalLink
-                    aria-hidden="true"
-                    className="ui-group-hover-bright tone-muted mt-0.5 h-4 w-4 flex-shrink-0"
-                  />
-                ) : null}
-              </div>
+              <h2 className="tone-heading ui-group-hover-dim line-clamp-2 font-medium text-sm">
+                {reference.title}
+              </h2>
               {byline ? (
                 <p className="tone-muted line-clamp-1 text-xs">{byline}</p>
               ) : null}
@@ -121,36 +106,21 @@ export const GridCardReferences = ({
           </GridCardSection>
         );
 
-        if (isExternal) {
-          return (
-            <a
-              aria-label={`Open reference: ${reference.title}`}
-              className={cn(
-                "ui-focus-ring group ui-interactive col-start-1 col-end-4",
-                rowClass,
-                staggerClass
-              )}
-              href={reference.url}
-              key={reference.id}
-              rel="noopener"
-              target="_blank"
-            >
-              {content}
-            </a>
-          );
-        }
-
+        // Each reference has a hub page; its external link lives there.
         return (
-          <div
+          <IntentLink
+            aria-label={`View reference: ${reference.title}`}
             className={cn(
-              "group col-start-1 col-end-4",
+              "ui-focus-ring group ui-interactive col-start-1 col-end-4",
               rowClass,
               staggerClass
             )}
+            href={referenceRoute(reference.slug)}
             key={reference.id}
+            transitionTypes={[transitionTypes.drillIn]}
           >
             {content}
-          </div>
+          </IntentLink>
         );
       })}
     </GridCard>

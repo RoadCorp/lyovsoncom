@@ -1,5 +1,5 @@
 import { revalidatePath, revalidateTag } from "next/cache";
-import { activityFullRoute, activityRoute } from "@/utilities/routes";
+import { legacyActivityPath } from "@/utilities/routes";
 
 export type PublicCollection = "posts" | "notes" | "activities" | "projects";
 interface PublicDocument {
@@ -27,7 +27,7 @@ function identity(collection: PublicCollection, doc?: PublicDocument | null) {
   if (!doc?.slug) {
     return null;
   }
-  return collection === "activities" ? activityFullRoute(doc) : doc.slug;
+  return collection === "activities" ? legacyActivityPath(doc) : doc.slug;
 }
 
 function invalidateDocument(
@@ -42,10 +42,10 @@ function invalidateDocument(
   const prefix =
     collection === "activities" ? "activity" : collection.slice(0, -1);
   revalidateTag(`${prefix}-${key}`, immediate ? { expire: 0 } : collection);
-  const path =
-    collection === "activities" ? activityRoute(doc) : `/${collection}/${key}`;
-  if (path) {
-    revalidatePath(path);
+  // An activity renders on its reference hub, which the collection tag
+  // refreshes; its own key only feeds the legacy URL redirect.
+  if (collection !== "activities") {
+    revalidatePath(`/${collection}/${key}`);
   }
 }
 
@@ -150,6 +150,7 @@ export function revalidatePublicDependencies() {
     "activities",
     "lyovsons",
     "projects",
+    "references",
     "topics",
     "homepage",
     "sitemap",

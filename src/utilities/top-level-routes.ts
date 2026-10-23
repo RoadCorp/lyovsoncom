@@ -20,6 +20,7 @@ export const TOP_LEVEL_ROUTE_SEGMENTS = new Set([
   "posts",
   "privacy-policy",
   "projects",
+  "references",
   "search",
   "topics",
 ]);

@@ -118,12 +118,13 @@ export function getNoteMetaTransitionName(
   return `note-${sanitizeTransitionSegment(slug)}-${part}`;
 }
 
-export function getActivityMediaTransitionName(date: string, slug: string) {
-  return `activity-${sanitizeTransitionSegment(date)}-${sanitizeTransitionSegment(slug)}-media`;
+/** An activity's cover and title morph into its reference hub's hero. */
+export function getReferenceMediaTransitionName(slug: string) {
+  return `reference-${sanitizeTransitionSegment(slug)}-media`;
 }
 
-export function getActivityTitleTransitionName(date: string, slug: string) {
-  return `activity-${sanitizeTransitionSegment(date)}-${sanitizeTransitionSegment(slug)}-title`;
+export function getReferenceTitleTransitionName(slug: string) {
+  return `reference-${sanitizeTransitionSegment(slug)}-title`;
 }
 
 export function getProjectMediaTransitionName(slug: string) {

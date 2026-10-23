@@ -70,8 +70,13 @@ describe("public publication freshness", () => {
       { ...note, startedAt: "2026-09-06T12:00:00Z" },
       { ...note, startedAt: "2026-09-05T12:00:00Z" }
     );
-    expect(revalidatePath).toHaveBeenCalledWith("/activities/09-05-26/a-note");
-    expect(revalidatePath).toHaveBeenCalledWith("/activities/09-06-26/a-note");
+    // The old URLs only redirect now; their lookup is what must expire.
+    expect(revalidateTag).toHaveBeenCalledWith("activity-09-05-26/a-note", {
+      expire: 0,
+    });
+    expect(revalidateTag).toHaveBeenCalledWith("activity-09-06-26/a-note", {
+      expire: 0,
+    });
   });
   it("uses the existing freshness profile for ordinary public edits", () => {
     revalidatePublicContent("notes", note, note);
@@ -91,6 +96,7 @@ describe("public publication freshness", () => {
       "activities",
       "lyovsons",
       "projects",
+      "references",
       "topics",
       "sitemap",
     ]) {

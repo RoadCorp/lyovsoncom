@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
  * route fallback hands over to the page's own fallback.
  */
 
-// GridCardHero and GridCardHeroActivity share this 2×1 placement.
+// GridCardHero and GridCardHeroReference share this 2×1 placement.
 const WIDE_HERO_PLACEMENT = cn(
   "col-start-1 col-end-2 row-start-2 row-end-4 h-[var(--grid-card-1x2)] w-[var(--grid-card-1x1)] [--grid-internal-rows:6]",
   "g2:col-start-2 g2:col-end-3 g2:row-start-1 g2:row-end-3",
@@ -133,7 +133,7 @@ export function NoteDetailSkeleton() {
   );
 }
 
-export function ActivityDetailSkeleton() {
+export function ReferenceDetailSkeleton() {
   return (
     <>
       <WideHeroSkeleton />

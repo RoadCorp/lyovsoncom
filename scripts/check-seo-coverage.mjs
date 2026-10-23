@@ -13,7 +13,7 @@ const requiredCanonicalFiles = [
   "src/app/(frontend)/search/page.tsx",
   "src/app/(frontend)/posts/[slug]/page.tsx",
   "src/app/(frontend)/notes/[slug]/page.tsx",
-  "src/app/(frontend)/activities/[date]/[slug]/page.tsx",
+  "src/app/(frontend)/references/[slug]/page.tsx",
   "src/app/(frontend)/projects/[project]/page.tsx",
   "src/app/(frontend)/topics/[slug]/page.tsx",
   "src/app/(frontend)/[lyovson]/page.tsx",
@@ -32,7 +32,7 @@ const requiredCanonicalFiles = [
 const requiredJsonLdFiles = [
   "src/app/(frontend)/posts/[slug]/page.tsx",
   "src/app/(frontend)/notes/[slug]/page.tsx",
-  "src/app/(frontend)/activities/[date]/[slug]/page.tsx",
+  "src/app/(frontend)/references/[slug]/page.tsx",
   "src/app/(frontend)/projects/[project]/page.tsx",
   "src/app/(frontend)/topics/[slug]/page.tsx",
   "src/app/(frontend)/posts/page.tsx",

@@ -8,6 +8,12 @@ interface ActivityPathInput {
   startedAt?: string | null;
 }
 
+/** An activity lives as a row on its reference's hub page. */
+interface ActivityLinkInput {
+  id: number;
+  reference?: number | { slug?: string | null } | null;
+}
+
 export const UNKNOWN_ACTIVITY_DATE_SLUG = "unknown";
 
 export const transitionTypes = {
@@ -122,17 +128,25 @@ export function activitiesRoute() {
   return typedRoute("/activities");
 }
 
-export function activityRoute(activity: ActivityPathInput) {
-  if (!activity.slug) {
+/** The id of an activity's row on its reference hub. */
+export function activityAnchor(activity: { id: number }) {
+  return `activity-${activity.id}`;
+}
+
+export function activityRoute(activity: ActivityLinkInput) {
+  const referenceSlug =
+    typeof activity.reference === "object" ? activity.reference?.slug : null;
+  if (!referenceSlug) {
     return null;
   }
 
   return typedRoute(
-    `/activities/${getActivityDateSlug(activity)}/${activity.slug}`
+    `${referenceRoute(referenceSlug)}#${activityAnchor(activity)}`
   );
 }
 
-export function activityFullRoute(activity: ActivityPathInput) {
+/** The pre-hub activity URL, kept only to redirect it. */
+export function legacyActivityPath(activity: ActivityPathInput) {
   if (!activity.slug) {
     return null;
   }
@@ -140,7 +154,7 @@ export function activityFullRoute(activity: ActivityPathInput) {
   return `${getActivityDateSlug(activity)}/${activity.slug}` as const;
 }
 
-export function activityUrl(activity: ActivityPathInput) {
+export function activityUrl(activity: ActivityLinkInput) {
   const route = activityRoute(activity);
   return route ? absoluteUrl(route) : null;
 }
@@ -149,6 +163,14 @@ export function activitiesPageRoute(pageNumber: number) {
   return pageNumber <= 1
     ? activitiesRoute()
     : typedRoute(`/activities/page/${pageNumber}`);
+}
+
+export function referenceRoute(slug: string) {
+  return typedRoute(`/references/${slug}`);
+}
+
+export function referenceUrl(slug: string) {
+  return absoluteUrl(referenceRoute(slug));
 }
 
 export function projectsRoute() {

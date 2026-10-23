@@ -7,16 +7,14 @@ import { Media } from "@/components/Media";
 import { CARD_COVER_IMAGE_SIZE } from "@/components/Media/image-sizes";
 import type { Activity } from "@/payload-types";
 import {
-  activitiesRoute,
   activityRoute,
-  getActivityDateSlug,
   lyovsonRoute,
   transitionTypes,
 } from "@/utilities/routes";
 import {
   frontendViewTransitionClasses,
-  getActivityMediaTransitionName,
-  getActivityTitleTransitionName,
+  getReferenceMediaTransitionName,
+  getReferenceTitleTransitionName,
 } from "@/utilities/view-transitions";
 import {
   getActivityDateMeta,
@@ -31,6 +29,8 @@ export interface GridCardActivityProps {
   activity: Activity;
   className?: string;
   loading?: "lazy" | "eager";
+  /** False when another card on the page already morphs into this hub. */
+  morph?: boolean;
   priority?: boolean;
 }
 
@@ -79,16 +79,17 @@ export const GridCardActivityFull = ({
   activity,
   className,
   loading,
+  morph = true,
   priority,
 }: GridCardActivityProps) => {
-  const { activityType, slug } = activity;
-  if (!slug) {
+  const { activityType } = activity;
+  const referenceObj = getActivityReference(activity);
+  const referenceSlug = referenceObj?.slug;
+  const activityHref = activityRoute(activity);
+  if (!(referenceSlug && activityHref)) {
     return null;
   }
 
-  const dateSlug = getActivityDateSlug(activity);
-  const activityHref = activityRoute(activity) || activitiesRoute();
-  const referenceObj = getActivityReference(activity);
   const referenceTitle =
     referenceObj?.title ?? UNKNOWN_ACTIVITY_REFERENCE_TITLE;
   const referenceImage = getActivityReferenceImage(referenceObj);
@@ -115,7 +116,11 @@ export const GridCardActivityFull = ({
             transitionTypes={[transitionTypes.drillIn]}
           >
             <ViewTransition
-              name={getActivityMediaTransitionName(dateSlug, slug)}
+              name={
+                morph
+                  ? getReferenceMediaTransitionName(referenceSlug)
+                  : undefined
+              }
               {...frontendViewTransitionClasses.sharedMedia}
             >
               <Media
@@ -141,7 +146,9 @@ export const GridCardActivityFull = ({
           transitionTypes={[transitionTypes.drillIn]}
         >
           <ViewTransition
-            name={getActivityTitleTransitionName(dateSlug, slug)}
+            name={
+              morph ? getReferenceTitleTransitionName(referenceSlug) : undefined
+            }
             {...frontendViewTransitionClasses.sharedTitle}
           >
             <h2 className="card-title tone-heading ui-group-hover-dim text-center font-bold text-sm">
