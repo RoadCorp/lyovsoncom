@@ -1,3 +1,4 @@
+import { cacheLife } from "next/cache";
 import { Suspense } from "react";
 import { EmbeddedTweet, TweetNotFound } from "react-tweet";
 import type { Tweet } from "react-tweet/api";
@@ -7,7 +8,6 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { XPostBlock as XPostBlockType } from "@/payload-types";
 
-const X_POST_REVALIDATE_SECONDS = 86_400;
 type TweetLike = Tweet | NonNullable<Tweet["quoted_tweet"]>;
 type TweetWithQuotedTweet = Tweet & {
   quoted_tweet: NonNullable<Tweet["quoted_tweet"]>;
@@ -52,62 +52,26 @@ export function normalizeTweetForEmbed<T extends TweetLike>(tweet: T): T {
   } as T;
 }
 
-function getXPostFallbackError(
-  tweetResult: {
-    notFound?: boolean;
-    tombstone?: boolean;
-  },
-  tweetError: Error | null
-) {
-  if (tweetError) {
-    return tweetError;
-  }
+/**
+ * Fetches a post from X's syndication API, cached for a day. Errors aren't
+ * cached, so a failed fetch retries on the next render.
+ */
+export async function getTweet(postId: string) {
+  "use cache";
+  cacheLife("days");
 
-  if (tweetResult.notFound) {
-    return new Error("This X post is no longer available.");
-  }
-
-  if (tweetResult.tombstone) {
-    return new Error("This X post is private.");
-  }
-
-  return new Error("Unable to load this X post right now.");
+  const { data } = await fetchTweet(postId);
+  return data;
 }
 
-/**
- * XPost Block - Optimized Twitter/X Embed
- *
- * Performance Optimizations:
- * - Uses react-tweet for static HTML rendering (server component)
- * - Eliminates 309.6 KiB Twitter widgets.js script
- * - Reduces TBT (Total Blocking Time) by 1,177ms
- * - Zero client-side JavaScript overhead
- * - SEO-friendly with static HTML content
- */
+/** Renders the post as static HTML with react-tweet, so no X script loads. */
 async function XPostContent({ postId, caption }: XPostBlockType) {
   if (!postId) {
     return null;
   }
 
   const contentPaddingClassName = caption ? "p-3" : "px-4 pt-4 pb-0";
-  let tweetError: Error | null = null;
-  const tweetResult = await fetchTweet(postId, {
-    next: {
-      revalidate: X_POST_REVALIDATE_SECONDS,
-    },
-  }).catch((error: unknown) => {
-    tweetError =
-      error instanceof Error
-        ? error
-        : new Error("Unable to load this X post right now.");
-
-    return {
-      data: undefined,
-      notFound: false,
-      tombstone: false,
-    };
-  });
-  const tweet = tweetResult.data;
+  const tweet = await getTweet(postId).catch(() => undefined);
   const normalizedTweet = tweet ? normalizeTweetForEmbed(tweet) : null;
 
   return (
@@ -119,9 +83,7 @@ async function XPostContent({ postId, caption }: XPostBlockType) {
           {normalizedTweet ? (
             <EmbeddedTweet tweet={normalizedTweet} />
           ) : (
-            <TweetNotFound
-              error={getXPostFallbackError(tweetResult, tweetError)}
-            />
+            <TweetNotFound />
           )}
         </div>
       </CardContent>

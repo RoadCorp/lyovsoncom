@@ -165,9 +165,10 @@ export const Lyovsons: CollectionConfig = {
   ],
   hooks: {
     afterChange: [
-      ({ doc, previousDoc, req }) => {
+      ({ context, doc, previousDoc, req }) => {
         // Password resets and other auth changes never render publicly.
         if (
+          context?.skipRevalidation ||
           !(
             doc.username &&
             hasPublicChanges(doc, previousDoc, PRIVATE_AUTH_FIELDS)
@@ -186,8 +187,8 @@ export const Lyovsons: CollectionConfig = {
       },
     ],
     afterDelete: [
-      ({ doc, req }) => {
-        if (doc?.username) {
+      ({ context, doc, req }) => {
+        if (doc?.username && !context?.skipRevalidation) {
           req.payload.logger.info(
             `Updating cache after user deletion: ${doc.username}`
           );

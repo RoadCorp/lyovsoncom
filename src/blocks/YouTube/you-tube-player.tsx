@@ -24,30 +24,20 @@ interface YouTubePlayerProps {
   videoId: string;
 }
 
-const THUMBNAIL_VARIANTS = [
-  "maxresdefault",
-  "hqdefault",
-  "mqdefault",
-  "default",
-] as const;
+// Not every video has a max-resolution thumbnail; every one has hqdefault.
+const THUMBNAIL_VARIANTS = ["maxresdefault", "hqdefault"] as const;
 
 export const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
   videoId,
   aspectRatio = "16:9",
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
+  // Next keeps visited pages alive but hidden; unload the player when this
+  // page is hidden so the video stops.
   useLayoutEffect(() => () => setIsLoaded(false), []);
-  const [thumbnailVariantIndex, setThumbnailVariantIndex] = useState(0);
+  const [thumbnailVariant, setThumbnailVariant] = useState(0);
   const normalizedAspectRatio = normalizeAspectRatio(aspectRatio || "16:9");
-  const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/${THUMBNAIL_VARIANTS[thumbnailVariantIndex]}.jpg`;
-
-  function handleThumbnailError() {
-    if (thumbnailVariantIndex >= THUMBNAIL_VARIANTS.length - 1) {
-      return;
-    }
-
-    setThumbnailVariantIndex((currentIndex) => currentIndex + 1);
-  }
+  const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/${THUMBNAIL_VARIANTS[thumbnailVariant]}.jpg`;
 
   return (
     <div
@@ -78,7 +68,7 @@ export const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
               className="object-cover"
               fill
               loading="lazy"
-              onError={handleThumbnailError}
+              onError={() => setThumbnailVariant(1)}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
               src={thumbnailUrl}
             />

@@ -13,11 +13,13 @@ async function getReferenceTitle(
   referenceId: number | string
 ): Promise<string | null> {
   try {
-    const reference = (await req.payload.findByID({
+    const reference = await req.payload.findByID({
       collection: "references",
       id: referenceId,
       overrideAccess: true,
-    })) as unknown as { title?: string };
+      req,
+      select: { title: true },
+    });
     return reference?.title || null;
   } catch (error) {
     req.payload.logger.error(

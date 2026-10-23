@@ -1,9 +1,8 @@
 import { EmbeddedTweet, TweetNotFound } from "react-tweet";
-import { fetchTweet } from "react-tweet/api";
 import { BlockPreview } from "@/components/admin/block-preview";
 import { BlockPreviewCaption } from "@/components/admin/block-preview-caption";
 import type { XPostBlock } from "@/payload-types";
-import { normalizeTweetForEmbed } from "./component";
+import { getTweet, normalizeTweetForEmbed } from "./component";
 
 export async function XPostPreview({
   siblingData,
@@ -12,9 +11,7 @@ export async function XPostPreview({
 }) {
   const postId = siblingData?.postId;
   const tweet = postId
-    ? await fetchTweet(postId)
-        .then((result) => result.data)
-        .catch(() => undefined)
+    ? await getTweet(postId).catch(() => undefined)
     : undefined;
 
   let body = <p className="block-preview__empty">Add an X post ID.</p>;

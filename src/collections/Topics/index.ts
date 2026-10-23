@@ -68,7 +68,10 @@ export const Topics: CollectionConfig = {
       },
     ],
     afterChange: [
-      ({ doc, req }) => {
+      ({ context, doc, req }) => {
+        if (context?.skipRevalidation) {
+          return;
+        }
         req.payload.logger.info(`Updating cache for topic: ${doc.slug}`);
 
         // Revalidate topic-related cache tags
@@ -82,7 +85,10 @@ export const Topics: CollectionConfig = {
       },
     ],
     afterDelete: [
-      ({ doc, req }) => {
+      ({ context, doc, req }) => {
+        if (context?.skipRevalidation) {
+          return;
+        }
         req.payload.logger.info(
           `Updating cache after topic deletion: ${doc?.slug}`
         );
