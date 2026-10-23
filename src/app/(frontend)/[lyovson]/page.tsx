@@ -78,7 +78,7 @@ async function PageContent({ params }: PageProps) {
 
   return (
     <>
-      <h1 className="sr-only">{displayName} posts</h1>
+      <h1 className="sr-only">{displayName}</h1>
       <JsonLd
         data={
           personSchema
@@ -131,10 +131,11 @@ export async function generateMetadata({
   }
 
   const name = getLyovsonDisplayName(response.user, username);
-  const description = `Browse published posts by ${name}.`;
+  // The profile mixes posts, notes and activities; /[lyovson]/posts owns "Posts".
+  const description = `Posts, notes and activities by ${name}.`;
 
   return buildLyovsonMetadata({
-    title: `${name} Posts`,
+    title: name,
     description,
     canonicalPath: lyovsonRoute(username),
   });

@@ -58,6 +58,7 @@ const metadataHelperMarkers = [
 
 const noindexExcludedFromSitemap = [
   "/playground",
+  "/ai-docs",
   ".well-known/ai-resources",
   "llms.txt",
 ];
