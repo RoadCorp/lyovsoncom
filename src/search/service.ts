@@ -249,6 +249,9 @@ export async function hydrateSearchResults(results: SearchResult[]) {
           depth: 2,
           select: publicContentSelect,
           limit: activitiesResults.length,
+          // Participants are Lyovsons (an auth collection); the where above
+          // keeps this to published, public activities.
+          overrideAccess: true,
         })
       : Promise.resolve({ docs: [] as Activity[] }),
   ]);

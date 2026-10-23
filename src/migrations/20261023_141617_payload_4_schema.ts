@@ -17,6 +17,16 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
      WHERE "slug" IS NOT NULL
    ) AS d
    WHERE r."id" = d."id" AND d.rn > 1;`);
+  // Same title and same type: the id breaks the tie.
+  await db.execute(sql`
+   UPDATE "references" AS r
+   SET "slug" = r."slug" || '-' || r."id"::text
+   FROM (
+     SELECT "id", row_number() OVER (PARTITION BY "slug" ORDER BY "id") AS rn
+     FROM "references"
+     WHERE "slug" IS NOT NULL
+   ) AS d
+   WHERE r."id" = d."id" AND d.rn > 1;`);
   await db.execute(sql`
    CREATE TYPE "public"."enum_payload_llm_instructions_entity_type" AS ENUM('collection', 'global');
   CREATE TABLE "media_rels" (

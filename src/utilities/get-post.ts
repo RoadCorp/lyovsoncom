@@ -24,6 +24,9 @@ export async function getPost(slug: string): Promise<Post | null> {
     limit: 1,
     depth: 2,
     select: publicContentSelect,
+    // The page's author metadata reads the populated Lyovsons, an auth
+    // collection that anonymous access cannot read.
+    overrideAccess: true,
   });
 
   return (response.docs[0] as Post) || null;

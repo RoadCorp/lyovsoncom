@@ -97,7 +97,12 @@ export function isDraftOnlySave(
   return isDraftRequest && doc?._status !== "published";
 }
 
-const UNRENDERED_FIELDS = new Set(["createdAt", "updatedAt"]);
+const UNRENDERED_FIELDS = new Set([
+  "createdAt",
+  "createdBy",
+  "updatedAt",
+  "updatedBy",
+]);
 
 /**
  * True when a field that can appear on the public site changed. `ignore`
