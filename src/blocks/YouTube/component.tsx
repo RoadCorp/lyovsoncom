@@ -2,6 +2,7 @@ import RichText from "@/components/RichText";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { YouTubeBlock as YouTubeBlockType } from "@/payload-types";
+import { captionWithText } from "@/utilities/extract-lexical-text";
 import { YouTubePlayer } from "./you-tube-player";
 
 /**
@@ -21,12 +22,14 @@ import { YouTubePlayer } from "./you-tube-player";
 
 export function YouTubeBlock({
   videoId,
-  caption,
   aspectRatio = "16:9",
+  ...block
 }: YouTubeBlockType) {
   if (!videoId) {
     return null;
   }
+
+  const caption = captionWithText(block.caption);
 
   return (
     <Card className="surface-block reveal-stagger-1 gap-0 overflow-hidden py-0 content-block">
