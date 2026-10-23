@@ -97,9 +97,11 @@ export const CatalogPicker: React.FC = () => {
   const pick = async (item: CatalogItem) => {
     setStatus("importing");
     try {
-      // A linked reference's image came from its catalog, so a new pick
-      // replaces it; a hand-picked image on an unlinked one stays.
-      fill(await importCatalogItem(item, !(image && !source)));
+      // A linked reference's image and description came from its catalog,
+      // so a new pick replaces them; hand-filled ones on an unlinked
+      // reference stay.
+      const imported = await importCatalogItem(item, !(image && !source));
+      fill(source ? { description: null, image: null, ...imported } : imported);
       setResults([]);
       setQuery("");
       setSearching(false);
