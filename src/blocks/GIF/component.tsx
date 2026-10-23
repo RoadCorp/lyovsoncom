@@ -11,7 +11,8 @@ import type { GIFBlock as GIFBlockType } from "./types";
  * GIF Block: a looping, muted video (or an animated GIF image) from Media,
  * or a GIPHY pick hotlinked from GIPHY with its attribution. Older Tenor
  * blocks keep their URLs until scripts/replace-tenor-gifs.ts swaps them.
- * A block with nothing to show renders nothing.
+ * A block with nothing to show renders nothing, and a GIF that fails to load
+ * hides its card.
  */
 function videoSources(props: GIFBlockType, media: MediaType | null) {
   if (!media) {
@@ -25,7 +26,10 @@ function videoSources(props: GIFBlockType, media: MediaType | null) {
 export function GIFBlock(props: GIFBlockType) {
   const media = typeof props.media === "object" ? props.media : null;
   const poster = typeof props.poster === "object" ? props.poster : null;
-  const giphyUrl = media ? null : props.sourceUrl;
+  const giphyUrl =
+    !media && props.sourceUrl?.startsWith("https://giphy.com/")
+      ? props.sourceUrl
+      : null;
   const hasFooter = Boolean(props.caption || giphyUrl);
   const isImage = media?.mimeType?.startsWith("image/");
   const { mp4Src, webmSrc } = videoSources(props, media);
@@ -35,7 +39,7 @@ export function GIFBlock(props: GIFBlockType) {
   }
 
   return (
-    <Card className="surface-block reveal-stagger-1 gap-0 overflow-hidden py-0 content-block">
+    <Card className="surface-block reveal-stagger-1 gap-0 overflow-hidden py-0 content-block has-[video[data-failed]]:hidden">
       <CardContent className={cn(hasFooter ? "p-3" : "p-0")}>
         <div className="media-frame overflow-hidden rounded-lg">
           {isImage ? (
@@ -46,7 +50,7 @@ export function GIFBlock(props: GIFBlockType) {
             />
           ) : (
             <LazyVideo
-              alt={media?.alt || "Animated GIF"}
+              alt={media?.alt || props.alt || "Animated GIF"}
               aspectRatio={
                 props.aspectRatio
                   ? normalizeAspectRatio(props.aspectRatio)

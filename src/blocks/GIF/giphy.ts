@@ -5,6 +5,8 @@
 
 const MAX_QUERY_LENGTH = 50; // GIPHY returns 414 above this
 const RATING = "pg-13";
+// Titles read like "Mind Blown GIF by The Daily Show".
+const TITLE_SUFFIX = /\s+GIF(\s+by\s+.*)?$/i;
 
 interface GiphyRendition {
   height: string;
@@ -26,10 +28,29 @@ export interface GiphyResult {
 }
 
 export interface GifVideoData {
+  alt: string;
   aspectRatio: string;
   mp4Url: string;
   posterUrl: string;
   sourceUrl: string;
+}
+
+/** Width / height, rounded so it reads well in the CMS. */
+export function formatAspectRatio(width: number, height: number): string {
+  return String(Number((width / height).toFixed(4)));
+}
+
+/**
+ * GIPHY's stable media URLs for an id. Search results carry per-request
+ * tracking URLs; these canonical ones serve the same files.
+ */
+export function giphyMediaUrls(id: string) {
+  const base = `https://media.giphy.com/media/${id}`;
+  return {
+    mp4Url: `${base}/giphy.mp4`,
+    posterUrl: `${base}/giphy_s.gif`,
+    sourceUrl: `https://giphy.com/gifs/${id}`,
+  };
 }
 
 export async function searchGiphy(
@@ -60,15 +81,13 @@ export async function searchGiphy(
 }
 
 export function extractVideoUrls(result: GiphyResult): GifVideoData {
-  const { original, original_still: still } = result.images;
+  const { original } = result.images;
   const width = Number(original.width);
   const height = Number(original.height);
 
   return {
-    aspectRatio:
-      width && height ? String(Number((width / height).toFixed(4))) : "1",
-    mp4Url: original.mp4 || "",
-    posterUrl: still.url,
-    sourceUrl: result.url,
+    alt: result.title.replace(TITLE_SUFFIX, "").trim(),
+    aspectRatio: width && height ? formatAspectRatio(width, height) : "1",
+    ...giphyMediaUrls(result.id),
   };
 }

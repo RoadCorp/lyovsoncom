@@ -14,16 +14,26 @@
  */
 import configPromise from "@payload-config";
 import { getPayload } from "payload";
+import { formatAspectRatio, giphyMediaUrls } from "@/blocks/GIF/giphy";
 
-// Tenor media id (the first 11 characters of the path) → GIPHY id, each
-// checked by eye against the Tenor still: the same clip or the same scene.
-const GIPHY_IDS: Record<string, string> = {
-  "04KdcsfRodU": "l0IykOsxLECVejOzm", // Charlie Day's conspiracy board
-  "c9A7w-0nmKc": "smGpsxCQzXwDS", // neon Apple logo
-  "fw-0U7YQBzs": "j8HJv9BX0chYQ", // Popeye down on the mat
-  TyEfGon6ieI: "0uPdvqdl0wCH6NrbDV", // CODA, Ruby at the car
-  UGwP2mDCcqM: "U6Qzze3Mt90Ig", // Moody, "Constant vigilance!"
-  ZpWIgnTC1dQ: "Trh2LxGxp0CsM", // Shia LaBeouf, "Just do it!"
+// Tenor media id (the first 11 characters of the path) → GIPHY id and alt
+// text, each checked by eye against the Tenor still: the same clip or scene.
+const GIPHY_MATCHES: Record<string, { alt: string; id: string }> = {
+  "04KdcsfRodU": {
+    id: "l0IykOsxLECVejOzm",
+    alt: "Charlie Day ranting in front of a conspiracy board",
+  },
+  "c9A7w-0nmKc": { id: "smGpsxCQzXwDS", alt: "A glowing neon Apple logo" },
+  "fw-0U7YQBzs": { id: "j8HJv9BX0chYQ", alt: "Popeye knocked down on the mat" },
+  TyEfGon6ieI: { id: "0uPdvqdl0wCH6NrbDV", alt: "Ruby by the car in CODA" },
+  UGwP2mDCcqM: {
+    id: "U6Qzze3Mt90Ig",
+    alt: 'Mad-Eye Moody shouting "Constant vigilance!"',
+  },
+  ZpWIgnTC1dQ: {
+    id: "Trh2LxGxp0CsM",
+    alt: 'Shia LaBeouf shouting "Just do it!"',
+  },
 };
 
 const TENOR_HOST = "media.tenor.com";
@@ -32,6 +42,7 @@ const payload = await getPayload({ config: await configPromise });
 
 type Node = Record<string, unknown>;
 interface GifFields {
+  alt?: string | null;
   aspectRatio?: string | null;
   blockType?: string;
   embedCode?: unknown;
@@ -50,11 +61,11 @@ function tenorId(url: string): string | null {
 }
 
 /** GIPHY renditions for an id, after checking that both files exist. */
-async function giphyFields(id: string) {
-  const base = `https://media.giphy.com/media/${id}`;
+async function giphyFields({ alt, id }: { alt: string; id: string }) {
+  const urls = giphyMediaUrls(id);
   const [still, video] = await Promise.all([
-    fetch(`${base}/giphy_s.gif`),
-    fetch(`${base}/giphy.mp4`, { method: "HEAD" }),
+    fetch(urls.posterUrl),
+    fetch(urls.mp4Url, { method: "HEAD" }),
   ]);
   if (!(still.ok && video.ok)) {
     throw new Error(`GIPHY ${id}: still ${still.status}, mp4 ${video.status}`);
@@ -65,10 +76,9 @@ async function giphyFields(id: string) {
   const height = header.getUint16(8, true);
 
   return {
-    aspectRatio: String(Number((width / height).toFixed(4))),
-    mp4Url: `${base}/giphy.mp4`,
-    posterUrl: `${base}/giphy_s.gif`,
-    sourceUrl: `https://giphy.com/gifs/${id}`,
+    ...urls,
+    alt,
+    aspectRatio: formatAspectRatio(width, height),
     webmUrl: null,
   };
 }
@@ -93,12 +103,12 @@ async function replaceIn(value: unknown, where: string): Promise<number> {
     if (!id) {
       return 0;
     }
-    const giphyId = GIPHY_IDS[id];
-    if (!giphyId) {
+    const match = GIPHY_MATCHES[id];
+    if (!match) {
       payload.logger.warn({ msg: "gif.no_match", where, tenor: fields.mp4Url });
       return 0;
     }
-    const next = await giphyFields(giphyId);
+    const next = await giphyFields(match);
     payload.logger.info({
       msg: write ? "gif.replaced" : "gif.dry_run",
       where,

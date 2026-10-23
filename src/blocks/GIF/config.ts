@@ -34,7 +34,8 @@ export const GIF: Block = {
         ],
       },
       admin: {
-        description: "An MP4, WebM or animated GIF file.",
+        description:
+          "An MP4 or WebM file is best; an animated GIF is often 10 times larger.",
       },
     },
     {
@@ -53,7 +54,16 @@ export const GIF: Block = {
       type: "text",
       admin: {
         description:
-          "Width / height, e.g. 16:9. Leave empty to use the file's.",
+          "Width / height, e.g. 16:9. Filled in from GIPHY picks and uploaded videos; it reserves the space before the GIF loads.",
+      },
+    },
+    {
+      name: "alt",
+      type: "text",
+      label: "Alt text",
+      admin: {
+        description:
+          "What the GIF shows, for screen readers. Filled in from GIPHY; uploads fall back to the file's alt text.",
       },
     },
     // Hotlinked GIPHY picks, and older Tenor blocks that

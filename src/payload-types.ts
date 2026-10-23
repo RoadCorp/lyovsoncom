@@ -1831,7 +1831,7 @@ export interface GIFBlock {
   id: string;
   blockType: 'gif';
   /**
-   * An MP4, WebM or animated GIF file.
+   * An MP4 or WebM file is best; an animated GIF is often 10 times larger.
    */
   media?: (number | null) | Media;
   /**
@@ -1839,9 +1839,13 @@ export interface GIFBlock {
    */
   poster?: (number | null) | Media;
   /**
-   * Width / height, e.g. 16:9. Leave empty to use the file's.
+   * Width / height, e.g. 16:9. Filled in from GIPHY picks and uploaded videos; it reserves the space before the GIF loads.
    */
   aspectRatio?: string | null;
+  /**
+   * What the GIF shows, for screen readers. Filled in from GIPHY; uploads fall back to the file's alt text.
+   */
+  alt?: string | null;
   mp4Url?: string | null;
   webmUrl?: string | null;
   posterUrl?: string | null;
