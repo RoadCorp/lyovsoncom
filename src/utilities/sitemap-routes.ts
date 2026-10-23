@@ -102,8 +102,7 @@ export function getStaticRoutes(now: Date): Sitemap {
     // Utility pages - medium priority (About, AM and Contact are noindexed
     // placeholders and stay out until they have content)
     sitemapEntry(absoluteUrl(privacyPolicyRoute()), now, "yearly", 0.3),
-    // AI and bot documentation - high priority for discovery
-    sitemapEntry(absoluteUrl("/ai-docs"), now, "monthly", 0.8),
+    // The AI docs page stays out: it is noindex and disallowed in robots.txt.
     // API endpoints stay out of the sitemap to prevent crawler-induced
     // database wake-ups; the API docs remain accessible.
   ];
