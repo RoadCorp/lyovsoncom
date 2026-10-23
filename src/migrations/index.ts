@@ -42,6 +42,10 @@ import {
   down as migration_20261023_141617_payload_4_schema_down,
   up as migration_20261023_141617_payload_4_schema_up,
 } from "./20261023_141617_payload_4_schema";
+import {
+  down as migration_20261023_141618_drop_legacy_columns_down,
+  up as migration_20261023_141618_drop_legacy_columns_up,
+} from "./20261023_141618_drop_legacy_columns";
 
 export const migrations = [
   {
@@ -98,5 +102,10 @@ export const migrations = [
     up: migration_20261023_141617_payload_4_schema_up,
     down: migration_20261023_141617_payload_4_schema_down,
     name: "20261023_141617_payload_4_schema",
+  },
+  {
+    up: migration_20261023_141618_drop_legacy_columns_up,
+    down: migration_20261023_141618_drop_legacy_columns_down,
+    name: "20261023_141618_drop_legacy_columns",
   },
 ];
