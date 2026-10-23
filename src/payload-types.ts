@@ -793,7 +793,7 @@ export interface Activity {
    */
   reference: number | Reference;
   /**
-   * Type of activity
+   * Filled from the reference type; change it if needed
    */
   activityType: 'read' | 'watch' | 'listen' | 'play' | 'visit' | 'learn';
   /**
@@ -805,30 +805,13 @@ export interface Activity {
    */
   startedAt?: string | null;
   /**
-   * When did you finish?
+   * When did you finish? Clear it while still in progress
    */
   finishedAt?: string | null;
   /**
    * Who can see this activity?
    */
   visibility?: ('public' | 'private') | null;
-  /**
-   * Optional explicit overrides for search and social metadata. Leave blank to use content defaults.
-   */
-  seo?: {
-    /**
-     * Optional raw page title. Do not include site branding here.
-     */
-    title?: string | null;
-    /**
-     * Optional search and social description override for this page.
-     */
-    description?: string | null;
-    /**
-     * Optional social sharing image override. Falls back to the content image or the default OG image.
-     */
-    image?: (number | null) | Media;
-  };
   /**
    * General information about this activity
    */
@@ -857,6 +840,23 @@ export interface Activity {
    * When this activity should be published
    */
   publishedAt?: string | null;
+  /**
+   * Optional explicit overrides for search and social metadata. Leave blank to use content defaults.
+   */
+  seo?: {
+    /**
+     * Optional raw page title. Do not include site branding here.
+     */
+    title?: string | null;
+    /**
+     * Optional search and social description override for this page.
+     */
+    description?: string | null;
+    /**
+     * Optional social sharing image override. Falls back to the content image or the default OG image.
+     */
+    image?: (number | null) | Media;
+  };
   slugSource?: string | null;
   slug?: string | null;
   /**
@@ -1257,13 +1257,6 @@ export interface ActivitiesSelect<T extends boolean = true> {
   startedAt?: T;
   finishedAt?: T;
   visibility?: T;
-  seo?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        image?: T;
-      };
   notes?: T;
   reviews?:
     | T
@@ -1274,6 +1267,13 @@ export interface ActivitiesSelect<T extends boolean = true> {
         id?: T;
       };
   publishedAt?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
   slugSource?: T;
   slug?: T;
   embedding_vector?: T;

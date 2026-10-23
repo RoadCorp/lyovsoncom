@@ -61,7 +61,10 @@ export const Activities: CollectionConfig = {
       required: true,
       admin: {
         position: "sidebar",
-        description: "Type of activity",
+        description: "Filled from the reference type; change it if needed",
+        components: {
+          Field: "@/collections/Activities/admin/fields#ActivityTypeField",
+        },
       },
     },
     {
@@ -69,6 +72,7 @@ export const Activities: CollectionConfig = {
       type: "relationship",
       relationTo: "lyovsons",
       hasMany: true,
+      defaultValue: ({ user }) => (user ? [user.id] : []),
       admin: {
         position: "sidebar",
         description: "Who participated in this activity?",
@@ -90,9 +94,12 @@ export const Activities: CollectionConfig = {
       type: "date",
       admin: {
         position: "sidebar",
-        description: "When did you finish?",
+        description: "When did you finish? Clear it while still in progress",
         date: {
           pickerAppearance: "dayOnly",
+        },
+        components: {
+          Field: "@/collections/Activities/admin/fields#TodayDateField",
         },
       },
     },
@@ -109,7 +116,6 @@ export const Activities: CollectionConfig = {
         description: "Who can see this activity?",
       },
     },
-    seoField,
     {
       type: "tabs",
       tabs: [
@@ -142,6 +148,7 @@ export const Activities: CollectionConfig = {
                   type: "relationship",
                   relationTo: "lyovsons",
                   required: true,
+                  defaultValue: ({ user }) => user?.id,
                   admin: {
                     description: "Who wrote this note?",
                   },
@@ -173,6 +180,7 @@ export const Activities: CollectionConfig = {
             publishedAtField({
               description: "When this activity should be published",
             }),
+            { ...seoField, admin: { ...seoField.admin, position: undefined } },
           ],
         },
       ],

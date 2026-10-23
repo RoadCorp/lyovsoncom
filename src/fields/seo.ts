@@ -1,6 +1,6 @@
-import type { Field } from "payload";
+import type { GroupField } from "payload";
 
-export const seoField: Field = {
+export const seoField: GroupField = {
   name: "seo",
   type: "group",
   admin: {
