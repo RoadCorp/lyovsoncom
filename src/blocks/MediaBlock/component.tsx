@@ -41,6 +41,7 @@ export function MediaBlock(props: Props) {
       <CardContent className={cn(hasCaption ? "p-3" : "p-0")}>
         <Media
           className="media-frame flex h-full items-center justify-center"
+          credit={true}
           imgClassName={cn(
             "h-full object-cover",
             hasCaption && "rounded-lg",

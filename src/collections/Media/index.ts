@@ -36,6 +36,14 @@ export const Media: CollectionConfig = {
       //required: true,
     },
     {
+      name: "credit",
+      type: "text",
+      admin: {
+        description:
+          "Attribution the image's licence asks for. Shown with the image.",
+      },
+    },
+    {
       name: "caption",
       type: "richText",
       editor: lexicalEditor({

@@ -7,7 +7,6 @@ import { Media } from "@/components/Media";
 import { CARD_THUMBNAIL_IMAGE_SIZE } from "@/components/Media/image-sizes";
 import { cn } from "@/lib/utils";
 import type { Reference } from "@/payload-types";
-import { extractLexicalText } from "@/utilities/extract-lexical-text";
 
 export interface GridCardReferencesProps {
   className?: string;
@@ -61,10 +60,7 @@ export const GridCardReferences = ({
           typeof reference.image === "object" && reference.image !== null
             ? reference.image
             : null;
-        // Commons photos and logos carry the credit their licence asks for.
-        const credit = imageObj?.caption
-          ? extractLexicalText(imageObj.caption)
-          : "";
+        const credit = imageObj?.credit;
 
         const content = (
           <GridCardSection

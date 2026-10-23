@@ -6,7 +6,7 @@ import type { Media as MediaType } from "@/payload-types";
 export interface Props {
   alt?: string;
   className?: string;
-  /** Overlay the resource's caption, for images whose licence asks for credit. */
+  /** Overlay the resource's licence credit on the image. */
   credit?: boolean;
   fill?: boolean; // for NextImage only
   htmlElement?: ElementType | null;

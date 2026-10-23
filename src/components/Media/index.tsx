@@ -1,7 +1,6 @@
 import type React from "react";
 import { Fragment } from "react";
 import { cn } from "@/lib/utils";
-import { extractLexicalText } from "@/utilities/extract-lexical-text";
 import { ImageMedia } from "./ImageMedia";
 import type { Props } from "./types";
 import { VideoMedia } from "./VideoMedia";
@@ -12,11 +11,8 @@ export const Media: React.FC<Props> = (props) => {
   const isVideo =
     typeof resource === "object" && resource?.mimeType?.includes("video");
   const Tag = htmlElement ?? Fragment;
-  // Commons images carry the credit their licence asks for as the caption.
   const creditText =
-    credit && typeof resource === "object" && resource?.caption
-      ? extractLexicalText(resource.caption)
-      : "";
+    credit && typeof resource === "object" ? resource?.credit : null;
 
   return (
     <Tag

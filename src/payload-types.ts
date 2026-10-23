@@ -330,6 +330,10 @@ export interface Post {
 export interface Media {
   id: number;
   alt?: string | null;
+  /**
+   * Attribution the image's licence asks for. Shown with the image.
+   */
+  credit?: string | null;
   caption?: LexicalRichText<LexicalNodes_AD327369> | null;
   prefix?: string | null;
   _objectKey?: string | null;
@@ -1059,6 +1063,7 @@ export interface PostsSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  credit?: T;
   caption?: T;
   prefix?: T;
   _objectKey?: T;

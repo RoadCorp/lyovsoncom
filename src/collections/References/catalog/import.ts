@@ -1,5 +1,5 @@
 import type { Payload } from "payload";
-import type { Lyovson, Media } from "@/payload-types";
+import type { Lyovson } from "@/payload-types";
 import { type CatalogItem, USER_AGENT } from "./shared";
 import { getCommonsImage, getWikidataFacts, matchWikidata } from "./wikidata";
 
@@ -33,46 +33,11 @@ function isCatalogImage(url: string) {
 }
 
 interface Cover {
-  /** Attribution the image's licence asks for, kept as the Media caption. */
+  /** Attribution the image's licence asks for. */
   credit?: string;
   name: string;
   title: string;
   url: string;
-}
-
-/** A one-paragraph Lexical caption. */
-function captionOf(text: string): NonNullable<Media["caption"]> {
-  return {
-    root: {
-      children: [
-        {
-          children: [
-            {
-              detail: 0,
-              format: 0,
-              mode: "normal",
-              style: "",
-              text,
-              type: "text",
-              version: 1,
-            },
-          ],
-          direction: null,
-          format: "",
-          indent: 0,
-          textFormat: 0,
-          textStyle: "",
-          type: "paragraph",
-          version: 1,
-        },
-      ],
-      direction: null,
-      format: "",
-      indent: 0,
-      type: "root",
-      version: 1,
-    },
-  };
 }
 
 /** Copies a cover into Media so the site never hotlinks a catalog. */
@@ -101,7 +66,7 @@ async function saveCover({ payload, user }: Importer, cover: Cover) {
     collection: "media",
     data: {
       alt: `${cover.title} cover`,
-      ...(cover.credit ? { caption: captionOf(cover.credit) } : {}),
+      ...(cover.credit ? { credit: cover.credit } : {}),
     },
     file: {
       data,
