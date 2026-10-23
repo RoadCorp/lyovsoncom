@@ -1,0 +1,11 @@
+.admin-crest--on-dark {
+  display: none;
+}
+
+[data-theme="dark"] .admin-crest--on-light {
+  display: none;
+}
+
+[data-theme="dark"] .admin-crest--on-dark {
+  display: block;
+}

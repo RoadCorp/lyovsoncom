@@ -1,35 +1,89 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
+/*
+ * The admin wears the site's look: the IBM Plex files the site self-hosts and
+ * its paper, ink and wave-blue palette from (frontend)/globals.css.
+ */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  src: url('../(frontend)/fonts/ibm-plex-sans-variable-latin.woff2') format('woff2');
+  font-weight: 100 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IBM Plex Serif';
+  src: url('../(frontend)/fonts/ibm-plex-serif-600-latin.woff2') format('woff2');
+  font-weight: 600 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('../(frontend)/fonts/ibm-plex-mono-400-latin.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('../(frontend)/fonts/ibm-plex-mono-500-latin.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
 
 /*
- * Payload 4 palette: semantic --color-* tokens read the --ramp-* palette in
- * both themes, so overriding the ramps re-tints the whole admin. The blue
- * ramp is the brand (accent) colour, the grey ramp the cool neutrals.
+ * Payload 4 semantic --color-* tokens read the --ramp-* palette, so
+ * overriding the ramps re-tints the admin in both themes. Grey 100-300 are
+ * the site's warm paper neutrals, grey 500-900 its ink-blue dark surfaces,
+ * blue is wave blue (light) running up to river blue (dark), and the
+ * translucent black/white ramps behind text and icons are tinted ink/foam.
  */
 :root {
   --font-body: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
+  --font-display: 'IBM Plex Serif', ui-serif, Georgia, serif;
 
-  --ramp-grey-100: oklch(0.965 0.007 228);
-  --ramp-grey-200: oklch(0.916 0.012 226);
-  --ramp-grey-300: oklch(0.884 0.014 228);
-  --ramp-grey-500: oklch(0.548 0.016 237);
-  --ramp-grey-600: oklch(0.386 0.019 238);
-  --ramp-grey-700: oklch(0.334 0.019 238);
-  --ramp-grey-800: oklch(0.286 0.018 240);
-  --ramp-grey-900: oklch(0.238 0.018 240);
+  --site-paper: oklch(0.97 0.011 85);
+  --site-foam: oklch(0.99 0.004 85);
+  --site-ink: oklch(0.3 0.045 250);
 
-  --ramp-blue-200: oklch(0.934 0.04 249);
-  --ramp-blue-300: oklch(0.858 0.082 252);
-  --ramp-blue-400: oklch(0.734 0.122 260);
-  --ramp-blue-500: oklch(0.61 0.136 264);
-  --ramp-blue-600: oklch(0.526 0.13 265);
-  --ramp-blue-700: oklch(0.438 0.112 267);
-  --ramp-blue-800: oklch(0.346 0.086 269);
-  --ramp-blue-900: oklch(0.252 0.055 272);
-  --ramp-blue-1000: oklch(0.206 0.04 274);
+  --ramp-grey-100: oklch(0.945 0.014 85);
+  --ramp-grey-200: oklch(0.905 0.015 85);
+  --ramp-grey-300: oklch(0.84 0.012 85);
+  --ramp-grey-500: oklch(0.49 0.018 250);
+  --ramp-grey-600: oklch(0.37 0.025 250);
+  --ramp-grey-700: oklch(0.26 0.022 250);
+  --ramp-grey-800: oklch(0.18 0.018 250);
+  --ramp-grey-900: oklch(0.22 0.018 250);
 
-  --color-bg: oklch(0.985 0.004 230);
-  --color-bg-elevated: oklch(0.985 0.004 230);
+  --ramp-blue-200: oklch(0.93 0.022 235);
+  --ramp-blue-300: oklch(0.86 0.04 233);
+  --ramp-blue-400: oklch(0.8 0.055 230);
+  --ramp-blue-500: oklch(0.44 0.075 248);
+  --ramp-blue-600: oklch(0.39 0.068 249);
+  --ramp-blue-700: oklch(0.34 0.058 250);
+  --ramp-blue-800: oklch(0.29 0.045 250);
+  --ramp-blue-900: oklch(0.24 0.035 250);
+  --ramp-blue-1000: oklch(0.2 0.028 250);
+
+  --ramp-black-100: oklch(0.3 0.045 250 / 0.05);
+  --ramp-black-200: oklch(0.3 0.045 250 / 0.1);
+  --ramp-black-300: oklch(0.3 0.045 250 / 0.2);
+  --ramp-black-400: oklch(0.3 0.045 250 / 0.45);
+  --ramp-black-500: oklch(0.3 0.045 250 / 0.72);
+  --ramp-black-600: oklch(0.3 0.045 250 / 0.85);
+  --ramp-black-800: var(--site-ink);
+
+  --ramp-white-400: oklch(0.925 0.01 85 / 0.45);
+  --ramp-white-500: oklch(0.925 0.01 85 / 0.72);
+  --ramp-white-600: oklch(0.925 0.01 85 / 0.82);
+  --ramp-white-800: oklch(0.925 0.01 85 / 0.92);
+
+  --color-bg: var(--site-paper);
+  --color-bg-elevated: var(--site-foam);
 
   --admin-surface-1: var(--color-bg);
   --admin-surface-2: var(--color-bg-secondary);
@@ -41,28 +95,44 @@
   --admin-text-3: var(--color-text-tertiary);
   --admin-accent: var(--color-bg-brand);
   --admin-accent-soft: color-mix(in oklch, var(--color-bg-brand) 14%, var(--color-bg));
-  --admin-danger-soft: color-mix(in oklch, oklch(0.72 0.1589 10.2758) 14%, var(--color-bg));
+  --admin-danger-soft: color-mix(in oklch, oklch(0.49 0.135 28) 14%, var(--color-bg));
   --admin-shadow:
-    0 16px 36px oklch(0.2 0.02 250 / 0.12),
-    0 2px 6px oklch(0.2 0.02 250 / 0.06);
+    0 16px 36px oklch(0.3 0.045 250 / 0.1),
+    0 2px 6px oklch(0.3 0.045 250 / 0.06);
   --admin-shadow-strong:
-    0 22px 48px oklch(0.2 0.02 250 / 0.16),
-    0 6px 12px oklch(0.2 0.02 250 / 0.08);
+    0 22px 48px oklch(0.3 0.045 250 / 0.14),
+    0 6px 12px oklch(0.3 0.045 250 / 0.08);
 }
 
 [data-theme='dark'] {
+  /* The site's dark mode: ink-blue background, foam text, river-blue accent.
+     Unlayered :root values outrank Payload's layered dark theme, so every
+     token set above is set again here. */
   --color-bg: var(--ramp-grey-800);
-  --color-bg-elevated: var(--ramp-grey-900);
+  --color-bg-brand: var(--ramp-blue-400);
+  --color-bg-brand-hover: var(--ramp-blue-300);
+  --color-bg-brand-pressed: var(--ramp-blue-300);
+  --color-text-onbrand: var(--ramp-grey-800);
+  --color-icon-onbrand: var(--ramp-grey-800);
+  --color-bg-elevated: oklch(0.245 0.02 250);
+  --color-text: oklch(0.925 0.01 85);
+  --color-icon: oklch(0.925 0.01 85);
 
   --admin-line-2: var(--ramp-grey-500);
   --admin-accent-soft: color-mix(in oklch, var(--color-bg-brand) 16%, var(--color-bg));
-  --admin-danger-soft: color-mix(in oklch, oklch(0.72 0.1589 10.2758) 16%, var(--color-bg));
+  --admin-danger-soft: color-mix(in oklch, oklch(0.49 0.135 28) 22%, var(--color-bg));
   --admin-shadow:
     0 18px 42px oklch(0 0 0 / 0.34),
     0 4px 10px oklch(0 0 0 / 0.22);
   --admin-shadow-strong:
     0 24px 54px oklch(0 0 0 / 0.42),
     0 8px 16px oklch(0 0 0 / 0.28);
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.015em;
 }
 
 code,

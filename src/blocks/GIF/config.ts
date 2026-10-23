@@ -7,6 +7,10 @@ import type { Block } from "payload";
 
 export const GIF: Block = {
   slug: "gif",
+  labels: { singular: "GIF", plural: "GIFs" },
+  admin: {
+    components: { Block: "@/blocks/GIF/admin-preview#GIFPreview" },
+  },
   interfaceName: "GIFBlock",
   fields: [
     {

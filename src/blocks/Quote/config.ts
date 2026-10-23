@@ -7,6 +7,10 @@ import type { Block } from "payload";
 
 export const Quote: Block = {
   slug: "quote",
+  labels: { singular: "Quote", plural: "Quotes" },
+  admin: {
+    components: { Block: "@/blocks/Quote/admin-preview#QuotePreview" },
+  },
   interfaceName: "QuoteBlock",
   fields: [
     {

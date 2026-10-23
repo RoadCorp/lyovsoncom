@@ -47,6 +47,10 @@ const extractXPostID = (input: string): string => {
 
 export const XPost: Block = {
   slug: "xpost",
+  labels: { singular: "X post", plural: "X posts" },
+  admin: {
+    components: { Block: "@/blocks/XPost/admin-preview#XPostPreview" },
+  },
   interfaceName: "XPostBlock",
   fields: [
     {

@@ -9,7 +9,7 @@ import type { Block } from "payload";
 const YOUTUBE_ID_REGEX = /^[A-Za-z0-9_-]{11}$/;
 
 // Improved YouTube ID extraction function
-const extractYouTubeID = (url: string): string => {
+export const extractYouTubeID = (url: string): string => {
   if (!url) {
     return "";
   }
@@ -61,6 +61,10 @@ const extractYouTubeID = (url: string): string => {
 
 export const YouTube: Block = {
   slug: "youtube",
+  labels: { singular: "YouTube video", plural: "YouTube videos" },
+  admin: {
+    components: { Block: "@/blocks/YouTube/admin-preview#YouTubePreview" },
+  },
   interfaceName: "YouTubeBlock",
   fields: [
     {

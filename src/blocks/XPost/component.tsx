@@ -29,7 +29,7 @@ function hasQuotedTweet(tweet: TweetLike): tweet is TweetWithQuotedTweet {
   return "quoted_tweet" in tweet && Boolean(tweet.quoted_tweet);
 }
 
-function normalizeTweetForEmbed<T extends TweetLike>(tweet: T): T {
+export function normalizeTweetForEmbed<T extends TweetLike>(tweet: T): T {
   const normalizedTweet = {
     ...tweet,
     display_text_range: getDisplayTextRange(tweet),

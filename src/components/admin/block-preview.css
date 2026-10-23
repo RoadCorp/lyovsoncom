@@ -1,0 +1,95 @@
+.block-preview {
+  display: grid;
+  gap: 10px;
+}
+
+.block-preview > :not(.block-preview__actions) {
+  width: 100%;
+  max-width: 560px;
+  margin-inline: auto;
+}
+
+.block-preview__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-block: -6px -10px;
+}
+
+.block-preview__frame {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.block-preview__frame img,
+.block-preview__frame video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.block-preview__play {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  color: var(--color-text-onbrand);
+  background: var(--color-bg-brand);
+  border-radius: 999px;
+  box-shadow: var(--admin-shadow);
+  transform: translate(-50%, -50%);
+}
+
+.block-preview__caption {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.block-preview__caption p {
+  margin: 0;
+}
+
+.block-preview__empty {
+  padding: 16px;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.block-preview__quote {
+  padding: 14px 18px;
+  margin: 0;
+  background: var(--color-bg-secondary);
+  border-inline-start: 3px solid var(--color-bg-brand);
+  border-radius: 10px;
+}
+
+.block-preview__quote-body {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-style: italic;
+  line-height: 1.55;
+}
+
+.block-preview__quote-body p {
+  margin: 0;
+}
+
+.block-preview__quote-body p + p {
+  margin-top: 10px;
+}
+
+.block-preview__quote footer {
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.block-preview .react-tweet-theme {
+  margin: 0 auto;
+}
