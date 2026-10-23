@@ -13,17 +13,20 @@ interface LazyVideoProps {
   webmSrc?: string;
 }
 
-// Attach video sources near the viewport and pause when React hides the content.
+// Attach video sources near the viewport, pause when React hides the content
+// and resume when it shows it again. A video whose sources all fail gets
+// data-failed, so its container can hide it.
 export const LazyVideo = ({
   mp4Src,
   webmSrc,
   poster,
-  aspectRatio = "1 / 1",
+  aspectRatio,
   className,
   alt = "Video content",
 }: LazyVideoProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
   // GIFs are short loops; with reduced motion, show the poster and controls.
   const reduceMotion = usePrefersReducedMotion();
 
@@ -47,9 +50,16 @@ export const LazyVideo = ({
 
     observer.observe(videoElement);
 
+    // Pausing clears the autoplay flag, so play again when React reveals it.
+    if (videoElement.currentSrc && videoElement.autoplay) {
+      videoElement.play().catch(() => undefined);
+    }
+
     return () => {
       observer.disconnect();
-      videoElement.pause();
+      if (!videoElement.paused) {
+        videoElement.pause();
+      }
     };
   }, []);
 
@@ -62,18 +72,32 @@ export const LazyVideo = ({
         className
       )}
       controls={reduceMotion}
+      data-failed={failed || undefined}
       loop
       muted
       playsInline
       poster={poster}
-      preload="none"
+      // Without a poster, load the first frame once in view.
+      preload={poster ? "none" : "metadata"}
       ref={videoRef}
       style={{ aspectRatio }}
     >
       {isLoaded && (
         <>
-          {webmSrc && <source src={webmSrc} type="video/webm" />}
-          {mp4Src && <source src={mp4Src} type="video/mp4" />}
+          {webmSrc && (
+            <source
+              onError={mp4Src ? undefined : () => setFailed(true)}
+              src={webmSrc}
+              type="video/webm"
+            />
+          )}
+          {mp4Src && (
+            <source
+              onError={() => setFailed(true)}
+              src={mp4Src}
+              type="video/mp4"
+            />
+          )}
         </>
       )}
     </video>

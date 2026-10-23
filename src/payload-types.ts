@@ -1818,10 +1818,26 @@ export interface QuoteBlock {
 export interface GIFBlock {
   id: string;
   blockType: 'gif';
-  mp4Url: string;
-  webmUrl?: string | null;
-  posterUrl: string;
+  /**
+   * An MP4 or WebM file is best; an animated GIF is often 10 times larger.
+   */
+  media?: (number | null) | Media;
+  /**
+   * A still frame, shown before the video loads and with reduced motion.
+   */
+  poster?: (number | null) | Media;
+  /**
+   * Width / height, e.g. 16:9. Filled in from GIPHY picks and uploaded videos; it reserves the space before the GIF loads.
+   */
   aspectRatio?: string | null;
+  /**
+   * What the GIF shows, for screen readers. Filled in from GIPHY; uploads fall back to the file's alt text.
+   */
+  alt?: string | null;
+  mp4Url?: string | null;
+  webmUrl?: string | null;
+  posterUrl?: string | null;
+  sourceUrl?: string | null;
   caption?: LexicalRichText<LexicalNodes_AD327369> | null;
   blockName?: string | null;
 }

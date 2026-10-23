@@ -1,65 +1,92 @@
 import { LazyVideo } from "@/components/LazyVideo";
+import { Media } from "@/components/Media";
 import RichText from "@/components/RichText";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import type { Media as MediaType } from "@/payload-types";
 import { normalizeAspectRatio } from "@/utilities/aspect-ratio";
 import type { GIFBlock as GIFBlockType } from "./types";
 
 /**
- * GIF Block - Optimized Video-Based Implementation
- *
- * Performance Optimizations:
- * - Converts Tenor GIF embeds to MP4/WebM video format
- * - Reduces file size by 80-85% (200 KiB GIF → 40 KiB MP4)
- * - Eliminates 50 KiB Tenor embed.js script
- * - Uses Intersection Observer for lazy loading
- * - Server-side rendering with Next.js caching
- * - Autoplay + loop + muted for GIF-like behavior
- *
- * Note: This is a server component that fetches video URLs
- * and passes them to the client-side LazyVideo component
+ * GIF Block: a looping, muted video (or an animated GIF image) from Media,
+ * or a GIPHY pick hotlinked from GIPHY with its attribution. Older Tenor
+ * blocks keep their URLs until scripts/replace-tenor-gifs.ts swaps them.
+ * A block with nothing to show renders nothing, and a GIF that fails to load
+ * hides its card.
  */
-export function GIFBlock(props: GIFBlockType) {
-  const { mp4Url, webmUrl, posterUrl, aspectRatio } = props;
-  const hasCaption = Boolean(props.caption);
+function videoSources(props: GIFBlockType, media: MediaType | null) {
+  if (!media) {
+    return { mp4Src: props.mp4Url, webmSrc: props.webmUrl };
+  }
+  return media.mimeType === "video/webm"
+    ? { mp4Src: null, webmSrc: media.url }
+    : { mp4Src: media.url, webmSrc: null };
+}
 
-  // Validation with helpful error messages
-  if (!mp4Url) {
-    return (
-      <div className="surface-alert surface-alert-error rounded-lg p-4">
-        <p className="state-error font-semibold">GIF Block Error</p>
-        <p className="tone-muted text-sm">
-          Missing video URL. Please select a GIF in the admin panel.
-        </p>
-      </div>
-    );
+export function GIFBlock(props: GIFBlockType) {
+  const media = typeof props.media === "object" ? props.media : null;
+  const poster = typeof props.poster === "object" ? props.poster : null;
+  const giphyUrl =
+    !media && props.sourceUrl?.startsWith("https://giphy.com/")
+      ? props.sourceUrl
+      : null;
+  const hasFooter = Boolean(props.caption || giphyUrl);
+  const isImage = media?.mimeType?.startsWith("image/");
+  const { mp4Src, webmSrc } = videoSources(props, media);
+
+  if (!(isImage || mp4Src || webmSrc)) {
+    return null;
   }
 
-  // Normalize aspect ratio
-  const normalizedAspectRatio = normalizeAspectRatio(aspectRatio || "1");
-
   return (
-    <Card className="surface-block reveal-stagger-1 gap-0 overflow-hidden py-0 content-block">
-      <CardContent className={cn(hasCaption ? "p-3" : "p-0")}>
+    <Card className="surface-block reveal-stagger-1 gap-0 overflow-hidden py-0 content-block has-[video[data-failed]]:hidden">
+      <CardContent className={cn(hasFooter ? "p-3" : "p-0")}>
         <div className="media-frame overflow-hidden rounded-lg">
-          <LazyVideo
-            alt="Animated GIF"
-            aspectRatio={normalizedAspectRatio}
-            mp4Src={mp4Url}
-            poster={posterUrl || undefined}
-            webmSrc={webmUrl || undefined}
-          />
+          {isImage ? (
+            <Media
+              imgClassName="h-auto object-cover"
+              pictureClassName="mt-0 mb-0"
+              resource={media ?? undefined}
+            />
+          ) : (
+            <LazyVideo
+              alt={media?.alt || props.alt || "Animated GIF"}
+              aspectRatio={
+                props.aspectRatio
+                  ? normalizeAspectRatio(props.aspectRatio)
+                  : undefined
+              }
+              mp4Src={mp4Src || undefined}
+              poster={poster?.url || props.posterUrl || undefined}
+              webmSrc={webmSrc || undefined}
+            />
+          )}
         </div>
       </CardContent>
 
-      {props.caption && (
-        <CardFooter className="surface-caption sm:px-5 sm:py-3" dir="auto">
-          <RichText
-            className="surface-caption-text"
-            content={props.caption}
-            enableGutter={false}
-            enableProse={false}
-          />
+      {hasFooter && (
+        <CardFooter
+          className="surface-caption flex-col items-start gap-1 sm:px-5 sm:py-3"
+          dir="auto"
+        >
+          {props.caption && (
+            <RichText
+              className="surface-caption-text"
+              content={props.caption}
+              enableGutter={false}
+              enableProse={false}
+            />
+          )}
+          {giphyUrl && (
+            <a
+              className="tone-muted text-sm underline-offset-4 hover:underline"
+              href={giphyUrl}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              via GIPHY
+            </a>
+          )}
         </CardFooter>
       )}
     </Card>

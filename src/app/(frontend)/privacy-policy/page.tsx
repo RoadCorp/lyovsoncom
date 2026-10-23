@@ -90,7 +90,7 @@ export default function PrivacyPolicy() {
                 from X.
               </li>
               <li>
-                <strong>GIFs</strong> load from Tenor (Google).
+                <strong>GIFs</strong> picked from GIPHY load from GIPHY.
               </li>
             </ul>
           </section>

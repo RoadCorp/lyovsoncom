@@ -86,18 +86,18 @@ const nextConfig: NextConfig = {
       "style-src 'self' 'unsafe-inline' fonts.googleapis.com",
       "font-src 'self' fonts.gstatic.com data:",
       [
-        "img-src 'self' data: blob: *.vercel-insights.com pbs.twimg.com abs.twimg.com *.twimg.com media.tenor.com",
+        "img-src 'self' data: blob: *.vercel-insights.com pbs.twimg.com abs.twimg.com *.twimg.com media.tenor.com *.giphy.com",
         VERCEL_BLOB_CSP_SOURCE,
       ]
         .filter(Boolean)
         .join(" "),
       [
-        "media-src 'self' blob: video.twimg.com media.tenor.com",
+        "media-src 'self' blob: video.twimg.com media.tenor.com *.giphy.com",
         VERCEL_BLOB_CSP_SOURCE,
       ]
         .filter(Boolean)
         .join(" "),
-      "connect-src 'self' *.vercel-insights.com cdn.syndication.twimg.com vitals.vercel-insights.com",
+      "connect-src 'self' api.giphy.com *.vercel-insights.com cdn.syndication.twimg.com vitals.vercel-insights.com",
       "frame-src 'self' www.youtube-nocookie.com",
       "worker-src 'self' blob:",
       "child-src 'self' blob:",

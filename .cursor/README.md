@@ -38,7 +38,6 @@ Do not add these names. They call paid providers or can write production resourc
 
 - `OPENAI_API_KEY`
 - `RESEND_API_KEY`
-- `TENOR_API_KEY`
 - `BLOB_READ_WRITE_TOKEN`
 - `CRON_SECRET`
 
