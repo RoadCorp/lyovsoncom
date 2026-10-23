@@ -193,5 +193,7 @@ export const Notes: CollectionConfig = {
     afterChange: [revalidateNote.afterChange],
     afterDelete: [revalidateNote.afterDelete],
   },
+  // Deleting moves a document to the trash, where it can be restored.
+  trash: true,
   versions: draftVersions(),
 };

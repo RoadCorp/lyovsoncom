@@ -291,5 +291,7 @@ export const Projects: CollectionConfig = {
     afterChange: [revalidateProject],
     afterDelete: [revalidateDeletedProject],
   },
+  // Deleting moves a document to the trash, where it can be restored.
+  trash: true,
   versions: draftVersions(),
 };

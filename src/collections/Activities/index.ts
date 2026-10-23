@@ -205,5 +205,7 @@ export const Activities: CollectionConfig = {
     afterChange: [revalidateActivity.afterChange],
     afterDelete: [revalidateActivity.afterDelete],
   },
+  // Deleting moves a document to the trash, where it can be restored.
+  trash: true,
   versions: draftVersions(),
 };

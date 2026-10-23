@@ -4,6 +4,7 @@ import {
   asc,
   eq,
   isNotNull,
+  isNull,
   ne,
   sql,
 } from "@payloadcms/db-vercel-postgres/drizzle";
@@ -65,6 +66,7 @@ export async function getSimilarContent<
       and(
         ne(table.id, id),
         eq(table._status, "published"),
+        isNull(table.deletedAt),
         // Keep parity with public note access
         collection === "notes" ? eq(table.visibility, "public") : undefined,
         isNotNull(table.embedding_vector)

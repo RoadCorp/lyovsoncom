@@ -13,6 +13,7 @@ import {
 // Fields post cards, heroes and feeds read from their populated project.
 const POST_RENDERED_FIELDS = [
   "_status",
+  "deletedAt",
   "name",
   "slug",
   "image",
@@ -54,7 +55,9 @@ function revalidateProjectOutput(
     return;
   }
   const linkChanged =
-    doc?._status !== previousDoc?._status || doc?.slug !== previousDoc?.slug;
+    doc?._status !== previousDoc?._status ||
+    doc?.deletedAt !== previousDoc?.deletedAt ||
+    doc?.slug !== previousDoc?.slug;
   revalidateTag("posts", linkChanged ? { expire: 0 } : "posts");
 }
 

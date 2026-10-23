@@ -45,6 +45,17 @@ describe("public publication freshness", () => {
       expect(revalidatePath).toHaveBeenCalledWith("/feed.xml");
     }
   );
+  it("withdraws a published document moved to the trash", () => {
+    revalidatePublicContent(
+      "posts",
+      { ...note, deletedAt: "2026-10-23T15:00:00Z" },
+      note
+    );
+    expect(revalidateTag).toHaveBeenCalledWith("posts", { expire: 0 });
+    expect(revalidateTag).toHaveBeenCalledWith("post-a-note", { expire: 0 });
+    expect(revalidatePath).toHaveBeenCalledWith("/posts/a-note");
+    expect(revalidatePath).toHaveBeenCalledWith("/feed.xml");
+  });
   it("invalidates both paths on a published slug change", () => {
     revalidatePublicContent("posts", { ...note, slug: "new-slug" }, note);
     expect(revalidateTag).toHaveBeenCalledWith("post-a-note", { expire: 0 });

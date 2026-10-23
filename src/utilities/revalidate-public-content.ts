@@ -4,6 +4,7 @@ import { activityFullRoute, activityRoute } from "@/utilities/routes";
 export type PublicCollection = "posts" | "notes" | "activities" | "projects";
 interface PublicDocument {
   _status?: "draft" | "published" | null;
+  deletedAt?: string | null;
   finishedAt?: string | null;
   publishedAt?: string | null;
   slug?: string | null;
@@ -17,6 +18,7 @@ const ALWAYS_VISIBLE = new Set<PublicCollection>(["posts", "projects"]);
 function isPublic(collection: PublicCollection, doc?: PublicDocument | null) {
   return (
     doc?._status === "published" &&
+    !doc.deletedAt &&
     (ALWAYS_VISIBLE.has(collection) || doc.visibility === "public")
   );
 }

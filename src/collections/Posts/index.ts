@@ -254,6 +254,8 @@ export const Posts: CollectionConfig = {
     afterRead: [populateAuthors],
     afterDelete: [revalidateDelete],
   },
+  // Deleting moves a document to the trash, where it can be restored.
+  trash: true,
   versions: draftVersions(),
 };
 
