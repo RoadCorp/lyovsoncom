@@ -9,8 +9,7 @@ import type { GIFBlock as GIFBlockType } from "./types";
 
 /**
  * GIF Block: a looping, muted video (or an animated GIF image) from Media,
- * or a GIPHY pick hotlinked from GIPHY with its attribution. Older Tenor
- * blocks keep their URLs until scripts/replace-tenor-gifs.ts swaps them.
+ * or a GIPHY pick hotlinked from GIPHY with its attribution.
  * A block with nothing to show renders nothing, and a GIF that fails to load
  * hides its card.
  */

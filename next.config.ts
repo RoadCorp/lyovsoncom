@@ -86,13 +86,13 @@ const nextConfig: NextConfig = {
       "style-src 'self' 'unsafe-inline' fonts.googleapis.com",
       "font-src 'self' fonts.gstatic.com data:",
       [
-        "img-src 'self' data: blob: *.vercel-insights.com pbs.twimg.com abs.twimg.com *.twimg.com media.tenor.com *.giphy.com",
+        "img-src 'self' data: blob: *.vercel-insights.com pbs.twimg.com abs.twimg.com *.twimg.com *.giphy.com",
         VERCEL_BLOB_CSP_SOURCE,
       ]
         .filter(Boolean)
         .join(" "),
       [
-        "media-src 'self' blob: video.twimg.com media.tenor.com *.giphy.com",
+        "media-src 'self' blob: video.twimg.com *.giphy.com",
         VERCEL_BLOB_CSP_SOURCE,
       ]
         .filter(Boolean)

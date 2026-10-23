@@ -66,8 +66,7 @@ export const GIF: Block = {
           "What the GIF shows, for screen readers. Filled in from GIPHY; uploads fall back to the file's alt text.",
       },
     },
-    // Hotlinked GIPHY picks, and older Tenor blocks that
-    // scripts/replace-tenor-gifs.ts could not match on GIPHY.
+    // Hotlinked GIPHY picks.
     {
       name: "mp4Url",
       type: "text",

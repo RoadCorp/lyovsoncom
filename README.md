@@ -29,7 +29,7 @@ Create `.env.local` with the configuration needed for your environment:
 | `BLOB_READ_WRITE_TOKEN`  | Vercel Blob media storage           |
 | `OPENAI_API_KEY`         | Embedding generation                |
 | `RESEND_API_KEY`         | Email delivery                      |
-| `TENOR_API_KEY`          | GIF search in the CMS               |
+| `GIPHY_API_KEY`          | GIF search in the CMS               |
 | `CRON_SECRET`            | Authenticated job execution         |
 
 Point `POSTGRES_URL` at a Neon development branch, never at the production `main` branch. Then start development:
