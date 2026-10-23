@@ -7,7 +7,8 @@
  * Write:    BACKFILL_WRITE=1 pnpm payload run scripts/replace-tenor-gifs.ts
  *
  * Idempotent: only blocks whose mp4Url is still on media.tenor.com change.
- * A Tenor GIF without a GIPHY match below is reported and left alone.
+ * Clips GIPHY doesn't have are uploaded to Media from Tenor instead (reused
+ * by filename on a rerun). Any other Tenor GIF is reported and left alone.
  * Saves skip embeddings (captions don't change) and cache invalidation,
  * which needs Next; post pages refresh within their 48-hour cache life,
  * or on the next publish.
@@ -34,6 +35,30 @@ const GIPHY_MATCHES: Record<string, { alt: string; id: string }> = {
     id: "Trh2LxGxp0CsM",
     alt: 'Shia LaBeouf shouting "Just do it!"',
   },
+  // Not the same clips: GIPHY has no copies, so these are close stand-ins.
+  nNO1EEhe0WA: { id: "i9moECwUvEKre", alt: "Sheldon awkwardly consoling Amy" },
+  hEIyWrrZfxo: {
+    id: "vc0dTWhvhmFq2tg3JV",
+    alt: "The white rabbit from The Matrix in a green mirror",
+  },
+};
+
+// Tenor media id → Tenor clips that GIPHY doesn't have, uploaded to Media.
+// Aspect ratios were measured from the Tenor files.
+const TENOR_UPLOADS: Record<string, { alt: string; aspectRatio: string }> = {
+  WWvs39QlsEQ: {
+    alt: "Marques Brownlee putting on an Apple Vision Pro, his eyes showing on the front",
+    aspectRatio: "1",
+  },
+  "e7UXmP-vkXk": { alt: 'Loki saying "A bit of both"', aspectRatio: "1.7978" },
+  HMiDdVJ9e24: {
+    alt: "Harry's arm left boneless after Lockhart's spell",
+    aspectRatio: "2.4038",
+  },
+  BQnAHKfBWXw: {
+    alt: "Apple's Liquid Glass interface intro",
+    aspectRatio: "1.766",
+  },
 };
 
 const TENOR_HOST = "media.tenor.com";
@@ -46,6 +71,7 @@ interface GifFields {
   aspectRatio?: string | null;
   blockType?: string;
   embedCode?: unknown;
+  media?: number | null;
   mp4Url?: string | null;
   posterUrl?: string | null;
   sourceUrl?: string | null;
@@ -83,6 +109,35 @@ async function giphyFields({ alt, id }: { alt: string; id: string }) {
   };
 }
 
+/** Uploads a Tenor clip to Media once; returns the Media id (none in a dry run). */
+async function uploadTenor(url: string, id: string, alt: string) {
+  const filename = `tenor-${id}.mp4`;
+  const { docs } = await payload.find({
+    collection: "media",
+    // Payload 4 stores it as tenor-<id>-original.mp4.
+    where: { filename: { like: `tenor-${id}` } },
+    limit: 1,
+    depth: 0,
+    overrideAccess: true,
+  });
+  if (docs[0] || !write) {
+    return docs[0]?.id ?? null;
+  }
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Tenor ${id}: ${response.status}`);
+  }
+  const data = Buffer.from(await response.arrayBuffer());
+  const media = await payload.create({
+    collection: "media",
+    data: { alt },
+    file: { data, mimetype: "video/mp4", name: filename, size: data.length },
+    context: { skipRevalidation: true },
+    overrideAccess: true,
+  });
+  return media.id;
+}
+
 /** Repoints Tenor GIF blocks in place; returns how many changed. */
 async function replaceIn(value: unknown, where: string): Promise<number> {
   if (Array.isArray(value)) {
@@ -102,6 +157,26 @@ async function replaceIn(value: unknown, where: string): Promise<number> {
     const id = tenorId(fields.mp4Url);
     if (!id) {
       return 0;
+    }
+    const upload = TENOR_UPLOADS[id];
+    if (upload) {
+      const media = await uploadTenor(fields.mp4Url, id, upload.alt);
+      payload.logger.info({
+        msg: write ? "gif.uploaded" : "gif.dry_run_upload",
+        where,
+        tenor: fields.mp4Url,
+        media,
+      });
+      Object.assign(fields, {
+        ...upload,
+        media,
+        mp4Url: null,
+        posterUrl: null,
+        sourceUrl: null,
+        webmUrl: null,
+      });
+      fields.embedCode = undefined;
+      return 1;
     }
     const match = GIPHY_MATCHES[id];
     if (!match) {
