@@ -1,13 +1,16 @@
+import type { ReactNode } from "react";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { cn } from "@/lib/utils";
 
 export function PlaceholderPageCard({
+  children,
   className,
   description,
   eyebrow,
   note,
   title,
 }: {
+  children?: ReactNode;
   className?: string;
   description: string;
   eyebrow: string;
@@ -39,6 +42,8 @@ export function PlaceholderPageCard({
           <p className="tone-heading font-medium text-sm">Placeholder page</p>
           <p className="tone-muted mt-2 text-sm leading-relaxed">{note}</p>
         </div>
+
+        {children}
       </GridCardSection>
     </GridCard>
   );
