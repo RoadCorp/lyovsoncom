@@ -9,6 +9,7 @@ import { getPayloadClient } from "@/utilities/payload-client";
 /** What a project card renders; case-study bodies stay on the project page. */
 export const projectCardSelect = {
   name: true,
+  kind: true,
   slug: true,
   image: true,
   description: true,

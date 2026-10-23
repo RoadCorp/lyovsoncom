@@ -56,6 +56,16 @@ export interface AboutWebSite {
   url: string;
 }
 
+// The writing series a project page collects (nested, so no @context).
+export interface AboutSeries {
+  "@type": "CreativeWorkSeries";
+  author?: PersonSchema[];
+  endDate?: string;
+  name: string;
+  startDate?: string;
+  url: string;
+}
+
 // Article schema for blog posts
 export type ArticleSchema = BaseSchema & {
   "@type": "Article" | "BlogPosting" | "TechArticle";
@@ -96,6 +106,7 @@ export type CollectionPageSchema = BaseSchema & {
   name: string;
   description?: string;
   url: string;
+  about?: AboutSeries;
   mainEntity?: {
     "@type": "ItemList";
     numberOfItems: number;

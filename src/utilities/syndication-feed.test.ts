@@ -27,6 +27,7 @@ const post: Post = {
   project: {
     _status: "published",
     id: 1,
+    kind: "series",
     name: "Reading",
     slug: "reading",
     createdAt: publishedAt,

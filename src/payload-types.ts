@@ -658,6 +658,10 @@ export interface Project {
   id: number;
   name: string;
   /**
+   * Sets the fields shown here and the structured data
+   */
+  kind: 'website' | 'series' | 'other';
+  /**
    * One-line summary shown on cards, under the title and in search results
    */
   description?: string | null;
@@ -1288,6 +1292,7 @@ export interface TopicsSelect<T extends boolean = true> {
  */
 export interface ProjectsSelect<T extends boolean = true> {
   name?: T;
+  kind?: T;
   description?: T;
   image?: T;
   people?: T;
