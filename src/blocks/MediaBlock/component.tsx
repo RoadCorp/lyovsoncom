@@ -4,6 +4,7 @@ import RichText from "@/components/RichText";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { MediaBlock as MediaBlockProps } from "@/payload-types";
+import { captionWithText } from "@/utilities/extract-lexical-text";
 
 type Props = MediaBlockProps & {
   breakout?: boolean;
@@ -26,7 +27,7 @@ export function MediaBlock(props: Props) {
     };
   } | null = null;
   if (media && typeof media === "object") {
-    caption = media.caption || null;
+    caption = captionWithText(media.caption);
   }
   const hasCaption = Boolean(caption);
 

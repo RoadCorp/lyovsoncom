@@ -7,6 +7,7 @@ import RichText from "@/components/RichText";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { XPostBlock as XPostBlockType } from "@/payload-types";
+import { captionWithText } from "@/utilities/extract-lexical-text";
 
 type TweetLike = Tweet | NonNullable<Tweet["quoted_tweet"]>;
 type TweetWithQuotedTweet = Tweet & {
@@ -65,10 +66,12 @@ export async function getTweet(postId: string) {
 }
 
 /** Renders the post as static HTML with react-tweet, so no X script loads. */
-async function XPostContent({ postId, caption }: XPostBlockType) {
+async function XPostContent({ postId, ...block }: XPostBlockType) {
   if (!postId) {
     return null;
   }
+
+  const caption = captionWithText(block.caption);
 
   const contentPaddingClassName = caption ? "p-3" : "px-4 pt-4 pb-0";
   const tweet = await getTweet(postId).catch(() => undefined);

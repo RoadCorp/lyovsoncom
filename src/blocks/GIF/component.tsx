@@ -5,6 +5,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { Media as MediaType } from "@/payload-types";
 import { normalizeAspectRatio } from "@/utilities/aspect-ratio";
+import { captionWithText } from "@/utilities/extract-lexical-text";
 import type { GIFBlock as GIFBlockType } from "./types";
 
 /**
@@ -29,7 +30,8 @@ export function GIFBlock(props: GIFBlockType) {
     !media && props.sourceUrl?.startsWith("https://giphy.com/")
       ? props.sourceUrl
       : null;
-  const hasFooter = Boolean(props.caption || giphyUrl);
+  const caption = captionWithText(props.caption);
+  const hasFooter = Boolean(caption || giphyUrl);
   const isImage = media?.mimeType?.startsWith("image/");
   const { mp4Src, webmSrc } = videoSources(props, media);
 
@@ -68,10 +70,10 @@ export function GIFBlock(props: GIFBlockType) {
           className="surface-caption flex-col items-start gap-1 sm:px-5 sm:py-3"
           dir="auto"
         >
-          {props.caption && (
+          {caption && (
             <RichText
               className="surface-caption-text"
-              content={props.caption}
+              content={caption}
               enableGutter={false}
               enableProse={false}
             />

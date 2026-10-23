@@ -75,3 +75,12 @@ export function extractLexicalText(content: unknown): string {
 export function extractLexicalTextWithNewlines(content: unknown): string {
   return extractTextByMode(content, "newline");
 }
+
+/**
+ * Returns a rich-text caption only when it has text. Clearing a caption in
+ * the editor saves an empty paragraph, which would otherwise render an
+ * empty caption box.
+ */
+export function captionWithText<T>(caption: T | null | undefined): T | null {
+  return caption && extractLexicalText(caption).trim() ? caption : null;
+}
