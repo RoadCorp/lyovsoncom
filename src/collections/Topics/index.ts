@@ -24,6 +24,11 @@ export const Topics: CollectionConfig = {
     readVersions: authenticated,
     update: authenticated,
   },
+  // Topics nest under a parent topic; the admin gets Payload's tree view.
+  hierarchy: {
+    parentFieldName: "parent",
+    slugField: "slug",
+  },
   admin: {
     group: "Organization",
     useAsTitle: "name",
@@ -65,6 +70,21 @@ export const Topics: CollectionConfig = {
           }
         }
         return data;
+      },
+    ],
+    beforeDelete: [
+      async ({ id, req }) => {
+        // Payload's hierarchy deletes child topics with their parent. Detach
+        // them first so their posts and notes keep the topic. Not moved up a
+        // level: in a bulk delete the grandparent may be deleted too.
+        await req.payload.update({
+          collection: "topics",
+          where: { parent: { equals: id } },
+          data: { parent: null },
+          depth: 0,
+          overrideAccess: true,
+          req,
+        });
       },
     ],
     afterChange: [

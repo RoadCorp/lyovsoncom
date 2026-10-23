@@ -50,6 +50,10 @@ import {
   down as migration_20261023_171114_trash_down,
   up as migration_20261023_171114_trash_up,
 } from "./20261023_171114_trash";
+import {
+  down as migration_20261023_173048_topic_hierarchy_down,
+  up as migration_20261023_173048_topic_hierarchy_up,
+} from "./20261023_173048_topic_hierarchy";
 
 export const migrations = [
   {
@@ -116,5 +120,10 @@ export const migrations = [
     up: migration_20261023_171114_trash_up,
     down: migration_20261023_171114_trash_down,
     name: "20261023_171114_trash",
+  },
+  {
+    up: migration_20261023_173048_topic_hierarchy_up,
+    down: migration_20261023_173048_topic_hierarchy_down,
+    name: "20261023_173048_topic_hierarchy",
   },
 ];

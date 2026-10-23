@@ -745,6 +745,7 @@ export interface Reference {
  */
 export interface Topic {
   id: number;
+  parent?: (number | null) | Topic;
   name: string;
   description?: string | null;
   /**
@@ -769,15 +770,6 @@ export interface Topic {
     image?: (number | null) | Media;
   };
   slug: string;
-  parent?: (number | null) | Topic;
-  breadcrumbs?:
-    | {
-        doc?: (number | null) | Topic;
-        url?: string | null;
-        label?: string | null;
-        id?: string | null;
-      }[]
-    | null;
   createdBy?: {
     relationTo: 'lyovsons';
     value: number | Lyovson;
@@ -788,6 +780,8 @@ export interface Topic {
   } | null;
   updatedAt: string;
   createdAt: string;
+  _h_slugPath?: string | null;
+  _h_titlePath?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1351,6 +1345,7 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "topics_select".
  */
 export interface TopicsSelect<T extends boolean = true> {
+  parent?: T;
   name?: T;
   description?: T;
   color?: T;
@@ -1362,19 +1357,12 @@ export interface TopicsSelect<T extends boolean = true> {
         image?: T;
       };
   slug?: T;
-  parent?: T;
-  breadcrumbs?:
-    | T
-    | {
-        doc?: T;
-        url?: T;
-        label?: T;
-        id?: T;
-      };
   createdBy?: T;
   updatedBy?: T;
   updatedAt?: T;
   createdAt?: T;
+  _h_slugPath?: T;
+  _h_titlePath?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -1,7 +1,7 @@
 {
   "name": "lyovsoncom",
   "version": "3.0.0",
-  "description": "The official website of Rafa and Jess Ly\u00f3vson",
+  "description": "The official website of Rafa and Jess Lyóvson",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -28,7 +28,6 @@
     "@payloadcms/db-vercel-postgres": "4.0.0-beta.4",
     "@payloadcms/email-resend": "4.0.0-beta.4",
     "@payloadcms/next": "4.0.0-beta.4",
-    "@payloadcms/plugin-nested-docs": "4.0.0-beta.4",
     "@payloadcms/richtext-lexical": "4.0.0-beta.4",
     "@payloadcms/storage-vercel-blob": "4.0.0-beta.4",
     "@payloadcms/transformer-sharp": "4.0.0-beta.4",
