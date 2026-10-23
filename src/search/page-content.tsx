@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { ViewTransition } from "react";
 import { ArchiveItems } from "@/components/archive-items";
 import { GridCardEmptyState } from "@/components/grid";
@@ -95,6 +96,11 @@ async function SearchResults({
       />
     );
   }
+
+  // Results are uncached database reads: run them per request, not in the
+  // runtime prefetch prerender, where pg's SCRAM nonce (randomBytes) is
+  // reported as an unstable value.
+  await connection();
 
   try {
     const searchResults = await runHybridSearch(normalizedQuery, {
