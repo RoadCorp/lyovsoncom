@@ -3,7 +3,7 @@
 // Accents fold to their base letter rather than vanishing: "Cuarón" → "cuaron".
 export const formatSlug = (val: string): string =>
   val
-    .normalize("NFKD")
+    .normalize("NFD")
     .replace(/\p{M}/gu, "")
     .trim()
     .replace(/ /g, "-")

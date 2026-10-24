@@ -32,6 +32,7 @@ async function getReferenceTitle(
 /**
  * Activities have no title, so the slug comes from the referenced work's
  * title, falling back to the previous slug source when it can't be read.
+ * A stored slug is kept: it only serves the old activity URL's redirect.
  */
 export const populateSlugSourceHook: FieldHook = async ({
   data,
@@ -55,7 +56,7 @@ export const populateSlugSourceHook: FieldHook = async ({
     referenceId === null ? null : await getReferenceTitle(req, referenceId);
 
   const slugSource = referenceTitle || data?.slugSource || originalSlugSource;
-  if (slugSource && data) {
+  if (slugSource && data && !readStoredField(originalDoc, "slug")) {
     data.slug = formatSlug(slugSource);
   }
   return slugSource;
