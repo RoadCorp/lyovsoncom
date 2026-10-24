@@ -746,7 +746,7 @@
      and meta text stay in Plex Sans. */
   .card-title,
   .surface-title-stage :is(h1, h2),
-  .content-prose :is(h2, h3) {
+  .content-prose :is(h2, h3, h4) {
     font-family: var(--font-display), var(--font-serif), Georgia, serif;
     font-weight: 600;
     letter-spacing: -0.01em;
@@ -1576,14 +1576,19 @@
   .content-prose h2 {
     padding-bottom: 0.4rem;
     margin-top: 1.8rem;
-    font-size: clamp(1.4rem, 2.8vw, 1.8rem);
+    font-size: clamp(1.4rem, 3.6cqi, 1.8rem);
     border-bottom: 1px solid
       color-mix(in oklab, var(--line-1) 84%, var(--accent-rail) 16%);
   }
 
   .content-prose h3 {
     margin-top: 1.4rem;
-    font-size: clamp(1.15rem, 2vw, 1.35rem);
+    font-size: clamp(1.15rem, 2.7cqi, 1.35rem);
+  }
+
+  .content-prose h4 {
+    margin-top: 1.2rem;
+    font-size: 1.1em;
   }
 
   .content-prose p,

@@ -1,3 +1,4 @@
+import { CircleCheck, Info, OctagonAlert, TriangleAlert } from "lucide-react";
 import RichText from "@/components/RichText";
 import { cn } from "@/lib/utils";
 import type { BannerBlock as BannerBlockProps } from "@/payload-types";
@@ -22,12 +23,13 @@ export function BannerBlock({ className, content, style }: Props) {
     warning: "state-warning",
   };
 
-  const iconClasses = {
-    info: "💡",
-    error: "⚠️",
-    success: "✅",
-    warning: "⚡",
+  const icons = {
+    info: Info,
+    error: OctagonAlert,
+    success: CircleCheck,
+    warning: TriangleAlert,
   };
+  const Icon = icons[bannerStyle];
 
   return (
     <div className={cn("mx-auto w-full content-block", className)}>
@@ -44,9 +46,7 @@ export function BannerBlock({ className, content, style }: Props) {
             accentClasses[bannerStyle]
           )}
         >
-          <span aria-hidden="true" className="text-lg">
-            {iconClasses[bannerStyle]}
-          </span>
+          <Icon aria-hidden="true" className="h-4 w-4" />
         </div>
 
         {/* Content */}

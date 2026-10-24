@@ -190,7 +190,7 @@ async function PostPageContent({ params: paramsPromise }: Args) {
           )}
           interactive={false}
         >
-          <GridCardSection className="col-span-3 row-span-3 p-6">
+          <GridCardSection className="col-span-3 row-span-3 p-6 [container-type:inline-size]">
             <RichText
               className="h-full g2:text-[1.125rem]"
               content={post.content}
