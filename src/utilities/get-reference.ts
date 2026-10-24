@@ -1,4 +1,5 @@
 import { cacheLife, cacheTag } from "next/cache";
+import { References } from "@/collections/References";
 import type { Activity, Note, Reference } from "@/payload-types";
 import {
   publicActivitiesWhere,
@@ -39,8 +40,10 @@ export async function getReferenceHub(
   const payload = await getPayloadClient();
   const { docs } = await payload.find({
     collection: "references",
-    depth: 1,
+    // Linked references and their covers; parts also carry their place.
+    depth: 2,
     limit: 1,
+    populate: { references: { ...References.defaultPopulate, partOf: true } },
     where: { slug: { equals: slug } },
   });
   const reference = docs[0];

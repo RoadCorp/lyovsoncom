@@ -132,7 +132,14 @@ export interface Config {
     'payload-migrations': PayloadMigration;
     'payload-llm-instructions': PayloadLlmInstruction;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    references: {
+      credited: 'references';
+      parts: 'references';
+      adaptations: 'references';
+      memberOf: 'references';
+    };
+  };
   collectionsSelect: {
     posts: PostsSelect<false> | PostsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
@@ -485,9 +492,68 @@ export interface Reference {
    */
   url?: string | null;
   /**
-   * The series or franchise this belongs to
+   * Who made it, each linked to their own reference
    */
-  series?: (number | null) | Reference;
+  credits?:
+    | {
+        agent: number | Reference;
+        role: 'author' | 'creator' | 'developer' | 'director' | 'host' | 'narrator' | 'performer' | 'translator';
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Series, franchise, album or season it belongs to
+   */
+  partOf?:
+    | {
+        whole: number | Reference;
+        /**
+         * Order in the whole
+         */
+        position?: number | null;
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The works it adapts
+   */
+  basedOn?: (number | Reference)[] | null;
+  /**
+   * People in the band or group
+   */
+  members?:
+    | {
+        member: number | Reference;
+        start?: number | null;
+        end?: number | null;
+        role?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Works that credit them
+   */
+  credited?: {
+    docs?: (number | Reference)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  parts?: {
+    docs?: (number | Reference)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  adaptations?: {
+    docs?: (number | Reference)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  memberOf?: {
+    docs?: (number | Reference)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   /**
    * Cover, poster, photo or logo; copied from the catalog
    */
@@ -1240,7 +1306,35 @@ export interface ReferencesSelect<T extends boolean = true> {
   year?: T;
   description?: T;
   url?: T;
-  series?: T;
+  credits?:
+    | T
+    | {
+        agent?: T;
+        role?: T;
+        id?: T;
+      };
+  partOf?:
+    | T
+    | {
+        whole?: T;
+        position?: T;
+        label?: T;
+        id?: T;
+      };
+  basedOn?: T;
+  members?:
+    | T
+    | {
+        member?: T;
+        start?: T;
+        end?: T;
+        role?: T;
+        id?: T;
+      };
+  credited?: T;
+  parts?: T;
+  adaptations?: T;
+  memberOf?: T;
   image?: T;
   wikidataId?: T;
   catalogSource?: T;

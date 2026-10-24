@@ -7,7 +7,7 @@ import {
   PenTool,
   Quote,
 } from "lucide-react";
-import { ViewTransition } from "react";
+import { Fragment, ViewTransition } from "react";
 import { REFERENCE_TYPE_LABELS } from "@/collections/References/fields/type";
 import { AppLink } from "@/components/app-link";
 import { GridCard } from "@/components/grid";
@@ -22,11 +22,13 @@ import type { Note, Post, Reference, Topic } from "@/payload-types";
 import { formatShortDate } from "@/utilities/date";
 import { dedupeRelationItemsById } from "@/utilities/dedupe-relation-items-by-id";
 import { getPublishedProject } from "@/utilities/public-project";
+import { getWholes, groupCredits } from "@/utilities/reference-links";
 import {
   lyovsonRoute,
   notesRoute,
   postsRoute,
   projectRoute,
+  referenceRoute,
   transitionTypes,
 } from "@/utilities/routes";
 import {
@@ -354,6 +356,74 @@ function linkHost(url: string) {
 
 const WWW_PREFIX = /^www\./;
 
+const REFERENCE_LINK_CLASS =
+  "ui-focus-ring tone-heading font-medium underline-offset-4 hover:underline";
+
+function ReferenceLink({ reference }: { reference: Reference }) {
+  return (
+    <AppLink
+      className={REFERENCE_LINK_CLASS}
+      href={referenceRoute(reference.slug)}
+      prefetch={false}
+    >
+      {reference.title}
+    </AppLink>
+  );
+}
+
+/** "A, B and C" with each name linked. */
+function LinkedList({ references }: { references: Reference[] }) {
+  return references.map((reference, index) => (
+    <Fragment key={reference.id}>
+      {index > 0 && (index === references.length - 1 ? " and " : ", ")}
+      <ReferenceLink reference={reference} />
+    </Fragment>
+  ));
+}
+
+/** Linked credits, else the creator as text. */
+function ReferenceByline({ reference }: { reference: Reference }) {
+  const groups = groupCredits(reference.credits);
+  if (groups.length === 0) {
+    return reference.creator ? (
+      <p className="tone-muted text-sm">{reference.creator}</p>
+    ) : null;
+  }
+  return (
+    <p className="tone-muted line-clamp-2 text-sm">
+      {groups.map((group, index) => (
+        <Fragment key={group.phrase}>
+          {index > 0 ? " · " : null}
+          {index === 0 ? capitalize(group.phrase) : group.phrase}{" "}
+          <LinkedList references={group.agents} />
+        </Fragment>
+      ))}
+    </p>
+  );
+}
+
+const capitalize = (text: string) =>
+  text.charAt(0).toUpperCase() + text.slice(1);
+
+/** "#8 in Cormoran Strike", or "Part of …" without a place. */
+function ReferenceWholes({ reference }: { reference: Reference }) {
+  const wholes = getWholes(reference);
+  if (wholes.length === 0) {
+    return null;
+  }
+  return (
+    <p className="tone-muted line-clamp-2 text-sm">
+      {wholes.map(({ note, reference: whole }, index) => (
+        <Fragment key={whole.id}>
+          {index > 0 ? " · " : null}
+          {note ? `${note} in ` : "Part of "}
+          <ReferenceLink reference={whole} />
+        </Fragment>
+      ))}
+    </p>
+  );
+}
+
 export const GridCardHeroReference = ({
   className,
   reference,
@@ -445,9 +515,8 @@ export const GridCardHeroReference = ({
                 {reference.title}
               </h1>
             </ViewTransition>
-            {reference.creator ? (
-              <p className="tone-muted text-sm">{reference.creator}</p>
-            ) : null}
+            <ReferenceByline reference={reference} />
+            <ReferenceWholes reference={reference} />
             {reference.description ? (
               <p className="tone-muted line-clamp-3 text-sm">
                 {reference.description}

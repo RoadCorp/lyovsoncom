@@ -1,3 +1,4 @@
+import type { CreditRole } from "../fields/relations";
 import { type CatalogItem, fetchJson, MAX_RESULTS, yearOf } from "./shared";
 
 // Wikidata is free, keyless and CC0. It is the search for people,
@@ -106,8 +107,13 @@ export async function matchWikidata(item: CatalogItem) {
 const CREATOR_PROPERTIES = ["P50", "P178", "P57", "P175", "P170"];
 const MAX_CREATORS = 2;
 
+interface Snak {
+  datavalue?: { value: unknown };
+}
+
 interface Claim {
-  mainsnak: { datavalue?: { value: unknown } };
+  mainsnak: Snak;
+  qualifiers?: Record<string, Snak[]>;
   rank: "preferred" | "normal" | "deprecated";
 }
 
@@ -131,16 +137,107 @@ async function getEntities(ids: string[], props: string) {
   return entities;
 }
 
-/** The preferred values of a property, else its normal ones. */
-function values(entity: Entity, property: string) {
+/** The preferred claims of a property, else its normal ones. */
+function claimsOf(entity: Entity, property: string) {
   const claims = (entity.claims?.[property] ?? []).filter(
     (claim) => claim.rank !== "deprecated" && claim.mainsnak.datavalue
   );
   const preferred = claims.filter((claim) => claim.rank === "preferred");
-  return (preferred.length > 0 ? preferred : claims).map(
+  return preferred.length > 0 ? preferred : claims;
+}
+
+function values(entity: Entity, property: string) {
+  return claimsOf(entity, property).map(
     (claim) => claim.mainsnak.datavalue?.value
   );
 }
+
+function itemId(snak: Snak) {
+  return (snak.datavalue?.value as { id?: string } | undefined)?.id;
+}
+
+function qualifier(claim: Claim, property: string) {
+  return claim.qualifiers?.[property]?.[0]?.datavalue?.value;
+}
+
+/** Wikidata times look like "+2011-11-11T00:00:00Z"; BCE dates are skipped. */
+function yearOfTime(value: unknown) {
+  const time = (value as { time?: string } | undefined)?.time;
+  return time?.startsWith("+") ? yearOf(time.slice(1)) : undefined;
+}
+
+/**
+ * The credit role each Wikidata property stands for, in the order a byline
+ * prefers when one person holds several: Stardew Valley's developer is
+ * also its director and creator.
+ */
+const CREDIT_PROPERTIES: [string, CreditRole][] = [
+  ["P50", "author"],
+  ["P178", "developer"],
+  ["P175", "performer"],
+  ["P371", "host"],
+  ["P57", "director"],
+  ["P170", "creator"],
+  ["P655", "translator"],
+  ["P2438", "narrator"],
+];
+// P179 is "part of the series", P361 "part of"; P1545 is the ordinal.
+const PART_OF_PROPERTIES = ["P179", "P361"];
+
+/**
+ * The item's links to other items: who made it, what it belongs to, what it
+ * adapts and, for a group, its members. Import keeps only the ones that
+ * already exist as references.
+ */
+function linksOf(entity: Entity) {
+  return {
+    basedOn: claimsOf(entity, "P144").flatMap((claim) => {
+      const id = itemId(claim.mainsnak);
+      return id ? [id] : [];
+    }),
+    credits: CREDIT_PROPERTIES.flatMap(([property, role]) =>
+      claimsOf(entity, property).flatMap((claim) => {
+        const id = itemId(claim.mainsnak);
+        return id ? [{ role, wikidataId: id }] : [];
+      })
+    ).filter(
+      (credit, index, credits) =>
+        credits.findIndex((first) => first.wikidataId === credit.wikidataId) ===
+        index
+    ),
+    // P527 "has part(s)" lists a band's members, with when they played.
+    members: claimsOf(entity, "P527").flatMap((claim) => {
+      const id = itemId(claim.mainsnak);
+      return id
+        ? [
+            {
+              end: yearOfTime(qualifier(claim, "P582")),
+              start: yearOfTime(qualifier(claim, "P580")),
+              wikidataId: id,
+            },
+          ]
+        : [];
+    }),
+    partOf: PART_OF_PROPERTIES.flatMap((property) =>
+      claimsOf(entity, property).flatMap((claim) => {
+        const id = itemId(claim.mainsnak);
+        const ordinal = Number.parseFloat(
+          String(qualifier(claim, "P1545") ?? "")
+        );
+        return id
+          ? [
+              {
+                position: Number.isNaN(ordinal) ? undefined : ordinal,
+                wikidataId: id,
+              },
+            ]
+          : [];
+      })
+    ),
+  };
+}
+
+export type WikidataLinks = ReturnType<typeof linksOf>;
 
 /**
  * What a catalog doesn't carry: the English description, an image (a Steam
@@ -155,9 +252,7 @@ export async function getWikidataFacts(id: string) {
   const [steamAppId] = values(entity, "P1733") as string[];
   const [logo] = values(entity, "P154") as string[];
   const [photo] = values(entity, "P18") as string[];
-  const [date] = [...values(entity, "P577"), ...values(entity, "P571")] as {
-    time: string;
-  }[];
+  const [date] = [...values(entity, "P577"), ...values(entity, "P571")];
   const creatorIds = (
     CREATOR_PROPERTIES.map((property) => values(entity, property)).find(
       (found) => found.length > 0
@@ -179,9 +274,9 @@ export async function getWikidataFacts(id: string) {
     commonsFile: logo ?? photo,
     creator: creators.filter(Boolean).join(", ") || undefined,
     description: entity.descriptions?.en?.value,
+    links: linksOf(entity),
     steamAppId,
-    // Wikidata times look like "+2011-11-11T00:00:00Z"; skip BCE dates.
-    year: date?.time.startsWith("+") ? yearOf(date.time.slice(1)) : undefined,
+    year: yearOfTime(date),
   };
 }
 

@@ -2,13 +2,20 @@ import type { CollectionConfig } from "payload";
 import { anyone } from "@/access/anyone";
 import { authenticated } from "@/access/authenticated";
 import { slugField } from "@/fields/slug";
+import type { Reference } from "@/payload-types";
 import {
   hasPublicChanges,
   revalidatePublicDependencies,
 } from "@/utilities/revalidate-public-content";
+import { relationFields } from "./fields/relations";
 import { referenceTypeField } from "./fields/type";
 
 const WIKIDATA_ID = /^Q\d+$/;
+
+const linksToOthers = (doc: Reference) =>
+  [doc.credits, doc.partOf, doc.basedOn, doc.members].some(
+    (links) => (links?.length ?? 0) > 0
+  );
 
 /**
  * The works, people and organizations content points to. Most are filled
@@ -92,17 +99,7 @@ export const References: CollectionConfig = {
         description: "Where the reference links: its catalog or official page",
       },
     },
-    {
-      name: "series",
-      type: "relationship",
-      relationTo: "references",
-      filterOptions: { type: { equals: "series" } },
-      admin: {
-        description: "The series or franchise this belongs to",
-        condition: (data) =>
-          !["series", "person", "organization"].includes(data?.type),
-      },
-    },
+    ...relationFields,
     {
       name: "image",
       type: "upload",
@@ -155,10 +152,11 @@ export const References: CollectionConfig = {
   hooks: {
     afterChange: [
       ({ context, doc, operation, previousDoc }) => {
-        // A new reference isn't rendered until content links to it.
+        // A new reference isn't rendered until something links to it, which
+        // it does itself when it credits, joins or adapts another one.
         if (
           context?.skipRevalidation ||
-          operation === "create" ||
+          (operation === "create" && !linksToOthers(doc)) ||
           !hasPublicChanges(doc, previousDoc)
         ) {
           return doc;

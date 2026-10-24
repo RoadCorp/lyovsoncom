@@ -4,6 +4,7 @@ import {
   Button,
   FieldLabel,
   TextInput,
+  useDocumentInfo,
   useForm,
   useFormFields,
 } from "@payloadcms/ui";
@@ -11,6 +12,7 @@ import type React from "react";
 import { useEffect, useState } from "react";
 
 import { getCatalogLabel, importCatalogItem, searchCatalog } from "./actions";
+import type { ImportedLinks } from "./import";
 import {
   type CatalogItem,
   type CatalogSource,
@@ -32,8 +34,47 @@ function useField<T>(path: string) {
   return useFormFields(([fields]) => fields[path]?.value as T | undefined);
 }
 
+// The field in each link row that points at the other reference.
+const LINK_TARGETS = {
+  credits: "agent",
+  members: "member",
+  partOf: "whole",
+} as const;
+
+function idOf(value: unknown) {
+  return typeof value === "object" && value !== null
+    ? (value as { id: unknown }).id
+    : value;
+}
+
+/** Only the links this type shows: a person has no credits, a book no members. */
+function linksForType(type: ReferenceType | undefined, links: ImportedLinks) {
+  const isAgent = type === "person" || type === "organization";
+  return {
+    basedOn: isAgent ? [] : links.basedOn,
+    rows: {
+      credits: isAgent ? [] : links.credits,
+      members: type === "organization" ? links.members : [],
+      partOf: isAgent ? [] : links.partOf,
+    },
+  };
+}
+
+/** Form state for a new array row. */
+function rowState(row: object) {
+  return Object.fromEntries(
+    Object.entries(row)
+      .filter(([, value]) => value !== undefined)
+      .map(([name, value]) => [
+        name,
+        { initialValue: value, valid: true, value },
+      ])
+  );
+}
+
 export const CatalogPicker: React.FC = () => {
-  const { dispatchFields } = useForm();
+  const { addFieldRow, dispatchFields, getDataByPath } = useForm();
+  const { id } = useDocumentInfo();
   const type = useField<ReferenceType>("type");
   const title = useField<string>("title");
   const image = useField<unknown>("image");
@@ -94,14 +135,48 @@ export const CatalogPicker: React.FC = () => {
     }
   };
 
+  /** Adds the links Wikidata knows of, skipping ones already there. */
+  const link = (links: ImportedLinks) => {
+    const { basedOn, rows } = linksForType(type, links);
+    const isNew = (current: unknown[]) => (target: unknown) =>
+      target !== id && !current.includes(target);
+
+    const currentBasedOn = (getDataByPath<unknown[]>("basedOn") ?? []).map(
+      idOf
+    );
+    const newBasedOn = basedOn.filter(isNew(currentBasedOn));
+    if (newBasedOn.length > 0) {
+      fill({ basedOn: [...currentBasedOn, ...newBasedOn] });
+    }
+
+    for (const [path, target] of Object.entries(LINK_TARGETS)) {
+      const current = (
+        getDataByPath<Record<string, unknown>[]>(path) ?? []
+      ).map((row) => idOf(row[target]));
+      for (const row of rows[path as keyof typeof LINK_TARGETS]) {
+        const value = (row as Record<string, unknown>)[target];
+        if (isNew(current)(value)) {
+          current.push(value);
+          addFieldRow({ path, schemaPath: path, subFieldState: rowState(row) });
+        }
+      }
+    }
+  };
+
   const pick = async (item: CatalogItem) => {
     setStatus("importing");
     try {
       // A linked reference's image and description came from its catalog,
       // so a new pick replaces them; hand-filled ones on an unlinked
       // reference stay.
-      const imported = await importCatalogItem(item, !(image && !source));
+      const { links, ...imported } = await importCatalogItem(
+        item,
+        !(image && !source)
+      );
       fill(source ? { description: null, image: null, ...imported } : imported);
+      if (links) {
+        link(links);
+      }
       setResults([]);
       setQuery("");
       setSearching(false);

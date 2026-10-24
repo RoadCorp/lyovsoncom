@@ -1,7 +1,12 @@
 import type { Payload } from "payload";
-import type { Lyovson } from "@/payload-types";
+import type { Lyovson, Reference } from "@/payload-types";
 import { type CatalogItem, USER_AGENT } from "./shared";
-import { getCommonsImage, getWikidataFacts, matchWikidata } from "./wikidata";
+import {
+  getCommonsImage,
+  getWikidataFacts,
+  matchWikidata,
+  type WikidataLinks,
+} from "./wikidata";
 
 /** Who imports: the signed-in editor, or a trusted script without one. */
 interface Importer {
@@ -117,6 +122,71 @@ function coverSources(item: CatalogItem, facts: Facts) {
 }
 
 /**
+ * The item's Wikidata links, kept only where the other item is already a
+ * reference: import never creates references on its own.
+ */
+export async function resolveLinks(
+  { payload, user }: Importer,
+  links: WikidataLinks
+) {
+  const wikidataIds = [
+    ...links.basedOn,
+    ...[...links.credits, ...links.members, ...links.partOf].map(
+      (link) => link.wikidataId
+    ),
+  ];
+  const unique = [...new Set(wikidataIds)];
+  const { docs } =
+    unique.length > 0
+      ? await payload.find({
+          collection: "references",
+          depth: 0,
+          pagination: false,
+          select: { type: true, wikidataId: true },
+          where: { wikidataId: { in: unique } },
+          ...(user ? { user } : { overrideAccess: true }),
+        })
+      : { docs: [] };
+  const byWikidataId = new Map(docs.map((doc) => [doc.wikidataId, doc]));
+  // Each link takes only the kinds of reference its field accepts.
+  const linked = <T extends { wikidataId: string }>(
+    list: T[],
+    accepts: (type: Reference["type"]) => boolean
+  ) =>
+    list.flatMap(({ wikidataId, ...rest }) => {
+      const doc = byWikidataId.get(wikidataId);
+      return doc && accepts(doc.type) ? [{ ...rest, id: doc.id }] : [];
+    });
+  const isAgent = (type: Reference["type"]) =>
+    type === "person" || type === "organization";
+  const isWork = (type: Reference["type"]) => !isAgent(type);
+
+  return {
+    basedOn: [
+      ...new Set(
+        linked(
+          links.basedOn.map((wikidataId) => ({ wikidataId })),
+          isWork
+        ).map(({ id }) => id)
+      ),
+    ],
+    credits: linked(links.credits, isAgent).map(({ id, role }) => ({
+      agent: id,
+      role,
+    })),
+    members: linked(links.members, (type) => type === "person").map(
+      ({ id, ...years }) => ({ member: id, ...years })
+    ),
+    partOf: linked(links.partOf, isWork).map(({ id, position }) => ({
+      position,
+      whole: id,
+    })),
+  };
+}
+
+export type ImportedLinks = Awaited<ReturnType<typeof resolveLinks>>;
+
+/**
  * The reference fields for a picked result: the catalog's details, its
  * Wikidata item and description when one matches, and the cover in Media
  * when asked for one.
@@ -149,6 +219,10 @@ export async function importCatalogItem(
       }
     }
   }
+  const wikidataLinks = facts.links;
+  const links = wikidataLinks
+    ? await resolveLinks(session, wikidataLinks).catch(() => undefined)
+    : undefined;
   const description =
     item.description && item.source === "wikidata"
       ? item.description
@@ -162,6 +236,7 @@ export async function importCatalogItem(
     // Keep a hand-written description when Wikidata has none.
     ...(description ? { description } : {}),
     ...(image ? { image } : {}),
+    ...(links ? { links } : {}),
     title: item.title,
     url: item.url,
     wikidataId: wikidataId ?? null,

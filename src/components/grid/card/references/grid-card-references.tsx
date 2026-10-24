@@ -10,11 +10,15 @@ import { referenceRoute, transitionTypes } from "@/utilities/routes";
 
 export interface GridCardReferencesProps {
   className?: string;
+  /** The frame's legend; "References" by default. */
+  label?: string;
+  /** A line per reference id, such as a part's place or a member's role. */
+  notes?: Record<number, string | undefined>;
   references: Array<number | Reference>;
 }
 
 const MAX_STAGGER_INDEX = 6;
-const MAX_VISIBLE_REFERENCES = 3;
+export const MAX_VISIBLE_REFERENCES = 3;
 
 function getStaggerClass(index: number): string {
   return `reveal-stagger-${Math.min(index + 1, MAX_STAGGER_INDEX)}`;
@@ -23,6 +27,8 @@ function getStaggerClass(index: number): string {
 export const GridCardReferences = ({
   references,
   className,
+  label = "References",
+  notes,
 }: GridCardReferencesProps) => {
   if (!references || references.length === 0) {
     return null;
@@ -39,7 +45,7 @@ export const GridCardReferences = ({
   }
 
   return (
-    <GridCard className={cn(className)} frameLabel="References">
+    <GridCard className={cn(className)} frameLabel={label}>
       {visibleReferences.map((reference, index) => {
         const IconComponent = getActivityReferenceIcon(reference.type);
         const typeLabel = REFERENCE_TYPE_LABELS[reference.type] ?? "Reference";
@@ -90,6 +96,11 @@ export const GridCardReferences = ({
               </h2>
               {byline ? (
                 <p className="tone-muted line-clamp-1 text-xs">{byline}</p>
+              ) : null}
+              {notes?.[reference.id] ? (
+                <p className="tone-muted line-clamp-1 text-xs">
+                  {notes[reference.id]}
+                </p>
               ) : null}
               {credit ? (
                 <p
