@@ -63,6 +63,12 @@ export function shouldBlockExpensiveBotRequest(
     return false;
   }
 
+  // Agents call MCP from scripted clients and must send an API key; Payload
+  // rejects the rest before any content is read.
+  if (pathname === "/api/mcp") {
+    return false;
+  }
+
   if (isScriptedClientUserAgent(userAgent)) {
     return isExpensivePublicPath(pathname) || isBotRestrictedPath(pathname);
   }

@@ -48,6 +48,8 @@ describe("request guards", () => {
     ["/rafa/search", "GPTBot", true],
     ["/posts/example", "python-requests", true],
     ["/api/search", "python-requests", true],
+    ["/api/mcp", "python-httpx/0.28.1", false],
+    ["/api/mcp", "ChatGPT-User", false],
     ["/admin/login", "curl/8.7.1", true],
     ["/search", "ClaudeBot", true],
     ["/searchlight", "ClaudeBot", false],

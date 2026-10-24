@@ -1,6 +1,13 @@
 import type { CollectionConfig } from "payload";
+import {
+  actingLyovsonId,
+  lyovsonOrAgent,
+  lyovsonOrAgentDraft,
+  withAgentRead,
+} from "@/access/agents";
 import { authenticated } from "@/access/authenticated";
 import { authenticatedOrPublishedPublic } from "@/access/authenticated-or-published-public";
+import { keepAgentDrafts } from "@/collections/hooks/keep-agent-drafts";
 import { revalidateContentHooks } from "@/collections/hooks/revalidate-content";
 import { draftVersions } from "@/collections/shared";
 import { contentTextField, embeddingFields } from "@/fields/embedding";
@@ -16,12 +23,12 @@ const revalidateActivity = revalidateContentHooks("activities");
 export const Activities: CollectionConfig = {
   slug: "activities",
   access: {
-    create: authenticated,
+    create: lyovsonOrAgent,
     delete: authenticated,
-    read: authenticatedOrPublishedPublic,
+    read: withAgentRead(authenticatedOrPublishedPublic, { publicOnly: true }),
     // Payload 4 lets versions inherit `read`; keep drafts and history private.
     readVersions: authenticated,
-    update: authenticated,
+    update: lyovsonOrAgentDraft({ publicOnly: true }),
   },
   defaultPopulate: {
     slug: true,
@@ -89,7 +96,10 @@ export const Activities: CollectionConfig = {
       type: "relationship",
       relationTo: "lyovsons",
       hasMany: true,
-      defaultValue: ({ user }) => (user ? [user.id] : []),
+      defaultValue: ({ user }) => {
+        const id = actingLyovsonId(user);
+        return id ? [id] : [];
+      },
       admin: {
         position: "sidebar",
         description: "Who participated in this activity?",
@@ -165,7 +175,7 @@ export const Activities: CollectionConfig = {
                   type: "relationship",
                   relationTo: "lyovsons",
                   required: true,
-                  defaultValue: ({ user }) => user?.id,
+                  defaultValue: ({ user }) => actingLyovsonId(user),
                   admin: {
                     description: "Who wrote this note?",
                   },
@@ -226,7 +236,11 @@ export const Activities: CollectionConfig = {
     contentTextField("activity content"),
   ],
   hooks: {
-    beforeChange: [populateContentTextHook, markActivityEmbeddingStaleHook],
+    beforeChange: [
+      keepAgentDrafts,
+      populateContentTextHook,
+      markActivityEmbeddingStaleHook,
+    ],
     afterChange: [revalidateActivity.afterChange],
     afterDelete: [revalidateActivity.afterDelete],
   },

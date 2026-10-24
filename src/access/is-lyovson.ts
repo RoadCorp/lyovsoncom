@@ -4,6 +4,6 @@
  */
 export function isLyovson<T extends { collection?: string }>(
   user: T | null | undefined
-): user is T {
+): user is Extract<T, { collection: "lyovsons" }> {
   return user?.collection === "lyovsons";
 }

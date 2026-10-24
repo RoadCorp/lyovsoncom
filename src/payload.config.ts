@@ -11,6 +11,7 @@ import { varchar } from "drizzle-orm/pg-core";
 import { buildConfig } from "payload";
 import sharp from "sharp"; // sharp-import
 import { Activities } from "@/collections/Activities";
+import { Agents } from "@/collections/Agents";
 import { Lyovsons } from "@/collections/Lyovsons";
 import { Media } from "@/collections/Media";
 import { Notes } from "@/collections/Notes";
@@ -20,6 +21,7 @@ import { References } from "@/collections/References";
 import { Topics } from "@/collections/Topics";
 import { tsvector } from "@/db/custom-types";
 import { defaultLexical } from "@/fields/default-lexical";
+import { mcp } from "@/plugins/mcp";
 import { getServerSideURL } from "@/utilities/get-url";
 
 const filename = fileURLToPath(import.meta.url);
@@ -206,12 +208,14 @@ export default buildConfig({
     Topics,
     Projects,
     Lyovsons,
+    Agents,
     References,
     Activities,
     Notes,
   ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [],
+  plugins: [mcp],
   // The admin and site use REST and the local API only.
   graphQL: { disable: true },
   // Cap relationship population for every API request (the site uses <= 2).

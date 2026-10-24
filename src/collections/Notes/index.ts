@@ -1,6 +1,12 @@
 import type { CollectionConfig } from "payload";
+import {
+  lyovsonOrAgent,
+  lyovsonOrAgentDraft,
+  withAgentRead,
+} from "@/access/agents";
 import { authenticated } from "@/access/authenticated";
 import { authenticatedOrPublishedPublic } from "@/access/authenticated-or-published-public";
+import { keepAgentDrafts } from "@/collections/hooks/keep-agent-drafts";
 import { populateContentTextHook } from "@/collections/hooks/populate-content-text";
 import { revalidateContentHooks } from "@/collections/hooks/revalidate-content";
 import { draftVersions, previewAdmin } from "@/collections/shared";
@@ -16,12 +22,12 @@ const revalidateNote = revalidateContentHooks("notes");
 export const Notes: CollectionConfig = {
   slug: "notes",
   access: {
-    create: authenticated,
+    create: lyovsonOrAgent,
     delete: authenticated,
-    read: authenticatedOrPublishedPublic,
+    read: withAgentRead(authenticatedOrPublishedPublic, { publicOnly: true }),
     // Payload 4 lets versions inherit `read`; keep drafts and history private.
     readVersions: authenticated,
-    update: authenticated,
+    update: lyovsonOrAgentDraft({ publicOnly: true }),
   },
   defaultPopulate: {
     title: true,
@@ -189,7 +195,11 @@ export const Notes: CollectionConfig = {
     slugField(),
   ],
   hooks: {
-    beforeChange: [populateContentTextHook, markNoteEmbeddingStaleHook],
+    beforeChange: [
+      keepAgentDrafts,
+      populateContentTextHook,
+      markNoteEmbeddingStaleHook,
+    ],
     afterChange: [revalidateNote.afterChange],
     afterDelete: [revalidateNote.afterDelete],
   },

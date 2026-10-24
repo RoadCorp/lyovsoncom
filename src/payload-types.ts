@@ -115,6 +115,7 @@ export type LexicalNodes_3DE324E4 =
 export interface Config {
   auth: {
     lyovsons: LyovsonAuthOperations;
+    agents: AgentAuthOperations;
   };
   blocks: {};
   collections: {
@@ -123,6 +124,7 @@ export interface Config {
     topics: Topic;
     projects: Project;
     lyovsons: Lyovson;
+    agents: Agent;
     references: Reference;
     activities: Activity;
     notes: Note;
@@ -146,6 +148,7 @@ export interface Config {
     topics: TopicsSelect<false> | TopicsSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     lyovsons: LyovsonsSelect<false> | LyovsonsSelect<true>;
+    agents: AgentsSelect<false> | AgentsSelect<true>;
     references: ReferencesSelect<false> | ReferencesSelect<true>;
     activities: ActivitiesSelect<false> | ActivitiesSelect<true>;
     notes: NotesSelect<false> | NotesSelect<true>;
@@ -169,7 +172,7 @@ export interface Config {
     activity: ActivityWidget;
     'upload-dropzone': UploadDropzoneWidget;
   };
-  user: Lyovson;
+  user: Lyovson | Agent;
   jobs: {
     tasks: unknown;
     workflows: unknown;
@@ -204,6 +207,24 @@ export interface LyovsonAuthOperations {
     | {
         username: string;
       };
+}
+export interface AgentAuthOperations {
+  forgotPassword: {
+    email: string;
+    password: string;
+  };
+  login: {
+    email: string;
+    password: string;
+  };
+  registerFirstUser: {
+    email: string;
+    password: string;
+  };
+  unlock: {
+    email: string;
+    password: string;
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -317,14 +338,24 @@ export interface Post {
   embedding_generated_at?: string | null;
   embedding_text_hash?: string | null;
   slug: string;
-  createdBy?: {
-    relationTo: 'lyovsons';
-    value: number | Lyovson;
-  } | null;
-  updatedBy?: {
-    relationTo: 'lyovsons';
-    value: number | Lyovson;
-  } | null;
+  createdBy?:
+    | ({
+        relationTo: 'lyovsons';
+        value: number | Lyovson;
+      } | null)
+    | ({
+        relationTo: 'agents';
+        value: number | Agent;
+      } | null);
+  updatedBy?:
+    | ({
+        relationTo: 'lyovsons';
+        value: number | Lyovson;
+      } | null)
+    | ({
+        relationTo: 'agents';
+        value: number | Agent;
+      } | null);
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -344,14 +375,24 @@ export interface Media {
   caption?: LexicalRichText<LexicalNodes_AD327369> | null;
   prefix?: string | null;
   _objectKey?: string | null;
-  createdBy?: {
-    relationTo: 'lyovsons';
-    value: number | Lyovson;
-  } | null;
-  updatedBy?: {
-    relationTo: 'lyovsons';
-    value: number | Lyovson;
-  } | null;
+  createdBy?:
+    | ({
+        relationTo: 'lyovsons';
+        value: number | Lyovson;
+      } | null)
+    | ({
+        relationTo: 'agents';
+        value: number | Agent;
+      } | null);
+  updatedBy?:
+    | ({
+        relationTo: 'lyovsons';
+        value: number | Lyovson;
+      } | null)
+    | ({
+        relationTo: 'agents';
+        value: number | Agent;
+      } | null);
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -425,14 +466,24 @@ export interface Lyovson {
         id?: string | null;
       }[]
     | null;
-  createdBy?: {
-    relationTo: 'lyovsons';
-    value: number | Lyovson;
-  } | null;
-  updatedBy?: {
-    relationTo: 'lyovsons';
-    value: number | Lyovson;
-  } | null;
+  createdBy?:
+    | ({
+        relationTo: 'lyovsons';
+        value: number | Lyovson;
+      } | null)
+    | ({
+        relationTo: 'agents';
+        value: number | Agent;
+      } | null);
+  updatedBy?:
+    | ({
+        relationTo: 'lyovsons';
+        value: number | Lyovson;
+      } | null)
+    | ({
+        relationTo: 'agents';
+        value: number | Agent;
+      } | null);
   updatedAt: string;
   createdAt: string;
   email?: string | null;
@@ -452,6 +503,44 @@ export interface Lyovson {
     | null;
   password?: string | null;
   collection: 'lyovsons';
+}
+/**
+ * AI assistants that draft posts, notes and activities through /api/mcp. Enable an API key to connect one; a Lyovson publishes what they draft.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "agents".
+ */
+export interface Agent {
+  id: number;
+  name: string;
+  /**
+   * Who this assistant works for. It is the default author and participant of what the assistant drafts.
+   */
+  lyovson: number | Lyovson;
+  createdBy?:
+    | ({
+        relationTo: 'lyovsons';
+        value: number | Lyovson;
+      } | null)
+    | ({
+        relationTo: 'agents';
+        value: number | Agent;
+      } | null);
+  updatedBy?:
+    | ({
+        relationTo: 'lyovsons';
+        value: number | Lyovson;
+      } | null)
+    | ({
+        relationTo: 'agents';
+        value: number | Agent;
+      } | null);
+  updatedAt: string;
+  createdAt: string;
+  apiKey?: string | null;
+  apiKeyLast4?: string | null;
+  apiKeyIndex?: string | null;
+  collection: 'agents';
 }
 /**
  * Books, films, music, games, people and organizations
@@ -562,14 +651,24 @@ export interface Reference {
   catalogSource?: ('openLibrary' | 'tmdb' | 'igdb' | 'musicBrainz' | 'itunes' | 'wikidata') | null;
   catalogId?: string | null;
   slug: string;
-  createdBy?: {
-    relationTo: 'lyovsons';
-    value: number | Lyovson;
-  } | null;
-  updatedBy?: {
-    relationTo: 'lyovsons';
-    value: number | Lyovson;
-  } | null;
+  createdBy?:
+    | ({
+        relationTo: 'lyovsons';
+        value: number | Lyovson;
+      } | null)
+    | ({
+        relationTo: 'agents';
+        value: number | Agent;
+      } | null);
+  updatedBy?:
+    | ({
+        relationTo: 'lyovsons';
+        value: number | Lyovson;
+      } | null)
+    | ({
+        relationTo: 'agents';
+        value: number | Agent;
+      } | null);
   updatedAt: string;
   createdAt: string;
 }
@@ -604,14 +703,24 @@ export interface Topic {
     image?: (number | null) | Media;
   };
   slug: string;
-  createdBy?: {
-    relationTo: 'lyovsons';
-    value: number | Lyovson;
-  } | null;
-  updatedBy?: {
-    relationTo: 'lyovsons';
-    value: number | Lyovson;
-  } | null;
+  createdBy?:
+    | ({
+        relationTo: 'lyovsons';
+        value: number | Lyovson;
+      } | null)
+    | ({
+        relationTo: 'agents';
+        value: number | Agent;
+      } | null);
+  updatedBy?:
+    | ({
+        relationTo: 'lyovsons';
+        value: number | Lyovson;
+      } | null)
+    | ({
+        relationTo: 'agents';
+        value: number | Agent;
+      } | null);
   updatedAt: string;
   createdAt: string;
   _h_slugPath?: string | null;
@@ -720,14 +829,24 @@ export interface Project {
    */
   publishedAt?: string | null;
   slug: string;
-  createdBy?: {
-    relationTo: 'lyovsons';
-    value: number | Lyovson;
-  } | null;
-  updatedBy?: {
-    relationTo: 'lyovsons';
-    value: number | Lyovson;
-  } | null;
+  createdBy?:
+    | ({
+        relationTo: 'lyovsons';
+        value: number | Lyovson;
+      } | null)
+    | ({
+        relationTo: 'agents';
+        value: number | Agent;
+      } | null);
+  updatedBy?:
+    | ({
+        relationTo: 'lyovsons';
+        value: number | Lyovson;
+      } | null)
+    | ({
+        relationTo: 'agents';
+        value: number | Agent;
+      } | null);
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -837,14 +956,24 @@ export interface Note {
    */
   content_text?: string | null;
   slug: string;
-  createdBy?: {
-    relationTo: 'lyovsons';
-    value: number | Lyovson;
-  } | null;
-  updatedBy?: {
-    relationTo: 'lyovsons';
-    value: number | Lyovson;
-  } | null;
+  createdBy?:
+    | ({
+        relationTo: 'lyovsons';
+        value: number | Lyovson;
+      } | null)
+    | ({
+        relationTo: 'agents';
+        value: number | Agent;
+      } | null);
+  updatedBy?:
+    | ({
+        relationTo: 'lyovsons';
+        value: number | Lyovson;
+      } | null)
+    | ({
+        relationTo: 'agents';
+        value: number | Agent;
+      } | null);
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -942,14 +1071,24 @@ export interface Activity {
    * Plain text extracted from activity content for full-text search indexing
    */
   content_text?: string | null;
-  createdBy?: {
-    relationTo: 'lyovsons';
-    value: number | Lyovson;
-  } | null;
-  updatedBy?: {
-    relationTo: 'lyovsons';
-    value: number | Lyovson;
-  } | null;
+  createdBy?:
+    | ({
+        relationTo: 'lyovsons';
+        value: number | Lyovson;
+      } | null)
+    | ({
+        relationTo: 'agents';
+        value: number | Agent;
+      } | null);
+  updatedBy?:
+    | ({
+        relationTo: 'lyovsons';
+        value: number | Lyovson;
+      } | null)
+    | ({
+        relationTo: 'agents';
+        value: number | Agent;
+      } | null);
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -1000,6 +1139,10 @@ export interface PayloadLockedDocument {
         value: number | Lyovson;
       } | null)
     | ({
+        relationTo: 'agents';
+        value: number | Agent;
+      } | null)
+    | ({
         relationTo: 'references';
         value: number | Reference;
       } | null)
@@ -1012,10 +1155,15 @@ export interface PayloadLockedDocument {
         value: number | Note;
       } | null);
   globalSlug?: string | null;
-  user: {
-    relationTo: 'lyovsons';
-    value: number | Lyovson;
-  };
+  user:
+    | {
+        relationTo: 'lyovsons';
+        value: number | Lyovson;
+      }
+    | {
+        relationTo: 'agents';
+        value: number | Agent;
+      };
   updatedAt: string;
   createdAt: string;
 }
@@ -1025,10 +1173,15 @@ export interface PayloadLockedDocument {
  */
 export interface PayloadPreference {
   id: number;
-  user: {
-    relationTo: 'lyovsons';
-    value: number | Lyovson;
-  };
+  user:
+    | {
+        relationTo: 'lyovsons';
+        value: number | Lyovson;
+      }
+    | {
+        relationTo: 'agents';
+        value: number | Agent;
+      };
   key?: string | null;
   value?:
     | {
@@ -1064,14 +1217,24 @@ export interface PayloadLlmInstruction {
   entityType: 'collection' | 'global';
   additionalInstructions?: LexicalRichText<LexicalNodes_3DE324E4> | null;
   systemInstructions?: LexicalRichText<LexicalNodes_3DE324E4> | null;
-  createdBy?: {
-    relationTo: 'lyovsons';
-    value: number | Lyovson;
-  } | null;
-  updatedBy?: {
-    relationTo: 'lyovsons';
-    value: number | Lyovson;
-  } | null;
+  createdBy?:
+    | ({
+        relationTo: 'lyovsons';
+        value: number | Lyovson;
+      } | null)
+    | ({
+        relationTo: 'agents';
+        value: number | Agent;
+      } | null);
+  updatedBy?:
+    | ({
+        relationTo: 'lyovsons';
+        value: number | Lyovson;
+      } | null)
+    | ({
+        relationTo: 'agents';
+        value: number | Agent;
+      } | null);
   updatedAt: string;
   createdAt: string;
 }
@@ -1297,6 +1460,21 @@ export interface LyovsonsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "agents_select".
+ */
+export interface AgentsSelect<T extends boolean = true> {
+  name?: T;
+  lyovson?: T;
+  createdBy?: T;
+  updatedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  apiKey?: T;
+  apiKeyLast4?: T;
+  apiKeyIndex?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "references_select".
  */
 export interface ReferencesSelect<T extends boolean = true> {
@@ -1510,7 +1688,8 @@ export interface CollectionsWidget {
 export interface CollectionQueryWidget {
   data?: {
     title?: string | null;
-    relatedCollection: 'posts' | 'media' | 'topics' | 'projects' | 'lyovsons' | 'references' | 'activities' | 'notes';
+    relatedCollection:
+      'posts' | 'media' | 'topics' | 'projects' | 'lyovsons' | 'agents' | 'references' | 'activities' | 'notes';
     where?:
       | {
           [k: string]: unknown;
@@ -1533,7 +1712,8 @@ export interface CollectionQueryWidget {
 export interface ActivityWidget {
   data?: {
     excludedCollections?:
-      ('posts' | 'media' | 'topics' | 'projects' | 'lyovsons' | 'references' | 'activities' | 'notes')[] | null;
+      | ('posts' | 'media' | 'topics' | 'projects' | 'lyovsons' | 'agents' | 'references' | 'activities' | 'notes')[]
+      | null;
   };
   width: 'small' | 'medium' | 'large' | 'x-large' | 'full';
 }

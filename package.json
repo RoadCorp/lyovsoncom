@@ -28,6 +28,7 @@
     "@payloadcms/db-vercel-postgres": "4.0.0-beta.4",
     "@payloadcms/email-resend": "4.0.0-beta.4",
     "@payloadcms/next": "4.0.0-beta.4",
+    "@payloadcms/plugin-mcp": "4.0.0-beta.4",
     "@payloadcms/richtext-lexical": "4.0.0-beta.4",
     "@payloadcms/storage-vercel-blob": "4.0.0-beta.4",
     "@payloadcms/transformer-sharp": "4.0.0-beta.4",
