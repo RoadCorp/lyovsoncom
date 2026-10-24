@@ -1,7 +1,6 @@
 import type { StaticImageData } from "next/image";
 import { Media } from "@/components/Media";
 import RichText from "@/components/RichText";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { MediaBlock as MediaBlockProps } from "@/payload-types";
 import { captionWithText } from "@/utilities/extract-lexical-text";
@@ -32,13 +31,13 @@ export function MediaBlock(props: Props) {
   const hasCaption = Boolean(caption);
 
   return (
-    <Card
+    <figure
       className={cn(
-        "surface-block reveal-stagger-1 gap-0 overflow-hidden py-0 content-block",
+        "surface-block reveal-stagger-1 flex flex-col overflow-hidden content-block",
         className
       )}
     >
-      <CardContent className={cn(hasCaption ? "p-3" : "p-0")}>
+      <div className={cn(hasCaption ? "p-3" : "p-0")}>
         <Media
           className="media-frame flex h-full items-center justify-center"
           credit={true}
@@ -51,17 +50,17 @@ export function MediaBlock(props: Props) {
           resource={media}
           src={staticImage}
         />
-      </CardContent>
+      </div>
       {caption && (
-        <CardFooter className="surface-caption sm:px-5 sm:py-3" dir="auto">
+        <figcaption className="surface-caption sm:px-5 sm:py-3" dir="auto">
           <RichText
             className={cn("surface-caption-text", captionClassName)}
             content={caption}
             enableGutter={false}
             enableProse={false}
           />
-        </CardFooter>
+        </figcaption>
       )}
-    </Card>
+    </figure>
   );
 }

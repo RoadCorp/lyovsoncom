@@ -1,5 +1,4 @@
 import RichText from "@/components/RichText";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { YouTubeBlock as YouTubeBlockType } from "@/payload-types";
 import { captionWithText } from "@/utilities/extract-lexical-text";
@@ -32,24 +31,24 @@ export function YouTubeBlock({
   const caption = captionWithText(block.caption);
 
   return (
-    <Card className="surface-block reveal-stagger-1 gap-0 overflow-hidden py-0 content-block">
-      <CardContent className={cn(caption ? "p-3" : "p-0")}>
+    <figure className="surface-block reveal-stagger-1 flex flex-col overflow-hidden content-block">
+      <div className={cn(caption ? "p-3" : "p-0")}>
         <YouTubePlayer
           aspectRatio={aspectRatio || undefined}
           videoId={videoId}
         />
-      </CardContent>
+      </div>
 
       {caption && (
-        <CardFooter className="surface-caption sm:px-5 sm:py-3" dir="auto">
+        <figcaption className="surface-caption sm:px-5 sm:py-3" dir="auto">
           <RichText
             className="surface-caption-text"
             content={caption}
             enableGutter={false}
             enableProse={false}
           />
-        </CardFooter>
+        </figcaption>
       )}
-    </Card>
+    </figure>
   );
 }

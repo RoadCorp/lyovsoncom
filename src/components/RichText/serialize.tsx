@@ -121,7 +121,7 @@ function getNodeKeyBase(node: NodeTypes): string {
     return `listitem-${node.value ?? "na"}-${node.checked ?? "na"}`;
   }
 
-  if (node.type === "link") {
+  if (node.type === "link" || node.type === "autolink") {
     const externalUrl =
       node.fields.linkType === "custom" && node.fields.url
         ? sanitizeKeySegment(node.fields.url)
@@ -307,12 +307,15 @@ function renderElementNode(
       );
     case "quote":
       return <blockquote key={key}>{serializedChildren}</blockquote>;
+    case "horizontalrule":
+      return <hr key={key} />;
+    case "autolink":
     case "link": {
       const isInternalLink = node.fields.linkType === "internal";
 
       return (
         <CMSLink
-          className="transition-colors duration-300"
+          className="ui-focus-ring content-link"
           key={key}
           newTab={Boolean(node.fields.newTab)}
           reference={isInternalLink ? node.fields.doc : null}

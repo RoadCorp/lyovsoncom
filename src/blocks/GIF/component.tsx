@@ -1,7 +1,6 @@
 import { LazyVideo } from "@/components/LazyVideo";
 import { Media } from "@/components/Media";
 import RichText from "@/components/RichText";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { Media as MediaType } from "@/payload-types";
 import { normalizeAspectRatio } from "@/utilities/aspect-ratio";
@@ -40,8 +39,8 @@ export function GIFBlock(props: GIFBlockType) {
   }
 
   return (
-    <Card className="surface-block reveal-stagger-1 gap-0 overflow-hidden py-0 content-block has-[video[data-failed]]:hidden">
-      <CardContent className={cn(hasFooter ? "p-3" : "p-0")}>
+    <figure className="surface-block reveal-stagger-1 flex flex-col overflow-hidden content-block has-[video[data-failed]]:hidden">
+      <div className={cn(hasFooter ? "p-3" : "p-0")}>
         <div className="media-frame overflow-hidden rounded-lg">
           {isImage ? (
             <Media
@@ -63,10 +62,10 @@ export function GIFBlock(props: GIFBlockType) {
             />
           )}
         </div>
-      </CardContent>
+      </div>
 
       {hasFooter && (
-        <CardFooter
+        <figcaption
           className="surface-caption flex-col items-start gap-1 sm:px-5 sm:py-3"
           dir="auto"
         >
@@ -88,8 +87,8 @@ export function GIFBlock(props: GIFBlockType) {
               via GIPHY
             </a>
           )}
-        </CardFooter>
+        </figcaption>
       )}
-    </Card>
+    </figure>
   );
 }

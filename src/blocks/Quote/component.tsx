@@ -9,7 +9,7 @@ type Props = {
 export function QuoteBlock({ className, quote, attribution }: Props) {
   return (
     <div className={cn("content-block", className)}>
-      <div
+      <figure
         className="surface-panel surface-quote mt-0 mb-0 rounded-lg px-4 py-3 sm:px-5 sm:py-4"
         dir="auto"
       >
@@ -28,14 +28,14 @@ export function QuoteBlock({ className, quote, attribution }: Props) {
           />
         </blockquote>
         {attribution && (
-          <footer
+          <figcaption
             className="quote-block-attribution mt-3 text-start font-medium text-sm opacity-90"
             dir="auto"
           >
             — {attribution}
-          </footer>
+          </figcaption>
         )}
-      </div>
+      </figure>
     </div>
   );
 }

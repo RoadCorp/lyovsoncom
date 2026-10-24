@@ -4,7 +4,6 @@ import { EmbeddedTweet, TweetNotFound } from "react-tweet";
 import type { Tweet } from "react-tweet/api";
 import { fetchTweet } from "react-tweet/api";
 import RichText from "@/components/RichText";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { XPostBlock as XPostBlockType } from "@/payload-types";
 import { captionWithText } from "@/utilities/extract-lexical-text";
@@ -78,10 +77,8 @@ async function XPostContent({ postId, ...block }: XPostBlockType) {
   const normalizedTweet = tweet ? normalizeTweetForEmbed(tweet) : null;
 
   return (
-    <Card className="surface-block reveal-stagger-2 gap-0 overflow-hidden py-0 content-block">
-      <CardContent
-        className={cn("flex justify-center", contentPaddingClassName)}
-      >
+    <figure className="surface-block reveal-stagger-2 flex flex-col overflow-hidden content-block">
+      <div className={cn("flex justify-center", contentPaddingClassName)}>
         <div className="xpost-embed w-full max-w-lg">
           {normalizedTweet ? (
             <EmbeddedTweet tweet={normalizedTweet} />
@@ -89,19 +86,19 @@ async function XPostContent({ postId, ...block }: XPostBlockType) {
             <TweetNotFound />
           )}
         </div>
-      </CardContent>
+      </div>
 
       {caption && (
-        <CardFooter className="surface-caption sm:px-5 sm:py-3" dir="auto">
+        <figcaption className="surface-caption sm:px-5 sm:py-3" dir="auto">
           <RichText
             className="surface-caption-text"
             content={caption}
             enableGutter={false}
             enableProse={false}
           />
-        </CardFooter>
+        </figcaption>
       )}
-    </Card>
+    </figure>
   );
 }
 
@@ -112,16 +109,19 @@ export function XPostBlock(props: XPostBlockType) {
   return (
     <Suspense
       fallback={
-        <Card className="surface-block p-6 content-block">
-          <p role="status">Loading X post…</p>
+        <div className="surface-block p-6 content-block">
+          <p className="tone-muted text-sm" role="status">
+            Loading X post…
+          </p>
           <a
+            className="ui-focus-ring text-sm content-link"
             href={`https://x.com/i/status/${props.postId}`}
             rel="noopener"
             target="_blank"
           >
             View on X
           </a>
-        </Card>
+        </div>
       }
     >
       <XPostContent {...props} />

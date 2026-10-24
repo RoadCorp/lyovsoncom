@@ -592,8 +592,7 @@
   .surface-caption,
   .surface-thumb,
   .surface-alert,
-  .surface-emphasis,
-  .content-code-shell {
+  .surface-emphasis {
     border-color: var(--line-1);
     border-style: solid;
     border-width: 1px;
@@ -1063,6 +1062,22 @@
       color-mix(in oklab, var(--surface-2) 98%, var(--accent-rail) 2%)
     );
     border-radius: calc(var(--radius) - 2px);
+  }
+
+  /* Inside an article the body's well is the frame: blocks keep a hairline
+     border but no shadow and no larger radius than the well, and captions
+     are plain text under the media. */
+  .content-prose .surface-block {
+    border-radius: var(--radius-md);
+    box-shadow: none;
+  }
+
+  .content-prose .surface-caption {
+    padding: 0.25rem 0.75rem 0.75rem;
+    margin: 0;
+    background: none;
+    border: 0;
+    box-shadow: none;
   }
 
   .surface-caption-text {
@@ -1569,7 +1584,8 @@
     color: color-mix(in oklab, var(--text-1) 94%, var(--accent-rail) 6%);
   }
 
-  .content-prose a {
+  .content-prose a,
+  .content-link {
     color: var(--accent-link);
     text-decoration: underline;
     text-decoration-thickness: 0.08em;
@@ -1584,7 +1600,8 @@
       text-decoration-color var(--duration-medium) var(--ease-standard);
   }
 
-  .content-prose a:hover {
+  .content-prose a:hover,
+  .content-link:hover {
     color: color-mix(in oklab, var(--accent-link) 68%, var(--accent-code) 32%);
     text-decoration-color: currentColor;
   }
@@ -1607,7 +1624,7 @@
     margin-top: 0.35rem;
   }
 
-  .content-prose blockquote {
+  .content-prose > blockquote {
     padding: 0.95rem 1rem;
     margin: 1.35rem 0;
     color: var(--text-2);
@@ -1654,8 +1671,7 @@
     border-radius: calc(var(--radius) - 6px);
   }
 
-  .content-prose pre,
-  .content-code-block {
+  .content-prose > pre {
     padding: 1rem;
     margin: 1.25rem 0;
     overflow-x: auto;
@@ -1752,10 +1768,18 @@
     );
   }
 
+  /* react-tweet's action row never wraps, so "Copy link" is cut off on phones.
+     Its class is a hashed CSS module name, hence the substring match. */
+  .xpost-embed [class*="actions"] {
+    flex-wrap: wrap;
+  }
+
   .xpost-embed .react-tweet-theme {
     --tweet-container-margin: 0 !important;
     --tweet-border: 1px solid
       color-mix(in oklab, var(--line-1) 52%, var(--accent-meta) 48%);
+    --tweet-font-family: var(--font-sans);
+    --tweet-body-font-size: 1rem;
     --tweet-font-color: var(--text-1);
     --tweet-font-color-secondary: var(--text-3);
     --tweet-bg-color: color-mix(

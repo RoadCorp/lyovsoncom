@@ -61,4 +61,31 @@ describe("stored rich text", () => {
     expect(html).toContain("Unsupported content block: retired-widget");
     expect(html).toContain("After");
   });
+
+  it("renders horizontal rules and pasted URLs the editor turned into autolinks", () => {
+    const html = renderToStaticMarkup(
+      createElement(RichText, {
+        content: {
+          root: {
+            children: [
+              { type: "horizontalrule" },
+              {
+                type: "paragraph",
+                children: [
+                  {
+                    type: "autolink",
+                    fields: { linkType: "custom", url: "https://example.com" },
+                    children: [{ type: "text", text: "example.com" }],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      })
+    );
+    expect(html).toContain("<hr/>");
+    expect(html).toContain('href="https://example.com"');
+    expect(html).toContain("example.com</a>");
+  });
 });

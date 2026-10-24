@@ -5,7 +5,8 @@ import {
   HorizontalRuleFeature,
   InlineToolbarFeature,
   lexicalEditor,
-  StrikethroughFeature,
+  OrderedListFeature,
+  UnorderedListFeature,
 } from "@payloadcms/richtext-lexical";
 import type { Config } from "payload";
 import { Banner } from "@/blocks/Banner/config";
@@ -46,7 +47,8 @@ import { YouTube } from "@/blocks/YouTube/config";
  *
  * **Features:**
  * - Text formatting: Bold, Italic, Underline, Strikethrough (inherited from rootFeatures)
- * - Headings: h1, h2, h3, h4
+ * - Headings: h2, h3, h4 (the page title is the h1)
+ * - Bulleted and numbered lists
  * - Custom blocks: Banner, Code, MediaBlock, YouTube, XPost, Quote, GIF
  * - Toolbars: Fixed (persistent) and Inline (selection-based)
  * - Horizontal rules for visual separation
@@ -64,10 +66,11 @@ export const richEditorConfig: Config["editor"] = lexicalEditor({
   features: ({ rootFeatures }) => {
     return [
       ...rootFeatures,
-      StrikethroughFeature(),
       HeadingFeature({
-        enabledHeadingSizes: ["h1", "h2", "h3", "h4"],
+        enabledHeadingSizes: ["h2", "h3", "h4"],
       }),
+      UnorderedListFeature(),
+      OrderedListFeature(),
       BlocksFeature({
         blocks: [Banner, Code, MediaBlock, YouTube, XPost, Quote, GIF],
       }),
@@ -107,7 +110,6 @@ export const bioEditorConfig: Config["editor"] = lexicalEditor({
   features: ({ rootFeatures }) => {
     return [
       ...rootFeatures,
-      StrikethroughFeature(),
       HeadingFeature({
         enabledHeadingSizes: ["h2", "h3", "h4"],
       }),

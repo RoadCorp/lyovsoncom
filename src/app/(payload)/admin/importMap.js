@@ -17,6 +17,8 @@ import { XPostPreview as XPostPreview_1b0a7904774f0e4b1670edad237c97f0 } from '@
 import { QuotePreview as QuotePreview_bfc2c5fb36cfb31b8c0a84e22379eba7 } from '@/blocks/Quote/admin-preview'
 import { GifPicker as GifPicker_6d0747c0f1aab9fdcb3853ebe15b2e15 } from '@/blocks/GIF/gif-picker'
 import { GIFPreview as GIFPreview_09162d99e649edc0946f976d78a721f6 } from '@/blocks/GIF/admin-preview'
+import { OrderedListFeatureClient as OrderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
+import { UnorderedListFeatureClient as UnorderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { HeadingFeatureClient as HeadingFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { LLMInstructionsMenuItem as LLMInstructionsMenuItem_3817bf644402e67bfe6577f60ef982de } from '@payloadcms/ui'
 import { NullField as NullField_3817bf644402e67bfe6577f60ef982de } from '@payloadcms/ui'
@@ -25,8 +27,6 @@ import { CatalogPicker as CatalogPicker_1fe89b3c45d37c0537d7fd3e37119240 } from 
 import { ActivityTypeField as ActivityTypeField_4e0e14004c084f2eba4c69f96bc4d66e } from '@/collections/Activities/admin/fields'
 import { TodayDateField as TodayDateField_4e0e14004c084f2eba4c69f96bc4d66e } from '@/collections/Activities/admin/fields'
 import { LLMInstructionsDescription as LLMInstructionsDescription_3817bf644402e67bfe6577f60ef982de } from '@payloadcms/ui'
-import { OrderedListFeatureClient as OrderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
-import { UnorderedListFeatureClient as UnorderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { LLMInstructionsCell as LLMInstructionsCell_ab83ff7e88da8d3530831f296ec4756a } from '@payloadcms/ui/rsc'
 import { default as default_0430f5fb3b8132a602107d7535a2a344 } from '@/components/admin/icon'
 import { default as default_334250e18ce0b45af3e0c04bb6fe8307 } from '@/components/admin/logo'
@@ -66,6 +66,8 @@ export const importMap = {
   "@/blocks/Quote/admin-preview#QuotePreview": QuotePreview_bfc2c5fb36cfb31b8c0a84e22379eba7,
   "@/blocks/GIF/gif-picker#GifPicker": GifPicker_6d0747c0f1aab9fdcb3853ebe15b2e15,
   "@/blocks/GIF/admin-preview#GIFPreview": GIFPreview_09162d99e649edc0946f976d78a721f6,
+  "@payloadcms/richtext-lexical/client#OrderedListFeatureClient": OrderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  "@payloadcms/richtext-lexical/client#UnorderedListFeatureClient": UnorderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#HeadingFeatureClient": HeadingFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/ui#LLMInstructionsMenuItem": LLMInstructionsMenuItem_3817bf644402e67bfe6577f60ef982de,
   "@payloadcms/ui#NullField": NullField_3817bf644402e67bfe6577f60ef982de,
@@ -74,8 +76,6 @@ export const importMap = {
   "@/collections/Activities/admin/fields#ActivityTypeField": ActivityTypeField_4e0e14004c084f2eba4c69f96bc4d66e,
   "@/collections/Activities/admin/fields#TodayDateField": TodayDateField_4e0e14004c084f2eba4c69f96bc4d66e,
   "@payloadcms/ui#LLMInstructionsDescription": LLMInstructionsDescription_3817bf644402e67bfe6577f60ef982de,
-  "@payloadcms/richtext-lexical/client#OrderedListFeatureClient": OrderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
-  "@payloadcms/richtext-lexical/client#UnorderedListFeatureClient": UnorderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/ui/rsc#LLMInstructionsCell": LLMInstructionsCell_ab83ff7e88da8d3530831f296ec4756a,
   "@/components/admin/icon#default": default_0430f5fb3b8132a602107d7535a2a344,
   "@/components/admin/logo#default": default_334250e18ce0b45af3e0c04bb6fe8307,
