@@ -71,7 +71,10 @@ export const mcp = mcpPlugin({
     },
     media: {
       description:
-        "Images and files. Deleting one also deletes its stored file, which cannot be restored.",
+        "Images and files. Upload with createDocuments and a `file` of source `base64` (Vercel caps a request at about 4.5 MB, so roughly 3 MB of file). Deleting one also deletes its stored file, which cannot be restored.",
+      // Staged uploads land on one function instance and the bot guard
+      // refuses scripted PUTs to /api, so agents upload inline instead.
+      tools: { getUploadInstructions: false },
     },
     projects: {
       description:
