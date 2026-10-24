@@ -27,6 +27,7 @@ const RULES = [
   "Default the author to the Lyovson you work for: `authors` on posts, `author` (their username) on notes, `participants` and review `lyovson` on activities.",
   "Rich text fields take Lexical JSON. Call getCollectionSchema before writing a collection for the first time.",
   "Find topics and references before creating them, so you link the existing one instead of a duplicate.",
+  "Upload media with createDocuments and a `file` of source `base64`; a request is capped at about 4.5 MB, so keep files under about 3 MB. Deleting media also deletes its stored file for good.",
 ].join("\n");
 
 const getContext = defineTool({
@@ -55,38 +56,17 @@ const getContext = defineTool({
 /** `/api/mcp` for API-key agents: full access to content and media, none to accounts. */
 export const mcp = mcpPlugin({
   collections: {
-    activities: {
-      description:
-        "Things a Lyovson read, watched, listened to or played. Each activity links one reference (find it first), has an activityType and finishedAt date, and can hold participants' reviews with a note and rating.",
-    },
+    activities: {},
     agents: { tools: noTools },
     lyovsons: { tools: noTools },
-    notes: {
-      description:
-        "Short notes: thoughts and quotes. A quote can link its sourceReference and quotedPerson. `author` is a Lyovson's username; `visibility` is public or private.",
-    },
-    posts: {
-      description:
-        "Long-form articles with a title, description and Lexical content, authored by Lyovsons and tagged with topics and references.",
-    },
-    media: {
-      description:
-        "Images and files. Upload with createDocuments and a `file` of source `base64` (Vercel caps a request at about 4.5 MB, so roughly 3 MB of file). Deleting one also deletes its stored file, which cannot be restored.",
-      // Staged uploads land on one function instance and the bot guard
-      // refuses scripted PUTs to /api, so agents upload inline instead.
-      tools: { getUploadInstructions: false },
-    },
-    projects: {
-      description:
-        "Portfolio projects and case studies, with drafts and a trash like posts.",
-    },
-    references: {
-      description:
-        "Books, films, shows, games, people and other works that posts, notes and activities link to.",
-    },
-    topics: {
-      description: "Topics that tag posts and notes.",
-    },
+    // Staged uploads land on one function instance and the bot guard
+    // refuses scripted PUTs to /api, so agents upload inline instead.
+    media: { tools: { getUploadInstructions: false } },
+    notes: {},
+    posts: {},
+    projects: {},
+    references: {},
+    topics: {},
   },
   mcp: {
     serverOptions: { serverInfo: { name: "lyovson.com" } },
