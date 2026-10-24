@@ -1576,14 +1576,14 @@
   .content-prose h2 {
     padding-bottom: 0.4rem;
     margin-top: 1.8rem;
-    font-size: clamp(1.4rem, 3.6cqi, 1.8rem);
+    font-size: clamp(1.4rem, 3.9cqi, 1.8rem);
     border-bottom: 1px solid
       color-mix(in oklab, var(--line-1) 84%, var(--accent-rail) 16%);
   }
 
   .content-prose h3 {
     margin-top: 1.4rem;
-    font-size: clamp(1.15rem, 2.7cqi, 1.35rem);
+    font-size: clamp(1.15rem, 2.95cqi, 1.35rem);
   }
 
   .content-prose h4 {
