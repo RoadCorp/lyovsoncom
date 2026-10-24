@@ -18,6 +18,9 @@ interface Importer {
 const COVER_HOSTS = [
   "covers.openlibrary.org",
   "coverartarchive.org",
+  // Open Library and Cover Art Archive redirect to Internet Archive mirrors.
+  "archive.org",
+  ".archive.org",
   "image.tmdb.org",
   "images.igdb.com",
   ".mzstatic.com",
@@ -26,6 +29,7 @@ const COVER_HOSTS = [
   "upload.wikimedia.org",
 ];
 const MAX_COVER_BYTES = 10 * 1024 * 1024;
+const MAX_COVER_REDIRECTS = 3;
 
 function isCatalogImage(url: string) {
   const { hostname, protocol } = new URL(url);
@@ -45,18 +49,37 @@ interface Cover {
   url: string;
 }
 
+/**
+ * Fetches a cover, following at most a few redirects by hand so every hop
+ * is checked against the host allowlist.
+ */
+export async function fetchCover(url: string) {
+  let current = url;
+  for (let hop = 0; hop <= MAX_COVER_REDIRECTS; hop++) {
+    if (!isCatalogImage(current)) {
+      return null;
+    }
+    const response = await fetch(current, {
+      // Wikimedia refuses requests that don't name themselves.
+      headers: { "User-Agent": USER_AGENT },
+      signal: AbortSignal.timeout(15_000),
+      redirect: "manual",
+    }).catch(() => null);
+    const location = response?.headers.get("location");
+    if (!(response && response.status >= 300 && response.status < 400)) {
+      return response;
+    }
+    if (!location) {
+      return null;
+    }
+    current = new URL(location, current).href;
+  }
+  return null;
+}
+
 /** Copies a cover into Media so the site never hotlinks a catalog. */
 async function saveCover({ payload, user }: Importer, cover: Cover) {
-  if (!isCatalogImage(cover.url)) {
-    return;
-  }
-  const response = await fetch(cover.url, {
-    // Wikimedia refuses requests that don't name themselves.
-    headers: { "User-Agent": USER_AGENT },
-    signal: AbortSignal.timeout(15_000),
-    // Don't follow redirects: the host allowlist only vets the first URL.
-    redirect: "error",
-  }).catch(() => null);
+  const response = await fetchCover(cover.url);
   const mimetype = response?.headers.get("content-type") ?? "";
   if (!(response?.ok && mimetype.startsWith("image/"))) {
     return;
