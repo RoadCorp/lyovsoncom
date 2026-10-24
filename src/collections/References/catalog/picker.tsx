@@ -156,8 +156,15 @@ export const CatalogPicker: React.FC = () => {
       for (const row of rows[path as keyof typeof LINK_TARGETS]) {
         const value = (row as Record<string, unknown>)[target];
         if (isNew(current)(value)) {
+          // The form's row count only updates on render, so each row's
+          // index is given to keep Wikidata's order.
+          addFieldRow({
+            path,
+            rowIndex: current.length,
+            schemaPath: path,
+            subFieldState: rowState(row),
+          });
           current.push(value);
-          addFieldRow({ path, schemaPath: path, subFieldState: rowState(row) });
         }
       }
     }

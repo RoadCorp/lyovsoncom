@@ -24,8 +24,23 @@ const { docs } = await payload.find({
   where: { wikidataId: { exists: true } },
 });
 
-const idOf = (value: number | Reference) =>
-  typeof value === "object" ? value.id : value;
+const idOf = (value: number | Reference | null | undefined) =>
+  typeof value === "object" ? value?.id : value;
+/** The first link to each target, among those not already linked. */
+function newLinks<T>(
+  rows: T[],
+  target: (row: T) => number,
+  known: Set<number>
+) {
+  return rows.filter((row) => {
+    const id = target(row);
+    if (known.has(id)) {
+      return false;
+    }
+    known.add(id);
+    return true;
+  });
+}
 const isAgent = (type: Reference["type"]) =>
   type === "person" || type === "organization";
 
@@ -39,29 +54,34 @@ for (const doc of docs) {
     continue;
   }
   const links = await resolveLinks({ payload }, facts.links);
-  const other = (id: number) => id !== doc.id;
+  // Starting from what is linked, plus the reference itself.
+  const known = (ids: (number | Reference | null | undefined)[] = []) =>
+    new Set([doc.id, ...ids.flatMap((id) => idOf(id) ?? [])]);
+  const works = !isAgent(doc.type);
 
-  const knownCredits = new Set(doc.credits?.map((row) => idOf(row.agent)));
-  const credits = isAgent(doc.type)
-    ? []
-    : links.credits.filter(
-        (row) => other(row.agent) && !knownCredits.has(row.agent)
-      );
-  const knownWholes = new Set(doc.partOf?.map((row) => idOf(row.whole)));
-  const partOf = isAgent(doc.type)
-    ? []
-    : links.partOf.filter(
-        (row) => other(row.whole) && !knownWholes.has(row.whole)
-      );
-  const knownBases = new Set(doc.basedOn?.map(idOf));
-  const basedOn = isAgent(doc.type)
-    ? []
-    : links.basedOn.filter((id) => other(id) && !knownBases.has(id));
-  const knownMembers = new Set(doc.members?.map((row) => idOf(row.member)));
+  const credits = works
+    ? newLinks(
+        links.credits,
+        (row) => row.agent,
+        known(doc.credits?.map((row) => row.agent))
+      )
+    : [];
+  const partOf = works
+    ? newLinks(
+        links.partOf,
+        (row) => row.whole,
+        known(doc.partOf?.map((row) => row.whole))
+      )
+    : [];
+  const basedOn = works
+    ? newLinks(links.basedOn, (id) => id, known(doc.basedOn ?? []))
+    : [];
   const members =
     doc.type === "organization"
-      ? links.members.filter(
-          (row) => other(row.member) && !knownMembers.has(row.member)
+      ? newLinks(
+          links.members,
+          (row) => row.member,
+          known(doc.members?.map((row) => row.member))
         )
       : [];
 
@@ -73,18 +93,27 @@ for (const doc of docs) {
     `${doc.title}: ${JSON.stringify({ basedOn, credits, members, partOf })}`
   );
   if (write) {
-    await payload.update({
-      collection: "references",
-      id: doc.id,
-      context: { skipRevalidation: true },
-      data: {
-        basedOn: [...(doc.basedOn ?? []).map(idOf), ...basedOn],
-        credits: [...(doc.credits ?? []), ...credits],
-        members: [...(doc.members ?? []), ...members],
-        partOf: [...(doc.partOf ?? []), ...partOf],
-      },
-      overrideAccess: true,
-    });
+    try {
+      await payload.update({
+        collection: "references",
+        id: doc.id,
+        context: { skipRevalidation: true },
+        data: {
+          basedOn: [
+            ...(doc.basedOn ?? []).flatMap((id) => idOf(id) ?? []),
+            ...basedOn,
+          ],
+          credits: [...(doc.credits ?? []), ...credits],
+          members: [...(doc.members ?? []), ...members],
+          partOf: [...(doc.partOf ?? []), ...partOf],
+        },
+        overrideAccess: true,
+      });
+    } catch (error) {
+      // One reference that won't save shouldn't stop the rest.
+      changed -= 1;
+      payload.logger.error({ err: error, msg: `Skipped ${doc.title}` });
+    }
   }
 }
 

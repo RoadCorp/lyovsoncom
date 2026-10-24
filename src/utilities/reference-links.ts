@@ -83,10 +83,17 @@ export function getWholes(reference: Reference): LinkedReference[] {
   });
 }
 
+/** A join's references, once each: a join on an array field returns a
+ * reference once per matching row. */
 function joined(join: { docs?: (number | Reference)[] } | undefined) {
+  const seen = new Set<number>();
   return (join?.docs ?? []).flatMap((doc) => {
     const reference = populated(doc);
-    return reference ? [reference] : [];
+    if (!reference || seen.has(reference.id)) {
+      return [];
+    }
+    seen.add(reference.id);
+    return [reference];
   });
 }
 
@@ -100,7 +107,7 @@ export function getParts(reference: Reference): LinkedReference[] {
       const row = part.partOf?.find(
         (candidate) =>
           (typeof candidate.whole === "object"
-            ? candidate.whole.id
+            ? candidate.whole?.id
             : candidate.whole) === reference.id
       );
       return {
@@ -123,13 +130,26 @@ function yearsLabel(start?: number | null, end?: number | null) {
 
 /** A group's members, with their roles and years. */
 export function getMembers(reference: Reference): LinkedReference[] {
-  return (reference.members ?? []).flatMap((row) => {
+  // Someone who left and came back has a row per stint; they show once.
+  const members = new Map<number, LinkedReference & { notes: string[] }>();
+  for (const row of reference.members ?? []) {
     const member = populated(row.member);
+    if (!member) {
+      continue;
+    }
     const note = [row.role, yearsLabel(row.start, row.end)]
       .filter(Boolean)
       .join(", ");
-    return member ? [{ note: note || undefined, reference: member }] : [];
-  });
+    const entry = members.get(member.id) ?? { notes: [], reference: member };
+    if (note) {
+      entry.notes.push(note);
+    }
+    members.set(member.id, entry);
+  }
+  return [...members.values()].map(({ notes, reference: member }) => ({
+    note: notes.join("; ") || undefined,
+    reference: member,
+  }));
 }
 
 /** The lists a hub shows below its activities, in reading order. */

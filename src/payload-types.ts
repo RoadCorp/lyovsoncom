@@ -496,7 +496,7 @@ export interface Reference {
    */
   credits?:
     | {
-        agent: number | Reference;
+        agent?: (number | null) | Reference;
         role: 'author' | 'creator' | 'developer' | 'director' | 'host' | 'narrator' | 'performer' | 'translator';
         id?: string | null;
       }[]
@@ -506,7 +506,7 @@ export interface Reference {
    */
   partOf?:
     | {
-        whole: number | Reference;
+        whole?: (number | null) | Reference;
         /**
          * Order in the whole
          */
@@ -524,7 +524,7 @@ export interface Reference {
    */
   members?:
     | {
-        member: number | Reference;
+        member?: (number | null) | Reference;
         start?: number | null;
         end?: number | null;
         role?: string | null;

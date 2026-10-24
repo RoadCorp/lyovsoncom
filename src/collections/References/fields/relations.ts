@@ -23,6 +23,10 @@ export const CREDIT_ROLES = [
 export type CreditRole = (typeof CREDIT_ROLES)[number]["value"];
 
 const AGENT_TYPES = ["person", "organization"];
+// The link fields aren't required: deleting the other reference empties
+// them (the foreign keys set null), and a required field would then block
+// every later save. Empty rows render as nothing.
+
 // Deeper nesting than a franchise, its series and their volumes is a
 // mistake; the walk stops there rather than querying without end.
 const MAX_NESTING = 10;
@@ -95,7 +99,6 @@ export const relationFields: Field[] = [
             name: "agent",
             type: "relationship",
             relationTo: "references",
-            required: true,
             filterOptions: otherReferences({ type: { in: AGENT_TYPES } }),
             admin: { width: "60%" },
           },
@@ -128,7 +131,6 @@ export const relationFields: Field[] = [
             name: "whole",
             type: "relationship",
             relationTo: "references",
-            required: true,
             filterOptions: otherReferences({ type: { not_in: AGENT_TYPES } }),
             admin: { width: "50%" },
           },
@@ -175,7 +177,6 @@ export const relationFields: Field[] = [
             name: "member",
             type: "relationship",
             relationTo: "references",
-            required: true,
             filterOptions: otherReferences({ type: { equals: "person" } }),
             admin: { width: "40%" },
           },
