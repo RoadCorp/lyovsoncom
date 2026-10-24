@@ -100,7 +100,8 @@ function joined(join: { docs?: (number | Reference)[] } | undefined) {
 const byYear = (a: Reference, b: Reference) =>
   (a.year ?? Number.POSITIVE_INFINITY) - (b.year ?? Number.POSITIVE_INFINITY);
 
-/** A whole's parts in order: by position, then by year. */
+/** A whole's parts in order: by year, then by position. Positions are often
+ * known for only some parts, so they can't lead. */
 export function getParts(reference: Reference): LinkedReference[] {
   return joined(reference.parts)
     .map((part) => {
@@ -116,7 +117,7 @@ export function getParts(reference: Reference): LinkedReference[] {
         reference: part,
       };
     })
-    .sort((a, b) => a.position - b.position || byYear(a.reference, b.reference))
+    .sort((a, b) => byYear(a.reference, b.reference) || a.position - b.position)
     .map(({ note, reference: part }) => ({ note, reference: part }));
 }
 
@@ -157,7 +158,10 @@ export function getRelatedLists(reference: Reference) {
   const plain = (references: Reference[]) =>
     references.map((related) => ({ reference: related }));
   return [
-    { items: getParts(reference), label: "Parts" },
+    {
+      items: getParts(reference),
+      label: reference.type === "series" ? "In this series" : "Includes",
+    },
     {
       items: plain(
         (reference.basedOn ?? []).flatMap((value) => populated(value) ?? [])
