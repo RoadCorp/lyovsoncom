@@ -1,14 +1,12 @@
-import type { Activity, Note } from "@/payload-types";
+import type { Activity } from "@/payload-types";
 import type { PostSummary } from "@/utilities/post-summary";
 
 export type MixedFeedItem =
   | { type: "activity"; data: Activity; timestamp: number }
-  | { type: "note"; data: Note; timestamp: number }
   | { type: "post"; data: PostSummary; timestamp: number };
 
 type MixedFeedInput =
   | { type: "activity"; data: Activity }
-  | { type: "note"; data: Note }
   | { type: "post"; data: PostSummary };
 
 export function getMixedFeedTimestamp(item: MixedFeedInput): number {
@@ -20,8 +18,6 @@ export function getMixedFeedTimestamp(item: MixedFeedInput): number {
       item.data.startedAt ||
       item.data.publishedAt ||
       "";
-  } else if (item.type === "note") {
-    dateValue = item.data.publishedAt || item.data.createdAt || "";
   } else {
     dateValue = item.data.publishedAt || item.data.createdAt || "";
   }
@@ -36,14 +32,6 @@ export function mapPostsToMixedFeedItems(
     type: "post",
     data: post,
     timestamp: getMixedFeedTimestamp({ type: "post", data: post }),
-  }));
-}
-
-export function mapNotesToMixedFeedItems(notes: Note[]): MixedFeedItem[] {
-  return notes.map((note) => ({
-    type: "note",
-    data: note,
-    timestamp: getMixedFeedTimestamp({ type: "note", data: note }),
   }));
 }
 

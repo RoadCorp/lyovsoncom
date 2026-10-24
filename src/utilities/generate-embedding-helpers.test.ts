@@ -11,7 +11,6 @@ vi.mock("./generate-embedding", async (importOriginal) => ({
   generateEmbedding: vi.fn(),
 }));
 vi.mock("./get-similar-posts", () => ({ getSimilarPosts: vi.fn() }));
-vi.mock("./get-similar-notes", () => ({ getSimilarNotes: vi.fn() }));
 
 const post = {
   id: 29,

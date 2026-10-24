@@ -131,8 +131,8 @@ export async function generateMetadata({
   }
 
   const name = getLyovsonDisplayName(response.user, username);
-  // The profile mixes posts, notes and activities; /[lyovson]/posts owns "Posts".
-  const description = `Posts, notes and activities by ${name}.`;
+  // The profile mixes posts and activities; /[lyovson]/posts owns "Posts".
+  const description = `Posts and activities by ${name}.`;
 
   return buildLyovsonMetadata({
     title: name,

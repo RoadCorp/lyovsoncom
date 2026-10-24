@@ -99,7 +99,7 @@ interface ArticleDataParams {
   imageUrl?: string;
   imageWidth?: number;
   keywords?: string[];
-  pathPrefix?: string; // e.g., '/posts', '/notes', '/activities' (defaults to '/posts')
+  pathPrefix?: string; // e.g., '/posts', '/activities' (defaults to '/posts')
   publishedAt?: string;
   slug: string;
   title: string;

@@ -121,55 +121,6 @@ export const bioEditorConfig: Config["editor"] = lexicalEditor({
   },
 });
 
-/**
- * Note editor configuration
- *
- * **Used for:** Zettelkasten notes, quick notes, knowledge base entries
- *
- * **Features:**
- * - Text formatting: Bold, Italic, Underline, Strikethrough (inherited from rootFeatures)
- * - Links: Internal (to other documents) and external
- * - Toolbars: Fixed (persistent) and Inline (selection-based)
- * - No headings or blocks to keep notes lightweight and focused
- *
- * **Philosophy:**
- * Designed for atomic note-taking where each note should be concise and focused
- * on a single idea. Complex formatting and blocks are intentionally omitted to
- * encourage clarity and simplicity.
- *
- * **Keyboard Shortcuts:**
- * - Bold: Ctrl/Cmd + B
- * - Italic: Ctrl/Cmd + I
- * - Underline: Ctrl/Cmd + U
- * - Strikethrough: Ctrl/Cmd + Shift + S
- * - Create link: Ctrl/Cmd + K
- *
- * **Extending:**
- * If you need blocks or headings for notes, add them to the features array:
- * ```typescript
- * return [
- *   ...rootFeatures,
- *   StrikethroughFeature(),
- *   HeadingFeature({ enabledHeadingSizes: ['h2', 'h3'] }),
- *   FixedToolbarFeature(),
- *   InlineToolbarFeature(),
- * ];
- * ```
- *
- * @see {@link https://payloadcms.com/docs/rich-text/lexical Payload Lexical Docs}
- */
-export const noteEditorConfig: Config["editor"] = lexicalEditor({
-  features: ({ rootFeatures }) => {
-    return [
-      ...rootFeatures,
-      StrikethroughFeature(),
-      FixedToolbarFeature(),
-      InlineToolbarFeature(),
-    ];
-  },
-});
-
 // Type exports for better IDE autocomplete and type checking
 export type RichEditorConfig = typeof richEditorConfig;
 export type BioEditorConfig = typeof bioEditorConfig;
-export type NoteEditorConfig = typeof noteEditorConfig;

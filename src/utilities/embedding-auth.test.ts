@@ -103,8 +103,6 @@ describe("embedding endpoint guards", () => {
     ["POST", "/regenerate", regenerate],
     ["GET", "/posts/1", getDocument],
     ["POST", "/posts/1", postDocument],
-    ["GET", "/notes/1", getDocument],
-    ["POST", "/notes/1", postDocument],
     ["GET", "/activities/1", getDocument],
     ["POST", "/activities/1", postDocument],
   ] as const)(
@@ -164,9 +162,9 @@ describe("scheduled embedding sync", () => {
     expect(response.status).toBe(200);
     expect(await response.json()).toMatchObject({
       mode: "stale-only",
-      collections: ["posts", "notes", "activities"],
+      collections: ["posts", "activities"],
       limitPerCollection: 25,
     });
-    expect(find).toHaveBeenCalledTimes(3);
+    expect(find).toHaveBeenCalledTimes(2);
   });
 });

@@ -41,7 +41,7 @@ interface TopicPillListProps {
   /** Where the "+N" pill leads (the item's page); plain text when omitted. */
   allTopicsHref?: string;
   /** Used in link labels: "View posts about …". */
-  itemLabel: "notes" | "posts";
+  itemLabel: "posts";
   /** `stack` fills a card's topic well; `inline` sits in a row of text. */
   layout?: "inline" | "stack";
   /** A card's topic well fits three pills at the minimum touch-target size. */

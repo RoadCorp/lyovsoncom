@@ -22,7 +22,7 @@ Build any env file for another branch with a small script, not `sed` substitutio
 
 ## 2. Seed stress content (optional, dev branch only)
 
-A post with a very long title, no image, six topics, banner and code blocks, and a nine-paragraph note. The script refuses any host not listed in `STRESS_SEED_ALLOWED_HOSTS` and is safe to re-run.
+A post with a very long title, no image, six topics, banner and code blocks, plus two portfolio projects. The script refuses any host not listed in `STRESS_SEED_ALLOWED_HOSTS` and is safe to re-run.
 
 ```sh
 STRESS_SEED_ALLOWED_HOSTS=ep-<branch> mise exec -- pnpm payload run scripts/seed-stress-content.ts
@@ -50,7 +50,7 @@ Expect differences only where the change intends them. Stress pages exist only o
 ## 5. Screenshots
 
 ```sh
-OUT=/tmp/shots TAG=my-change ROUTES=/,/posts,/notes \
+OUT=/tmp/shots TAG=my-change ROUTES=/,/posts,/activities \
   node .claude/skills/visual-review/scripts/screenshots.mjs https://www.lyovson.com http://127.0.0.1:3100
 ```
 

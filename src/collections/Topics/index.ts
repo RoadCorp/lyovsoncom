@@ -75,7 +75,7 @@ export const Topics: CollectionConfig = {
     beforeDelete: [
       async ({ id, req }) => {
         // Payload's hierarchy deletes child topics with their parent. Detach
-        // them first so their posts and notes keep the topic. Not moved up a
+        // them first so their posts keep the topic. Not moved up a
         // level: in a bulk delete the grandparent may be deleted too.
         await req.payload.update({
           collection: "topics",

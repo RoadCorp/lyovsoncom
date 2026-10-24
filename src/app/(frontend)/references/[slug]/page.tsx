@@ -39,7 +39,6 @@ import {
   activitiesRoute,
   activityUrl,
   homeRoute,
-  noteUrl,
   postUrl,
   referenceRoute,
 } from "@/utilities/routes";
@@ -76,11 +75,10 @@ function getHubDescription(reference: Reference) {
   );
 }
 
-function getHubItemUrls({ activities, notes, posts }: ReferenceHub) {
+function getHubItemUrls({ activities, posts }: ReferenceHub) {
   return [
     ...activities.map((activity) => activityUrl(activity)),
     ...posts.map((post) => (post.slug ? postUrl(post.slug) : null)),
-    ...notes.map((note) => (note.slug ? noteUrl(note.slug) : null)),
   ].flatMap((url) => (url ? [{ url }] : []));
 }
 
@@ -91,7 +89,7 @@ async function ReferencePageContent({ params: paramsPromise }: Args) {
   if (!hub) {
     return notFound();
   }
-  const { activities, notes, posts, reference } = hub;
+  const { activities, posts, reference } = hub;
   const url = absoluteUrl(referenceRoute(slug));
   const itemUrls = getHubItemUrls(hub);
 
@@ -127,12 +125,7 @@ async function ReferencePageContent({ params: paramsPromise }: Args) {
         <RelatedReferences items={items} key={label} label={label} />
       ))}
 
-      <ArchiveItems
-        items={[
-          ...toArchiveItems(posts, "post"),
-          ...toArchiveItems(notes, "note"),
-        ]}
-      />
+      <ArchiveItems items={toArchiveItems(posts, "post")} />
     </ViewTransition>
   );
 }

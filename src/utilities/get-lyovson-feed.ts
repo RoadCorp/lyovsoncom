@@ -11,19 +11,17 @@ import {
 import {
   countLyovsonContent,
   findLyovsonActivities,
-  findLyovsonNotes,
   findLyovsonPosts,
 } from "@/utilities/lyovson-feed-queries";
 import {
   type MixedFeedItem,
   mapActivitiesToMixedFeedItems,
-  mapNotesToMixedFeedItems,
   mapPostsToMixedFeedItems,
   sortMixedFeedItems,
 } from "@/utilities/mixed-feed";
 import { getPayloadClient } from "@/utilities/payload-client";
 
-export type LyovsonFilter = "all" | "posts" | "notes" | "activities";
+export type LyovsonFilter = "all" | "posts" | "activities";
 
 export type LyovsonMixedFeedItem = MixedFeedItem;
 
@@ -54,7 +52,6 @@ const FETCH_BUFFER = 5;
 export interface LyovsonFeedCounts {
   activities: number;
   all: number;
-  notes: number;
   posts: number;
 }
 
@@ -82,7 +79,6 @@ interface FeedPageArgs {
   limit: number;
   lyovsonId: number;
   page: number;
-  username: string;
 }
 
 interface FeedPage {
@@ -102,13 +98,6 @@ const singleCollectionFeeds: Record<
       totalItems: result.totalDocs,
     };
   },
-  notes: async ({ limit, page, username }) => {
-    const result = await findLyovsonNotes(username, limit, page);
-    return {
-      items: mapNotesToMixedFeedItems(result.docs),
-      totalItems: result.totalDocs,
-    };
-  },
   activities: async ({ limit, lyovsonId, page }) => {
     const result = await findLyovsonActivities(lyovsonId, limit, page);
     return {
@@ -123,20 +112,18 @@ const singleCollectionFeeds: Record<
  * requested page, merges them by date and slices out the page.
  */
 async function getMixedFeedItems(
-  { limit, lyovsonId, page, username }: FeedPageArgs,
+  { limit, lyovsonId, page }: FeedPageArgs,
   totalItems: number
 ): Promise<LyovsonMixedFeedItem[]> {
   const fetchLimit = Math.min(page * limit + FETCH_BUFFER, totalItems || limit);
 
-  const [posts, notes, activities] = await Promise.all([
+  const [posts, activities] = await Promise.all([
     findLyovsonPosts(lyovsonId, fetchLimit),
-    findLyovsonNotes(username, fetchLimit),
     findLyovsonActivities(lyovsonId, fetchLimit),
   ]);
 
   const mixedItems = sortMixedFeedItems([
     ...mapPostsToMixedFeedItems(posts.docs),
-    ...mapNotesToMixedFeedItems(notes.docs),
     ...mapActivitiesToMixedFeedItems(activities.docs),
   ]);
 
@@ -156,7 +143,6 @@ export async function getLyovsonFeed({
   const safeLimit = getValidLimit(limit);
 
   cacheTag("posts");
-  cacheTag("notes");
   cacheTag("activities");
   cacheTag("lyovsons");
   cacheTag(`lyovson-${username}`);
@@ -173,7 +159,6 @@ export async function getLyovsonFeed({
     limit: safeLimit,
     lyovsonId: user.id,
     page: safePage,
-    username,
   };
 
   if (filter !== "all") {
@@ -205,7 +190,6 @@ export async function getLyovsonFeedCounts(
   "use cache";
 
   cacheTag("posts");
-  cacheTag("notes");
   cacheTag("activities");
   cacheTag("lyovsons");
   cacheTag(`lyovson-${username}`);
@@ -217,11 +201,11 @@ export async function getLyovsonFeedCounts(
     return null;
   }
 
-  const counts = await countLyovsonContent(user.id, username);
+  const counts = await countLyovsonContent(user.id);
 
   return {
     ...counts,
-    all: counts.posts + counts.notes + counts.activities,
+    all: counts.posts + counts.activities,
   };
 }
 

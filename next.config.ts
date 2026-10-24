@@ -193,11 +193,6 @@ const nextConfig: NextConfig = {
       revalidate: 604_800,
       expire: 2_592_000,
     },
-    notes: {
-      stale: 3600, // 1 hour client; tags refresh on publish, 7 days/30 days as a backstop
-      revalidate: 604_800,
-      expire: 2_592_000,
-    },
     activities: {
       stale: 3600, // 1 hour client; tags refresh on publish, 7 days/30 days as a backstop
       revalidate: 604_800,

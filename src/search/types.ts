@@ -28,5 +28,5 @@ export interface SearchPreviewItem {
   href: string;
   subtitle: string;
   title: string;
-  type: "activity" | "note" | "post";
+  type: "activity" | "post";
 }

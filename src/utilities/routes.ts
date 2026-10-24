@@ -106,24 +106,6 @@ export function postsPageRoute(pageNumber: number) {
     : typedRoute(`/posts/page/${pageNumber}`);
 }
 
-export function notesRoute() {
-  return typedRoute("/notes");
-}
-
-export function noteRoute(slug: string) {
-  return typedRoute(`/notes/${slug}`);
-}
-
-export function noteUrl(slug: string) {
-  return absoluteUrl(noteRoute(slug));
-}
-
-export function notesPageRoute(pageNumber: number) {
-  return pageNumber <= 1
-    ? notesRoute()
-    : typedRoute(`/notes/page/${pageNumber}`);
-}
-
 export function activitiesRoute() {
   return typedRoute("/activities");
 }
@@ -229,16 +211,6 @@ export function lyovsonPostsPageRoute(username: string, pageNumber: number) {
   return pageNumber <= 1
     ? lyovsonPostsRoute(username)
     : typedRoute(`/${username}/posts/page/${pageNumber}`);
-}
-
-export function lyovsonNotesRoute(username: string) {
-  return typedRoute(`/${username}/notes`);
-}
-
-export function lyovsonNotesPageRoute(username: string, pageNumber: number) {
-  return pageNumber <= 1
-    ? lyovsonNotesRoute(username)
-    : typedRoute(`/${username}/notes/page/${pageNumber}`);
 }
 
 export function lyovsonActivitiesRoute(username: string) {

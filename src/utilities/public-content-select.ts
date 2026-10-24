@@ -1,8 +1,4 @@
-import type {
-  ActivitiesSelect,
-  NotesSelect,
-  PostsSelect,
-} from "@/payload-types";
+import type { ActivitiesSelect, PostsSelect } from "@/payload-types";
 
 // Search-only fields that never render: embeddings and the plain-text copy of
 // the rich text. Excluding them keeps them out of public reads and cache entries.
@@ -13,6 +9,4 @@ export const publicContentSelect = {
   embedding_dimensions: false,
   embedding_generated_at: false,
   embedding_text_hash: false,
-} as const satisfies NotesSelect<false> &
-  ActivitiesSelect<false> &
-  PostsSelect<false>;
+} as const satisfies ActivitiesSelect<false> & PostsSelect<false>;

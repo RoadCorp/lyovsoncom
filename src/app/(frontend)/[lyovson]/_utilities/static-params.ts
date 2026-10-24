@@ -44,7 +44,6 @@ export async function getLyovsonPaginatedStaticParams(filter: LyovsonFilter) {
   "use cache";
   cacheTag("lyovsons");
   cacheTag("posts");
-  cacheTag("notes");
   cacheTag("activities");
   cacheLife("static");
 

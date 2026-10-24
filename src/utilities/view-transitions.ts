@@ -103,21 +103,6 @@ export function getPostTitleTransitionName(slug: string) {
   return `post-${sanitizeTransitionSegment(slug)}-title`;
 }
 
-export function getNoteContentTransitionName(slug: string) {
-  return `note-${sanitizeTransitionSegment(slug)}-content`;
-}
-
-export function getNoteTitleTransitionName(slug: string) {
-  return `note-${sanitizeTransitionSegment(slug)}-title`;
-}
-
-export function getNoteMetaTransitionName(
-  slug: string,
-  part: "topics" | "byline" | "type"
-) {
-  return `note-${sanitizeTransitionSegment(slug)}-${part}`;
-}
-
 /** An activity's cover and title morph into its reference hub's hero. */
 export function getReferenceMediaTransitionName(slug: string) {
   return `reference-${sanitizeTransitionSegment(slug)}-media`;

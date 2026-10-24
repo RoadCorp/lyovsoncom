@@ -133,9 +133,18 @@ const redirects = () => {
     { source: "/index", destination: "/", permanent: true },
   ];
 
+  // Notes were retired; their old URLs lead home.
+  const retiredNotesRedirects = [
+    { source: "/notes", destination: "/", permanent: true },
+    { source: "/notes/:path*", destination: "/", permanent: true },
+    { source: "/:lyovson/notes", destination: "/", permanent: true },
+    { source: "/:lyovson/notes/:path*", destination: "/", permanent: true },
+  ];
+
   const allRedirects = [
     ...mediaRedirects,
     ...canonicalRedirects,
+    ...retiredNotesRedirects,
     ...newsletterArchiveRedirects,
     ...specificPostRedirects,
     ...projectIndexRedirects,

@@ -124,15 +124,6 @@ export function PostDetailSkeleton() {
   );
 }
 
-export function NoteDetailSkeleton() {
-  return (
-    <>
-      <SquareCardSkeleton className="col-start-1 g2:col-start-2 g3:col-start-2 col-end-2 g2:col-end-3 g3:col-end-3 g2:row-start-1 g3:row-start-1 row-start-2 g2:row-end-2 g3:row-end-2 row-end-3 g4:self-start" />
-      <BodySkeleton className="g2:col-start-2 g3:col-start-2 g2:col-end-3 g3:col-end-3 g2:row-start-2 g3:row-start-2 g2:row-end-3 g3:row-end-3" />
-    </>
-  );
-}
-
 export function ReferenceDetailSkeleton() {
   return (
     <>

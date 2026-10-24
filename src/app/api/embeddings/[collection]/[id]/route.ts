@@ -34,7 +34,7 @@ function json(body: unknown, status: number) {
 }
 
 /**
- * Returns a post's, note's or activity's stored embedding. `?regenerate=true`
+ * Returns a post's or activity's stored embedding. `?regenerate=true`
  * re-embeds it first through the shared helper (conditional write, no
  * version row). `?format=vector-only|metadata-only|full`, `?content=true`.
  */

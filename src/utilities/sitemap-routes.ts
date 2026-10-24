@@ -1,17 +1,9 @@
 import type { MetadataRoute } from "next";
-import type {
-  Activity,
-  Lyovson,
-  Note,
-  Post,
-  Project,
-  Topic,
-} from "@/payload-types";
+import type { Activity, Lyovson, Post, Project, Topic } from "@/payload-types";
 import {
   ACTIVITIES_PER_PAGE,
   getIndexedPaginationPages,
   LYOVSON_ITEMS_PER_PAGE,
-  NOTES_PER_PAGE,
   POSTS_PER_PAGE,
   PROJECT_POSTS_PER_PAGE,
   TOPIC_POSTS_PER_PAGE,
@@ -32,16 +24,11 @@ import {
   lyovsonActivitiesRoute,
   lyovsonBioRoute,
   lyovsonContactRoute,
-  lyovsonNotesPageRoute,
-  lyovsonNotesRoute,
   lyovsonPageRoute,
   lyovsonPortfolioRoute,
   lyovsonPostsPageRoute,
   lyovsonPostsRoute,
   lyovsonRoute,
-  notesPageRoute,
-  notesRoute,
-  noteUrl,
   postsPageRoute,
   postsRoute,
   postUrl,
@@ -101,7 +88,6 @@ export function getStaticRoutes(now: Date): Sitemap {
     sitemapEntry(getCanonicalSiteOrigin(), now, "daily", 1),
     // Main section pages - high priority
     sitemapEntry(absoluteUrl(postsRoute()), now, "daily", 0.9),
-    sitemapEntry(absoluteUrl(notesRoute()), now, "daily", 0.9),
     sitemapEntry(absoluteUrl(activitiesRoute()), now, "daily", 0.9),
     sitemapEntry(absoluteUrl(projectsRoute()), now, "weekly", 0.9),
     sitemapEntry(absoluteUrl(topicsRoute()), now, "weekly", 0.8),
@@ -248,33 +234,6 @@ function getTopicRoutes(
   });
 }
 
-function getNoteRoutes(notes: Note[], now: Date): Sitemap {
-  const routes: Sitemap = [];
-  for (const note of notes) {
-    if (note?.slug) {
-      routes.push(
-        sitemapEntry(
-          noteUrl(note.slug),
-          new Date(note.updatedAt),
-          "monthly",
-          0.8
-        )
-      );
-    }
-  }
-
-  routes.push(
-    ...paginatedRoutes({
-      pageRoute: notesPageRoute,
-      totalItems: notes.length,
-      pageSize: NOTES_PER_PAGE,
-      lastModified: now,
-      priority: 0.6,
-    })
-  );
-  return routes;
-}
-
 // Activities live on their reference hubs; getReferenceRoutes lists those.
 function getActivityRoutes(activities: Activity[], now: Date): Sitemap {
   const routes: Sitemap = [];
@@ -291,16 +250,10 @@ function getActivityRoutes(activities: Activity[], now: Date): Sitemap {
 }
 
 /** The newest edit among a hub's reference and what it lists. */
-function hubLastModified({
-  activities,
-  notes,
-  posts,
-  reference,
-}: ReferenceHub) {
+function hubLastModified({ activities, posts, reference }: ReferenceHub) {
   const dates = [
     reference.updatedAt,
     ...activities.map((activity) => activity.updatedAt),
-    ...notes.map((note) => note.updatedAt),
     // Post summaries carry no updatedAt.
     ...posts.map((post) => post.publishedAt ?? post.createdAt),
   ];
@@ -347,11 +300,6 @@ async function getLyovsonRoutes(
       0.55,
     ],
     [
-      (pageNumber) => lyovsonNotesPageRoute(username, pageNumber),
-      counts?.notes || 0,
-      0.55,
-    ],
-    [
       (pageNumber) => lyovsonActivitiesPageRoute(username, pageNumber),
       counts?.activities || 0,
       0.55,
@@ -390,12 +338,6 @@ async function getLyovsonRoutes(
     ),
     sitemapEntry(
       absoluteUrl(lyovsonPostsRoute(username)),
-      lastModified,
-      "weekly",
-      0.75
-    ),
-    sitemapEntry(
-      absoluteUrl(lyovsonNotesRoute(username)),
       lastModified,
       "weekly",
       0.75
@@ -445,14 +387,12 @@ export async function getContentRoutes(
   {
     activities,
     lyovsons,
-    notes,
     posts,
     projects,
     topics,
   }: {
     activities: Activity[];
     lyovsons: Lyovson[];
-    notes: Note[];
     posts: Post[];
     projects: Project[];
     topics: Topic[];
@@ -469,7 +409,6 @@ export async function getContentRoutes(
     ...getPostRoutes(posts, now),
     ...getProjectRoutes(projects, projectPostCounts),
     ...getTopicRoutes(topics, topicPostCounts),
-    ...getNoteRoutes(notes, now),
     ...getActivityRoutes(activities, now),
     ...(await getReferenceRoutes()),
     ...(await getAllLyovsonRoutes(lyovsons, projects, now)),

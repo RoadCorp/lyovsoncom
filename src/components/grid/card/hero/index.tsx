@@ -1,12 +1,4 @@
-import {
-  ArrowLeft,
-  Brain,
-  Calendar,
-  ExternalLink,
-  FileText,
-  PenTool,
-  Quote,
-} from "lucide-react";
+import { ArrowLeft, ExternalLink, FileText } from "lucide-react";
 import { Fragment, ViewTransition } from "react";
 import {
   REFERENCE_TYPE_LABELS,
@@ -21,14 +13,13 @@ import { MediaFallback } from "@/components/Media/media-fallback";
 import { PostTransitionBoundary } from "@/components/post-transitions/post-transition-boundary";
 import { TopicPillList } from "@/components/topic-pill";
 import { cn } from "@/lib/utils";
-import type { Note, Post, Reference, Topic } from "@/payload-types";
+import type { Post, Reference, Topic } from "@/payload-types";
 import { formatShortDate } from "@/utilities/date";
 import { dedupeRelationItemsById } from "@/utilities/dedupe-relation-items-by-id";
 import { getPublishedProject } from "@/utilities/public-project";
 import { getWholes, groupCredits } from "@/utilities/reference-links";
 import {
   lyovsonRoute,
-  notesRoute,
   postsRoute,
   projectRoute,
   referenceRoute,
@@ -36,8 +27,6 @@ import {
 } from "@/utilities/routes";
 import {
   frontendViewTransitionClasses,
-  getNoteMetaTransitionName,
-  getNoteTitleTransitionName,
   getReferenceMediaTransitionName,
   getReferenceTitleTransitionName,
 } from "@/utilities/view-transitions";
@@ -257,94 +246,6 @@ export const GridCardHero = ({
         </GridCardSection>
       </GridCard>
     </PostTransitionBoundary>
-  );
-};
-
-export const GridCardHeroNote = ({
-  className,
-  note,
-}: {
-  className?: string;
-  note: Note;
-}) => {
-  const isQuoteType = note.type === "quote";
-  const typeLabel = isQuoteType ? "quote" : "thought";
-
-  return (
-    <GridCard
-      className={cn(
-        "col-start-1 col-end-2 row-start-2 row-end-3",
-        "g2:col-start-2 g2:col-end-3 g2:row-start-1 g2:row-end-2",
-        "g3:col-start-2 g3:col-end-3 g3:row-start-1 g3:row-end-2",
-        "g4:self-start",
-        className
-      )}
-    >
-      <GridCardSection className="surface-title-stage col-start-1 col-end-4 row-start-1 row-end-3 flex h-full flex-col items-center justify-center px-6 py-6">
-        <div className="absolute top-3 right-4">
-          <HeroBackLink href={notesRoute()} label="Notes" />
-        </div>
-        <ViewTransition
-          name={getNoteTitleTransitionName(note.slug || String(note.id))}
-          {...frontendViewTransitionClasses.sharedTitle}
-        >
-          <h1 className="tone-heading text-center font-bold text-2xl">
-            {note.title}
-          </h1>
-        </ViewTransition>
-      </GridCardSection>
-
-      <ViewTransition
-        name={getNoteMetaTransitionName(note.slug || String(note.id), "topics")}
-        {...frontendViewTransitionClasses.sharedMeta}
-      >
-        <GridCardSection className="surface-rail-panel card-rail-stack card-topic-stack col-start-1 col-end-2 row-start-3 row-end-4 h-full">
-          <TopicPillList
-            itemLabel="notes"
-            topics={dedupeRelationItemsById(note.topics).filter(
-              (topic) => typeof topic === "object"
-            )}
-          />
-        </GridCardSection>
-      </ViewTransition>
-
-      <ViewTransition
-        name={getNoteMetaTransitionName(note.slug || String(note.id), "byline")}
-        {...frontendViewTransitionClasses.sharedMeta}
-      >
-        <GridCardSection className="surface-rail-panel card-rail-stack card-meta-stack col-start-2 col-end-3 row-start-3 row-end-4">
-          {note.author ? (
-            <div className="tone-muted flex items-center gap-2 text-xs capitalize">
-              <PenTool aria-hidden="true" className="h-5 w-5" />
-              <span className="font-medium">{note.author}</span>
-            </div>
-          ) : null}
-
-          {note.publishedAt ? (
-            <div className="tone-muted flex items-center gap-2 text-xs">
-              <Calendar aria-hidden="true" className="h-5 w-5" />
-              <time dateTime={note.publishedAt}>
-                {formatShortDate(note.publishedAt)}
-              </time>
-            </div>
-          ) : null}
-        </GridCardSection>
-      </ViewTransition>
-
-      <ViewTransition
-        name={getNoteMetaTransitionName(note.slug || String(note.id), "type")}
-        {...frontendViewTransitionClasses.sharedMeta}
-      >
-        <GridCardSection className="surface-rail-panel col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
-          {isQuoteType ? (
-            <Quote aria-hidden="true" className="tone-heading h-5 w-5" />
-          ) : (
-            <Brain aria-hidden="true" className="tone-heading h-5 w-5" />
-          )}
-          <span className="tone-muted text-xs capitalize">{typeLabel}</span>
-        </GridCardSection>
-      </ViewTransition>
-    </GridCard>
   );
 };
 

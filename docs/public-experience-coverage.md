@@ -35,8 +35,6 @@ Each row covers its page-local helper components and metadata/static-parameter f
 | `/[lyovson]/activities/page/[pageNumber]` | R15: Author activity pagination | Cached scoped activity results. | URL boundary; date/slug-safe identities and pager. | Populated second page; last page; author switch. |
 | `/[lyovson]/bio` | R16: Author biography | Cached profile shared with layout; rich-text biography or empty card. | Reuse profile read; stream only dependent blocks; keep profile frame. | Long biography, empty biography, embedded blocks. |
 | `/[lyovson]/contact` | R18: Author contact | Cached public profile and contact/social display. | Ready public contact card under author boundary; native external/mailto behavior. | Missing optional contact fields; keyboard links; no new form. |
-| `/[lyovson]/notes` | R14: Author notes | Cached username-filtered notes. | Retain author mapping and public predicate; shaped child list shell. | Both supported authors; quote/excerpt references; empty author list. |
-| `/[lyovson]/notes/page/[pageNumber]` | R14: Author note pagination | Cached scoped notes and pagination. | Retain author key and child-state contract; no full profile remount. | Correct author/query restoration and page validation. |
 | `/[lyovson]/page/[pageNumber]` | R12: Author home pagination | Cached mixed feed slices merged results; fetch volume can grow with page. | Bound measured feed work while retaining ordering/totals; preserve profile and rail. | Deep-page mixed-content fixture; no skipped/duplicated items. |
 | `/[lyovson]/portfolio` | R17: Author portfolio | Cached query for published projects that credit the author (`people`), card fields only. An empty portfolio is `noindex` and left out of the sitemap. | Keep membership explicit; cards share the project card's view-transition names. | No projects; a project shared by both authors; drafts hidden; correct author. |
 | `/[lyovson]/posts` | R13: Author posts | Shared author layout and filtered cached feed. | Profile stays anchored; child list shell; public summary reads. | Correct author scope; change section without profile flash. |
@@ -50,9 +48,6 @@ Each row covers its page-local helper components and metadata/static-parameter f
 | `/am` | R20: Armenian section placeholder (hidden) | Synchronous placeholder card; `noindex, follow`; not in the menu or sitemap. | Keep the route; restore the menu and sitemap entries when real content exists. | Correct heading/canonical; robots meta. |
 | `/contact` | R20: Global contact placeholder (hidden) | Synchronous placeholder card; `noindex, follow`; not in the menu or sitemap. | Keep the route; restore the menu and sitemap entries when real content exists. | Correct heading/canonical; robots meta. |
 | `/topics` | Topics index | One cached query for topics with published posts and their counts; tinted pills. | Static, in the menu and sitemap. | Pill links, counts, both themes. |
-| `/notes` | R04: Notes archive | Cached depth-2 notes; full documents passed to cards. | Inventory excerpt/quote fields; evaluate summary projection; stable shell. | All note types; source references; empty list. |
-| `/notes/[slug]` | R05: Note detail | Cached note; separate loading; uncached RelatedNotes ID lookup. | Public-filter related results before caching; body/metadata sharing; independent recommendations. | Private/draft fixture excluded; missing reference; duplicate related item; long quote. |
-| `/notes/page/[pageNumber]` | R04: Notes pagination | Params gate cached notes; shared pagination. | URL boundary; same summary contract; directional continuity. | Page-one redirect; page beyond total; notes → detail → Back. |
 | `/offline` | R23: Offline information | Existing recovery/information page; no offline retry rollout here. | Keep lightweight; distinguish informational page from guaranteed offline availability. | Links work when connected; no new service worker or fake offline guarantee. |
 | `/page/[pageNumber]` | R01: Home pagination | URL params gate cached posts/activity reads. | Route-local URL boundary; preserve rail; directional page change. | Page 1 redirect; invalid/out-of-range page; Back to prior scroll. |
 | `/playground` | R24: Protected utility | Suspense then headers/auth; redirects unauthenticated visitors to admin. | Retain auth-only behavior; no shared public cache or eager prefetch; no admin work. | Unauthenticated redirect; isolated authenticated fixture if needed. |
@@ -80,7 +75,6 @@ Each row covers its page-local helper components and metadata/static-parameter f
 | `src/app/(frontend)/layout.tsx` | Persistent public grid/nav/theme. Audit navigation search-param suspension without blanking frame. |
 | `src/app/(frontend)/loading.tsx` | Match the destination grid slots and landmarks; verify direct load AND client entry from each shared-layout depth. Never duplicate nav/profile in fallback. |
 | `src/app/(frontend)/not-found.tsx` | Preserve genuine missing-content semantics, metadata and route recovery; verify streamed vs pre-stream missing detection and no misleading successful page. |
-| `src/app/(frontend)/notes/[slug]/loading.tsx` | Match the destination grid slots and landmarks; verify direct load AND client entry from each shared-layout depth. Never duplicate nav/profile in fallback. |
 | `src/app/(frontend)/projects/[project]/loading.tsx` | Match the destination grid slots and landmarks; verify direct load AND client entry from each shared-layout depth. Never duplicate nav/profile in fallback. |
 | `src/app/(frontend)/projects/[project]/not-found.tsx` | Preserve genuine missing-content semantics, metadata and route recovery; verify streamed vs pre-stream missing detection and no misleading successful page. |
 | `src/app/(frontend)/template.tsx` | Retain transition policy; audit remount/key behavior against Activity and history before moving/removing this boundary. |
@@ -174,14 +168,11 @@ Unused template components and UI primitives were removed during the September 6
 | `src/components/grid/card/nav/site-title-section.tsx` | C04 | server-compatible / helper |
 | `src/components/grid/card/nav/theme-switcher.tsx` | C04 | client |
 | `src/components/grid/card/not-found/index.tsx` | C06 | server-compatible / helper |
-| `src/components/grid/card/note/grid-card-note-full.tsx` | C03 | server-compatible / helper |
-| `src/components/grid/card/note/index.tsx` | C03 | server-compatible / helper |
 | `src/components/grid/card/post/grid-card-post-full.tsx` | C03 | server-compatible / helper |
 | `src/components/grid/card/post/index.tsx` | C03 | server-compatible / helper |
 | `src/components/grid/card/project/index.tsx` | C03 | server-compatible / helper |
 | `src/components/grid/card/references/grid-card-references.tsx` | C07 | server-compatible / helper |
 | `src/components/grid/card/references/index.tsx` | C07 | server-compatible / helper |
-| `src/components/grid/card/related/grid-card-related-notes.tsx` | C07 | server-compatible / helper |
 | `src/components/grid/card/related/index.tsx` | C07 | server-compatible / helper |
 | `src/components/grid/card/section/index.tsx` | C03 | server-compatible / helper |
 | `src/components/grid/card/user/index.tsx` | C07 | server-compatible / helper |
@@ -213,10 +204,10 @@ These files participate in the public contract even though they are not TSX comp
 
 | Scope | Files and decision |
 | --- | --- |
-| Domain reads | `src/utilities/get-post.ts`, `get-note.ts`, `get-activity.ts`, `get-project.ts`, `get-projects.ts`, `get-project-posts.ts`, `get-topic.ts`, `get-topic-posts.ts`, `get-lyovson-profile.ts`, `get-lyovson-feed.ts`: apply the parent cache table, visibility, projections, keys and invalidation tests. |
+| Domain reads | `src/utilities/get-post.ts`, `get-activity.ts`, `get-project.ts`, `get-projects.ts`, `get-project-posts.ts`, `get-topic.ts`, `get-topic-posts.ts`, `get-lyovson-profile.ts`, `get-lyovson-feed.ts`: apply the parent cache table, visibility, projections, keys and invalidation tests. |
 | Query dependencies | `content-queries.ts`, `post-summary.ts`, `mixed-feed.ts`, `activity-preview.ts`, `payload-client.ts`, `activity-path.ts`, `activity-type.ts`: preserve predicates, ordering, public shape, path identity and cached redirect correctness. |
-| Recommendation support | `get-similar-content.ts` (with its `get-similar-posts.ts` and `get-similar-notes.ts` wrappers) and embedding helpers: trace whether called by publication or runtime before optimizing; no regeneration or new semantic work from prefetch. Inline RelatedPosts/RelatedNotes are explicitly covered by R03/R05. |
-| Public hooks | `src/collections/Posts/hooks`, `Notes/hooks`, `Activities/hooks`, plus Media, Lyovsons, Projects, Topics and References collection hooks/configs: map public invalidation dependencies. No admin UI work or schema changes. |
+| Recommendation support | `get-similar-content.ts` (with its `get-similar-posts.ts` wrapper) and embedding helpers: trace whether called by publication or runtime before optimizing; no regeneration or new semantic work from prefetch. Inline RelatedPosts is explicitly covered by R03. |
+| Public hooks | `src/collections/Posts/hooks`, `Activities/hooks`, plus Media, Lyovsons, Projects, Topics and References collection hooks/configs: map public invalidation dependencies. No admin UI work or schema changes. |
 | Search | `src/search/service.ts`, `types.ts`, `beforeSync.ts`, `fieldOverrides.ts`, `src/app/api/search/route.ts`: retain normalization, limits, visibility and scope/ranking; deduplicate per request, support direct query URLs, and exclude typing/prefetch from embedding execution. |
 | Routing/motion/style | `src/utilities/routes.ts`, `view-transitions.ts`, `src/app/(frontend)/globals.css`, navigation types, activity shared helpers: retain identity, accessibility, theme and grid contracts. |
 | Media and block schemas | `src/components/Media/image-sizes.ts`, `types.ts`, `src/blocks/*/config.ts`, GIF types/actions and aspect-ratio utilities: read to understand public fields; no admin picker/schema refactor. |
@@ -230,13 +221,13 @@ These files participate in the public contract even though they are not TSX comp
 Every route definition has a direct-load or protected-redirect case in `e2e/public-pages.spec.ts`. Focused navigation, history, no-JavaScript, mobile/theme and isolated media cases passed. The compound scenarios below remain the broader release checklist; an unchecked row may include tested subcases and does not imply that implementation is pending. See the verification report for exact coverage and fixture limitations.
 
 - [ ] Main menu → each destination; Hero/Menu/Search switching; Escape and focus restoration.
-- [ ] Home/archive → post/note/activity → related item → Back/Forward; source scroll and card identity.
+- [ ] Home/archive → post/activity → related item → Back/Forward; source scroll and card identity.
 - [ ] Projects/topics → page two → article → Back; stable hero/topic context and pager.
 - [ ] Global → Rafa → each author section → Jess → Back; correct profile/font/scope and no stale cross-author content.
 - [ ] Global/scoped search: blank query, results/no results, invalid input, failure/retry, rapid submits, bookmarked query, refresh and Back/Forward; zero typing/hover/prefetch embeddings; pending/completion announced and late results isolated.
 - [ ] Warm shell, shell-only, intent-warmed detail, cold server instance, revalidation, deployment cache reset, cold browser/image caches and unseen-at-build content; useful navigation with delayed JavaScript.
-- [ ] Invalid author/topic/project/post/note/activity; invalid date and page number; old slug redirect; valid empty collection; page-one redirect.
-- [ ] Long title, large article, quote note, mixed activity references, missing/slow image and every rich-text block type.
+- [ ] Invalid author/topic/project/post/activity; invalid date and page number; old slug redirect; valid empty collection; page-one redirect.
+- [ ] Long title, large article, mixed activity references, missing/slow image and every rich-text block type.
 - [ ] Delayed/failed X response does not hide article text; YouTube click-to-load; GIF/video hide/show cleanup; code-copy behavior.
 - [ ] Pause initial/mid/final transition frames: shared image remains visible, shell brightness constant, active page numeral present.
 - [ ] Browser history, native back/forward cache and fresh push/replace have intentional state semantics; traverse beyond three routes to test eviction. Cached Back need not animate; URL reconstruction stays correct.

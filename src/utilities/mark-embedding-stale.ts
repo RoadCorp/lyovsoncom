@@ -158,18 +158,6 @@ export const markPostEmbeddingStaleHook = createMarkEmbeddingStaleHook({
   },
 });
 
-export const markNoteEmbeddingStaleHook = createMarkEmbeddingStaleHook({
-  trackedFields: {
-    title: "value",
-    type: "value",
-    author: "value",
-    quotedPerson: "value",
-    topics: "relation",
-    content: "richText",
-  },
-  requirePublicVisibility: true,
-});
-
 export const markActivityEmbeddingStaleHook = createMarkEmbeddingStaleHook({
   trackedFields: {
     reference: "relation",

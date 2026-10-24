@@ -46,16 +46,14 @@ export {
 export { GridCardEmptyState } from "./card/empty-state";
 export {
   GridCardHero,
-  GridCardHeroNote,
   GridCardHeroReference,
 } from "./card/hero";
 export { GridCardNav, GridCardNavItem } from "./card/nav";
 export { GridCardNotFound } from "./card/not-found";
-export { GridCardNoteFull } from "./card/note";
 export { GridCardPostFull } from "./card/post";
 export { GridCardProject, GridCardProjectHero } from "./card/project";
 export { GridCardReferences } from "./card/references";
-export { GridCardRelatedNotes, GridCardRelatedPosts } from "./card/related";
+export { GridCardRelatedPosts } from "./card/related";
 export { GridCardSection } from "./card/section";
 export { GridCardUser } from "./card/user";
 export { GridCardUserSocial } from "./card/user-social";

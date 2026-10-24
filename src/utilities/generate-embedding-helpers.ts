@@ -2,7 +2,7 @@ import { and, eq } from "@payloadcms/db-vercel-postgres/drizzle";
 import { revalidateTag } from "next/cache";
 import type { Payload, Where } from "payload";
 import { REFERENCE_TYPE_LABELS } from "@/collections/References/fields/type";
-import type { Activity, Note, Post } from "@/payload-types";
+import type { Activity, Post } from "@/payload-types";
 import { getActivityTypeLabel } from "@/utilities/activity-type";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";
 import {
@@ -11,7 +11,6 @@ import {
   EMBEDDING_VECTOR_DIMENSIONS,
   generateEmbedding,
 } from "@/utilities/generate-embedding";
-import { getSimilarNotes } from "@/utilities/get-similar-notes";
 import { getSimilarPosts } from "@/utilities/get-similar-posts";
 import { isPopulated } from "@/utilities/relations";
 
@@ -37,33 +36,12 @@ export function buildPostEmbeddingText(post: Post): string {
     .join("\n\n");
 }
 
-export function buildNoteEmbeddingText(note: Note): string {
-  const contentText = extractLexicalText(note.content);
-  const noteTypeLabel = note.type === "quote" ? "Quote" : "Thought";
-  const topicNames = note.topics
-    ?.filter(isPopulated)
-    .map((t) => t.name)
-    .filter(Boolean)
-    .join(", ");
-
-  return [
-    note.title,
-    `Type: ${noteTypeLabel}`,
-    note.author ? `Author: ${note.author}` : null,
-    note.quotedPerson ? `Quoted: ${note.quotedPerson}` : null,
-    topicNames ? `Topics: ${topicNames}` : null,
-    contentText,
-  ]
-    .filter(Boolean)
-    .join("\n\n");
-}
-
 /**
- * Recommendation lists are rendered from the cached post or note, so refresh
+ * Recommendation lists are rendered from the cached post, so refresh
  * that entry (stale-while-revalidate). Outside a request, such as a CLI
  * script, there is no cache to refresh.
  */
-function refreshRecommendationCache(tag: string, profile: "notes" | "posts") {
+function refreshRecommendationCache(tag: string, profile: "posts") {
   try {
     revalidateTag(tag, profile);
   } catch {
@@ -103,11 +81,10 @@ export function buildActivityEmbeddingText(activity: Activity): string {
   return textParts.join("\n\n");
 }
 
-export type EmbeddableCollection = "activities" | "notes" | "posts";
+export type EmbeddableCollection = "activities" | "posts";
 
 export const EMBEDDABLE_COLLECTIONS: readonly EmbeddableCollection[] = [
   "posts",
-  "notes",
   "activities",
 ];
 
@@ -131,7 +108,6 @@ export interface EmbeddingResult {
 
 interface EmbeddableDocs {
   activities: Activity;
-  notes: Note;
   posts: Post;
 }
 
@@ -144,9 +120,9 @@ interface EmbeddableSpec<C extends EmbeddableCollection> {
   publicWhere: Where;
   /** Recommendations stored on the document after its embedding changes. */
   recommendations?: {
-    cacheProfile: "notes" | "posts";
-    cacheTagPrefix: "note" | "post";
-    column: "recommended_note_ids" | "recommended_post_ids";
+    cacheProfile: "posts";
+    cacheTagPrefix: "post";
+    column: "recommended_post_ids";
     findSimilar: (id: number, limit: number) => Promise<{ id: number }[]>;
   };
   requiresContent: boolean;
@@ -166,19 +142,6 @@ export const EMBEDDABLE: { [C in EmbeddableCollection]: EmbeddableSpec<C> } = {
     },
     requiresContent: true,
   },
-  notes: {
-    buildText: buildNoteEmbeddingText,
-    depth: 1,
-    label: "Note",
-    publicWhere: PUBLISHED_AND_PUBLIC,
-    recommendations: {
-      cacheProfile: "notes",
-      cacheTagPrefix: "note",
-      column: "recommended_note_ids",
-      findSimilar: getSimilarNotes,
-    },
-    requiresContent: true,
-  },
   activities: {
     buildText: buildActivityEmbeddingText,
     depth: 1,
@@ -191,12 +154,12 @@ export const EMBEDDABLE: { [C in EmbeddableCollection]: EmbeddableSpec<C> } = {
 /** Builds the embedding text for any embeddable document. */
 export function buildEmbeddingText(
   collection: EmbeddableCollection,
-  doc: Activity | Note | Post
+  doc: Activity | Post
 ): string {
   // The spec map ties each collection to its own document type; TypeScript
   // can't follow that through a union key, so widen once here.
   const buildText = EMBEDDABLE[collection].buildText as (
-    doc: Activity | Note | Post
+    doc: Activity | Post
   ) => string;
   return buildText(doc);
 }
@@ -241,7 +204,7 @@ async function persistEmbedding(args: {
 }
 
 /**
- * Embeds one published document and, for posts and notes, refreshes its
+ * Embeds one published document and, for posts, refreshes its
  * recommendations. Unchanged text is skipped unless `force` is set; the
  * write is conditional on the document not changing meanwhile.
  */
@@ -260,7 +223,7 @@ export async function generateEmbeddingFor(
       id,
       depth: spec.depth,
       overrideAccess: true,
-    })) as Activity | Note | Post | null;
+    })) as Activity | Post | null;
 
     if (!doc) {
       payload.logger.error(`[Embedding] ${spec.label} ${id} not found`);
@@ -341,7 +304,7 @@ export async function generateEmbeddingFor(
   }
 }
 
-/** Stores the nearest documents' ids on a post or note. Non-critical. */
+/** Stores the nearest documents' ids on a post. Non-critical. */
 async function computeRecommendations(
   collection: EmbeddableCollection,
   id: number,

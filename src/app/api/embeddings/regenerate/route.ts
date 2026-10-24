@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
 
     if (!isEmbeddableCollection(collection)) {
       return NextResponse.json(
-        { error: 'collection must be "posts", "notes", or "activities"' },
+        { error: 'collection must be "posts" or "activities"' },
         { status: 400 }
       );
     }

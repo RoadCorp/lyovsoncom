@@ -127,7 +127,6 @@ export interface Config {
     agents: Agent;
     references: Reference;
     activities: Activity;
-    notes: Note;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -151,7 +150,6 @@ export interface Config {
     agents: AgentsSelect<false> | AgentsSelect<true>;
     references: ReferencesSelect<false> | ReferencesSelect<true>;
     activities: ActivitiesSelect<false> | ActivitiesSelect<true>;
-    notes: NotesSelect<false> | NotesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -294,10 +292,6 @@ export interface Post {
    * People, companies, works, and web media referenced in this post
    */
   references?: (number | Reference)[] | null;
-  /**
-   * Notes that connect to this post
-   */
-  notesReferenced?: (number | Note)[] | null;
   /**
    * When this post should be published
    */
@@ -853,133 +847,6 @@ export interface Project {
   _status?: ('draft' | 'published') | null;
 }
 /**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "notes".
- */
-export interface Note {
-  id: number;
-  /**
-   * The main title of your note
-   */
-  title: string;
-  /**
-   * What type of note is this?
-   */
-  type: 'quote' | 'thought';
-  /**
-   * Who wrote this note?
-   */
-  author: 'rafa' | 'jess';
-  /**
-   * Who can see this note?
-   */
-  visibility: 'public' | 'private';
-  /**
-   * Optional explicit overrides for search and social metadata. Leave blank to use content defaults.
-   */
-  seo?: {
-    /**
-     * Optional raw page title. Do not include site branding here.
-     */
-    title?: string | null;
-    /**
-     * Optional search and social description override for this page.
-     */
-    description?: string | null;
-    /**
-     * Optional social sharing image override. Falls back to the content image or the default OG image.
-     */
-    image?: (number | null) | Media;
-  };
-  content: LexicalRichText<LexicalNodes_AD327369>;
-  /**
-   * What reference is this quote from?
-   */
-  sourceReference?: (number | null) | Reference;
-  /**
-   * Who said this quote? (e.g., author name, speaker)
-   */
-  quotedPerson?: string | null;
-  /**
-   * Page number, timestamp, or location reference
-   */
-  pageNumber?: string | null;
-  /**
-   * What topics does this note cover?
-   */
-  topics?: (number | Topic)[] | null;
-  /**
-   * Connect this note to other content in your knowledge base
-   */
-  connections?:
-    | (
-        | {
-            relationTo: 'posts';
-            value: number | Post;
-          }
-        | {
-            relationTo: 'references';
-            value: number | Reference;
-          }
-        | {
-            relationTo: 'notes';
-            value: number | Note;
-          }
-      )[]
-    | null;
-  /**
-   * When this note should be published
-   */
-  publishedAt?: string | null;
-  /**
-   * Vector embedding for semantic search (pgvector format)
-   */
-  embedding_vector?: string | null;
-  embedding_model?: string | null;
-  embedding_dimensions?: number | null;
-  embedding_generated_at?: string | null;
-  embedding_text_hash?: string | null;
-  /**
-   * Pre-computed recommended note IDs based on semantic similarity
-   */
-  recommended_note_ids?:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
-  /**
-   * Plain text extracted from rich text content for full-text search indexing
-   */
-  content_text?: string | null;
-  slug: string;
-  createdBy?:
-    | ({
-        relationTo: 'lyovsons';
-        value: number | Lyovson;
-      } | null)
-    | ({
-        relationTo: 'agents';
-        value: number | Agent;
-      } | null);
-  updatedBy?:
-    | ({
-        relationTo: 'lyovsons';
-        value: number | Lyovson;
-      } | null)
-    | ({
-        relationTo: 'agents';
-        value: number | Agent;
-      } | null);
-  updatedAt: string;
-  createdAt: string;
-  deletedAt?: string | null;
-  _status?: ('draft' | 'published') | null;
-}
-/**
  * Log reading, watching, listening, playing, visiting, and learning activities
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1149,10 +1016,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'activities';
         value: number | Activity;
-      } | null)
-    | ({
-        relationTo: 'notes';
-        value: number | Note;
       } | null);
   globalSlug?: string | null;
   user:
@@ -1262,7 +1125,6 @@ export interface PostsSelect<T extends boolean = true> {
   topics?: T;
   project?: T;
   references?: T;
-  notesReferenced?: T;
   publishedAt?: T;
   authors?: T;
   populatedAuthors?:
@@ -1569,44 +1431,6 @@ export interface ActivitiesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "notes_select".
- */
-export interface NotesSelect<T extends boolean = true> {
-  title?: T;
-  type?: T;
-  author?: T;
-  visibility?: T;
-  seo?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        image?: T;
-      };
-  content?: T;
-  sourceReference?: T;
-  quotedPerson?: T;
-  pageNumber?: T;
-  topics?: T;
-  connections?: T;
-  publishedAt?: T;
-  embedding_vector?: T;
-  embedding_model?: T;
-  embedding_dimensions?: T;
-  embedding_generated_at?: T;
-  embedding_text_hash?: T;
-  recommended_note_ids?: T;
-  content_text?: T;
-  slug?: T;
-  createdBy?: T;
-  updatedBy?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  deletedAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -1688,8 +1512,7 @@ export interface CollectionsWidget {
 export interface CollectionQueryWidget {
   data?: {
     title?: string | null;
-    relatedCollection:
-      'posts' | 'media' | 'topics' | 'projects' | 'lyovsons' | 'agents' | 'references' | 'activities' | 'notes';
+    relatedCollection: 'posts' | 'media' | 'topics' | 'projects' | 'lyovsons' | 'agents' | 'references' | 'activities';
     where?:
       | {
           [k: string]: unknown;
@@ -1712,8 +1535,7 @@ export interface CollectionQueryWidget {
 export interface ActivityWidget {
   data?: {
     excludedCollections?:
-      | ('posts' | 'media' | 'topics' | 'projects' | 'lyovsons' | 'agents' | 'references' | 'activities' | 'notes')[]
-      | null;
+      ('posts' | 'media' | 'topics' | 'projects' | 'lyovsons' | 'agents' | 'references' | 'activities')[] | null;
   };
   width: 'small' | 'medium' | 'large' | 'x-large' | 'full';
 }

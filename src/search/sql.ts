@@ -17,7 +17,6 @@ interface ScopedSearchSqlParams extends HybridSearchSqlParams {
 
 interface ScopePredicates {
   activities: SQL;
-  notes: SQL;
   posts: SQL;
 }
 
@@ -33,7 +32,6 @@ function scopePredicates(scopeUsername: string): ScopePredicates {
           AND l.username = ${scopeUsername}
       )
     `,
-    notes: sql`n.author = ${scopeUsername}`,
     activities: sql`
       (
         EXISTS (
@@ -107,55 +105,6 @@ function postsRankingCtes(
       )`;
 }
 
-function notesRankingCtes(
-  { matchWindow, query, vectorString }: ScopedSearchSqlParams,
-  scope: SQL
-) {
-  return sql`
-      notes_semantic_search AS (
-        SELECT
-          n.id,
-          ROW_NUMBER() OVER (
-            ORDER BY n.embedding_vector::vector(1536) <=> ${vectorString}::vector
-          ) AS rank
-        FROM notes n
-        WHERE ${vectorString}::vector IS NOT NULL
-          AND n._status = 'published'
-          AND n.visibility = 'public'
-          AND n.embedding_vector IS NOT NULL
-          AND ${scope}
-        ORDER BY n.embedding_vector::vector(1536) <=> ${vectorString}::vector
-        LIMIT ${matchWindow}
-      ),
-      notes_fulltext_search AS (
-        SELECT
-          n.id,
-          ROW_NUMBER() OVER (
-            ORDER BY ts_rank(n.search_vector, websearch_to_tsquery('english', ${query})) DESC
-          ) AS rank
-        FROM notes n
-        WHERE n._status = 'published'
-          AND n.visibility = 'public'
-          AND n.search_vector @@ websearch_to_tsquery('english', ${query})
-          AND ${scope}
-        ORDER BY ts_rank(n.search_vector, websearch_to_tsquery('english', ${query})) DESC
-        LIMIT ${matchWindow}
-      ),
-      notes_fuzzy_search AS (
-        SELECT
-          n.id,
-          ROW_NUMBER() OVER (
-            ORDER BY similarity(n.title, ${query}) DESC
-          ) AS rank
-        FROM notes n
-        WHERE n._status = 'published'
-          AND n.visibility = 'public'
-          AND n.title % ${query}
-          AND ${scope}
-        LIMIT ${matchWindow}
-      )`;
-}
-
 function activitiesRankingCtes(
   { matchWindow, query, vectorString }: ScopedSearchSqlParams,
   scope: SQL
@@ -205,7 +154,7 @@ function activitiesRankingCtes(
       )`;
 }
 
-/** Fuses the three per-collection rankings into one score per document. */
+/** Fuses the per-collection rankings into one score per document. */
 function rankedResults(scopes: ScopePredicates) {
   return sql`
       SELECT
@@ -234,37 +183,6 @@ function rankedResults(scopes: ScopePredicates) {
           posts_semantic_search.id IS NOT NULL
           OR posts_fulltext_search.id IS NOT NULL
           OR posts_fuzzy_search.id IS NOT NULL
-        )
-
-      UNION ALL
-
-      SELECT
-        'notes'::VARCHAR AS collection,
-        n.id,
-        n.title,
-        n.slug,
-        NULL::VARCHAR AS description,
-        NULL::INTEGER AS featured_image_id,
-        n.created_at,
-        n.updated_at,
-        notes_semantic_search.rank AS semantic_rank,
-        notes_fulltext_search.rank AS fts_rank,
-        notes_fuzzy_search.rank AS fuzzy_rank,
-        COALESCE(1.0 / (${SEARCH_RRF_K} + notes_semantic_search.rank), 0.0) * 0.4 +
-        COALESCE(1.0 / (${SEARCH_RRF_K} + notes_fulltext_search.rank), 0.0) * 0.4 +
-        COALESCE(1.0 / (${SEARCH_RRF_K} + notes_fuzzy_search.rank), 0.0) * 0.2 AS combined_score
-      FROM notes n
-      LEFT JOIN notes_semantic_search ON n.id = notes_semantic_search.id
-      LEFT JOIN notes_fulltext_search ON n.id = notes_fulltext_search.id
-      LEFT JOIN notes_fuzzy_search ON n.id = notes_fuzzy_search.id
-      WHERE n._status = 'published'
-        AND n.deleted_at IS NULL
-        AND n.visibility = 'public'
-        AND ${scopes.notes}
-        AND (
-          notes_semantic_search.id IS NOT NULL
-          OR notes_fulltext_search.id IS NOT NULL
-          OR notes_fuzzy_search.id IS NOT NULL
         )
 
       UNION ALL
@@ -309,7 +227,6 @@ export function scopedHybridSearchSql(params: ScopedSearchSqlParams): SQL {
   return sql`
     WITH
       ${postsRankingCtes(params, scopes.posts)},
-      ${notesRankingCtes(params, scopes.notes)},
       ${activitiesRankingCtes(params, scopes.activities)}
     SELECT *
     FROM (${rankedResults(scopes)}
@@ -334,8 +251,6 @@ export function globalHybridSearchSql({
     ) r
     WHERE NOT EXISTS (
       SELECT 1 FROM posts p WHERE r.collection = 'posts' AND p.id = r.id AND p.deleted_at IS NOT NULL
-      UNION ALL
-      SELECT 1 FROM notes n WHERE r.collection = 'notes' AND n.id = r.id AND n.deleted_at IS NOT NULL
       UNION ALL
       SELECT 1 FROM activities a WHERE r.collection = 'activities' AND a.id = r.id AND a.deleted_at IS NOT NULL
     )`;

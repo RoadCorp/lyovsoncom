@@ -3,7 +3,6 @@ import {
   BriefcaseBusiness,
   FileText,
   Mail,
-  NotebookPen,
   Radio,
   Search,
   ShieldCheck,
@@ -17,10 +16,8 @@ import {
   lyovsonActivitiesRoute,
   lyovsonBioRoute,
   lyovsonContactRoute,
-  lyovsonNotesRoute,
   lyovsonPortfolioRoute,
   lyovsonPostsRoute,
-  notesRoute,
   postsRoute,
   privacyPolicyRoute,
   projectsRoute,
@@ -95,11 +92,6 @@ export const MenuMode = ({
       label: "Posts",
     },
     {
-      href: username ? lyovsonNotesRoute(username) : notesRoute(),
-      icon: NotebookPen,
-      label: "Notes",
-    },
-    {
       href: username ? lyovsonActivitiesRoute(username) : activitiesRoute(),
       icon: Radio,
       label: "Activities",
@@ -109,7 +101,6 @@ export const MenuMode = ({
   const archiveClasses = [
     "surface-nav-tile col-start-1 col-end-2 row-start-1 row-end-2",
     "surface-nav-tile col-start-2 col-end-3 row-start-1 row-end-2",
-    "surface-nav-tile col-start-3 col-end-4 row-start-1 row-end-2",
   ] as const;
   const menuClasses = [
     "surface-nav-tile col-start-1 col-end-2 row-start-2 row-end-3",
@@ -143,7 +134,7 @@ export const MenuMode = ({
         </GridCardNavItem>
       ))}
       <GridCardNavItem
-        className="surface-nav-tile col-start-1 col-end-2 row-start-3 row-end-4"
+        className="surface-nav-tile col-start-3 col-end-4 row-start-1 row-end-2"
         id="nav-search-trigger"
         onClick={openSearch}
         variant="button"
@@ -165,7 +156,7 @@ export const MenuMode = ({
         share="vt-control"
       >
         <GridCardNavItem
-          className="surface-nav-tile col-start-2 col-end-3 row-start-3 row-end-4"
+          className="surface-nav-tile col-start-1 col-end-2 row-start-3 row-end-4"
           onClick={() => setMenuMode("hero")}
           variant="button"
         >
@@ -173,7 +164,7 @@ export const MenuMode = ({
           <span>Close</span>
         </GridCardNavItem>
       </ViewTransition>
-      <ThemeSwitcher className="surface-nav-tile" />
+      <ThemeSwitcher className="surface-nav-tile col-start-2 col-end-3" />
     </>
   );
 };

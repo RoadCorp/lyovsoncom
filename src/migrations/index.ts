@@ -70,6 +70,10 @@ import {
   down as migration_20261024_113002_agents_down,
   up as migration_20261024_113002_agents_up,
 } from "./20261024_113002_agents";
+import {
+  down as migration_20261024_144952_retire_notes_down,
+  up as migration_20261024_144952_retire_notes_up,
+} from "./20261024_144952_retire_notes";
 
 export const migrations = [
   {
@@ -161,5 +165,10 @@ export const migrations = [
     up: migration_20261024_113002_agents_up,
     down: migration_20261024_113002_agents_down,
     name: "20261024_113002_agents",
+  },
+  {
+    up: migration_20261024_144952_retire_notes_up,
+    down: migration_20261024_144952_retire_notes_down,
+    name: "20261024_144952_retire_notes",
   },
 ];

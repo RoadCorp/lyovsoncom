@@ -1,7 +1,7 @@
 /**
  * Adds synthetic stress content for visual review on a Neon dev branch:
  * a post with a very long title, no image, six topics, banners and code
- * blocks, a nine-paragraph note, and two portfolio projects (one with every
+ * blocks, and two portfolio projects (one with every
  * case-study field filled, one minimal). Re-running it updates the same slugs.
  *
  * Refuses to run unless POSTGRES_URL points at a host listed in
@@ -28,11 +28,9 @@ if (!allowedHosts.some((host) => databaseHost.startsWith(host))) {
 const POST_SLUG = "audit-stress-long-title-no-image";
 const CASE_STUDY_SLUG = "audit-stress-case-study";
 const MINIMAL_PROJECT_SLUG = "audit-stress-minimal-project";
-const NOTE_SLUG = "audit-stress-long-note";
 const TOPIC_COUNT = 6;
-const NOTE_PARAGRAPHS = 9;
-const NOTE_SENTENCE =
-  "A long note keeps going so the archive card has to decide how to fade or clamp it. ";
+const LONG_SENTENCE =
+  "A long passage keeps going so the archive card has to decide how to fade or clamp it. ";
 
 const text = (value: string) => ({
   mode: "normal",
@@ -104,12 +102,6 @@ const postContent = root([
   paragraph("End of synthetic content."),
 ]);
 
-const noteContent = root(
-  Array.from({ length: NOTE_PARAGRAPHS }, (_, index) =>
-    paragraph(`Paragraph ${index + 1}. ${NOTE_SENTENCE.repeat(3)}`)
-  )
-);
-
 const payload = await getPayload({ config: await configPromise });
 
 const [{ docs: topics }, { docs: people }, { docs: images }] =
@@ -147,7 +139,7 @@ const portrait = images.filter(
 );
 
 async function upsert(
-  collection: "notes" | "posts" | "projects",
+  collection: "posts" | "projects",
   slug: string,
   data: Record<string, unknown>
 ) {
@@ -183,7 +175,7 @@ const section = (heading: string, paragraphs: number) => ({
   content: root(
     Array.from({ length: paragraphs }, (_, index) =>
       paragraph(
-        `${heading}, paragraph ${index + 1}. ${NOTE_SENTENCE.repeat(2)}`
+        `${heading}, paragraph ${index + 1}. ${LONG_SENTENCE.repeat(2)}`
       )
     )
   ),
@@ -273,14 +265,6 @@ await upsert("posts", POST_SLUG, {
   topics: topics.map((topic) => topic.id),
   authors: authors.map((author) => author.id),
   project: caseStudyId,
-  publishedAt: new Date().toISOString(),
-});
-
-await upsert("notes", NOTE_SLUG, {
-  title: "A Long Thought That Overflows Its Card",
-  type: "thought",
-  author: "rafa",
-  content: noteContent,
   publishedAt: new Date().toISOString(),
 });
 

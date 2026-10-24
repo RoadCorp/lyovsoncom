@@ -1,10 +1,6 @@
 import { ViewTransition } from "react";
-import {
-  GridCardActivityFull,
-  GridCardNoteFull,
-  GridCardPostFull,
-} from "@/components/grid";
-import type { Activity, Note } from "@/payload-types";
+import { GridCardActivityFull, GridCardPostFull } from "@/components/grid";
+import type { Activity } from "@/payload-types";
 import type { PostSummary } from "@/utilities/post-summary";
 import {
   frontendViewTransitionClasses,
@@ -13,7 +9,6 @@ import {
 
 export type ArchiveItem =
   | { type: "activity"; data: Activity }
-  | { type: "note"; data: Note }
   | { type: "post"; data: PostSummary };
 
 interface ArchiveItemsProps {
@@ -24,13 +19,12 @@ export function toArchiveItems(
   items: Activity[],
   type: "activity"
 ): ArchiveItem[];
-export function toArchiveItems(items: Note[], type: "note"): ArchiveItem[];
 export function toArchiveItems(
   items: PostSummary[],
   type: "post"
 ): ArchiveItem[];
 export function toArchiveItems(
-  items: Array<Activity | Note | PostSummary>,
+  items: Array<Activity | PostSummary>,
   type: ArchiveItem["type"]
 ) {
   return items.flatMap((item) =>
@@ -50,8 +44,6 @@ function ArchiveCard({
   switch (item.type) {
     case "post":
       return <GridCardPostFull post={item.data} priority={priority} />;
-    case "note":
-      return <GridCardNoteFull note={item.data} priority={priority} />;
     case "activity":
       return (
         <GridCardActivityFull

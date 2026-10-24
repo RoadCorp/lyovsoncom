@@ -67,7 +67,7 @@ function getWhereClause(
     { _status: { equals: "published" } },
   ];
 
-  if (collection === "notes" || collection === "activities") {
+  if (collection === "activities") {
     baseFilters.push({ visibility: { equals: "public" } });
   }
 
@@ -197,7 +197,6 @@ async function handleSync(
 
     const summary: Record<EmbeddableCollection, CollectionSummary> = {
       posts: buildCollectionSummary(),
-      notes: buildCollectionSummary(),
       activities: buildCollectionSummary(),
     };
 

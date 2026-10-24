@@ -32,8 +32,8 @@ export const SearchMode = ({
         </ViewTransition>
         <h2 className="tone-heading font-bold text-lg">Search the archive</h2>
         <p className="tone-muted text-sm">
-          Find posts, notes, and activities by topic or idea. Enter your search
-          below and press Enter.
+          Find posts and activities by topic or idea. Enter your search below
+          and press Enter.
         </p>
       </GridCardSection>
       <ViewTransition

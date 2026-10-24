@@ -11,7 +11,7 @@ const SOCIAL_PREVIEW_USER_AGENT_PATTERN =
   /(Discordbot|facebookexternalhit|LinkedInBot|Slackbot|Twitterbot|WhatsApp)/i;
 
 const EXPENSIVE_PUBLIC_PATH_PATTERN =
-  /^\/($|activities(?:\/|$)|ai-docs(?:\/|$)|api(?:\/|$)|jess(?:\/|$)|notes(?:\/|$)|page(?:\/|$)|posts(?:\/|$)|projects(?:\/|$)|rafa(?:\/|$)|search(?:\/|$)|topics(?:\/|$)|_next\/image(?:\?|$))/;
+  /^\/($|activities(?:\/|$)|ai-docs(?:\/|$)|api(?:\/|$)|jess(?:\/|$)|page(?:\/|$)|posts(?:\/|$)|projects(?:\/|$)|rafa(?:\/|$)|search(?:\/|$)|topics(?:\/|$)|_next\/image(?:\?|$))/;
 
 // Uncached or private surfaces: closed to every bot, AI crawlers included.
 const BOT_RESTRICTED_PATH_PATTERN =

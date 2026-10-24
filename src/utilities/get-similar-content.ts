@@ -10,11 +10,10 @@ import {
 } from "@payloadcms/db-vercel-postgres/drizzle";
 import { getPayload } from "payload";
 import { TRUSTED_EMBEDDING_READ } from "@/access/private-field-read";
-import type { Note, Post } from "@/payload-types";
+import type { Post } from "@/payload-types";
 import { EMBEDDING_VECTOR_DIMENSIONS } from "@/utilities/generate-embedding";
 
 interface SimilarContentDocs {
-  notes: Note;
   posts: Post;
 }
 
@@ -67,8 +66,6 @@ export async function getSimilarContent<
         ne(table.id, id),
         eq(table._status, "published"),
         isNull(table.deletedAt),
-        // Keep parity with public note access
-        collection === "notes" ? eq(table.visibility, "public") : undefined,
         isNotNull(table.embedding_vector)
       )
     )

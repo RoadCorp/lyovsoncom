@@ -32,7 +32,6 @@ interface CollectionEmbeddingStats {
 
 interface CollectionCounts {
   activities: number;
-  notes: number;
   posts: number;
 }
 
@@ -96,8 +95,8 @@ async function getEmbeddingCoverage(
   );
 
   const coverage: EmbeddingCoverage = {
-    published: { posts: 0, notes: 0, activities: 0 },
-    withEmbeddings: { posts: 0, notes: 0, activities: 0 },
+    published: { posts: 0, activities: 0 },
+    withEmbeddings: { posts: 0, activities: 0 },
   };
   for (const [collection, published, withEmbeddings] of counts) {
     coverage.published[collection] = published;
@@ -160,23 +159,15 @@ function buildStatus(
     coverage.published.posts,
     coverage.withEmbeddings.posts
   );
-  const notes = createCollectionEmbeddingStats(
-    coverage.published.notes,
-    coverage.withEmbeddings.notes
-  );
   const activities = createCollectionEmbeddingStats(
     coverage.published.activities,
     coverage.withEmbeddings.activities
   );
 
   const totalPublishedItems =
-    coverage.published.posts +
-    coverage.published.notes +
-    coverage.published.activities;
+    coverage.published.posts + coverage.published.activities;
   const itemsWithEmbeddings =
-    coverage.withEmbeddings.posts +
-    coverage.withEmbeddings.notes +
-    coverage.withEmbeddings.activities;
+    coverage.withEmbeddings.posts + coverage.withEmbeddings.activities;
 
   return {
     system: {
@@ -186,7 +177,7 @@ function buildStatus(
       dimensions: EMBEDDING_VECTOR_DIMENSIONS,
       queryEmbeddingPublic: false,
       pgvectorEnabled: true,
-      collectionsSupported: ["posts", "notes", "activities"],
+      collectionsSupported: ["posts", "activities"],
     },
     statistics: {
       totalPublishedItems,
@@ -200,7 +191,6 @@ function buildStatus(
       itemsNeedingEmbeddings: totalPublishedItems - itemsWithEmbeddings,
       collections: {
         posts,
-        notes,
         activities,
       },
     },
@@ -223,10 +213,9 @@ function buildStatus(
     endpoints: {
       status: `${siteUrl}/api/embeddings/status`,
       sync: `${siteUrl}/api/embeddings/sync`,
-      bulk: `${siteUrl}/api/embeddings?type=posts|notes|activities|all`,
+      bulk: `${siteUrl}/api/embeddings?type=posts|activities|all`,
       collections: {
         posts: `${siteUrl}/api/embeddings/posts/{id}`,
-        notes: `${siteUrl}/api/embeddings/notes/{id}`,
         activities: `${siteUrl}/api/embeddings/activities/{id}`,
       },
       query: `${siteUrl}/api/embeddings?q={text}`,

@@ -42,7 +42,7 @@ describe("request guards", () => {
   it.each([
     ["/posts/example", "GPTBot", false],
     ["/", "ClaudeBot", false],
-    ["/rafa/notes", "PerplexityBot", false],
+    ["/rafa/activities", "PerplexityBot", false],
     ["/api/posts", "GPTBot", true],
     ["/admin", "ClaudeBot", true],
     ["/playground/skeleton", "CCBot", true],
@@ -66,7 +66,7 @@ describe("request guards", () => {
   it.each([
     ["/api/mcp", "agents API-Key key", false],
     ["/api/posts/1", "agents API-Key key", true],
-    ["/api/notes/versions/3", "agents API-Key key", true],
+    ["/api/activities/versions/3", "agents API-Key key", true],
     ["/api/payload-locked-documents", "agents API-Key key", true],
     ["/api/graphql", "agents API-Key key", true],
     ["/api/posts/1", "", false],

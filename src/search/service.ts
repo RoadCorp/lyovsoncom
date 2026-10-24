@@ -1,25 +1,18 @@
 import { cacheLife } from "next/cache";
 import { cache } from "react";
-import type { Activity, Note, Post } from "@/payload-types";
+import type { Activity, Post } from "@/payload-types";
 import { getActivityTypeLabel } from "@/utilities/activity-type";
 import {
   publicActivitiesWhere,
-  publicNotesWhere,
   publishedPostsWhere,
 } from "@/utilities/content-queries";
-import { extractLexicalText } from "@/utilities/extract-lexical-text";
 import {
   EMBEDDING_VECTOR_DIMENSIONS,
   generateEmbedding,
 } from "@/utilities/generate-embedding";
 import { getPayloadClient } from "@/utilities/payload-client";
 import { publicContentSelect } from "@/utilities/public-content-select";
-import {
-  activitiesRoute,
-  activityRoute,
-  noteRoute,
-  postRoute,
-} from "@/utilities/routes";
+import { activitiesRoute, activityRoute, postRoute } from "@/utilities/routes";
 import { parseHybridSearchRows } from "./rows";
 import { globalHybridSearchSql, scopedHybridSearchSql } from "./sql";
 import type {
@@ -29,7 +22,6 @@ import type {
   SearchResult,
 } from "./types";
 
-const NOTE_PREVIEW_MAX_CHARS = 96;
 const SEARCH_WINDOW_MULTIPLIER = 2;
 
 export const MAX_SEARCH_QUERY_LENGTH = 200;
@@ -38,7 +30,6 @@ export const MAX_SEARCH_LIMIT = 50;
 
 export type HydratedSearchItem =
   | { type: "activity"; data: Activity }
-  | { type: "note"; data: Note }
   | { type: "post"; data: Post };
 
 export class SearchInputError extends Error {
@@ -188,14 +179,11 @@ export async function hydrateSearchResults(results: SearchResult[]) {
   const postsResults = results.filter(
     (result) => result.collection === "posts"
   );
-  const notesResults = results.filter(
-    (result) => result.collection === "notes"
-  );
   const activitiesResults = results.filter(
     (result) => result.collection === "activities"
   );
 
-  const [postsResponse, notesResponse, activitiesResponse] = await Promise.all([
+  const [postsResponse, activitiesResponse] = await Promise.all([
     postsResults.length > 0
       ? payload.find({
           collection: "posts",
@@ -215,24 +203,6 @@ export async function hydrateSearchResults(results: SearchResult[]) {
           limit: postsResults.length,
         })
       : Promise.resolve({ docs: [] as Post[] }),
-    notesResults.length > 0
-      ? payload.find({
-          collection: "notes",
-          where: {
-            AND: [
-              publicNotesWhere(),
-              {
-                id: {
-                  in: notesResults.map((result) => result.id),
-                },
-              },
-            ],
-          },
-          depth: 1,
-          select: publicContentSelect,
-          limit: notesResults.length,
-        })
-      : Promise.resolve({ docs: [] as Note[] }),
     activitiesResults.length > 0
       ? payload.find({
           collection: "activities",
@@ -257,7 +227,6 @@ export async function hydrateSearchResults(results: SearchResult[]) {
   ]);
 
   const postsMap = new Map(postsResponse.docs.map((post) => [post.id, post]));
-  const notesMap = new Map(notesResponse.docs.map((note) => [note.id, note]));
   const activitiesMap = new Map(
     activitiesResponse.docs.map((activity) => [activity.id, activity])
   );
@@ -268,22 +237,13 @@ export async function hydrateSearchResults(results: SearchResult[]) {
       return post ? [{ type: "post", data: post }] : [];
     }
 
-    if (result.collection === "notes") {
-      const note = notesMap.get(result.id);
-      return note ? [{ type: "note", data: note }] : [];
+    if (result.collection !== "activities") {
+      return [];
     }
 
     const activity = activitiesMap.get(result.id);
     return activity ? [{ type: "activity", data: activity }] : [];
   });
-}
-
-function truncateText(value: string, maxChars: number) {
-  if (value.length <= maxChars) {
-    return value;
-  }
-
-  return `${value.slice(0, maxChars).trimEnd()}...`;
 }
 
 function getSearchPreviewItem(
@@ -298,21 +258,6 @@ function getSearchPreviewItem(
       title: item.data.title,
       subtitle: postType.charAt(0).toUpperCase() + postType.slice(1),
       description: item.data.description || null,
-    };
-  }
-
-  if (item.type === "note") {
-    const excerpt = truncateText(
-      extractLexicalText(item.data.content).trim(),
-      NOTE_PREVIEW_MAX_CHARS
-    );
-
-    return {
-      type: "note",
-      href: noteRoute(item.data.slug || "unknown"),
-      title: item.data.title,
-      subtitle: item.data.type === "quote" ? "Quote" : "Thought",
-      description: excerpt || null,
     };
   }
 

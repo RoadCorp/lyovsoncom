@@ -1,18 +1,16 @@
 import { type ReactNode, Suspense } from "react";
 import { SkeletonGrid } from "@/components/grid/skeleton";
 import {
-  NoteDetailSkeleton,
   PostDetailSkeleton,
   ReferenceDetailSkeleton,
 } from "@/components/grid/skeleton/detail-skeletons";
 import { LoadingTransition } from "@/components/loading-transition";
 
-export type PublicPageSkeleton = "archive" | "note" | "post" | "reference";
+export type PublicPageSkeleton = "archive" | "post" | "reference";
 
 const SKELETONS: Record<PublicPageSkeleton, () => ReactNode> = {
   reference: ReferenceDetailSkeleton,
   archive: () => <SkeletonGrid />,
-  note: NoteDetailSkeleton,
   post: PostDetailSkeleton,
 };
 

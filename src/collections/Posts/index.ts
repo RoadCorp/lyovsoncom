@@ -173,15 +173,6 @@ export const Posts: CollectionConfig = {
                   "People, companies, works, and web media referenced in this post",
               },
             },
-            {
-              name: "notesReferenced",
-              type: "relationship",
-              relationTo: "notes",
-              hasMany: true,
-              admin: {
-                description: "Notes that connect to this post",
-              },
-            },
           ],
           label: "Connections",
           description:

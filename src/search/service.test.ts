@@ -224,33 +224,29 @@ describe("search result hydration", () => {
       combined_score: 0.75,
     };
     const hydrated = await hydrateSearchResults([
-      { ...result, collection: "notes" },
+      { ...result, collection: "retired" },
       result,
       { ...result, collection: "activities" },
       { ...result, id: 2 },
-      { ...result, collection: "notes", id: 99 },
     ]);
     expect(hydrated.map(({ type, data }) => [type, data.id])).toEqual([
-      ["note", 1],
       ["post", 1],
       ["activity", 1],
       ["post", 2],
     ]);
-    for (const collection of ["notes", "activities"]) {
-      expect(find).toHaveBeenCalledWith(
-        expect.objectContaining({
-          collection,
-          where: {
-            AND: expect.arrayContaining([
-              {
-                _status: { equals: "published" },
-                visibility: { equals: "public" },
-              },
-            ]),
-          },
-        })
-      );
-    }
+    expect(find).toHaveBeenCalledWith(
+      expect.objectContaining({
+        collection: "activities",
+        where: {
+          AND: expect.arrayContaining([
+            {
+              _status: { equals: "published" },
+              visibility: { equals: "public" },
+            },
+          ]),
+        },
+      })
+    );
     expect(find).toHaveBeenCalledWith(
       expect.objectContaining({
         collection: "posts",

@@ -14,7 +14,6 @@ import { Activities } from "@/collections/Activities";
 import { Agents } from "@/collections/Agents";
 import { Lyovsons } from "@/collections/Lyovsons";
 import { Media } from "@/collections/Media";
-import { Notes } from "@/collections/Notes";
 import { Posts } from "@/collections/Posts";
 import { Projects } from "@/collections/Projects";
 import { References } from "@/collections/References";
@@ -165,23 +164,6 @@ export default buildConfig({
           },
         });
 
-        // Add search columns for Notes
-        extendTable({
-          table: schema.tables.notes,
-          columns: {
-            content_text: varchar("content_text"),
-            search_vector: tsvector("search_vector")
-              .notNull()
-              .generatedAlwaysAs(
-                () =>
-                  sql`to_tsvector('english',
-                    coalesce(${schema.tables.notes.title}, '') || ' ' ||
-                    coalesce(${schema.tables.notes.content_text}, '')
-                  )`
-              ),
-          },
-        });
-
         // Add search columns for Activities
         extendTable({
           table: schema.tables.activities,
@@ -211,7 +193,6 @@ export default buildConfig({
     Agents,
     References,
     Activities,
-    Notes,
   ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [],

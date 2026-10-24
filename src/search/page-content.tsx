@@ -88,8 +88,8 @@ async function SearchResults({
       <SearchEmptyState
         description={
           scopeUsername
-            ? `Use the search box to find posts, notes, and activities for ${scopeText}.`
-            : "Use the search box to find posts, notes, and activities across Lyóvson.com."
+            ? `Use the search box to find posts and activities for ${scopeText}.`
+            : "Use the search box to find posts and activities across Lyóvson.com."
         }
         heading={headingText}
         title="Search the Site"
@@ -113,8 +113,8 @@ async function SearchResults({
         <SearchEmptyState
           description={
             scopeUsername
-              ? `No posts, notes, or activities matched "${normalizedQuery}" for ${scopeText}.`
-              : `No posts, notes, or activities matched "${normalizedQuery}".`
+              ? `No posts or activities matched "${normalizedQuery}" for ${scopeText}.`
+              : `No posts or activities matched "${normalizedQuery}".`
           }
           heading={headingText}
           title="No Results Found"
@@ -156,8 +156,8 @@ async function SearchResults({
         <SearchEmptyState
           description={
             scopeUsername
-              ? `No posts, notes, or activities matched "${normalizedQuery}" for ${scopeText}.`
-              : `No posts, notes, or activities matched "${normalizedQuery}".`
+              ? `No posts or activities matched "${normalizedQuery}" for ${scopeText}.`
+              : `No posts or activities matched "${normalizedQuery}".`
           }
           heading={headingText}
           title="No Results Found"

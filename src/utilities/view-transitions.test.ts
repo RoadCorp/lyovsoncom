@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
   getArchiveCardTransitionName,
-  getNoteMetaTransitionName,
   getPostTitleTransitionName,
 } from "./view-transitions";
 
@@ -19,14 +18,10 @@ describe("shared element identity", () => {
     }
   });
 
-  it("separates collections and note metadata sharing targets", () => {
+  it("separates collections sharing targets", () => {
     const names = [
       getArchiveCardTransitionName("post", SHARED_ID),
-      getArchiveCardTransitionName("note", SHARED_ID),
       getArchiveCardTransitionName("activity", SHARED_ID),
-      getNoteMetaTransitionName("same-note", "topics"),
-      getNoteMetaTransitionName("same-note", "byline"),
-      getNoteMetaTransitionName("same-note", "type"),
     ];
 
     expect(new Set(names).size).toBe(names.length);

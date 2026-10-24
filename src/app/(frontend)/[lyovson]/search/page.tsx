@@ -82,8 +82,8 @@ export async function generateMetadata({
       ? `${scopeLabel} Search: "${normalizedQuery}"`
       : `${scopeLabel} Search`,
     description: normalizedQuery
-      ? `Find posts, notes, and activities related to "${normalizedQuery}" for ${scopeLabel}.`
-      : `Search posts, notes, and activities for ${scopeLabel}.`,
+      ? `Find posts and activities related to "${normalizedQuery}" for ${scopeLabel}.`
+      : `Search posts and activities for ${scopeLabel}.`,
     canonicalPath: `/${username}/search`,
     robots: {
       index: !normalizedQuery,

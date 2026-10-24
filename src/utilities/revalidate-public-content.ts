@@ -1,7 +1,7 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { legacyActivityPath } from "@/utilities/routes";
 
-export type PublicCollection = "posts" | "notes" | "activities" | "projects";
+export type PublicCollection = "posts" | "activities" | "projects";
 interface PublicDocument {
   _status?: "draft" | "published" | null;
   deletedAt?: string | null;
@@ -12,7 +12,7 @@ interface PublicDocument {
   visibility?: string | null;
 }
 
-// Only notes and activities have a visibility field.
+// Only activities have a visibility field.
 const ALWAYS_VISIBLE = new Set<PublicCollection>(["posts", "projects"]);
 
 function isPublic(collection: PublicCollection, doc?: PublicDocument | null) {
@@ -146,7 +146,6 @@ export function hasPublicChanges(
 export function revalidatePublicDependencies() {
   for (const tag of [
     "posts",
-    "notes",
     "activities",
     "lyovsons",
     "projects",

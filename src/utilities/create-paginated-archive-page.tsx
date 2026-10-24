@@ -20,7 +20,6 @@ import {
   getActivityCount,
   getLatestActivities,
 } from "@/utilities/get-activity";
-import { getNoteCount } from "@/utilities/get-note";
 import { getPostCount } from "@/utilities/get-post";
 import {
   type BuildPaginatedArchiveMetadataArgs,
@@ -31,14 +30,13 @@ import {
 import { absoluteUrl } from "@/utilities/routes";
 import { buildNotFoundMetadata } from "@/utilities/seo-metadata";
 
-export type ArchiveCollection = "activities" | "notes" | "posts";
+export type ArchiveCollection = "activities" | "posts";
 
 const ARCHIVE_COUNTS: Record<
   ArchiveCollection,
   () => Promise<{ totalDocs: number }>
 > = {
   activities: getActivityCount,
-  notes: getNoteCount,
   posts: getPostCount,
 };
 

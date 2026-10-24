@@ -12,7 +12,6 @@ const EXTRA_PATHS = [
   "/",
   "/search?q=vercel",
   "/posts/audit-stress-long-title-no-image",
-  "/notes/audit-stress-long-note",
 ];
 const COMPARED = [
   "status",

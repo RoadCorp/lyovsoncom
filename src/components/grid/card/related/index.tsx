@@ -7,8 +7,6 @@ import { cn } from "@/lib/utils";
 import type { PostSummary } from "@/utilities/post-summary";
 import { postRoute } from "@/utilities/routes";
 
-export { GridCardRelatedNotes } from "./grid-card-related-notes";
-
 function isUniquePostWithSlug(
   post: number | PostSummary,
   seenSlugs: Set<string>

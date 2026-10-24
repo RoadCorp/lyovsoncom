@@ -36,11 +36,11 @@ interface LyovsonFeedPageArgs {
 }
 
 interface LyovsonFeedPageConfig<TIndex extends string> {
-  /** Describes the page for JSON-LD and metadata, e.g. "Public notes by X on page 2." */
+  /** Describes the page for JSON-LD and metadata, e.g. "Public posts by X on page 2." */
   describe: (name: string, pageNumber: number) => string;
   filter: Exclude<LyovsonFilter, "all">;
   getItemUrl: (item: LyovsonMixedFeedItem) => string | null;
-  /** Capitalised plural, e.g. "Notes"; lowercased in the heading and empty state. */
+  /** Capitalised plural, e.g. "Posts"; lowercased in the heading and empty state. */
   label: string;
   routes: {
     index: (username: string) => Route<TIndex>;

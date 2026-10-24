@@ -1,22 +1,16 @@
-import type { Activity, Note, Post } from "@/payload-types";
+import type { Activity, Post } from "@/payload-types";
 import { getActivityTypeLabel } from "@/utilities/activity-type";
-import {
-  buildEmbeddingText,
-  type EmbeddableCollection,
-} from "@/utilities/generate-embedding-helpers";
+import type { EmbeddableCollection } from "@/utilities/generate-embedding-helpers";
 import {
   absoluteUrl,
   activitiesRoute,
   activityRoute,
-  noteRoute,
   postRoute,
 } from "@/utilities/routes";
 
-const WORD_SPLIT_REGEX = /\s+/;
-const WORDS_PER_MINUTE = 200;
 const VECTOR_BRACKETS = /^\[|\]$/g;
 
-export type EmbeddableDoc = Activity | Note | Post;
+export type EmbeddableDoc = Activity | Post;
 
 export interface StoredEmbedding {
   dimensions?: number | null;
@@ -58,25 +52,6 @@ export function describeEmbeddableDoc(
         : "Activity",
       url: absoluteUrl(path ?? activitiesRoute()),
       content: activity.notes,
-    };
-  }
-
-  if (collection === "notes") {
-    const note = doc as Note;
-    const wordCount = buildEmbeddingText("notes", note).split(
-      WORD_SPLIT_REGEX
-    ).length;
-    return {
-      title: note.title,
-      url: absoluteUrl(noteRoute(note.slug ?? "")),
-      content: note.content,
-      metadata: {
-        type: "note",
-        wordCount,
-        readingTime: Math.ceil(wordCount / WORDS_PER_MINUTE),
-        contentFormat: "lexical",
-        hasContent: Boolean(note.content),
-      },
     };
   }
 

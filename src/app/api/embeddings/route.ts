@@ -30,10 +30,9 @@ import { absoluteUrl, projectRoute } from "@/utilities/routes";
 
 const MAX_EMBEDDINGS_LIMIT = 100;
 
-/** Singular item type used in bulk responses ("post", "note", "activity"). */
+/** Singular item type used in bulk responses ("post", "activity"). */
 const ITEM_TYPE: Record<EmbeddableCollection, string> = {
   posts: "post",
-  notes: "note",
   activities: "activity",
 };
 
@@ -386,7 +385,7 @@ async function bulkEmbeddingsResponse(
 /**
  * Admin and cron only. `?q=` embeds a query on demand; `?type=&id=` returns
  * one item's embedding; otherwise lists stored embeddings for `?type=`
- * (posts, notes, activities or all). `?vector=true` includes vectors.
+ * (posts, activities or all). `?vector=true` includes vectors.
  */
 export async function GET(request: NextRequest) {
   const params = parseEmbeddingsParams(request);

@@ -26,10 +26,10 @@ const noTools = {
 } as const;
 
 const RULES = [
-  "You have a Lyovson's access to posts, notes, activities, projects, references, topics and media: create, edit, publish, trash, restore and delete. You cannot see or change accounts, agents or API keys.",
+  "You have a Lyovson's access to posts, activities, projects, references, topics and media: create, edit, publish, trash, restore and delete. You cannot see or change accounts, agents or API keys.",
   'Save drafts by default: pass `draft: true` to createDocuments and updateDocument. Publish only when the Lyovson you work for asks: pass `draft: false` with `_status: "published"`. With `draft: true` an edit to a published document waits as a draft; with `draft: false` it goes live.',
-  "Trash a post, note, activity or project with updateDocument setting `deletedAt` to the current time; restore it with `trash: true` and `deletedAt: null`. deleteDocuments and deleteFromTrash delete permanently: use them only when asked to delete for good. deleteDocuments cannot see trashed documents; deleteFromTrash can.",
-  "Default the author to the Lyovson you work for: `authors` on posts, `author` (their username) on notes, `participants` and review `lyovson` on activities.",
+  "Trash a post, activity or project with updateDocument setting `deletedAt` to the current time; restore it with `trash: true` and `deletedAt: null`. deleteDocuments and deleteFromTrash delete permanently: use them only when asked to delete for good. deleteDocuments cannot see trashed documents; deleteFromTrash can.",
+  "Default the author to the Lyovson you work for: `authors` on posts, `participants` and review `lyovson` on activities.",
   "Rich text fields take Lexical JSON. Call getCollectionSchema before writing a collection for the first time.",
   "Find topics and references before creating them, so you link the existing one instead of a duplicate.",
   "Upload media with createDocuments and a `file` of source `base64`; a request is capped at about 4.5 MB, so keep files under about 3 MB. Deleting media also deletes its stored file for good.",
@@ -97,7 +97,6 @@ export const mcp = mcpPlugin({
     // Staged uploads land on one function instance and the bot guard
     // refuses scripted PUTs to /api, so agents upload inline instead.
     media: { tools: { getUploadInstructions: false } },
-    notes: trashTools,
     posts: trashTools,
     projects: trashTools,
     references: {},

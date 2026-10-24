@@ -1,26 +1,9 @@
 import type { Where } from "payload";
-import type { Note } from "@/payload-types";
-
-export const NOTE_AUTHOR_BY_USERNAME = {
-  rafa: "rafa",
-  jess: "jess",
-} as const satisfies Record<string, NonNullable<Note["author"]>>;
 
 export function publishedPostsWhere(): Where {
   return {
     _status: {
       equals: "published",
-    },
-  };
-}
-
-export function publicNotesWhere(): Where {
-  return {
-    _status: {
-      equals: "published",
-    },
-    visibility: {
-      equals: "public",
     },
   };
 }
@@ -91,28 +74,6 @@ export function lyovsonPostsWhere(lyovsonId: number): Where {
       contains: lyovsonId,
     },
     ...publishedPostsWhere(),
-  };
-}
-
-export function getNoteAuthorByUsername(username: string) {
-  return (
-    NOTE_AUTHOR_BY_USERNAME[username as keyof typeof NOTE_AUTHOR_BY_USERNAME] ||
-    null
-  );
-}
-
-export function lyovsonNotesWhere(username: string): Where | null {
-  const noteAuthor = getNoteAuthorByUsername(username);
-
-  if (!noteAuthor) {
-    return null;
-  }
-
-  return {
-    author: {
-      equals: noteAuthor,
-    },
-    ...publicNotesWhere(),
   };
 }
 

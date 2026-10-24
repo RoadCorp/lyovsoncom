@@ -1,7 +1,7 @@
 // Screenshot routes on two origins at desktop and phone width, light and
 // dark, for side-by-side review.
 //
-//   OUT=/tmp/shots TAG=change ROUTES=/,/notes node screenshots.mjs \
+//   OUT=/tmp/shots TAG=change ROUTES=/,/activities node screenshots.mjs \
 //     https://www.lyovson.com http://127.0.0.1:3100
 import { mkdirSync } from "node:fs";
 import { createRequire } from "node:module";

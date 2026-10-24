@@ -15,84 +15,94 @@ vi.mock("next/cache", () => ({
   revalidateTag: vi.fn(),
 }));
 beforeEach(() => vi.clearAllMocks());
-const note = {
+const fixture = {
   _status: "published",
   visibility: "public",
-  slug: "a-note",
+  slug: "a-slug",
 } as const;
+const activity = { ...fixture, startedAt: "2026-09-06T12:00:00Z" } as const;
 
 describe("public publication freshness", () => {
   it("does not invalidate public output for a private draft edit", () => {
     revalidatePublicContent(
-      "notes",
-      { ...note, _status: "draft" },
-      { ...note, _status: "draft" }
+      "projects",
+      { ...fixture, _status: "draft" },
+      { ...fixture, _status: "draft" }
     );
     expect(revalidateTag).not.toHaveBeenCalled();
   });
   it("immediately expires a cached missing slug on first publication", () => {
-    revalidatePublicContent("notes", note);
-    expect(revalidateTag).toHaveBeenCalledWith("note-a-note", { expire: 0 });
-    expect(revalidateTag).toHaveBeenCalledWith("notes", { expire: 0 });
+    revalidatePublicContent("projects", fixture);
+    expect(revalidateTag).toHaveBeenCalledWith("project-a-slug", {
+      expire: 0,
+    });
+    expect(revalidateTag).toHaveBeenCalledWith("projects", { expire: 0 });
   });
   it.each(["private", "unlisted"])(
-    "withdraws %s notes without serving stale public results",
+    "withdraws %s activities without serving stale public results",
     (visibility) => {
-      revalidatePublicContent("notes", { ...note, visibility }, note);
-      expect(revalidateTag).toHaveBeenCalledWith("notes", { expire: 0 });
-      expect(revalidateTag).toHaveBeenCalledWith("note-a-note", { expire: 0 });
-      expect(revalidatePath).toHaveBeenCalledWith("/notes/a-note");
+      revalidatePublicContent(
+        "activities",
+        { ...activity, visibility },
+        activity
+      );
+      expect(revalidateTag).toHaveBeenCalledWith("activities", { expire: 0 });
+      expect(revalidateTag).toHaveBeenCalledWith("activity-09-06-26/a-slug", {
+        expire: 0,
+      });
       expect(revalidatePath).toHaveBeenCalledWith("/feed.xml");
     }
   );
   it("withdraws a published document moved to the trash", () => {
     // Payload passes the latest version, here a newer draft of the live post.
-    const draft = { ...note, _status: "draft" as const };
+    const draft = { ...fixture, _status: "draft" as const };
     revalidatePublicContent(
       "posts",
       { ...draft, deletedAt: "2026-10-23T15:00:00Z" },
       draft
     );
     expect(revalidateTag).toHaveBeenCalledWith("posts", { expire: 0 });
-    expect(revalidateTag).toHaveBeenCalledWith("post-a-note", { expire: 0 });
-    expect(revalidatePath).toHaveBeenCalledWith("/posts/a-note");
+    expect(revalidateTag).toHaveBeenCalledWith("post-a-slug", { expire: 0 });
+    expect(revalidatePath).toHaveBeenCalledWith("/posts/a-slug");
     expect(revalidatePath).toHaveBeenCalledWith("/feed.xml");
   });
   it("invalidates both paths on a published slug change", () => {
-    revalidatePublicContent("posts", { ...note, slug: "new-slug" }, note);
-    expect(revalidateTag).toHaveBeenCalledWith("post-a-note", { expire: 0 });
+    revalidatePublicContent("posts", { ...fixture, slug: "new-slug" }, fixture);
+    expect(revalidateTag).toHaveBeenCalledWith("post-a-slug", { expire: 0 });
     expect(revalidateTag).toHaveBeenCalledWith("post-new-slug", { expire: 0 });
-    expect(revalidatePath).toHaveBeenCalledWith("/posts/a-note");
+    expect(revalidatePath).toHaveBeenCalledWith("/posts/a-slug");
   });
   it("expires both activity identities when its canonical date changes", () => {
     revalidatePublicContent(
       "activities",
-      { ...note, startedAt: "2026-09-06T12:00:00Z" },
-      { ...note, startedAt: "2026-09-05T12:00:00Z" }
+      { ...fixture, startedAt: "2026-09-06T12:00:00Z" },
+      { ...fixture, startedAt: "2026-09-05T12:00:00Z" }
     );
     // The old URLs only redirect now; their lookup is what must expire.
-    expect(revalidateTag).toHaveBeenCalledWith("activity-09-05-26/a-note", {
+    expect(revalidateTag).toHaveBeenCalledWith("activity-09-05-26/a-slug", {
       expire: 0,
     });
-    expect(revalidateTag).toHaveBeenCalledWith("activity-09-06-26/a-note", {
+    expect(revalidateTag).toHaveBeenCalledWith("activity-09-06-26/a-slug", {
       expire: 0,
     });
   });
   it("uses the existing freshness profile for ordinary public edits", () => {
-    revalidatePublicContent("notes", note, note);
-    expect(revalidateTag).toHaveBeenCalledWith("notes", "notes");
-    expect(revalidateTag).toHaveBeenCalledWith("note-a-note", "notes");
+    revalidatePublicContent("activities", activity, activity);
+    expect(revalidateTag).toHaveBeenCalledWith("activities", "activities");
+    expect(revalidateTag).toHaveBeenCalledWith(
+      "activity-09-06-26/a-slug",
+      "activities"
+    );
   });
   it("expires collection and document output on deletion", () => {
-    revalidatePublicContent("posts", null, note);
+    revalidatePublicContent("posts", null, fixture);
     expect(revalidateTag).toHaveBeenCalledWith("posts", { expire: 0 });
-    expect(revalidateTag).toHaveBeenCalledWith("post-a-note", { expire: 0 });
+    expect(revalidateTag).toHaveBeenCalledWith("post-a-slug", { expire: 0 });
   });
   it("refreshes populated reference, media and author fields throughout the public site", () => {
     revalidatePublicDependencies();
     for (const tag of [
       "posts",
-      "notes",
       "activities",
       "lyovsons",
       "projects",
@@ -110,7 +120,7 @@ describe("public publication freshness", () => {
 });
 
 describe("draft and autosave saves", () => {
-  const published = { ...note, _status: "published" } as const;
+  const published = { ...fixture, _status: "published" } as const;
   const runHook = (query: Record<string, string>, status: string) =>
     revalidatePost({
       context: {},
@@ -135,7 +145,7 @@ describe("draft and autosave saves", () => {
 
   it("revalidates on publish", () => {
     runHook({}, "published");
-    expect(revalidateTag).toHaveBeenCalledWith("post-a-note", "posts");
+    expect(revalidateTag).toHaveBeenCalledWith("post-a-slug", "posts");
   });
 
   it("treats a draft-flagged save that publishes as a publish", () => {
