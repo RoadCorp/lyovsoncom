@@ -268,7 +268,7 @@ export function ProjectCaseStudy({
       <div className="flex flex-col gap-10 p-6">
         {sections.map((section) => (
           <section
-            className="mx-auto w-full g3:text-[1.125rem] content-prose"
+            className="mx-auto w-full g3:text-[1.125rem] content-measure content-prose"
             key={section.id ?? section.heading}
           >
             <h2 className="mt-0">{section.heading}</h2>

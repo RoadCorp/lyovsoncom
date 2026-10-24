@@ -466,7 +466,7 @@
   ---break---
 */
 
-/* Registered so `em` resolves once on .content-prose and headings inherit
+/* Registered so `em` resolves once on .content-measure and headings inherit
    the body text's measure, not one scaled by their own font size. */
 @property --prose-measure {
   syntax: "<length>";
@@ -1697,11 +1697,11 @@
 
   /* Text keeps a readable measure (about 70 characters a line); figures,
      embeds and code still fill the card. */
-  .content-prose {
+  .content-measure {
     --prose-measure: 33em;
   }
 
-  .content-prose > :is(p, ul, ol, h2, h3, h4, blockquote, hr) {
+  .content-measure > :is(p, ul, ol, h2, h3, h4, blockquote, hr) {
     max-width: var(--prose-measure);
     margin-inline: auto;
   }

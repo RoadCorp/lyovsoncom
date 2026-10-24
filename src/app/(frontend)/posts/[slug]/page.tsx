@@ -144,6 +144,10 @@ async function PostPageContent({ params: paramsPromise }: Args) {
       : null;
   const imageUrl = postImage?.url ? absoluteUrl(postImage.url) : undefined;
   const keywords = getPostKeywords(post);
+  // Only populated references render a card; without one, related posts take its slot.
+  const hasReferences = Boolean(
+    post.references?.some((ref) => typeof ref === "object" && ref !== null)
+  );
 
   const articleSchema = generateArticleSchema({
     title: post.seo?.title || post.title,
@@ -206,16 +210,21 @@ async function PostPageContent({ params: paramsPromise }: Args) {
           "g3:col-start-1 g3:col-end-2 g3:row-start-2 g3:row-end-5 g3:grid"
         )}
       >
-        {post.references && post.references.length > 0 ? (
+        {hasReferences ? (
           <PostTransitionBoundary variant="rail">
             <div className="g3:col-auto g2:col-start-1 g2:col-end-2 g3:row-auto g2:row-start-2 g2:self-start">
-              <GridCardReferences references={post.references} />
+              <GridCardReferences references={post.references ?? []} />
             </div>
           </PostTransitionBoundary>
         ) : null}
 
         <PostTransitionBoundary variant="rail">
-          <div className="g3:col-auto g2:col-start-1 g2:col-end-2 g3:row-auto g2:row-start-4 g2:self-start">
+          <div
+            className={cn(
+              "g3:col-auto g2:col-start-1 g2:col-end-2 g3:row-auto g2:self-start",
+              hasReferences ? "g2:row-start-4" : "g2:row-start-2"
+            )}
+          >
             <OptionalErrorBoundary title="Unable to load recommended posts.">
               <Suspense
                 fallback={

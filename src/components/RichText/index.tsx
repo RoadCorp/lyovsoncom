@@ -48,7 +48,7 @@ const RichText = ({
         {
           container: enableGutter,
           "max-w-none": !enableGutter,
-          "mx-auto content-prose": enableProse,
+          "mx-auto content-measure content-prose": enableProse,
         },
         className
       )}
