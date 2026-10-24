@@ -100,41 +100,41 @@ export async function down({ db }: MigrateDownArgs): Promise<void> {
   ALTER TABLE "agents_rels" DISABLE ROW LEVEL SECURITY;
   DROP TABLE "agents" CASCADE;
   DROP TABLE "agents_rels" CASCADE;
-  ALTER TABLE "posts_rels" DROP CONSTRAINT "posts_rels_agents_fk";
+  ALTER TABLE "posts_rels" DROP CONSTRAINT IF EXISTS "posts_rels_agents_fk";
   
-  ALTER TABLE "_posts_v_rels" DROP CONSTRAINT "_posts_v_rels_agents_fk";
+  ALTER TABLE "_posts_v_rels" DROP CONSTRAINT IF EXISTS "_posts_v_rels_agents_fk";
   
-  ALTER TABLE "media_rels" DROP CONSTRAINT "media_rels_agents_fk";
+  ALTER TABLE "media_rels" DROP CONSTRAINT IF EXISTS "media_rels_agents_fk";
   
-  ALTER TABLE "_media_v_rels" DROP CONSTRAINT "_media_v_rels_agents_fk";
+  ALTER TABLE "_media_v_rels" DROP CONSTRAINT IF EXISTS "_media_v_rels_agents_fk";
   
-  ALTER TABLE "topics_rels" DROP CONSTRAINT "topics_rels_agents_fk";
+  ALTER TABLE "topics_rels" DROP CONSTRAINT IF EXISTS "topics_rels_agents_fk";
   
-  ALTER TABLE "_topics_v_rels" DROP CONSTRAINT "_topics_v_rels_agents_fk";
+  ALTER TABLE "_topics_v_rels" DROP CONSTRAINT IF EXISTS "_topics_v_rels_agents_fk";
   
-  ALTER TABLE "projects_rels" DROP CONSTRAINT "projects_rels_agents_fk";
+  ALTER TABLE "projects_rels" DROP CONSTRAINT IF EXISTS "projects_rels_agents_fk";
   
-  ALTER TABLE "_projects_v_rels" DROP CONSTRAINT "_projects_v_rels_agents_fk";
+  ALTER TABLE "_projects_v_rels" DROP CONSTRAINT IF EXISTS "_projects_v_rels_agents_fk";
   
-  ALTER TABLE "lyovsons_rels" DROP CONSTRAINT "lyovsons_rels_agents_fk";
+  ALTER TABLE "lyovsons_rels" DROP CONSTRAINT IF EXISTS "lyovsons_rels_agents_fk";
   
-  ALTER TABLE "references_rels" DROP CONSTRAINT "references_rels_agents_fk";
+  ALTER TABLE "references_rels" DROP CONSTRAINT IF EXISTS "references_rels_agents_fk";
   
-  ALTER TABLE "_references_v_rels" DROP CONSTRAINT "_references_v_rels_agents_fk";
+  ALTER TABLE "_references_v_rels" DROP CONSTRAINT IF EXISTS "_references_v_rels_agents_fk";
   
-  ALTER TABLE "activities_rels" DROP CONSTRAINT "activities_rels_agents_fk";
+  ALTER TABLE "activities_rels" DROP CONSTRAINT IF EXISTS "activities_rels_agents_fk";
   
-  ALTER TABLE "_activities_v_rels" DROP CONSTRAINT "_activities_v_rels_agents_fk";
+  ALTER TABLE "_activities_v_rels" DROP CONSTRAINT IF EXISTS "_activities_v_rels_agents_fk";
   
-  ALTER TABLE "notes_rels" DROP CONSTRAINT "notes_rels_agents_fk";
+  ALTER TABLE "notes_rels" DROP CONSTRAINT IF EXISTS "notes_rels_agents_fk";
   
-  ALTER TABLE "_notes_v_rels" DROP CONSTRAINT "_notes_v_rels_agents_fk";
+  ALTER TABLE "_notes_v_rels" DROP CONSTRAINT IF EXISTS "_notes_v_rels_agents_fk";
   
-  ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT "payload_locked_documents_rels_agents_fk";
+  ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT IF EXISTS "payload_locked_documents_rels_agents_fk";
   
-  ALTER TABLE "payload_preferences_rels" DROP CONSTRAINT "payload_preferences_rels_agents_fk";
+  ALTER TABLE "payload_preferences_rels" DROP CONSTRAINT IF EXISTS "payload_preferences_rels_agents_fk";
   
-  ALTER TABLE "payload_llm_instructions_rels" DROP CONSTRAINT "payload_llm_instructions_rels_agents_fk";
+  ALTER TABLE "payload_llm_instructions_rels" DROP CONSTRAINT IF EXISTS "payload_llm_instructions_rels_agents_fk";
   
   DROP INDEX "posts_rels_agents_id_idx";
   DROP INDEX "_posts_v_rels_agents_id_idx";
