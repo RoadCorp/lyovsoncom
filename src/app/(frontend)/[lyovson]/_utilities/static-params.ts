@@ -23,6 +23,7 @@ export async function getLyovsonStaticParams() {
     collection: "lyovsons",
     limit: 100,
     overrideAccess: true,
+    select: { username: true },
   });
 
   return ensureStaticParams(

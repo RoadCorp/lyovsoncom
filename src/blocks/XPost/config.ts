@@ -1,9 +1,5 @@
-import {
-  FixedToolbarFeature,
-  InlineToolbarFeature,
-  lexicalEditor,
-} from "@payloadcms/richtext-lexical";
 import type { Block } from "payload";
+import { captionEditor } from "@/fields/default-lexical";
 
 // Regex patterns for X/Twitter post ID extraction
 const NUMERIC_ID_REGEX = /^\d+$/;
@@ -82,15 +78,7 @@ export const XPost: Block = {
     {
       name: "caption",
       type: "richText",
-      editor: lexicalEditor({
-        features: ({ rootFeatures }) => {
-          return [
-            ...rootFeatures,
-            FixedToolbarFeature(),
-            InlineToolbarFeature(),
-          ];
-        },
-      }),
+      editor: captionEditor,
       label: "Caption",
     },
   ],

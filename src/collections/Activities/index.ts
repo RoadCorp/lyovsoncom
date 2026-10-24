@@ -1,6 +1,7 @@
 import type { CollectionConfig } from "payload";
 import { actingLyovsonId, lyovsonOrAgent } from "@/access/agents";
 import { authenticatedOrPublishedPublic } from "@/access/authenticated-or-published-public";
+import { draftSaveGuard } from "@/collections/hooks/draft-save-guard";
 import { revalidateContentHooks } from "@/collections/hooks/revalidate-content";
 import { draftVersions } from "@/collections/shared";
 import { contentTextField, embeddingFields } from "@/fields/embedding";
@@ -229,6 +230,7 @@ export const Activities: CollectionConfig = {
     contentTextField("activity content"),
   ],
   hooks: {
+    beforeOperation: [draftSaveGuard],
     beforeChange: [populateContentTextHook, markActivityEmbeddingStaleHook],
     afterChange: [revalidateActivity.afterChange],
     afterDelete: [revalidateActivity.afterDelete],

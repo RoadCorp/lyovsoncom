@@ -21,13 +21,15 @@ export const populateContentTextHook: CollectionBeforeChangeHook = ({
     return data;
   }
 
-  // Extract text from Lexical content if present
-  if (data.content) {
-    const contentText = extractTextFromContent(data.content);
-    data.content_text = contentText || null;
-  } else {
-    data.content_text = null;
+  // Partial updates (trash, restore, a title fix) carry no content; keep the
+  // stored text rather than clearing it.
+  if (!("content" in data)) {
+    return data;
   }
+
+  data.content_text = data.content
+    ? extractTextFromContent(data.content) || null
+    : null;
 
   return data;
 };

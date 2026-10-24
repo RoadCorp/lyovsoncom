@@ -94,12 +94,18 @@ export function revalidatePublicContent(
 /**
  * Admin "Save draft" and autosave send `draft=true` with a non-published
  * status; Payload then writes only a version and leaves the live document
- * untouched. (Publishing sends no `draft` parameter.)
+ * untouched. (Publishing sends no `draft` parameter.) Local API and MCP draft
+ * saves are marked in `req.context.draftSave` by `draftSaveGuard`.
  */
 export function isDraftOnlySave(
-  req: { query?: Record<string, unknown> } | undefined,
+  req:
+    | { context?: Record<string, unknown>; query?: Record<string, unknown> }
+    | undefined,
   doc: { _status?: string | null } | null | undefined
 ) {
+  if (req?.context?.draftSave === true) {
+    return true;
+  }
   const query = req?.query;
   const isDraftRequest = query?.draft === "true" || query?.autosave === "true";
   return isDraftRequest && doc?._status !== "published";

@@ -13,9 +13,29 @@ import type { GIFBlock as GIFBlockType } from "./types";
  * A block with nothing to show renders nothing, and a GIF that fails to load
  * hides its card.
  */
+const GIPHY_MEDIA_HOST = /^(?:i|media\d*)\.giphy\.com$/;
+
+/** Hotlinked files play only from GIPHY's media hosts. */
+function giphyMediaUrl(url: string | null | undefined) {
+  if (!url) {
+    return null;
+  }
+  try {
+    const { hostname, protocol } = new URL(url);
+    return protocol === "https:" && GIPHY_MEDIA_HOST.test(hostname)
+      ? url
+      : null;
+  } catch {
+    return null;
+  }
+}
+
 function videoSources(props: GIFBlockType, media: MediaType | null) {
   if (!media) {
-    return { mp4Src: props.mp4Url, webmSrc: props.webmUrl };
+    return {
+      mp4Src: giphyMediaUrl(props.mp4Url),
+      webmSrc: giphyMediaUrl(props.webmUrl),
+    };
   }
   return media.mimeType === "video/webm"
     ? { mp4Src: null, webmSrc: media.url }
@@ -57,7 +77,9 @@ export function GIFBlock(props: GIFBlockType) {
                   : undefined
               }
               mp4Src={mp4Src || undefined}
-              poster={poster?.url || props.posterUrl || undefined}
+              poster={
+                poster?.url || giphyMediaUrl(props.posterUrl) || undefined
+              }
               webmSrc={webmSrc || undefined}
             />
           )}

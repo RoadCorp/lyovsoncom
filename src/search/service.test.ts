@@ -136,9 +136,8 @@ describe("search execution", () => {
       if (scope) {
         expect(query.params).toContain("rafa");
         expect(query.sql).not.toContain("rafa");
-      } else {
-        expect(query.sql).toContain("hybrid_search_content");
       }
+      expect(query.sql).toContain("deleted_at IS NULL");
     }
   );
 

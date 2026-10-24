@@ -73,18 +73,20 @@ export type LexicalNodes_AD327369 =
   | SerializedLinkNode<LexicalNodes_AD327369, LexicalLinkFields>;
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "LexicalNodes_6E99CEEE".
+ * via the `definition` "LexicalNodes_91480D83".
  */
-export type LexicalNodes_6E99CEEE =
+export type LexicalNodes_91480D83 =
   | SerializedTextNode
   | SerializedTabNode
   | SerializedLineBreakNode
-  | SerializedParagraphNode<LexicalNodes_6E99CEEE>
+  | SerializedParagraphNode<LexicalNodes_91480D83>
   | SerializedHorizontalRuleNode
   | SerializedBlockNode<BannerBlock | CodeBlock | MediaBlock | YouTubeBlock | XPostBlock | QuoteBlock | GIFBlock>
-  | SerializedHeadingNode<LexicalNodes_6E99CEEE, 'h1' | 'h2' | 'h3' | 'h4'>
-  | SerializedAutoLinkNode<LexicalNodes_6E99CEEE, LexicalLinkFields>
-  | SerializedLinkNode<LexicalNodes_6E99CEEE, LexicalLinkFields>;
+  | SerializedListNode<LexicalNodes_91480D83>
+  | SerializedListItemNode<LexicalNodes_91480D83>
+  | SerializedHeadingNode<LexicalNodes_91480D83, 'h2' | 'h3' | 'h4'>
+  | SerializedAutoLinkNode<LexicalNodes_91480D83, LexicalLinkFields>
+  | SerializedLinkNode<LexicalNodes_91480D83, LexicalLinkFields>;
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "LexicalNodes_52AC8EA2".
@@ -259,7 +261,7 @@ export interface Post {
      */
     image?: (number | null) | Media;
   };
-  content: LexicalRichText<LexicalNodes_6E99CEEE>;
+  content: LexicalRichText<LexicalNodes_91480D83>;
   /**
    * What type of content is this?
    */
@@ -782,7 +784,7 @@ export interface Project {
   caseStudy?:
     | {
         heading: string;
-        content: LexicalRichText<LexicalNodes_6E99CEEE>;
+        content: LexicalRichText<LexicalNodes_91480D83>;
         id?: string | null;
       }[]
     | null;
@@ -882,7 +884,7 @@ export interface Activity {
   /**
    * General information about this activity
    */
-  notes?: LexicalRichText<LexicalNodes_6E99CEEE> | null;
+  notes?: LexicalRichText<LexicalNodes_91480D83> | null;
   /**
    * Notes from participants (each can include a note and/or rating)
    */
@@ -1763,14 +1765,6 @@ export interface LexicalRichText<TNode> {
   };
 }
 
-export interface SerializedHeadingNode<
-  TChildren,
-  TTag extends 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6',
-> extends SerializedLexicalElementBase<TChildren> {
-  type: 'heading';
-  tag: TTag;
-}
-
 export interface SerializedListNode<TChildren> extends SerializedLexicalElementBase<TChildren> {
   type: 'list';
   checked?: boolean;
@@ -1783,6 +1777,14 @@ export interface SerializedListItemNode<TChildren> extends SerializedLexicalElem
   type: 'listitem';
   checked?: boolean;
   value: number;
+}
+
+export interface SerializedHeadingNode<
+  TChildren,
+  TTag extends 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6',
+> extends SerializedLexicalElementBase<TChildren> {
+  type: 'heading';
+  tag: TTag;
 }
 
 

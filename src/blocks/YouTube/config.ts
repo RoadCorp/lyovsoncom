@@ -1,9 +1,5 @@
-import {
-  FixedToolbarFeature,
-  InlineToolbarFeature,
-  lexicalEditor,
-} from "@payloadcms/richtext-lexical";
 import type { Block } from "payload";
+import { captionEditor } from "@/fields/default-lexical";
 
 // YouTube ID validation regex (11 characters of alphanumeric and -/_)
 const YOUTUBE_ID_REGEX = /^[A-Za-z0-9_-]{11}$/;
@@ -96,15 +92,7 @@ export const YouTube: Block = {
     {
       name: "caption",
       type: "richText",
-      editor: lexicalEditor({
-        features: ({ rootFeatures }) => {
-          return [
-            ...rootFeatures,
-            FixedToolbarFeature(),
-            InlineToolbarFeature(),
-          ];
-        },
-      }),
+      editor: captionEditor,
       label: "Caption",
     },
     {

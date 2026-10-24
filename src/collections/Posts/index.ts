@@ -1,6 +1,7 @@
 import type { CollectionConfig } from "payload";
 import { lyovsonOrAgent } from "@/access/agents";
 import { authenticatedOrPublished } from "@/access/authenticated-or-published";
+import { draftSaveGuard } from "@/collections/hooks/draft-save-guard";
 import { populateContentTextHook } from "@/collections/hooks/populate-content-text";
 import { draftVersions, previewAdmin } from "@/collections/shared";
 import { contentTextField, embeddingFields } from "@/fields/embedding";
@@ -240,6 +241,7 @@ export const Posts: CollectionConfig = {
     slugField(),
   ],
   hooks: {
+    beforeOperation: [draftSaveGuard],
     beforeChange: [populateContentTextHook, markPostEmbeddingStaleHook],
     afterChange: [revalidatePost],
     afterRead: [populateAuthors],

@@ -14,7 +14,7 @@ import { getPayloadClient } from "@/utilities/payload-client";
 import { publicContentSelect } from "@/utilities/public-content-select";
 import { activitiesRoute, activityRoute, postRoute } from "@/utilities/routes";
 import { parseHybridSearchRows } from "./rows";
-import { globalHybridSearchSql, scopedHybridSearchSql } from "./sql";
+import { hybridSearchSql } from "./sql";
 import type {
   SearchOptions,
   SearchPreviewItem,
@@ -107,34 +107,21 @@ async function getSearchVectorString(query: string): Promise<string | null> {
   }
 }
 
-async function runScopedHybridSearch(
+async function executeHybridSearch(
   query: string,
   limit: number,
-  scopeUsername: string
+  scopeUsername: string | null
 ): Promise<SearchResponse> {
   const payload = await getPayloadClient();
   const vectorString = await getSearchVectorString(query);
   const result = await payload.db.drizzle.execute(
-    scopedHybridSearchSql({
+    hybridSearchSql({
       query,
       vectorString,
       limit,
       matchWindow: getSearchWindow(limit),
       scopeUsername,
     })
-  );
-
-  return toSearchResponse(query, result.rows);
-}
-
-async function runGlobalHybridSearch(
-  query: string,
-  limit: number
-): Promise<SearchResponse> {
-  const payload = await getPayloadClient();
-  const vectorString = await getSearchVectorString(query);
-  const result = await payload.db.drizzle.execute(
-    globalHybridSearchSql({ query, vectorString, limit })
   );
 
   return toSearchResponse(query, result.rows);
@@ -153,12 +140,7 @@ function toSearchResponse(
   };
 }
 
-const runSearchForRequest = cache(
-  (query: string, limit: number, scope: string | null) =>
-    scope
-      ? runScopedHybridSearch(query, limit, scope)
-      : runGlobalHybridSearch(query, limit)
-);
+const runSearchForRequest = cache(executeHybridSearch);
 
 export function runHybridSearch(
   rawQuery: string | null,

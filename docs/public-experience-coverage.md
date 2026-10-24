@@ -70,7 +70,6 @@ Each row covers its page-local helper components and metadata/static-parameter f
 | `src/app/(frontend)/[lyovson]/layout.tsx` | Profile awaits URL data before children. Place profile-slot Suspense at the correct level; preserve profile across child changes and distinguish authors. |
 | `src/app/(frontend)/[lyovson]/loading.tsx` | Match the destination grid slots and landmarks; verify direct load AND client entry from each shared-layout depth. Never duplicate nav/profile in fallback. |
 | `src/app/(frontend)/[lyovson]/template.tsx` | Retain transition policy; audit remount/key behavior against Activity and history before moving/removing this boundary. |
-| `src/app/(frontend)/activities/[date]/[slug]/loading.tsx` | Match the destination grid slots and landmarks; verify direct load AND client entry from each shared-layout depth. Never duplicate nav/profile in fallback. |
 | `src/app/(frontend)/error.tsx` | Retain retry(); usable recovery without swallowing notFound/redirect, preserving the surrounding navigation. |
 | `src/app/(frontend)/layout.tsx` | Persistent public grid/nav/theme. Audit navigation search-param suspension without blanking frame. |
 | `src/app/(frontend)/loading.tsx` | Match the destination grid slots and landmarks; verify direct load AND client entry from each shared-layout depth. Never duplicate nav/profile in fallback. |
@@ -136,7 +135,6 @@ Unused template components and UI primitives were removed during the September 6
 | `src/components/Media/ImageMedia/index.tsx` | C08 | server-compatible / helper |
 | `src/components/Media/VideoMedia/index.tsx` | C08 | client; hidden-media cleanup |
 | `src/components/Media/index.tsx` | C08 | server-compatible / helper |
-| `src/components/NotesArchive/index.tsx` | C02 | server-compatible / helper |
 | `src/components/offline-page.tsx` | C11 | client; retained offline controls |
 | `src/components/public-page-boundary.tsx` | C06 | server-compatible; page-local Suspense |
 | `src/components/grid/skeleton/profile-skeleton.tsx` | C06 | server-compatible; dimensioned profile fallback |
@@ -147,7 +145,6 @@ Unused template components and UI primitives were removed during the September 6
 | `src/components/RichText/node-format.tsx` | C09 | server-compatible / helper |
 | `src/components/RichText/serialize.tsx` | C09 | server-compatible / helper |
 | `src/components/topic-pill.tsx` | C07 | server-compatible / helper |
-| `src/components/admin/admin-font-provider.tsx` | C15 | client |
 | `src/components/admin/icon.tsx` | C15 | client |
 | `src/components/admin/login-text.tsx` | C15 | server-compatible / helper |
 | `src/components/admin/logo.tsx` | C15 | client |
@@ -196,7 +193,6 @@ Unused template components and UI primitives were removed during the September 6
 | Module | Package | Direct declaration |
 | --- | --- | --- |
 | `src/utilities/social-icons.tsx` | C07 | server-compatible / helper |
-| `src/fields/slug/slug-component.tsx` | C15 | client; admin-only and excluded |
 
 ## Supporting files and endpoints
 

@@ -1,20 +1,11 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import {
-  FixedToolbarFeature,
-  InlineToolbarFeature,
-  lexicalEditor,
-} from "@payloadcms/richtext-lexical";
 import type { CollectionConfig } from "payload";
 import { lyovsonOrAgent } from "@/access/agents";
 import { anyone } from "@/access/anyone";
+import { captionEditor } from "@/fields/default-lexical";
 import {
   hasPublicChanges,
   revalidatePublicDependencies,
 } from "@/utilities/revalidate-public-content";
-
-const filename = fileURLToPath(import.meta.url);
-const dirname = path.dirname(filename);
 
 export const Media: CollectionConfig = {
   slug: "media",
@@ -46,15 +37,7 @@ export const Media: CollectionConfig = {
     {
       name: "caption",
       type: "richText",
-      editor: lexicalEditor({
-        features: ({ rootFeatures }) => {
-          return [
-            ...rootFeatures,
-            FixedToolbarFeature(),
-            InlineToolbarFeature(),
-          ];
-        },
-      }),
+      editor: captionEditor,
     },
   ],
   hooks: {
@@ -82,8 +65,9 @@ export const Media: CollectionConfig = {
     ],
   },
   upload: {
-    // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
-    staticDir: path.resolve(dirname, "../../public/media"),
+    // Files live in Vercel Blob (see payload.config.ts); only media the site
+    // renders is accepted.
     adminThumbnail: "thumbnail",
+    mimeTypes: ["image/*", "video/mp4", "video/webm"],
   },
 };

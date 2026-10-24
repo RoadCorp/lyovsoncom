@@ -1,5 +1,7 @@
 import {
   BoldFeature,
+  FixedToolbarFeature,
+  InlineToolbarFeature,
   ItalicFeature,
   LinkFeature,
   lexicalEditor,
@@ -43,4 +45,13 @@ export const defaultLexical: Config["editor"] = lexicalEditor({
       }),
     ];
   },
+});
+
+/** Captions and short block text: the default features plus both toolbars. */
+export const captionEditor: Config["editor"] = lexicalEditor({
+  features: ({ rootFeatures }) => [
+    ...rootFeatures,
+    FixedToolbarFeature(),
+    InlineToolbarFeature(),
+  ],
 });

@@ -87,7 +87,7 @@ async function getTwitchToken() {
   const { access_token, expires_in } = await fetchJson<{
     access_token: string;
     expires_in: number;
-  }>(`https://id.twitch.tv/oauth2/token?${params}`, { method: "POST" });
+  }>("https://id.twitch.tv/oauth2/token", { body: params, method: "POST" });
   twitchToken = {
     expiresAt: Date.now() + (expires_in - 60) * 1000,
     value: access_token,

@@ -1,7 +1,7 @@
 import type { CollectionConfig } from "payload";
 import { lyovsonOrAgent } from "@/access/agents";
-
 import { authenticatedOrPublished } from "@/access/authenticated-or-published";
+import { draftSaveGuard } from "@/collections/hooks/draft-save-guard";
 import { draftVersions } from "@/collections/shared";
 import { richEditorConfig } from "@/fields/lexical-configs";
 import { publishedAtField } from "@/fields/published-at";
@@ -288,6 +288,7 @@ export const Projects: CollectionConfig = {
     slugField("name"),
   ],
   hooks: {
+    beforeOperation: [draftSaveGuard],
     afterChange: [revalidateProject],
     afterDelete: [revalidateDeletedProject],
   },

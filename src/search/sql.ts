@@ -12,7 +12,8 @@ export interface HybridSearchSqlParams {
 interface ScopedSearchSqlParams extends HybridSearchSqlParams {
   /** Candidate rows per ranking method before rank fusion. */
   matchWindow: number;
-  scopeUsername: string;
+  /** Limits results to one profile; null searches the whole site. */
+  scopeUsername: string | null;
 }
 
 interface ScopePredicates {
@@ -21,7 +22,11 @@ interface ScopePredicates {
 }
 
 /** Ownership predicates that limit each collection to one profile. */
-function scopePredicates(scopeUsername: string): ScopePredicates {
+function scopePredicates(scopeUsername: string | null): ScopePredicates {
+  if (scopeUsername === null) {
+    return { posts: sql`TRUE`, activities: sql`TRUE` };
+  }
+
   return {
     posts: sql`
       EXISTS (
@@ -67,6 +72,7 @@ function postsRankingCtes(
         FROM posts p
         WHERE ${vectorString}::vector IS NOT NULL
           AND p._status = 'published'
+          AND p.deleted_at IS NULL
           AND p.embedding_vector IS NOT NULL
           AND ${scope}
         ORDER BY p.embedding_vector::vector(1536) <=> ${vectorString}::vector
@@ -80,6 +86,7 @@ function postsRankingCtes(
           ) AS rank
         FROM posts p
         WHERE p._status = 'published'
+          AND p.deleted_at IS NULL
           AND p.search_vector @@ websearch_to_tsquery('english', ${query})
           AND ${scope}
         ORDER BY ts_rank(p.search_vector, websearch_to_tsquery('english', ${query})) DESC
@@ -96,6 +103,7 @@ function postsRankingCtes(
           ) AS rank
         FROM posts p
         WHERE p._status = 'published'
+          AND p.deleted_at IS NULL
           AND (
             p.title % ${query}
             OR COALESCE(p.description, '') % ${query}
@@ -119,6 +127,7 @@ function activitiesRankingCtes(
         FROM activities a
         WHERE ${vectorString}::vector IS NOT NULL
           AND a._status = 'published'
+          AND a.deleted_at IS NULL
           AND a.visibility = 'public'
           AND a.embedding_vector IS NOT NULL
           AND ${scope}
@@ -133,6 +142,7 @@ function activitiesRankingCtes(
           ) AS rank
         FROM activities a
         WHERE a._status = 'published'
+          AND a.deleted_at IS NULL
           AND a.visibility = 'public'
           AND a.search_vector @@ websearch_to_tsquery('english', ${query})
           AND ${scope}
@@ -147,6 +157,7 @@ function activitiesRankingCtes(
           ) AS rank
         FROM activities a
         WHERE a._status = 'published'
+          AND a.deleted_at IS NULL
           AND a.visibility = 'public'
           AND COALESCE(a.content_text, '') % ${query}
           AND ${scope}
@@ -218,10 +229,10 @@ function rankedResults(scopes: ScopePredicates) {
 }
 
 /**
- * Hybrid search limited to one profile's content. Semantic, full-text and
+ * Hybrid search over the site, or one profile's content. Semantic, full-text and
  * trigram rankings are fused with reciprocal rank fusion (weights 0.4/0.4/0.2).
  */
-export function scopedHybridSearchSql(params: ScopedSearchSqlParams): SQL {
+export function hybridSearchSql(params: ScopedSearchSqlParams): SQL {
   const scopes = scopePredicates(params.scopeUsername);
 
   return sql`
@@ -234,24 +245,4 @@ export function scopedHybridSearchSql(params: ScopedSearchSqlParams): SQL {
     ORDER BY ranked_results.combined_score DESC
     LIMIT ${params.limit}
   `;
-}
-
-/** Site-wide hybrid search through the `hybrid_search_content` database function. */
-export function globalHybridSearchSql({
-  limit,
-  query,
-  vectorString,
-}: HybridSearchSqlParams): SQL {
-  // The database function predates the trash, so trashed hits are dropped here.
-  return sql`SELECT r.* FROM hybrid_search_content(
-      ${query},
-      ${vectorString}::vector,
-      ${limit},
-      ${SEARCH_RRF_K}
-    ) r
-    WHERE NOT EXISTS (
-      SELECT 1 FROM posts p WHERE r.collection = 'posts' AND p.id = r.id AND p.deleted_at IS NOT NULL
-      UNION ALL
-      SELECT 1 FROM activities a WHERE r.collection = 'activities' AND a.id = r.id AND a.deleted_at IS NOT NULL
-    )`;
 }

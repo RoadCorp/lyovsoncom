@@ -37,8 +37,11 @@ async function fetchText(url: string) {
 
 async function countAvenewsPublications() {
   const index = await fetchText("https://www.avenews.am/sitemap-index.xml");
-  const sitemaps = getSitemapLocations(index).filter((url) =>
-    url.includes("/publications-sitemap/")
+  // Follow only AveNews's own sitemaps, whatever the index lists.
+  const sitemaps = getSitemapLocations(index).filter(
+    (url) =>
+      url.startsWith("https://www.avenews.am/") &&
+      url.includes("/publications-sitemap/")
   );
   if (sitemaps.length === 0) {
     return null;

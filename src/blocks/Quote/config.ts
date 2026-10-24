@@ -1,9 +1,5 @@
-import {
-  FixedToolbarFeature,
-  InlineToolbarFeature,
-  lexicalEditor,
-} from "@payloadcms/richtext-lexical";
 import type { Block } from "payload";
+import { captionEditor } from "@/fields/default-lexical";
 
 export const Quote: Block = {
   slug: "quote",
@@ -16,15 +12,7 @@ export const Quote: Block = {
     {
       name: "quote",
       type: "richText",
-      editor: lexicalEditor({
-        features: ({ rootFeatures }) => {
-          return [
-            ...rootFeatures,
-            FixedToolbarFeature(),
-            InlineToolbarFeature(),
-          ];
-        },
-      }),
+      editor: captionEditor,
       required: true,
       label: "Quote Text",
     },
