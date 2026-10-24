@@ -1,13 +1,6 @@
 import type { CollectionConfig } from "payload";
-import {
-  actingLyovsonId,
-  lyovsonOrAgent,
-  lyovsonOrAgentDraft,
-  withAgentRead,
-} from "@/access/agents";
-import { authenticated } from "@/access/authenticated";
+import { actingLyovsonId, lyovsonOrAgent } from "@/access/agents";
 import { authenticatedOrPublishedPublic } from "@/access/authenticated-or-published-public";
-import { keepAgentDrafts } from "@/collections/hooks/keep-agent-drafts";
 import { revalidateContentHooks } from "@/collections/hooks/revalidate-content";
 import { draftVersions } from "@/collections/shared";
 import { contentTextField, embeddingFields } from "@/fields/embedding";
@@ -24,11 +17,11 @@ export const Activities: CollectionConfig = {
   slug: "activities",
   access: {
     create: lyovsonOrAgent,
-    delete: authenticated,
-    read: withAgentRead(authenticatedOrPublishedPublic, { publicOnly: true }),
+    delete: lyovsonOrAgent,
+    read: authenticatedOrPublishedPublic,
     // Payload 4 lets versions inherit `read`; keep drafts and history private.
-    readVersions: authenticated,
-    update: lyovsonOrAgentDraft({ publicOnly: true }),
+    readVersions: lyovsonOrAgent,
+    update: lyovsonOrAgent,
   },
   defaultPopulate: {
     slug: true,
@@ -236,11 +229,7 @@ export const Activities: CollectionConfig = {
     contentTextField("activity content"),
   ],
   hooks: {
-    beforeChange: [
-      keepAgentDrafts,
-      populateContentTextHook,
-      markActivityEmbeddingStaleHook,
-    ],
+    beforeChange: [populateContentTextHook, markActivityEmbeddingStaleHook],
     afterChange: [revalidateActivity.afterChange],
     afterDelete: [revalidateActivity.afterDelete],
   },

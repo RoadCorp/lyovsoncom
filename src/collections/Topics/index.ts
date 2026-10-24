@@ -1,8 +1,8 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
+import { lyovsonOrAgent } from "@/access/agents";
 
 import { anyone } from "@/access/anyone";
-import { authenticated } from "@/access/authenticated";
 import { seoField } from "@/fields/seo";
 import { slugField } from "@/fields/slug";
 
@@ -17,12 +17,12 @@ export const Topics: CollectionConfig = {
     updatedAt: true,
   },
   access: {
-    create: authenticated,
-    delete: authenticated,
+    create: lyovsonOrAgent,
+    delete: lyovsonOrAgent,
     read: anyone,
     // Payload 4 lets versions inherit `read`; keep history private.
-    readVersions: authenticated,
-    update: authenticated,
+    readVersions: lyovsonOrAgent,
+    update: lyovsonOrAgent,
   },
   // Topics nest under a parent topic; the admin gets Payload's tree view.
   hierarchy: {

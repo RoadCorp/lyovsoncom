@@ -1,4 +1,4 @@
-import type { Access, PayloadRequest, Where } from "payload";
+import type { Access, PayloadRequest } from "payload";
 
 import { isLyovson } from "./is-lyovson";
 
@@ -22,44 +22,6 @@ export function actingLyovsonId(
   }
 }
 
-const untrashed: Where = { deletedAt: { exists: false } };
-const publicUntrashed: Where = {
-  ...untrashed,
-  visibility: { equals: "public" },
-};
-
-interface AgentScope {
-  publicOnly: boolean;
-}
-
-/** Lyovsons and agents may create; `keepAgentDrafts` keeps agents to drafts. */
+/** Lyovsons and their agents: full access to content and media. */
 export const lyovsonOrAgent: Access = ({ req: { user } }) =>
   isLyovson(user) || isAgent(user);
-
-/** Agents also read drafts, but nothing private or trashed. */
-export const withAgentRead =
-  (read: Access, { publicOnly }: AgentScope): Access =>
-  (args) => {
-    if (isAgent(args.req.user)) {
-      return publicOnly ? publicUntrashed : untrashed;
-    }
-    return read(args);
-  };
-
-/** Lyovsons edit anything; agents edit only documents that are drafts. */
-export const lyovsonOrAgentDraft =
-  ({ publicOnly }: AgentScope): Access =>
-  ({ req: { user } }) => {
-    if (isLyovson(user)) {
-      return true;
-    }
-    if (isAgent(user)) {
-      return {
-        and: [
-          publicOnly ? publicUntrashed : untrashed,
-          { _status: { equals: "draft" } },
-        ],
-      };
-    }
-    return false;
-  };

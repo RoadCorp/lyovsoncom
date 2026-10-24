@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
+import { lyovsonOrAgent } from "@/access/agents";
 
-import { authenticated } from "@/access/authenticated";
 import { authenticatedOrPublished } from "@/access/authenticated-or-published";
 import { draftVersions } from "@/collections/shared";
 import { richEditorConfig } from "@/fields/lexical-configs";
@@ -44,12 +44,12 @@ export const Projects: CollectionConfig = {
     updatedAt: true,
   },
   access: {
-    create: authenticated,
-    delete: authenticated,
+    create: lyovsonOrAgent,
+    delete: lyovsonOrAgent,
     read: authenticatedOrPublished,
     // Payload 4 lets versions inherit `read`; keep drafts and history private.
-    readVersions: authenticated,
-    update: authenticated,
+    readVersions: lyovsonOrAgent,
+    update: lyovsonOrAgent,
   },
   admin: {
     group: "Organization",

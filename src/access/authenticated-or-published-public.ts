@@ -1,8 +1,9 @@
 import type { Access } from "payload";
+import { isAgent } from "./agents";
 import { isLyovson } from "./is-lyovson";
 
 export const authenticatedOrPublishedPublic: Access = ({ req: { user } }) => {
-  if (isLyovson(user)) {
+  if (isLyovson(user) || isAgent(user)) {
     return true;
   }
 

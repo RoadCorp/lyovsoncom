@@ -1,12 +1,6 @@
 import type { CollectionConfig } from "payload";
-import {
-  lyovsonOrAgent,
-  lyovsonOrAgentDraft,
-  withAgentRead,
-} from "@/access/agents";
-import { authenticated } from "@/access/authenticated";
+import { lyovsonOrAgent } from "@/access/agents";
 import { authenticatedOrPublished } from "@/access/authenticated-or-published";
-import { keepAgentDrafts } from "@/collections/hooks/keep-agent-drafts";
 import { populateContentTextHook } from "@/collections/hooks/populate-content-text";
 import { draftVersions, previewAdmin } from "@/collections/shared";
 import { contentTextField, embeddingFields } from "@/fields/embedding";
@@ -32,11 +26,11 @@ export const Posts: CollectionConfig = {
   },
   access: {
     create: lyovsonOrAgent,
-    delete: authenticated,
-    read: withAgentRead(authenticatedOrPublished, { publicOnly: false }),
+    delete: lyovsonOrAgent,
+    read: authenticatedOrPublished,
     // Payload 4 lets versions inherit `read`; keep drafts and history private.
-    readVersions: authenticated,
-    update: lyovsonOrAgentDraft({ publicOnly: false }),
+    readVersions: lyovsonOrAgent,
+    update: lyovsonOrAgent,
   },
   admin: {
     group: "Content",
@@ -255,11 +249,7 @@ export const Posts: CollectionConfig = {
     slugField(),
   ],
   hooks: {
-    beforeChange: [
-      keepAgentDrafts,
-      populateContentTextHook,
-      markPostEmbeddingStaleHook,
-    ],
+    beforeChange: [populateContentTextHook, markPostEmbeddingStaleHook],
     afterChange: [revalidatePost],
     afterRead: [populateAuthors],
     afterDelete: [revalidateDelete],

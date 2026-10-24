@@ -505,7 +505,7 @@ export interface Lyovson {
   collection: 'lyovsons';
 }
 /**
- * AI assistants that draft posts, notes and activities through /api/mcp. Enable an API key to connect one; a Lyovson publishes what they draft.
+ * AI assistants with a Lyovson's access to content and media through /api/mcp, but none to accounts. Enable an API key to connect one.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "agents".
@@ -514,7 +514,7 @@ export interface Agent {
   id: number;
   name: string;
   /**
-   * Who this assistant works for. It is the default author and participant of what the assistant drafts.
+   * Who this assistant works for. It is the default author and participant of what the assistant writes.
    */
   lyovson: number | Lyovson;
   createdBy?:

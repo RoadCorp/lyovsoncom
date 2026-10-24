@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
+import { lyovsonOrAgent } from "@/access/agents";
 import { anyone } from "@/access/anyone";
-import { authenticated } from "@/access/authenticated";
 import { slugField } from "@/fields/slug";
 import type { Reference } from "@/payload-types";
 import {
@@ -25,12 +25,12 @@ const linksToOthers = (doc: Reference) =>
 export const References: CollectionConfig = {
   slug: "references",
   access: {
-    create: authenticated,
-    delete: authenticated,
+    create: lyovsonOrAgent,
+    delete: lyovsonOrAgent,
     read: anyone,
     // Payload 4 lets versions inherit `read`; keep history private.
-    readVersions: authenticated,
-    update: authenticated,
+    readVersions: lyovsonOrAgent,
+    update: lyovsonOrAgent,
   },
   defaultPopulate: {
     title: true,

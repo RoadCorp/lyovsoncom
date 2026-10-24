@@ -6,8 +6,8 @@ import {
   lexicalEditor,
 } from "@payloadcms/richtext-lexical";
 import type { CollectionConfig } from "payload";
+import { lyovsonOrAgent } from "@/access/agents";
 import { anyone } from "@/access/anyone";
-import { authenticated } from "@/access/authenticated";
 import {
   hasPublicChanges,
   revalidatePublicDependencies,
@@ -19,12 +19,12 @@ const dirname = path.dirname(filename);
 export const Media: CollectionConfig = {
   slug: "media",
   access: {
-    create: authenticated,
-    delete: authenticated,
+    create: lyovsonOrAgent,
+    delete: lyovsonOrAgent,
     read: anyone,
     // Payload 4 lets versions inherit `read`; keep history private.
-    readVersions: authenticated,
-    update: authenticated,
+    readVersions: lyovsonOrAgent,
+    update: lyovsonOrAgent,
   },
   admin: {
     group: "Media & Settings",
