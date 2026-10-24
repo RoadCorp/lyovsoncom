@@ -137,8 +137,12 @@ const redirects = () => {
   const retiredNotesRedirects = [
     { source: "/notes", destination: "/", permanent: true },
     { source: "/notes/:path*", destination: "/", permanent: true },
-    { source: "/:lyovson/notes", destination: "/", permanent: true },
-    { source: "/:lyovson/notes/:path*", destination: "/", permanent: true },
+    { source: "/:lyovson(rafa|jess)/notes", destination: "/", permanent: true },
+    {
+      source: "/:lyovson(rafa|jess)/notes/:path*",
+      destination: "/",
+      permanent: true,
+    },
   ];
 
   const allRedirects = [
