@@ -29,9 +29,7 @@ export function PlaceholderPageCard({
     >
       <GridCardSection className="col-span-3 row-span-3 flex flex-col gap-5 p-6">
         <div className="space-y-3">
-          <p className="tone-muted text-xs uppercase tracking-[0.14em]">
-            {eyebrow}
-          </p>
+          <p className="tone-muted type-eyebrow">{eyebrow}</p>
           <h1 className="tone-heading font-bold text-3xl">{title}</h1>
           <p className="tone-muted max-w-2xl text-sm leading-relaxed">
             {description}

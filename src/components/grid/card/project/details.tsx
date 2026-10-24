@@ -79,9 +79,7 @@ export function GridCardProjectFacts({ project }: { project: Project }) {
         >
           <Icon aria-hidden="true" className="card-eyebrow h-5 w-5 shrink-0" />
           <dl className="flex min-w-0 flex-col gap-0.5">
-            <dt className="card-eyebrow font-mono text-label uppercase tracking-[0.16em]">
-              {term}
-            </dt>
+            <dt className="card-eyebrow type-eyebrow">{term}</dt>
             <dd className="tone-heading line-clamp-2 font-medium text-sm">
               {href ? (
                 <a
@@ -175,9 +173,7 @@ export function GridCardProjectHighlights({
           >
             {highlight.value}
           </span>
-          <span className="card-eyebrow font-mono text-label uppercase tracking-[0.16em]">
-            {highlight.label}
-          </span>
+          <span className="card-eyebrow type-eyebrow">{highlight.label}</span>
         </GridCardSection>
       ))}
     </GridCard>
@@ -238,9 +234,7 @@ export function GridCardRelatedProjects({
                   {project.name}
                 </h2>
                 {years ? (
-                  <span className="card-eyebrow font-mono text-label uppercase tracking-[0.16em]">
-                    {years}
-                  </span>
+                  <span className="card-eyebrow type-eyebrow">{years}</span>
                 ) : null}
               </div>
             </GridCardSection>

@@ -119,7 +119,7 @@ export function GridCardActivityEntry({
             <span className="tone-heading font-bold text-2xl leading-none">
               {finishDateParts.day}
             </span>
-            <span className="tone-muted text-label uppercase tracking-wider">
+            <span className="tone-muted type-eyebrow">
               {finishDateParts.monthYear}
             </span>
           </time>

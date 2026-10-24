@@ -159,10 +159,7 @@ export const GridCardProject = ({
 
           <GridCardSection className="surface-title-stage col-start-1 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1.5">
             {eyebrow ? (
-              <span
-                aria-hidden="true"
-                className="card-eyebrow font-mono text-label uppercase tracking-[0.16em]"
-              >
+              <span aria-hidden="true" className="card-eyebrow type-eyebrow">
                 {eyebrow}
               </span>
             ) : null}
@@ -175,9 +172,7 @@ export const GridCardProject = ({
               </h2>
             </ViewTransition>
             {!hasRail && years ? (
-              <p className="card-eyebrow font-mono text-label uppercase tracking-[0.16em]">
-                {years}
-              </p>
+              <p className="card-eyebrow type-eyebrow">{years}</p>
             ) : null}
           </GridCardSection>
         </GridCard>
@@ -260,9 +255,7 @@ export const GridCardProjectHero = ({
                 </h2>
               </ViewTransition>
               {meta ? (
-                <p className="card-eyebrow text-center font-mono text-label uppercase tracking-[0.16em]">
-                  {meta}
-                </p>
+                <p className="card-eyebrow type-eyebrow text-center">{meta}</p>
               ) : null}
               {description ? (
                 <p className="tone-muted text-left text-base leading-relaxed">

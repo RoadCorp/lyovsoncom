@@ -16,11 +16,7 @@ export function MediaFallback({ icon: Icon, label }: MediaFallbackProps) {
       className="media-frame media-fallback flex h-full w-full flex-col items-center justify-center gap-3"
     >
       <Icon className="h-12 w-12" strokeWidth={1.25} />
-      {label ? (
-        <span className="font-mono text-label uppercase tracking-[0.16em]">
-          {label}
-        </span>
-      ) : null}
+      {label ? <span className="type-eyebrow">{label}</span> : null}
     </div>
   );
 }

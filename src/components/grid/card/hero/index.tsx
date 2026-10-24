@@ -93,7 +93,7 @@ function HeroBackLink({ href, label }: { href: string; label: string }) {
 function PostHeroEyebrow({ post }: { post: Post }) {
   const postType = post.type || "article";
   return (
-    <p className="flex items-center gap-2 font-mono text-label uppercase tracking-[0.16em]">
+    <p className="type-eyebrow flex items-center gap-2">
       <span className="card-eyebrow" data-post-type={postType}>
         {postType}
       </span>
@@ -393,7 +393,7 @@ export const GridCardHeroReference = ({
 
       <GridCardSection className="surface-title-stage col-start-1 g3:col-start-4 col-end-4 g3:col-end-7 g3:row-start-1 row-start-4 g3:row-end-4 row-end-7">
         <div className="flex h-full flex-col gap-4 px-6 py-5 md:px-7 md:py-6">
-          <p className="flex items-center gap-2 font-mono text-label uppercase tracking-[0.16em]">
+          <p className="type-eyebrow flex items-center gap-2">
             <span className="card-eyebrow">{typeLabel}</span>
             {reference.year ? (
               <>
@@ -428,7 +428,7 @@ export const GridCardHeroReference = ({
           </div>
           {reference.url && host ? (
             <a
-              className="ui-meta-link ui-focus-ring inline-flex items-center gap-1.5 self-start font-mono text-label uppercase tracking-[0.16em]"
+              className="ui-meta-link ui-focus-ring type-eyebrow inline-flex items-center gap-1.5 self-start"
               href={reference.url}
               rel="noopener"
               target="_blank"
