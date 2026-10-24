@@ -54,6 +54,8 @@ async function saveCover({ payload, user }: Importer, cover: Cover) {
     // Wikimedia refuses requests that don't name themselves.
     headers: { "User-Agent": USER_AGENT },
     signal: AbortSignal.timeout(15_000),
+    // Don't follow redirects: the host allowlist only vets the first URL.
+    redirect: "error",
   }).catch(() => null);
   const mimetype = response?.headers.get("content-type") ?? "";
   if (!(response?.ok && mimetype.startsWith("image/"))) {
