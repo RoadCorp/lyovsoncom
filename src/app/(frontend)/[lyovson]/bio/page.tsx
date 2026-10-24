@@ -62,7 +62,7 @@ async function PageContent({ params }: PageProps) {
         >
           <GridCardSection className="col-span-3 row-span-3 p-6">
             <RichText
-              className="reveal-stagger-3 h-full"
+              className="reveal-stagger-3 h-full g3:text-[1.125rem]"
               content={user.bio}
               enableGutter={false}
               enableProse={true}

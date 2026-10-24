@@ -466,6 +466,14 @@
   ---break---
 */
 
+/* Registered so `em` resolves once on .content-prose and headings inherit
+   the body text's measure, not one scaled by their own font size. */
+@property --prose-measure {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
 @layer components {
   .site-backdrop {
     background:
@@ -1685,6 +1693,17 @@
       color-mix(in oklab, var(--line-1) 66%, var(--accent-code) 34%);
     border-radius: calc(var(--radius) - 2px);
     box-shadow: var(--shadow-surface), var(--shadow-emboss);
+  }
+
+  /* Text keeps a readable measure (about 70 characters a line); figures,
+     embeds and code still fill the card. */
+  .content-prose {
+    --prose-measure: 33em;
+  }
+
+  .content-prose > :is(p, ul, ol, h2, h3, h4, blockquote, hr) {
+    max-width: var(--prose-measure);
+    margin-inline: auto;
   }
 
   .content-code-shell {

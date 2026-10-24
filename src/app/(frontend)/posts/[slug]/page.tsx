@@ -180,15 +180,15 @@ async function PostPageContent({ params: paramsPromise }: Args) {
       <PostTransitionBoundary variant="body">
         <GridCard
           className={cn(
-            "g2:col-start-2 g2:col-end-3 g2:row-auto g2:row-start-3",
-            "g3:col-end-4 g3:row-start-2 g3:w-[var(--grid-card-2x1)]",
+            "g2:col-start-1 g2:col-end-3 g2:row-auto g2:row-start-3 g2:w-[var(--grid-card-2x1)]",
+            "g3:col-start-2 g3:col-end-4 g3:row-start-2",
             "aspect-auto h-auto"
           )}
           interactive={false}
         >
           <GridCardSection className="col-span-3 row-span-3 p-6">
             <RichText
-              className="h-full"
+              className="h-full g2:text-[1.125rem]"
               content={post.content}
               enableGutter={false}
               enableProse={true}
@@ -197,36 +197,45 @@ async function PostPageContent({ params: paramsPromise }: Args) {
         </GridCard>
       </PostTransitionBoundary>
 
-      <PostTransitionBoundary variant="rail">
-        <aside
-          className={cn(
-            "col-start-1 col-end-2 row-start-6 row-end-7 grid auto-rows-max gap-4 self-start",
-            "g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-5"
-          )}
-        >
-          {post.references && post.references.length > 0 ? (
-            <GridCardReferences references={post.references} />
-          ) : null}
+      {/* With two columns the body spans both, so the rail splits: references
+          fill the slot under the menu and related posts follow the body. */}
+      <aside
+        className={cn(
+          "col-start-1 col-end-2 row-start-6 row-end-7 grid auto-rows-max gap-4 self-start",
+          "g2:contents",
+          "g3:col-start-1 g3:col-end-2 g3:row-start-2 g3:row-end-5 g3:grid"
+        )}
+      >
+        {post.references && post.references.length > 0 ? (
+          <PostTransitionBoundary variant="rail">
+            <div className="g3:col-auto g2:col-start-1 g2:col-end-2 g3:row-auto g2:row-start-2 g2:self-start">
+              <GridCardReferences references={post.references} />
+            </div>
+          </PostTransitionBoundary>
+        ) : null}
 
-          <OptionalErrorBoundary title="Unable to load recommended posts.">
-            <Suspense
-              fallback={
-                <div className="surface-panel surface-loading h-[var(--grid-card-1x1)] w-[var(--grid-card-1x1)] animate-pulse rounded-xl">
-                  <Skeleton className="surface-chip h-full w-full" />
-                </div>
-              }
-            >
-              <RecommendedPosts
-                currentPostId={post.id}
-                currentSlug={post.slug}
-                recommendedIds={
-                  post.recommended_post_ids as number[] | undefined
+        <PostTransitionBoundary variant="rail">
+          <div className="g3:col-auto g2:col-start-1 g2:col-end-2 g3:row-auto g2:row-start-4 g2:self-start">
+            <OptionalErrorBoundary title="Unable to load recommended posts.">
+              <Suspense
+                fallback={
+                  <div className="surface-panel surface-loading h-[var(--grid-card-1x1)] w-[var(--grid-card-1x1)] animate-pulse rounded-xl">
+                    <Skeleton className="surface-chip h-full w-full" />
+                  </div>
                 }
-              />
-            </Suspense>
-          </OptionalErrorBoundary>
-        </aside>
-      </PostTransitionBoundary>
+              >
+                <RecommendedPosts
+                  currentPostId={post.id}
+                  currentSlug={post.slug}
+                  recommendedIds={
+                    post.recommended_post_ids as number[] | undefined
+                  }
+                />
+              </Suspense>
+            </OptionalErrorBoundary>
+          </div>
+        </PostTransitionBoundary>
+      </aside>
     </>
   );
 }
