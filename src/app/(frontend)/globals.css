@@ -1768,67 +1768,6 @@
     );
   }
 
-  /* react-tweet's action row never wraps, so "Copy link" is cut off on phones.
-     Its class is a hashed CSS module name, hence the substring match. */
-  .xpost-embed [class*="actions"] {
-    flex-wrap: wrap;
-  }
-
-  .xpost-embed .react-tweet-theme {
-    --tweet-container-margin: 0 !important;
-    --tweet-border: 1px solid
-      color-mix(in oklab, var(--line-1) 52%, var(--accent-meta) 48%);
-    --tweet-font-family: var(--font-sans);
-    --tweet-body-font-size: 1rem;
-    --tweet-font-color: var(--text-1);
-    --tweet-font-color-secondary: var(--text-3);
-    --tweet-bg-color: color-mix(
-      in oklab,
-      var(--surface-2) 96%,
-      var(--accent-rail) 4%
-    );
-    --tweet-bg-color-hover: color-mix(
-      in oklab,
-      var(--surface-2) 92%,
-      var(--accent-meta) 8%
-    );
-    --tweet-quoted-bg-color-hover: color-mix(
-      in oklab,
-      var(--surface-3) 94%,
-      var(--accent-quote) 6%
-    );
-    --tweet-color-blue-primary: var(--accent-link);
-    --tweet-color-blue-primary-hover: color-mix(
-      in oklab,
-      var(--accent-link) 76%,
-      var(--accent-code) 24%
-    );
-    --tweet-color-blue-secondary: var(--accent-code);
-    --tweet-color-blue-secondary-hover: color-mix(
-      in oklab,
-      var(--accent-code) 12%,
-      transparent
-    );
-    --tweet-color-red-primary: var(--accent-error);
-    --tweet-color-red-primary-hover: color-mix(
-      in oklab,
-      var(--accent-error) 12%,
-      transparent
-    );
-    --tweet-color-green-primary: var(--accent-success);
-    --tweet-color-green-primary-hover: color-mix(
-      in oklab,
-      var(--accent-success) 12%,
-      transparent
-    );
-    --tweet-twitter-icon-color: color-mix(
-      in oklab,
-      var(--accent-link) 56%,
-      var(--text-1) 44%
-    );
-    margin: 0 !important;
-  }
-
   .docs-shell {
     font-size: 1rem;
     line-height: 1.72;
@@ -2568,4 +2507,67 @@
     text-rendering: optimizeLegibility;
     @apply bg-background text-foreground;
   }
+}
+
+/* react-tweet ships unlayered CSS, which beats anything in @layer components,
+   so the embed's theme lives outside the layers. */
+/* react-tweet's action row never wraps, so "Copy link" is cut off on phones.
+   Its class is a hashed CSS module name, hence the substring match. */
+.xpost-embed [class*="actions"] {
+  flex-wrap: wrap;
+}
+
+.xpost-embed .react-tweet-theme {
+  --tweet-container-margin: 0 !important;
+  --tweet-border: 1px solid
+    color-mix(in oklab, var(--line-1) 52%, var(--accent-meta) 48%);
+  --tweet-font-family: var(--font-sans);
+  --tweet-body-font-size: 1rem;
+  --tweet-font-color: var(--text-1);
+  --tweet-font-color-secondary: var(--text-3);
+  --tweet-bg-color: color-mix(
+    in oklab,
+    var(--surface-2) 96%,
+    var(--accent-rail) 4%
+  );
+  --tweet-bg-color-hover: color-mix(
+    in oklab,
+    var(--surface-2) 92%,
+    var(--accent-meta) 8%
+  );
+  --tweet-quoted-bg-color-hover: color-mix(
+    in oklab,
+    var(--surface-3) 94%,
+    var(--accent-quote) 6%
+  );
+  --tweet-color-blue-primary: var(--accent-link);
+  --tweet-color-blue-primary-hover: color-mix(
+    in oklab,
+    var(--accent-link) 76%,
+    var(--accent-code) 24%
+  );
+  --tweet-color-blue-secondary: var(--accent-code);
+  --tweet-color-blue-secondary-hover: color-mix(
+    in oklab,
+    var(--accent-code) 12%,
+    transparent
+  );
+  --tweet-color-red-primary: var(--accent-error);
+  --tweet-color-red-primary-hover: color-mix(
+    in oklab,
+    var(--accent-error) 12%,
+    transparent
+  );
+  --tweet-color-green-primary: var(--accent-success);
+  --tweet-color-green-primary-hover: color-mix(
+    in oklab,
+    var(--accent-success) 12%,
+    transparent
+  );
+  --tweet-twitter-icon-color: color-mix(
+    in oklab,
+    var(--accent-link) 56%,
+    var(--text-1) 44%
+  );
+  margin: 0 !important;
 }
