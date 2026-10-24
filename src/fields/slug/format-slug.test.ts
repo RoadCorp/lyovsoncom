@@ -12,4 +12,9 @@ describe("formatSlug", () => {
     expect(formatSlug("stress--success")).toBe("stress--success");
     expect(formatSlug("Stress & Success")).toBe("stress--success");
   });
+
+  it("folds accents to their base letters", () => {
+    expect(formatSlug("Alfonso Cuarón")).toBe("alfonso-cuaron");
+    expect(formatSlug("Lyóvson")).toBe("lyovson");
+  });
 });
