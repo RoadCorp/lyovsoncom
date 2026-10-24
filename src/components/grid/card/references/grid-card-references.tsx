@@ -1,4 +1,7 @@
-import { REFERENCE_TYPE_LABELS } from "@/collections/References/fields/type";
+import {
+  REFERENCE_TYPE_LABELS,
+  showsLogo,
+} from "@/collections/References/fields/type";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { getActivityReferenceIcon } from "@/components/grid/card/activity/shared";
 import { IntentLink } from "@/components/intent-link";
@@ -70,10 +73,8 @@ export const GridCardReferences = ({
               <Media
                 className="media-frame flex h-full items-center justify-center"
                 imgClassName={
-                  // Organizations carry logos, which must not be cropped and
-                  // are drawn for white; the important flag beats ImageMedia's
-                  // inline object-fit.
-                  reference.type === "organization"
+                  // The important flag beats ImageMedia's inline object-fit.
+                  showsLogo(reference.type)
                     ? "h-full bg-white object-contain! p-3"
                     : "h-full object-cover"
                 }

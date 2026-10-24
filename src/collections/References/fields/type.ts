@@ -19,6 +19,11 @@ export const REFERENCE_TYPE_LABELS: Record<string, string> = Object.fromEntries(
   options.map(({ label, value }) => [value, label])
 );
 
+/** Companies and software carry logos, which must not be cropped and are
+ * drawn for white. */
+export const showsLogo = (type: string) =>
+  type === "organization" || type === "software";
+
 /** The type picks the catalog the reference is searched in. */
 export const referenceTypeField: Field = {
   name: "type",

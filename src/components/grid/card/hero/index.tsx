@@ -8,7 +8,10 @@ import {
   Quote,
 } from "lucide-react";
 import { Fragment, ViewTransition } from "react";
-import { REFERENCE_TYPE_LABELS } from "@/collections/References/fields/type";
+import {
+  REFERENCE_TYPE_LABELS,
+  showsLogo,
+} from "@/collections/References/fields/type";
 import { AppLink } from "@/components/app-link";
 import { GridCard } from "@/components/grid";
 import { IntentLink } from "@/components/intent-link";
@@ -468,9 +471,8 @@ export const GridCardHeroReference = ({
               className="media-frame flex h-full items-center justify-center"
               credit={true}
               imgClassName={
-                // Logos must not be cropped and are drawn for white; the
-                // important flag beats ImageMedia's inline object-fit.
-                reference.type === "organization"
+                // The important flag beats ImageMedia's inline object-fit.
+                showsLogo(reference.type)
                   ? "h-full bg-white object-contain! p-8"
                   : "h-full object-cover"
               }
