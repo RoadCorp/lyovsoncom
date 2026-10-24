@@ -52,6 +52,12 @@ export function isBotRestrictedPath(pathname: string) {
   return BOT_RESTRICTED_PATH_PATTERN.test(pathname);
 }
 
+// Agents' API keys work only on MCP, where the tools set what they can do.
+// Elsewhere (REST, GraphQL, document locks) collection access alone decides.
+export function isAgentKeyOffMcp(pathname: string, authorization: string) {
+  return authorization.startsWith("agents API-Key ") && pathname !== "/api/mcp";
+}
+
 export function shouldBlockExpensiveBotRequest(
   pathname: string,
   userAgent: string

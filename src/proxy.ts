@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import {
   getRequestUserAgent,
+  isAgentKeyOffMcp,
   isHostileProbePath,
   shouldBlockExpensiveBotRequest,
 } from "@/utilities/request-guards";
@@ -36,6 +37,7 @@ export function proxy(request: NextRequest) {
 
   if (
     isHostileProbePath(pathname) ||
+    isAgentKeyOffMcp(pathname, request.headers.get("authorization") ?? "") ||
     shouldBlockExpensiveBotRequest(pathname, userAgent)
   ) {
     return new NextResponse("Forbidden", {

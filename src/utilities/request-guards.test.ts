@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  isAgentKeyOffMcp,
   isHostileProbePath,
   shouldBlockExpensiveBotRequest,
 } from "./request-guards";
@@ -60,5 +61,17 @@ describe("request guards", () => {
     ["/postscripts", "GPTBot", false],
   ])("applies crawler policy to %s for %s", (pathname, userAgent, blocked) => {
     expect(shouldBlockExpensiveBotRequest(pathname, userAgent)).toBe(blocked);
+  });
+
+  it.each([
+    ["/api/mcp", "agents API-Key key", false],
+    ["/api/posts/1", "agents API-Key key", true],
+    ["/api/notes/versions/3", "agents API-Key key", true],
+    ["/api/payload-locked-documents", "agents API-Key key", true],
+    ["/api/graphql", "agents API-Key key", true],
+    ["/api/posts/1", "", false],
+    ["/api/posts/1", "Bearer token", false],
+  ])("limits agent keys on %s with %j", (pathname, authorization, blocked) => {
+    expect(isAgentKeyOffMcp(pathname, authorization)).toBe(blocked);
   });
 });
