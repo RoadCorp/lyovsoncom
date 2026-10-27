@@ -72,7 +72,7 @@
 
   --ramp-pale-blue-500: oklch(0.56 0.05 350);
   --ramp-pale-blue-600: oklch(0.5 0.05 348);
-  --ramp-pale-blue-700: oklch(0.45 0.048 345);
+  --ramp-pale-blue-700: oklch(0.4 0.048 345);
   --ramp-pale-blue-800: oklch(0.37 0.045 340);
 
   --ramp-red-200: oklch(0.92 0.03 28);
@@ -119,6 +119,7 @@
   --admin-accent: var(--color-bg-brand);
   --admin-accent-soft: color-mix(in oklch, var(--color-bg-brand) 14%, var(--color-bg));
   --admin-danger-soft: color-mix(in oklch, oklch(0.49 0.135 28) 14%, var(--color-bg));
+  --admin-danger-text: color-mix(in oklch, oklch(0.49 0.135 28) 82%, var(--admin-text-1));
   --admin-shadow:
     0 16px 36px oklch(0.282 0.029 316 / 0.1),
     0 2px 6px oklch(0.282 0.029 316 / 0.06);
@@ -141,6 +142,8 @@
   --color-text-onbrand-secondary: oklch(0.15 0.02 315 / 0.78);
   --color-icon-onbrand-secondary: oklch(0.15 0.02 315 / 0.78);
   --color-border-onbrand-strong: var(--ramp-grey-800);
+  /* Hover a step darker than selected so mauve labels keep AA on both. */
+  --color-bg-selected-hover: var(--ramp-pale-blue-800);
   --color-icon-onbrand: var(--ramp-grey-800);
   --color-bg-elevated: oklch(0.225 0.027 316);
   --color-text: oklch(0.917 0.028 89);
@@ -149,6 +152,7 @@
   --admin-line-2: var(--ramp-grey-500);
   --admin-accent-soft: color-mix(in oklch, var(--color-bg-brand) 16%, var(--color-bg));
   --admin-danger-soft: color-mix(in oklch, oklch(0.49 0.135 28) 22%, var(--color-bg));
+  --admin-danger-text: oklch(0.73 0.12 28);
   --admin-shadow:
     0 18px 42px oklch(0 0 0 / 0.34),
     0 4px 10px oklch(0 0 0 / 0.22);
@@ -272,7 +276,7 @@ pre,
 .gif-picker__error {
   padding: 12px;
   margin-bottom: 16px;
-  color: color-mix(in oklch, oklch(0.49 0.135 28) 82%, var(--admin-text-1));
+  color: var(--admin-danger-text);
   background: var(--admin-danger-soft);
   border: 1px solid color-mix(in oklch, oklch(0.73 0.12 28) 36%, var(--admin-line-1));
   border-radius: 8px;
