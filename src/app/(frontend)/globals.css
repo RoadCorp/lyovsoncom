@@ -785,6 +785,11 @@
     letter-spacing: -0.02em;
   }
 
+  /* A stage with no eyebrow (activities) has room for a third title line. */
+  .surface-title-stage > a > .card-title:only-child {
+    -webkit-line-clamp: 3;
+  }
+
   /* Post hero: the summary can't push the byline out of the fixed-height
      panel, and a hairline separates the byline from the text above. */
   .hero-dek {
