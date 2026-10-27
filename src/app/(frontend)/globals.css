@@ -13,17 +13,19 @@
   ---break---
 */
 
-/* Warm ivory and blue ink by day; slate and pearl by night.
+/* Warm cream and aubergine ink by day; near-black and aubergine by night,
+   with dusty mauve accents. The legacy token names (wave-blue, river-blue)
+   now hold the mauve accents.
    Mix in Oklab to keep neutral surfaces from picking up intermediate hues. */
 :root {
   --radius: 0.75rem;
 
-  --paper: oklch(0.97 0.011 85);
-  --paper-warm: oklch(0.927 0.018 85);
-  --foam: oklch(0.99 0.004 85);
-  --ink: oklch(0.3 0.045 250);
-  --wave-blue: oklch(0.44 0.075 248);
-  --river-blue: oklch(0.77 0.045 230);
+  --paper: oklch(0.905 0.04 75);
+  --paper-warm: oklch(0.87 0.045 70);
+  --foam: oklch(0.958 0.02 85);
+  --ink: oklch(0.282 0.029 316);
+  --wave-blue: oklch(0.45 0.075 350);
+  --river-blue: oklch(0.738 0.037 7);
   --cedar-gold: oklch(0.76 0.085 75);
   --boat-coral: oklch(0.69 0.1 38);
   --lichen-green: oklch(0.49 0.073 150);
@@ -32,9 +34,9 @@
   --activity-read: color-mix(in oklab, var(--cedar-gold) 65%, black 35%);
   --activity-watch: color-mix(in oklab, var(--boat-coral) 70%, black 30%);
   --activity-listen: var(--lichen-green);
-  --activity-play: var(--wave-blue);
+  --activity-play: oklch(0.44 0.075 248);
   --seal-red: oklch(0.49 0.135 28);
-  --storm-gray: oklch(0.49 0.018 250);
+  --storm-gray: oklch(0.49 0.022 320);
 
   --background: var(--paper);
   --foreground: var(--ink);
@@ -54,8 +56,8 @@
   --muted-foreground: var(--text-3);
   --destructive: var(--seal-red);
   --destructive-foreground: var(--foam);
-  --border: oklch(0.84 0.012 85);
-  --input: oklch(0.6 0.025 250);
+  --border: oklch(0.8 0.035 68);
+  --input: oklch(0.56 0.03 330);
   --ring: var(--accent-link);
   --ring-offset: var(--background);
 
@@ -81,7 +83,7 @@
   --accent-error: var(--seal-red);
   --accent-score: oklch(0.49 0.1 75);
 
-  --syntax-comment: oklch(0.44 0.018 250);
+  --syntax-comment: oklch(0.44 0.02 320);
   --syntax-keyword: var(--accent-link);
   --syntax-string: var(--success);
   --syntax-number: var(--warning);
@@ -137,7 +139,7 @@
   --line-1: var(--border);
   --text-1: var(--foreground);
   --text-2: color-mix(in oklab, var(--ink) 75%, var(--storm-gray) 25%);
-  --text-3: oklch(0.5 0.022 250);
+  --text-3: oklch(0.47 0.03 330);
 
   --page-ambient-1: color-mix(in oklab, var(--wave-blue) 10%, transparent);
   --page-ambient-2: color-mix(in oklab, var(--river-blue) 8%, transparent);
@@ -210,31 +212,31 @@
 */
 
 .dark {
-  --paper: oklch(0.3 0.02 250);
-  --paper-warm: oklch(0.36 0.025 250);
-  --foam: oklch(0.925 0.01 85);
-  --ink: oklch(0.47 0.065 250);
-  --wave-blue: oklch(0.68 0.08 240);
-  --river-blue: oklch(0.8 0.055 230);
+  --paper: oklch(0.282 0.029 316);
+  --paper-warm: oklch(0.34 0.032 316);
+  --foam: oklch(0.917 0.028 89);
+  --ink: oklch(0.47 0.05 330);
+  --wave-blue: oklch(0.66 0.06 350);
+  --river-blue: oklch(0.79 0.05 5);
   --cedar-gold: oklch(0.76 0.07 72);
   --boat-coral: oklch(0.69 0.056 45);
   --lichen-green: oklch(0.76 0.075 150);
   --activity-read: var(--cedar-gold);
   --activity-watch: var(--boat-coral);
   --activity-listen: var(--lichen-green);
-  --activity-play: var(--river-blue);
+  --activity-play: oklch(0.8 0.055 230);
   --seal-red: oklch(0.73 0.12 28);
-  --storm-gray: oklch(0.6 0.02 250);
+  --storm-gray: oklch(0.6 0.022 320);
 
-  --background: oklch(0.18 0.018 250);
+  --background: oklch(0.15 0.02 315);
   --foreground: var(--foam);
 
   --card: var(--surface-1);
   --card-foreground: var(--foreground);
-  --popover: oklch(0.29 0.022 250);
+  --popover: oklch(0.28 0.03 316);
   --popover-foreground: var(--foreground);
 
-  --primary: oklch(0.78 0.065 230);
+  --primary: oklch(0.8 0.05 8);
   --primary-foreground: var(--background);
   --secondary: var(--surface-3);
   --secondary-foreground: var(--foreground);
@@ -248,8 +250,8 @@
     var(--background) 88%,
     black 12%
   );
-  --border: oklch(0.37 0.025 250);
-  --input: oklch(0.58 0.025 250);
+  --border: oklch(0.36 0.03 316);
+  --input: oklch(0.6 0.03 330);
   --ring: var(--accent-link);
   --ring-offset: var(--background);
 
@@ -274,7 +276,7 @@
   --accent-success: var(--lichen-green);
   --accent-error: var(--seal-red);
   --accent-score: var(--cedar-gold);
-  --syntax-comment: oklch(0.78 0.016 250);
+  --syntax-comment: oklch(0.76 0.02 330);
 
   --success: var(--accent-success);
   --success-foreground: var(--primary-foreground);
@@ -321,9 +323,9 @@
   );
   --sidebar-ring: var(--ring);
 
-  --surface-1: oklch(0.22 0.018 250);
-  --surface-2: oklch(0.245 0.02 250);
-  --surface-3: oklch(0.28 0.024 250);
+  --surface-1: oklch(0.2 0.025 316);
+  --surface-2: oklch(0.225 0.027 316);
+  --surface-3: oklch(0.26 0.03 316);
   --surface-accent: color-mix(
     in oklab,
     var(--surface-2) 88%,
@@ -336,8 +338,8 @@
   );
   --line-1: var(--border);
   --text-1: var(--foreground);
-  --text-2: oklch(0.79 0.016 250);
-  --text-3: oklch(0.68 0.022 250);
+  --text-2: oklch(0.83 0.022 80);
+  --text-3: oklch(0.71 0.022 50);
 
   --page-ambient-1: color-mix(in oklab, var(--wave-blue) 10%, transparent);
   --page-ambient-2: color-mix(in oklab, var(--river-blue) 7%, transparent);
