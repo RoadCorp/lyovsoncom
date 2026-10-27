@@ -1002,19 +1002,36 @@
   }
 
   /* Topic colours from the CMS, harmonised: only the hue is kept, at the
-     palette's lightness and chroma, so any colour an editor picks fits the
-     site and text contrast stays high. */
+     palette's lightness and chroma, then blended into the ink and warm paper
+     so any colour an editor picks reads as a dusty tone of the palette and
+     text contrast stays high (6.9:1 or more). */
   @supports (color: oklch(from red l c h)) {
     .topic-pill {
-      color: oklch(from var(--topic, var(--accent-meta)) 0.42 0.09 h);
-      background: oklch(from var(--topic, var(--accent-meta)) 0.93 0.035 h);
+      color: color-mix(
+        in oklab,
+        oklch(from var(--topic, var(--accent-meta)) 0.4 0.09 h) 70%,
+        var(--ink)
+      );
+      background: color-mix(
+        in oklab,
+        oklch(from var(--topic, var(--accent-meta)) 0.86 0.06 h) 45%,
+        var(--paper-warm)
+      );
       border-color: transparent;
       box-shadow: none;
     }
 
     .dark .topic-pill {
-      color: oklch(from var(--topic, var(--accent-meta)) 0.85 0.07 h);
-      background: oklch(from var(--topic, var(--accent-meta)) 0.32 0.045 h);
+      color: color-mix(
+        in oklab,
+        oklch(from var(--topic, var(--accent-meta)) 0.86 0.07 h) 65%,
+        var(--foam)
+      );
+      background: color-mix(
+        in oklab,
+        oklch(from var(--topic, var(--accent-meta)) 0.38 0.05 h) 45%,
+        var(--paper-warm)
+      );
     }
   }
 
