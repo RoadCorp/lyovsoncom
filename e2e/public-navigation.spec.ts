@@ -94,7 +94,7 @@ test("public pages remain navigable without JavaScript", async ({
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();
   await page.goto(
-    `${test.info().project.use.baseURL || process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3100"}/`
+    `${test.info().project.use.baseURL || process.env.PLAYWRIGHT_BASE_URL || "http://localhost:7300"}/`
   );
   await expect(
     page.getByRole("navigation", { name: "Main navigation" })
