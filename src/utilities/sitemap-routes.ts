@@ -214,7 +214,8 @@ function getTopicRoutes(
   postCounts: Map<string, number>
 ): Sitemap {
   return topics.flatMap((topic) => {
-    if (!topic?.slug) {
+    // A topic without posts is noindex, so it stays out of the sitemap.
+    if (!(topic?.slug && postCounts.get(topic.slug))) {
       return [];
     }
     const { slug } = topic;

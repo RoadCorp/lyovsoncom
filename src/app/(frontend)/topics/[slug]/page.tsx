@@ -110,7 +110,10 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { slug } = await paramsPromise;
 
-  const topic = await getTopic(slug);
+  const [topic, posts] = await Promise.all([
+    getTopic(slug),
+    getTopicPosts(slug),
+  ]);
 
   if (!topic) {
     return buildNotFoundMetadata({
@@ -147,6 +150,8 @@ export async function generateMetadata({
           height: 630,
           alt: topicName,
         },
+    // An empty topic is a page with a heading and nothing else.
+    ...(posts?.totalDocs ? {} : { robots: { index: false, follow: true } }),
   });
 }
 

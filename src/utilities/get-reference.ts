@@ -91,18 +91,16 @@ export function getShownReviews(activity: Activity) {
 }
 
 /**
- * Search engines get a hub only when it carries the Lyovsons' own words: an
- * activity note or written review, or a post. A page of catalog
- * facts alone stays out of the index.
+ * Search engines get a hub only when it shows the Lyovsons' own words: an
+ * activity note or written review. Catalog facts and post cards alone stay
+ * out of the index: a citing post shows only its card here, and the post
+ * page is the one that should rank.
  */
-export function hubHasOwnWords({ activities, posts }: ReferenceHub) {
-  return (
-    posts.length > 0 ||
-    activities.some(
-      (activity) =>
-        Boolean(extractLexicalText(activity.notes).trim()) ||
-        (activity.reviews ?? []).some((review) => Boolean(review.note?.trim()))
-    )
+export function hubHasOwnWords({ activities }: ReferenceHub) {
+  return activities.some(
+    (activity) =>
+      Boolean(extractLexicalText(activity.notes).trim()) ||
+      (activity.reviews ?? []).some((review) => Boolean(review.note?.trim()))
   );
 }
 
