@@ -194,6 +194,9 @@ export const Posts: CollectionConfig = {
       },
       hasMany: true,
       relationTo: "lyovsons",
+      // Drafts may leave it empty; publishing needs an author (a post lost
+      // its authors in Jan 2026 and stayed published without one).
+      required: true,
     },
     // This field is only used to populate the user data via the `populateAuthors` hook
     // This is because the `user` collection has access control locked to protect user privacy

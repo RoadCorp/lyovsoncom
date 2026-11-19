@@ -23,6 +23,7 @@ const post: Post = {
   publishedAt,
   createdAt: publishedAt,
   updatedAt: publishedAt,
+  authors: [1],
   populatedAuthors: [{ id: "1", name: "Rafa Lyóvson", username: "rafa" }],
   project: {
     _status: "published",
