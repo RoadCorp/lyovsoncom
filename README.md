@@ -35,7 +35,7 @@ Create `.env.local` with the configuration needed for your environment:
 Point `POSTGRES_URL` at a Neon development branch, never at the production `main` branch. Then start development:
 
 ```sh
-mise exec -- pnpm dev --port 3100
+mise exec -- pnpm dev
 ```
 
 Payload's development schema push is off unless `PAYLOAD_DB_PUSH=true`. Apply schema changes with migrations, and enable push only on a disposable database. Disabling push does not prevent application writes. For public browsing checks against an existing database, the preview commands also enforce read-only database transactions and clear the OpenAI and Resend keys:
@@ -45,7 +45,7 @@ mise exec -- pnpm preview:experience:build
 mise exec -- pnpm preview:experience
 ```
 
-The preview runs at `http://localhost:3100`. Use an isolated database for CMS edits or migration work.
+The dev server and the preview both run at `http://localhost:7300`, inside lyovson.com's port range on Artemis (7300–7399; the 3000s belong to Avenews). Use an isolated database for CMS edits or migration work.
 
 ## Database discovery
 

@@ -28,7 +28,7 @@ database.searchParams.set("options", "-c default_transaction_read_only=on");
 env.POSTGRES_URL = database.toString();
 const args =
   command === "start"
-    ? ["start", "--hostname", "127.0.0.1", "--port", "3100"]
+    ? ["start", "--hostname", "127.0.0.1", "--port", "7300"]
     : ["build"];
 const child = spawn(
   process.execPath,

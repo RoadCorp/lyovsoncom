@@ -1,5 +1,5 @@
 const DEFAULT_CANONICAL_ORIGIN = "https://www.lyovson.com";
-const DEFAULT_RUNTIME_ORIGIN = "http://localhost:3000";
+const DEFAULT_RUNTIME_ORIGIN = "http://localhost:7300";
 const DEFAULT_OG_IMAGE_PATH = "/og-image.png";
 const DEFAULT_LOGO_PATH = "/android-chrome-512x512.png";
 
