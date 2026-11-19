@@ -43,14 +43,9 @@ async function AuthorLayout({ children, params }: LayoutProps) {
 
 export default function Layout(props: LayoutProps) {
   return (
-    <Suspense
-      fallback={
-        <>
-          <ProfileSkeleton />
-          {props.children}
-        </>
-      }
-    >
+    // The fallback must not render children too: the page would then be in
+    // the HTML twice (two H1s and every card doubled for crawlers).
+    <Suspense fallback={<ProfileSkeleton />}>
       <AuthorLayout {...props} />
     </Suspense>
   );
