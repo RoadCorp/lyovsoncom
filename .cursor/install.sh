@@ -25,7 +25,6 @@ if [[ "$(/usr/local/bin/node -v 2>/dev/null || true)" != "v${NODE_VERSION}" ]]; 
   "${SUDO[@]}" ln -sfn "$NODE_PREFIX/bin/node" /usr/local/bin/node
   "${SUDO[@]}" ln -sfn "$NODE_PREFIX/bin/npm" /usr/local/bin/npm
   "${SUDO[@]}" ln -sfn "$NODE_PREFIX/bin/npx" /usr/local/bin/npx
-  "${SUDO[@]}" ln -sfn "$NODE_PREFIX/bin/corepack" /usr/local/bin/corepack
   rm -rf "$tmp"
 fi
 
@@ -37,12 +36,15 @@ EOF
 
 ORIGINAL_PATH="$PATH"
 export PATH="/usr/local/bin:${PATH}"
-export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 hash -r
 
+# Node 25+ no longer bundles corepack, so pnpm comes from npm. npm runs
+# through the new node explicitly: sudo may reset PATH to an older one.
 if [[ "$(/usr/local/bin/pnpm -v 2>/dev/null || true)" != "$PNPM_VERSION" ]]; then
-  "${SUDO[@]}" /usr/local/bin/corepack enable
-  "${SUDO[@]}" /usr/local/bin/corepack prepare "pnpm@${PNPM_VERSION}" --activate
+  "${SUDO[@]}" /usr/local/bin/node "$NODE_PREFIX/lib/node_modules/npm/bin/npm-cli.js" \
+    install --global --prefix "$NODE_PREFIX" "pnpm@${PNPM_VERSION}"
+  "${SUDO[@]}" ln -sfn "$NODE_PREFIX/bin/pnpm" /usr/local/bin/pnpm
+  "${SUDO[@]}" ln -sfn "$NODE_PREFIX/bin/pnpx" /usr/local/bin/pnpx
 fi
 
 # Some login shells load nvm after /etc/profile.d, so prepend again at the
@@ -67,7 +69,7 @@ if [[ "$(PATH="$ORIGINAL_PATH" node -v 2>/dev/null || true)" != "v${NODE_VERSION
     if [[ -e "$dir/node" && ! -L "$dir/node" ]]; then
       continue
     fi
-    for tool in node npm npx corepack pnpm pnpx; do
+    for tool in node npm npx pnpm pnpx; do
       if [[ -e "/usr/local/bin/$tool" ]]; then
         "${SUDO[@]}" ln -sfn "/usr/local/bin/$tool" "$dir/$tool"
       fi
