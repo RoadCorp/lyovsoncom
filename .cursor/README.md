@@ -1,6 +1,6 @@
 # Cursor cloud agents
 
-`.cursor/install.sh` prepares a cloud agent to build and test this repository. Cursor runs it from [environment.json](environment.json) while creating a Build. The script is safe to run again: it installs Node 24.22.3 and pnpm 10.30.0 when they are missing, then runs `pnpm install --frozen-lockfile`.
+`.cursor/install.sh` prepares a cloud agent to build and test this repository. Cursor runs it from [environment.json](environment.json) while creating a Build. The script is safe to run again: it installs Node 26.13.1 and pnpm 10.30.0 when they are missing, then runs `pnpm install --frozen-lockfile`.
 
 The script does not start the app, migrate, seed, or call a provider. Builds keep the installed files. They do not keep exported shell variables or running processes.
 
