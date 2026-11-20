@@ -301,7 +301,7 @@ export interface Post {
   /**
    * Who authored this post
    */
-  authors?: (number | Lyovson)[] | null;
+  authors: (number | Lyovson)[];
   populatedAuthors?:
     | {
         id?: string | null;
