@@ -6,17 +6,17 @@ Notion task: [Polish shared-element transitions across all public views](https:/
 
 ## Completed implementation
 
-| Area               | Existing behavior                                                                                                   | Implemented refinement                                                                                                                                                       |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Post detail        | Matching image/title names existed, but group geometry was disabled; JavaScript supplied scale and opacity effects. | Restore actual image/title movement into the hero. Replace custom animation callbacks with the shared CSS system.                                                            |
-| Archives           | Individual content sometimes matched; the complete card did not retain its position across lists.                   | Stable collection/ID identities move retained cards between archive, author, topic, project, and search layouts. Incoming/removed cards fade.                                |
-| Navigation         | Hero, Menu, and Search swapped abruptly; menu links used the detail transition type.                                | Short local crossfades, moving Search/Close controls, and a distinct section transition. Preserve typing, keyboard navigation, Escape, and query restoration.                |
-| Notes              | Excerpt/body sharing existed; related titles and metadata did not match.                                            | Related-note title to heading, plus topic/byline/type continuity. Crossfade long text without stretching it. Deduplicate related-note identities.                            |
-| Detail loading     | Notes, activities, and projects disabled prefetch; a loading commit could break the shared pair.                    | Full prefetch on hover, focus, or touch intent, following the post pattern. Fade loading/result/detail panels when a matching pair is unavailable.                           |
-| Search             | Query changes lacked a coordinated result transition.                                                               | Query/scoped result boundaries with overlapping-card continuity. Input remains immediate and browser history restores the correct query.                                     |
-| Pagination         | Next/previous types looked identical; the pager had no stable identity.                                             | Opposing short movements, stable pager frame, and shared active-page marker. Retain the project hero on later pages.                                                         |
-| Persistent panels  | Repeated frames could fade or participate in broad content changes.                                                 | Keep navigation, unchanged author profiles, and repeated activity rail anchored. Author sections transition below the profile. Different authors retain distinct identities. |
-| Motion consistency | Separate post animations and delayed body effects competed with shared transitions.                                 | One timing/easing system, shorter mobile movement, and zero transition duration under reduced motion. Remove competing body/row stagger effects in the affected flows.       |
+| Area | Existing behavior | Implemented refinement |
+| --- | --- | --- |
+| Post detail | Matching image/title names existed, but group geometry was disabled; JavaScript supplied scale and opacity effects. | Restore actual image/title movement into the hero. Replace custom animation callbacks with the shared CSS system. |
+| Archives | Individual content sometimes matched; the complete card did not retain its position across lists. | Stable collection/ID identities move retained cards between archive, author, topic, project, and search layouts. Incoming/removed cards fade. |
+| Navigation | Hero, Menu, and Search swapped abruptly; menu links used the detail transition type. | Short local crossfades, moving Search/Close controls, and a distinct section transition. Preserve typing, keyboard navigation, Escape, and query restoration. |
+| Notes | Excerpt/body sharing existed; related titles and metadata did not match. | Related-note title to heading, plus topic/byline/type continuity. Crossfade long text without stretching it. Deduplicate related-note identities. |
+| Detail loading | Notes, activities, and projects disabled prefetch; a loading commit could break the shared pair. | Full prefetch on hover, focus, or touch intent, following the post pattern. Fade loading/result/detail panels when a matching pair is unavailable. |
+| Search | Query changes lacked a coordinated result transition. | Query/scoped result boundaries with overlapping-card continuity. Input remains immediate and browser history restores the correct query. |
+| Pagination | Next/previous types looked identical; the pager had no stable identity. | Opposing short movements, stable pager frame, and shared active-page marker. Retain the project hero on later pages. |
+| Persistent panels | Repeated frames could fade or participate in broad content changes. | Keep navigation, unchanged author profiles, and repeated activity rail anchored. Author sections transition below the profile. Different authors retain distinct identities. |
+| Motion consistency | Separate post animations and delayed body effects competed with shared transitions. | One timing/easing system, shorter mobile movement, and zero transition duration under reduced motion. Remove competing body/row stagger effects in the affected flows. |
 
 ### Motion rules
 
@@ -41,26 +41,26 @@ These decisions resolve the optional audit ideas; they are not unfinished work.
 
 Every frontend route definition was inspected. Browser verification sampled real journeys through the shared renderers; it did not visit every possible content slug.
 
-| View family                                     | Final treatment                                                                                                              |
-| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| Home and paginated home                         | Shared archive cards, stable activity rail, directional pagination.                                                          |
-| Posts archive and pagination                    | Whole-card continuity and image/title detail sharing.                                                                        |
-| Post detail and related posts                   | Image/title geometry; restrained body/rail reveals.                                                                          |
-| Notes archive and pagination                    | Whole-card continuity and note metadata/content sharing.                                                                     |
-| Note detail and related notes                   | Related-title sharing; readable body crossfade and panel reveals.                                                            |
-| Activities archive and pagination               | Shared cards and directional pagination.                                                                                     |
-| Activity detail                                 | Image/title sharing with coordinated info/review panel arrival.                                                              |
-| Projects index                                  | Card continuity and project image/title detail sharing.                                                                      |
-| Project archive and pagination                  | Shared hero, stable later-page header, archive-card transitions.                                                             |
-| Topic archive and pagination                    | Shared post cards; no invented heading morph.                                                                                |
-| Author home and pagination                      | Distinct persistent author profile, shared cards/activity rail.                                                              |
-| Author posts, notes, activities, and pagination | Profile remains anchored while archive content changes.                                                                      |
-| Author bio, portfolio, contact                  | Content reveal below the profile; portfolio retains project-card sharing.                                                    |
-| Global and author search                        | Query/scoped result changes, retained cards, stable search controls.                                                         |
-| About, Armenian placeholder, contact            | Brief section/content changes.                                                                                               |
-| Privacy policy and AI documentation             | Restrained page entrance.                                                                                                    |
-| Offline, empty, error, and not-found states     | Existing recovery behavior and restrained state treatment; errors inspected without deliberately triggering server failures. |
-| Playground and skeleton demo                    | Inspected; no additional public animation scope.                                                                             |
+| View family | Final treatment |
+| --- | --- |
+| Home and paginated home | Shared archive cards, stable activity rail, directional pagination. |
+| Posts archive and pagination | Whole-card continuity and image/title detail sharing. |
+| Post detail and related posts | Image/title geometry; restrained body/rail reveals. |
+| Notes archive and pagination | Whole-card continuity and note metadata/content sharing. |
+| Note detail and related notes | Related-title sharing; readable body crossfade and panel reveals. |
+| Activities archive and pagination | Shared cards and directional pagination. |
+| Activity detail | Image/title sharing with coordinated info/review panel arrival. |
+| Projects index | Card continuity and project image/title detail sharing. |
+| Project archive and pagination | Shared hero, stable later-page header, archive-card transitions. |
+| Topic archive and pagination | Shared post cards; no invented heading morph. |
+| Author home and pagination | Distinct persistent author profile, shared cards/activity rail. |
+| Author posts, notes, activities, and pagination | Profile remains anchored while archive content changes. |
+| Author bio, portfolio, contact | Content reveal below the profile; portfolio retains project-card sharing. |
+| Global and author search | Query/scoped result changes, retained cards, stable search controls. |
+| About, Armenian placeholder, contact | Brief section/content changes. |
+| Privacy policy and AI documentation | Restrained page entrance. |
+| Offline, empty, error, and not-found states | Existing recovery behavior and restrained state treatment; errors inspected without deliberately triggering server failures. |
+| Playground and skeleton demo | Inspected; no additional public animation scope. |
 
 ## Verification
 

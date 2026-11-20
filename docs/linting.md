@@ -28,7 +28,7 @@ Both rules are outside Biome's recommended set, although Ultracite enables them.
 
 Three newer rules are scoped rather than disabled (Biome 2.6 / Ultracite 8.3):
 
-- [`useBaseline`](https://biomejs.dev/linter/rules/use-baseline/) targets Baseline "newly available" instead of "widely". `text-wrap: balance`, `@property` and view transitions are progressive enhancements that older browsers ignore. `::marker` is allowed: Safari's support is partial, but it covers the `color` the site sets.
+- [`useBaseline`](https://biomejs.dev/linter/rules/use-baseline/) keeps the "widely available" bar and exempts only four progressive enhancements: `text-wrap`, `@property`, `::view-transition` and `::marker`. Older browsers ignore the first three; Safari supports `::marker` only partly, but that covers the `color` the site sets. Any other newer feature still fails lint until it is checked.
 - [`noImportCycles`](https://biomejs.dev/linter/rules/no-import-cycles/) is off only for `src/components/RichText` and the block components. Rich text renders blocks, and blocks render nested rich text (captions, banners, quotes). Every use is inside a render, so load order cannot leave a value undefined. Elsewhere the rule stays on: grid cards import `GridCard` and `GridCardSection` from their own modules, not the `@/components/grid` barrel.
 - [`noComponentHookFactories`](https://biomejs.dev/linter/rules/no-component-hook-factories/) is off only for the three route factories (`create-entity-archive-page`, `create-paginated-archive-page`, `create-lyovson-feed-page`). Each runs once at module scope in a page file, so the components it returns are stable rather than rebuilt on every render.
 

@@ -9,6 +9,8 @@
   "files": {
     "includes": [
       "!.claude/worktrees",
+      // Historical records: the Markdown formatter would rewrite their code samples.
+      "!docs/archive",
       "!src/components/ui",
       "!src/app/(payload)",
       "!src/payload-types.ts",
@@ -41,12 +43,16 @@
         }
       },
       "suspicious": {
-        // Progressive enhancements (text-wrap, @property, view transitions)
-        // are Baseline "newly available"; older browsers ignore them.
-        // ::marker is partial only in Safari, which supports the `color` we set.
+        // Keep the "widely available" bar and exempt only the progressive
+        // enhancements in use: older browsers ignore text-wrap, @property and
+        // view transitions, and Safari's partial ::marker covers `color`.
         "useBaseline": {
           "level": "error",
-          "options": { "available": "newly", "allowSelectors": ["marker"] }
+          "options": {
+            "allowAtRules": ["property"],
+            "allowProperties": ["text-wrap"],
+            "allowSelectors": ["marker", "view-transition"]
+          }
         },
         // Existing nullish guards intentionally match both null and undefined.
         "noEqualsToNull": "off",

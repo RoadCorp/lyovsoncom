@@ -50,8 +50,9 @@ export const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
           allowFullScreen
           className="absolute inset-0 h-full w-full rounded-lg"
           // The player needs scripts and its own origin; popups let "Watch on
-          // YouTube" open. Nothing else from the embed reaches this page.
-          sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox"
+          // YouTube" open, and orientation lock turns phones landscape in
+          // fullscreen. Nothing else from the embed reaches this page.
+          sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox allow-orientation-lock"
           src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`}
           title="YouTube video player"
         />

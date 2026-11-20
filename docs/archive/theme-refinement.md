@@ -17,13 +17,13 @@ The light palette uses warm ivory, blue ink, and restrained cool accents. Dark m
 
 Local measurements use browser-computed text colors and the least favorable opaque gradient endpoint. They are targeted checks, not a whole-site WCAG certification. Transparent decorative overlays are excluded from these endpoint calculations; both themes are also reviewed visually.
 
-| Sample                       | Previous light | Refined light | Refined dark |
-| ---------------------------- | -------------: | ------------: | -----------: |
-| Article type label           |         2.87:1 |        5.07:1 |       5.87:1 |
-| Activity date                |         3.21:1 |        5.31:1 |       5.42:1 |
-| Navigation label             |         5.28:1 |        8.10:1 |       6.94:1 |
-| Code syntax, minimum sampled |              — |        5.10:1 |       6.29:1 |
-| Primary button label         |              — |       11.18:1 |       9.53:1 |
+| Sample | Previous light | Refined light | Refined dark |
+| --- | ---: | ---: | ---: |
+| Article type label | 2.87:1 | 5.07:1 | 5.87:1 |
+| Activity date | 3.21:1 | 5.31:1 | 5.42:1 |
+| Navigation label | 5.28:1 | 8.10:1 | 6.94:1 |
+| Code syntax, minimum sampled | — | 5.10:1 | 6.29:1 |
+| Primary button label | — | 11.18:1 | 9.53:1 |
 
 Additional checks cover status colors, ratings, placeholders, destructive/secondary buttons, focus states, theme switching, and narrow screens. Rare states and Prism token colors were rendered in a temporary local fixture, which was removed before the production build. No subscription or CMS forms were submitted.
 
