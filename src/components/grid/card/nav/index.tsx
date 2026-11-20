@@ -135,12 +135,12 @@ function Navigation({
 
     if (restoreSearchFocusRef.current) {
       restoreSearchFocusRef.current = false;
-      document.getElementById("nav-search-trigger")?.focus();
+      document.querySelector<HTMLElement>("#nav-search-trigger")?.focus();
     } else if (restoreMenuFocusRef.current) {
       restoreMenuFocusRef.current = false;
       document
-        .getElementById(
-          renderMode === "menu" ? "nav-first-link" : "nav-menu-trigger"
+        .querySelector<HTMLElement>(
+          renderMode === "menu" ? "#nav-first-link" : "#nav-menu-trigger"
         )
         ?.focus();
     }

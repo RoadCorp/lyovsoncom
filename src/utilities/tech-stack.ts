@@ -1,5 +1,5 @@
+import type { SimpleIcon } from "simple-icons";
 import {
-  type SimpleIcon,
   siEffect,
   siNeon,
   siNextdotjs,
@@ -61,7 +61,8 @@ const KNOWN_TECH: Record<string, Omit<TechInfo, "name">> = {
   "vercel blob": { icon: siVercel, url: "https://vercel.com/storage/blob" },
 };
 
-const HEX_CHANNELS = /^([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i;
+const HEX_CHANNELS =
+  /^(?<red>[0-9a-f]{2})(?<green>[0-9a-f]{2})(?<blue>[0-9a-f]{2})$/iu;
 // Channels closer than this read as grey, so the pill keeps the site accent.
 const MIN_HUE_SPREAD = 24;
 

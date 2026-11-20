@@ -2,9 +2,11 @@ import type {
   DefaultNodeTypes,
   SerializedBlockNode,
 } from "@payloadcms/richtext-lexical";
-import React, { type JSX } from "react";
+import type { JSX } from "react";
+import React from "react";
 import { BannerBlock } from "@/blocks/Banner/component";
-import { CodeBlock, type CodeBlockProps } from "@/blocks/Code/component";
+import type { CodeBlockProps } from "@/blocks/Code/component";
+import { CodeBlock } from "@/blocks/Code/component";
 import { GIFBlock } from "@/blocks/GIF/component";
 import type { GIFBlock as GIFBlockProps } from "@/blocks/GIF/types";
 import { MediaBlock } from "@/blocks/MediaBlock/component";
@@ -90,8 +92,8 @@ function getObjectId(value: unknown): string | null {
 function sanitizeKeySegment(value: string): string {
   return value
     .toLowerCase()
-    .replace(/[^a-z0-9_-]+/g, "-")
-    .replace(/^-|-$/g, "");
+    .replace(/[^a-z0-9_-]+/gu, "-")
+    .replace(/^-|-$/gu, "");
 }
 
 function getNodeKeyBase(node: NodeTypes): string {
@@ -256,7 +258,7 @@ function renderUnsupportedBlock(block: unknown, key: string): JSX.Element {
   const blockType = getUnknownBlockType(block);
 
   return (
-    <div className="surface-panel rounded-lg p-4 content-block" key={key}>
+    <div className="surface-panel content-block rounded-lg p-4" key={key}>
       <p className="tone-muted text-sm">
         Unsupported content block: {blockType}
       </p>
@@ -288,7 +290,7 @@ function renderElementNode(
           <li
             className={
               node.checked
-                ? "line-through opacity-65 content-checklist-item"
+                ? "content-checklist-item line-through opacity-65"
                 : "content-checklist-item"
             }
             key={key}

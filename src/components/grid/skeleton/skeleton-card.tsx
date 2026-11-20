@@ -1,4 +1,5 @@
-import { GridCard, GridCardSection } from "@/components/grid";
+import { GridCard } from "@/components/grid/card";
+import { GridCardSection } from "@/components/grid/card/section";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function SkeletonCard({ className = "" }: { className?: string }) {

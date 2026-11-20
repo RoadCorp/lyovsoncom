@@ -1,6 +1,3 @@
-import { PublicPageBoundary } from "@/components/public-page-boundary";
-export const prefetch = "partial";
-
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { ViewTransition } from "react";
@@ -16,24 +13,22 @@ import {
 import { GridCardActivityEntry } from "@/components/grid/card/activity/grid-card-activity-entry";
 import { MAX_VISIBLE_REFERENCES } from "@/components/grid/card/references/grid-card-references";
 import { JsonLd } from "@/components/json-ld";
+import { PublicPageBoundary } from "@/components/public-page-boundary";
 import type { Reference } from "@/payload-types";
 import { ensureStaticParams } from "@/utilities/ensure-static-params";
 import {
   generateBreadcrumbSchema,
   generateCollectionPageSchema,
 } from "@/utilities/generate-json-ld";
+import type { ReferenceHub } from "@/utilities/get-reference";
 import {
   getReferenceHub,
   getReferenceSlugs,
   getShownReviews,
   hubHasOwnWords,
-  type ReferenceHub,
 } from "@/utilities/get-reference";
-import {
-  getRelatedLists,
-  type LinkedReference,
-  makerNames,
-} from "@/utilities/reference-links";
+import type { LinkedReference } from "@/utilities/reference-links";
+import { getRelatedLists, makerNames } from "@/utilities/reference-links";
 import {
   absoluteUrl,
   activitiesRoute,
@@ -47,6 +42,8 @@ import {
   buildSeoMetadata,
 } from "@/utilities/seo-metadata";
 import { frontendViewTransitionClasses } from "@/utilities/view-transitions";
+
+export const prefetch = "partial";
 
 interface Args {
   params: Promise<{

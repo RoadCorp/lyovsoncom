@@ -33,7 +33,7 @@ export function MediaBlock(props: Props) {
   return (
     <figure
       className={cn(
-        "surface-block reveal-stagger-1 flex flex-col overflow-hidden content-block",
+        "surface-block reveal-stagger-1 content-block flex flex-col overflow-hidden",
         className
       )}
     >

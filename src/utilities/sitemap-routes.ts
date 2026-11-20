@@ -9,11 +9,11 @@ import {
   TOPIC_POSTS_PER_PAGE,
 } from "@/utilities/archive";
 import { getLyovsonFeedCounts } from "@/utilities/get-lyovson-feed";
+import type { ReferenceHub } from "@/utilities/get-reference";
 import {
   getReferenceHub,
   getReferenceSlugs,
   hubHasOwnWords,
-  type ReferenceHub,
 } from "@/utilities/get-reference";
 import { getRelationId } from "@/utilities/relations";
 import {

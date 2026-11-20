@@ -1,4 +1,5 @@
-import { type CatalogItem, fetchJson, MAX_RESULTS, yearOf } from "./shared";
+import type { CatalogItem } from "./shared";
+import { fetchJson, MAX_RESULTS, yearOf } from "./shared";
 
 // Each search returns at most MAX_RESULTS items in the shared shape. Keys stay
 // on the server; sources without one are skipped by `searchCatalog`.

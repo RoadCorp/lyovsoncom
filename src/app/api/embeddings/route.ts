@@ -1,6 +1,7 @@
 import configPromise from "@payload-config";
 import type { NextRequest } from "next/server";
-import { getPayload, type Payload } from "payload";
+import type { Payload } from "payload";
+import { getPayload } from "payload";
 import { TRUSTED_EMBEDDING_READ } from "@/access/private-field-read";
 import type { Activity, Post } from "@/payload-types";
 import { logApiTelemetry } from "@/utilities/api-telemetry";
@@ -9,19 +10,19 @@ import {
   getEmbeddingUnauthorizedResponse,
   hasEmbeddingAuthHint,
 } from "@/utilities/embedding-auth";
+import type { EmbeddableDoc } from "@/utilities/embedding-documents";
 import {
   describeEmbeddableDoc,
-  type EmbeddableDoc,
   readStoredEmbedding,
 } from "@/utilities/embedding-documents";
 import {
   EMBEDDING_VECTOR_DIMENSIONS,
   generateEmbedding,
 } from "@/utilities/generate-embedding";
+import type { EmbeddableCollection } from "@/utilities/generate-embedding-helpers";
 import {
   EMBEDDABLE,
   EMBEDDABLE_COLLECTIONS,
-  type EmbeddableCollection,
   isEmbeddableCollection,
 } from "@/utilities/generate-embedding-helpers";
 import { getPublishedProject } from "@/utilities/public-project";

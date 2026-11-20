@@ -10,7 +10,7 @@ import {
 import { relationFields } from "./fields/relations";
 import { referenceTypeField } from "./fields/type";
 
-const WIKIDATA_ID = /^Q\d+$/;
+const WIKIDATA_ID = /^Q\d+$/u;
 
 const linksToOthers = (doc: Reference) =>
   [doc.credits, doc.partOf, doc.basedOn, doc.members].some(

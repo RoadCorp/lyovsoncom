@@ -6,7 +6,7 @@
 const MAX_QUERY_LENGTH = 50; // GIPHY returns 414 above this
 const RATING = "pg-13";
 // Titles read like "Mind Blown GIF by The Daily Show".
-const TITLE_SUFFIX = /\s+GIF(\s+by\s+.*)?$/i;
+const TITLE_SUFFIX = /\s+GIF(?:\s+by\s+.*)?$/iu;
 
 interface GiphyRendition {
   height: string;

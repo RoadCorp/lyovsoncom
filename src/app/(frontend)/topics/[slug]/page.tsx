@@ -1,12 +1,10 @@
-import { PublicPageBoundary } from "@/components/public-page-boundary";
-export const prefetch = "partial";
-
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { CollectionArchive } from "@/components/CollectionArchive";
 import { JsonLd } from "@/components/json-ld";
 import { Pagination } from "@/components/Pagination";
+import { PublicPageBoundary } from "@/components/public-page-boundary";
 import type { Media, Topic } from "@/payload-types";
 import { ensureStaticParams } from "@/utilities/ensure-static-params";
 import {
@@ -26,6 +24,8 @@ import {
   buildNotFoundMetadata,
   buildSeoMetadata,
 } from "@/utilities/seo-metadata";
+
+export const prefetch = "partial";
 
 interface PageProps {
   params: Promise<{

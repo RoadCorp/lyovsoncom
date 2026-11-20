@@ -3,11 +3,8 @@ import type { PaginatedDocs } from "payload";
 import { TOPIC_POSTS_PER_PAGE } from "@/utilities/archive";
 import { topicPostsWhere } from "@/utilities/content-queries";
 import { getTopic } from "@/utilities/get-topic";
-import {
-  countPosts,
-  findPostSummaries,
-  type PostSummary,
-} from "@/utilities/post-summary";
+import type { PostSummary } from "@/utilities/post-summary";
+import { countPosts, findPostSummaries } from "@/utilities/post-summary";
 
 export function getTopicPosts(
   slug: string

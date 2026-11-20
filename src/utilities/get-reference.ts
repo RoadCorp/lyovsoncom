@@ -7,7 +7,8 @@ import {
 } from "@/utilities/content-queries";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";
 import { getPayloadClient } from "@/utilities/payload-client";
-import { findPostSummaries, type PostSummary } from "@/utilities/post-summary";
+import type { PostSummary } from "@/utilities/post-summary";
+import { findPostSummaries } from "@/utilities/post-summary";
 import { publicContentSelect } from "@/utilities/public-content-select";
 
 // A hub shows everything public that points at one reference. Real counts

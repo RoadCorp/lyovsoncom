@@ -1,4 +1,5 @@
-import { GridCard, GridCardSection } from "@/components/grid";
+import { GridCard } from "@/components/grid/card";
+import { GridCardSection } from "@/components/grid/card/section";
 import { Media } from "@/components/Media";
 import { CARD_THUMBNAIL_IMAGE_SIZE } from "@/components/Media/image-sizes";
 import { PostDrillInLink } from "@/components/post-transitions/post-drill-in-link";

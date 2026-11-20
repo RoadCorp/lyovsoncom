@@ -1,4 +1,5 @@
-import { normalizeTokens, Prism, type PrismTheme } from "prism-react-renderer";
+import type { PrismTheme } from "prism-react-renderer";
+import { normalizeTokens, Prism } from "prism-react-renderer";
 import { CopyButton } from "./copy-button";
 
 const codeTheme: PrismTheme = {
@@ -59,7 +60,7 @@ export function Code({
   return (
     <div className="surface-panel surface-emphasis surface-code relative">
       {language && (
-        <div className="surface-chip surface-code-chip absolute top-3 right-15 rounded px-2 py-1 font-medium text-xs">
+        <div className="surface-chip surface-code-chip absolute top-3 right-15 rounded px-2 py-1 text-xs font-medium">
           {language.toUpperCase()}
         </div>
       )}
@@ -72,7 +73,7 @@ export function Code({
         tabIndex={0}
       >
         <pre
-          className="overflow-visible rounded-lg p-6 font-mono text-sm leading-relaxed content-code-shell"
+          className="content-code-shell overflow-visible rounded-lg p-6 font-mono text-sm leading-relaxed"
           style={codeTheme.plain}
         >
           <code>
@@ -80,7 +81,7 @@ export function Code({
               <span className="table-row" key={line.offset}>
                 <span
                   aria-hidden="true"
-                  className="tone-muted table-cell min-w-[3rem] select-none pr-4 text-right"
+                  className="tone-muted table-cell min-w-[3rem] pr-4 text-right select-none"
                 >
                   {line.number}
                 </span>

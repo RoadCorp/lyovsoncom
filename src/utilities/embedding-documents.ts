@@ -8,7 +8,7 @@ import {
   postRoute,
 } from "@/utilities/routes";
 
-const VECTOR_BRACKETS = /^\[|\]$/g;
+const VECTOR_BRACKETS = /^\[|\]$/gu;
 
 export type EmbeddableDoc = Activity | Post;
 

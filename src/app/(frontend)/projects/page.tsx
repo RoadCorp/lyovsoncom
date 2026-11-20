@@ -1,5 +1,3 @@
-export const prefetch = "partial";
-
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { GridCardProject } from "@/components/grid/card/project";
@@ -8,6 +6,8 @@ import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getProjects } from "@/utilities/get-projects";
 import { absoluteUrl, projectsRoute, projectUrl } from "@/utilities/routes";
 import { buildSeoMetadata } from "@/utilities/seo-metadata";
+
+export const prefetch = "partial";
 
 export default async function Page() {
   const response = await getProjects();

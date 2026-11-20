@@ -1,12 +1,9 @@
 import type { Payload } from "payload";
 import type { Lyovson, Reference } from "@/payload-types";
-import { type CatalogItem, USER_AGENT } from "./shared";
-import {
-  getCommonsImage,
-  getWikidataFacts,
-  matchWikidata,
-  type WikidataLinks,
-} from "./wikidata";
+import type { CatalogItem } from "./shared";
+import { USER_AGENT } from "./shared";
+import type { WikidataLinks } from "./wikidata";
+import { getCommonsImage, getWikidataFacts, matchWikidata } from "./wikidata";
 
 /** Who imports: the signed-in editor, or a trusted script without one. */
 interface Importer {

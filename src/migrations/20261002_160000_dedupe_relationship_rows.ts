@@ -1,8 +1,8 @@
-import {
-  type MigrateDownArgs,
-  type MigrateUpArgs,
-  sql,
+import type {
+  MigrateDownArgs,
+  MigrateUpArgs,
 } from "@payloadcms/db-vercel-postgres";
+import { sql } from "@payloadcms/db-vercel-postgres";
 
 // Some posts and activities carried each relationship row many times (one
 // post had 64 topic rows for 2 topics and 32 author rows). Payload returned

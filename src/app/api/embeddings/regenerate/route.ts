@@ -8,8 +8,8 @@ import {
   getEmbeddingUnauthorizedResponse,
   hasEmbeddingAuthHint,
 } from "@/utilities/embedding-auth";
+import type { EmbeddableCollection } from "@/utilities/generate-embedding-helpers";
 import {
-  type EmbeddableCollection,
   generateEmbeddingFor,
   isEmbeddableCollection,
 } from "@/utilities/generate-embedding-helpers";

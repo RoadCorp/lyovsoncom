@@ -1,8 +1,8 @@
-import {
-  type MigrateDownArgs,
-  type MigrateUpArgs,
-  sql,
+import type {
+  MigrateDownArgs,
+  MigrateUpArgs,
 } from "@payloadcms/db-vercel-postgres";
+import { sql } from "@payloadcms/db-vercel-postgres";
 
 // DROP TABLE ... CASCADE already removes foreign keys and indexes that
 // point at the dropped tables, so the generated drops below use IF EXISTS.

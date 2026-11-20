@@ -42,7 +42,7 @@ const browser = await chromium.launch();
 
 try {
   for (const url of urls) {
-    const host = new URL(url).hostname.replace(/^www\./, "");
+    const host = new URL(url).hostname.replace(/^www\./u, "");
     for (const [viewportName, viewport] of Object.entries(VIEWPORTS)) {
       for (const colorScheme of THEMES) {
         const context = await browser.newContext({

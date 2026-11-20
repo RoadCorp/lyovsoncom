@@ -1,9 +1,9 @@
-export const prefetch = "partial";
-
 import type { Metadata } from "next";
 import Image from "next/image";
 import { PlaceholderPageCard } from "@/components/placeholder-page-card";
 import { buildSeoMetadata } from "@/utilities/seo-metadata";
+
+export const prefetch = "partial";
 
 export default function AboutPage() {
   return (
@@ -15,7 +15,7 @@ export default function AboutPage() {
     >
       {/* TMDB's terms require attribution with its notice and logo. */}
       <section aria-labelledby="credits" className="space-y-3">
-        <h2 className="tone-heading font-medium text-sm" id="credits">
+        <h2 className="tone-heading text-sm font-medium" id="credits">
           Credits
         </h2>
         <Image

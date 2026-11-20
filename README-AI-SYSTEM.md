@@ -20,13 +20,13 @@ Posts and activities carry an OpenAI `text-embedding-3-small` vector (1536 dimen
 
 Every embedding endpoint requires an authenticated Payload admin or `Authorization: Bearer $CRON_SECRET`, and responds with `Cache-Control: private, no-store`. None of them are public.
 
-| Endpoint | Purpose |
-| --- | --- |
-| `GET /api/embeddings/sync` (cron), `POST /api/embeddings/sync` | Embed stale or missing documents. The POST body may set `collections`, `limitPerCollection` and `force`. |
-| `POST /api/embeddings/regenerate` | Re-embed one document: `{ "collection", "id", "force" }`. |
-| `GET /api/embeddings/{posts,activities}/{id}` | One document's stored embedding. Takes `format=full\|vector-only\|metadata-only`, `content=true`, and `regenerate=true`. |
-| `GET /api/embeddings?type=all\|posts\|activities` | Bulk listing of stored embeddings (`vector=true` includes vectors). Add `id=` for one item, or `q=` to embed a query on demand. |
-| `GET /api/embeddings/status` | Coverage per collection and system health. |
+| Endpoint                                                       | Purpose                                                                                                                         |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `GET /api/embeddings/sync` (cron), `POST /api/embeddings/sync` | Embed stale or missing documents. The POST body may set `collections`, `limitPerCollection` and `force`.                        |
+| `POST /api/embeddings/regenerate`                              | Re-embed one document: `{ "collection", "id", "force" }`.                                                                       |
+| `GET /api/embeddings/{posts,activities}/{id}`                  | One document's stored embedding. Takes `format=full\|vector-only\|metadata-only`, `content=true`, and `regenerate=true`.        |
+| `GET /api/embeddings?type=all\|posts\|activities`              | Bulk listing of stored embeddings (`vector=true` includes vectors). Add `id=` for one item, or `q=` to embed a query on demand. |
+| `GET /api/embeddings/status`                                   | Coverage per collection and system health.                                                                                      |
 
 The public search page is `/search?q=…`. Bots are blocked from it, and from `/api`, by the request guard in `src/utilities/request-guards.ts`.
 

@@ -1,7 +1,8 @@
 "use client";
 
 import { LoaderCircle, SearchIcon } from "lucide-react";
-import { type FormEvent, useEffect, useRef, useState } from "react";
+import type { FormEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

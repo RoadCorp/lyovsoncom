@@ -1,8 +1,8 @@
-import {
-  type MigrateDownArgs,
-  type MigrateUpArgs,
-  sql,
+import type {
+  MigrateDownArgs,
+  MigrateUpArgs,
 } from "@payloadcms/db-vercel-postgres";
+import { sql } from "@payloadcms/db-vercel-postgres";
 
 export async function up({ db }: MigrateUpArgs): Promise<void> {
   // Global search ranks through hybrid_search_content, which read notes

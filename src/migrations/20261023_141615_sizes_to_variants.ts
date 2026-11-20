@@ -1,8 +1,8 @@
-import {
-  type MigrateDownArgs,
-  type MigrateUpArgs,
-  sql,
+import type {
+  MigrateDownArgs,
+  MigrateUpArgs,
 } from "@payloadcms/db-vercel-postgres";
+import { sql } from "@payloadcms/db-vercel-postgres";
 
 // Copies rather than renames (Payload's sizes-to-variants helper renames):
 // the previous build still reads `sizes_*` while the Payload 4 build deploys.

@@ -30,7 +30,7 @@ export const SearchMode = ({
             <Search aria-hidden="true" className="tone-heading h-7 w-7" />
           </span>
         </ViewTransition>
-        <h2 className="tone-heading font-bold text-lg">Search the archive</h2>
+        <h2 className="tone-heading text-lg font-bold">Search the archive</h2>
         <p className="tone-muted text-sm">
           Find posts and activities by topic or idea. Enter your search below
           and press Enter.

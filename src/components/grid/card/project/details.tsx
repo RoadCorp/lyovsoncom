@@ -1,13 +1,14 @@
+import type { LucideIcon } from "lucide-react";
 import {
   BriefcaseBusiness,
   Building2,
   Calendar,
   Code2,
-  type LucideIcon,
   PenTool,
 } from "lucide-react";
 import type { CSSProperties } from "react";
-import { GridCard, GridCardSection } from "@/components/grid";
+import { GridCard } from "@/components/grid/card";
+import { GridCardSection } from "@/components/grid/card/section";
 import { IntentLink } from "@/components/intent-link";
 import { Media } from "@/components/Media";
 import {
@@ -80,7 +81,7 @@ export function GridCardProjectFacts({ project }: { project: Project }) {
           <Icon aria-hidden="true" className="card-eyebrow h-5 w-5 shrink-0" />
           <dl className="flex min-w-0 flex-col gap-0.5">
             <dt className="card-eyebrow type-eyebrow">{term}</dt>
-            <dd className="tone-heading line-clamp-2 font-medium text-sm">
+            <dd className="tone-heading line-clamp-2 text-sm font-medium">
               {href ? (
                 <a
                   aria-label={`${term}: ${value} (opens in a new tab)`}
@@ -167,7 +168,7 @@ export function GridCardProjectHighlights({
           ) : null}
           <span
             className={cn(
-              "tone-heading font-bold tabular-nums leading-none",
+              "tone-heading leading-none font-bold tabular-nums",
               highlights.length > 1 ? "text-4xl" : "text-6xl"
             )}
           >
@@ -262,7 +263,7 @@ export function ProjectCaseStudy({
       <div className="flex flex-col gap-10 p-6">
         {sections.map((section) => (
           <section
-            className="mx-auto w-full g3:text-[1.125rem] content-measure content-prose [container-type:inline-size]"
+            className="g3:text-[1.125rem] content-measure content-prose [container-type:inline-size] mx-auto w-full"
             key={section.id ?? section.heading}
           >
             <h2 className="mt-0">{section.heading}</h2>

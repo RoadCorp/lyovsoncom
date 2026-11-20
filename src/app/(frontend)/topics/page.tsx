@@ -1,5 +1,3 @@
-export const prefetch = "partial";
-
 import type { Metadata } from "next";
 import { AppLink } from "@/components/app-link";
 import { GridCard, GridCardSection } from "@/components/grid";
@@ -17,6 +15,8 @@ import {
   topicsRoute,
 } from "@/utilities/routes";
 import { buildSeoMetadata } from "@/utilities/seo-metadata";
+
+export const prefetch = "partial";
 
 const DESCRIPTION =
   "Every topic Rafa and Jess Lyóvson write about, with the number of posts in each.";
@@ -43,12 +43,12 @@ export default async function TopicsPage() {
       <JsonLd data={collectionPageSchema} />
       <JsonLd data={breadcrumbSchema} />
       <GridCard
-        className="g2:col-start-2 g3:col-start-2 g2:col-end-3 g3:col-end-4 g2:row-start-1 aspect-auto h-auto g3:w-[var(--grid-card-2x1)] self-start"
+        className="g2:col-start-2 g3:col-start-2 g2:col-end-3 g3:col-end-4 g2:row-start-1 g3:w-[var(--grid-card-2x1)] aspect-auto h-auto self-start"
         interactive={false}
       >
         <GridCardSection className="col-span-3 row-span-3 flex flex-col gap-5 p-6">
           <div className="space-y-2">
-            <h1 className="tone-heading font-bold text-3xl">Topics</h1>
+            <h1 className="tone-heading text-3xl font-bold">Topics</h1>
             <p className="tone-muted text-sm leading-relaxed">{DESCRIPTION}</p>
           </div>
           <ul className="flex flex-wrap gap-2">

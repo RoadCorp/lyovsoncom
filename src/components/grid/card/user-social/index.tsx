@@ -8,7 +8,8 @@ import {
   SiX,
   SiYoutube,
 } from "@icons-pack/react-simple-icons";
-import { GridCard, GridCardNavItem } from "@/components/grid";
+import { GridCard } from "@/components/grid/card";
+import { GridCardNavItem } from "@/components/grid/card/nav/grid-card-nav-item";
 import { LinkedInIcon } from "@/components/linked-in-icon";
 import { cn } from "@/lib/utils";
 

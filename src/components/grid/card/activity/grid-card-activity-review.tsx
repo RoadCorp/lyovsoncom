@@ -1,6 +1,7 @@
 import { Quote, Star, StarHalf, User } from "lucide-react";
 import { AppLink } from "@/components/app-link";
-import { GridCard, GridCardSection } from "@/components/grid";
+import { GridCard } from "@/components/grid/card";
+import { GridCardSection } from "@/components/grid/card/section";
 import { cn } from "@/lib/utils";
 import type { Lyovson } from "@/payload-types";
 import { lyovsonRoute } from "@/utilities/routes";
@@ -40,7 +41,7 @@ function renderRating(rating: number) {
     >
       {/* Numeric rating */}
       <div className="flex items-baseline gap-0.5">
-        <span className="review-score-value font-bold text-2xl leading-none">
+        <span className="review-score-value text-2xl leading-none font-bold">
           {rating}
         </span>
         <span className="tone-muted text-xs">/{RATING_MAX}</span>
@@ -109,8 +110,8 @@ export function GridCardActivityReview({
             />
             <p
               className={cn(
-                "review-note-copy overflow-hidden text-pretty break-words pr-6 pl-4 text-left font-serif text-note not-italic leading-relaxed",
-                "whitespace-pre-line tracking-[-0.01em]"
+                "review-note-copy text-note overflow-hidden pr-6 pl-4 text-left font-serif leading-relaxed text-pretty break-words not-italic",
+                "tracking-[-0.01em] whitespace-pre-line"
               )}
             >
               {excerpt}
@@ -118,7 +119,7 @@ export function GridCardActivityReview({
 
             {isTruncated && (
               <>
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 content-fade-bottom" />
+                <div className="content-fade-bottom pointer-events-none absolute inset-x-0 bottom-0 h-14" />
                 <span className="tone-muted pointer-events-none absolute right-6 bottom-4 text-xs tracking-widest">
                   ...
                 </span>

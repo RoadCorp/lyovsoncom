@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, it as test, vi } from "vitest";
 import { getActivityByDateAndSlug } from "./get-activity";
 import { getLyovsonProfile } from "./get-lyovson-profile";
 import { getRelatedPosts } from "./get-related-content";
@@ -43,7 +43,7 @@ describe("public read contracts", () => {
   });
 });
 
-it.each([
+test.each([
   ["activities", () => getActivityByDateAndSlug("09-06-26", "same-slug")],
 ] as const)(
   "restricts %s detail reads to public content and excludes embedding internals",
@@ -68,7 +68,7 @@ it.each([
   }
 );
 
-it("distinguishes repeated activity slugs by their UTC date", async () => {
+test("distinguishes repeated activity slugs by their UTC date", async () => {
   const first = { id: 1, slug: "reading", startedAt: "2026-09-05T12:00:00Z" };
   const second = { id: 2, slug: "reading", startedAt: "2026-09-06T12:00:00Z" };
   const find = vi.fn().mockResolvedValue({ docs: [first, second] });

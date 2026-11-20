@@ -1,5 +1,3 @@
-export const prefetch = "partial";
-
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { ActivitiesArchive } from "@/components/ActivitiesArchive";
@@ -15,6 +13,8 @@ import {
   activityUrl,
 } from "@/utilities/routes";
 import { buildSeoMetadata } from "@/utilities/seo-metadata";
+
+export const prefetch = "partial";
 
 export default async function Page() {
   const response = await getLatestActivities(ACTIVITIES_PER_PAGE);

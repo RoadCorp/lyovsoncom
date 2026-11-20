@@ -1,6 +1,3 @@
-import { PublicPageBoundary } from "@/components/public-page-boundary";
-export const prefetch = "partial";
-
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import {
@@ -9,6 +6,7 @@ import {
   GridCardSection,
 } from "@/components/grid";
 import { JsonLd } from "@/components/json-ld";
+import { PublicPageBoundary } from "@/components/public-page-boundary";
 import RichText from "@/components/RichText";
 import {
   generatePersonSchema,
@@ -24,6 +22,8 @@ import {
   buildLyovsonMetadata,
   buildLyovsonNotFoundMetadata,
 } from "../_utilities/metadata";
+
+export const prefetch = "partial";
 
 interface PageProps {
   params: Promise<{ lyovson: string }>;
@@ -57,12 +57,12 @@ async function PageContent({ params }: PageProps) {
 
       {user.bio ? (
         <GridCard
-          className="g2:col-start-2 g2:col-end-3 g3:col-end-4 g2:row-auto g2:row-start-2 aspect-auto h-auto g3:w-[var(--grid-card-2x1)]"
+          className="g2:col-start-2 g2:col-end-3 g3:col-end-4 g2:row-auto g2:row-start-2 g3:w-[var(--grid-card-2x1)] aspect-auto h-auto"
           interactive={false}
         >
-          <GridCardSection className="col-span-3 row-span-3 p-6 [container-type:inline-size]">
+          <GridCardSection className="[container-type:inline-size] col-span-3 row-span-3 p-6">
             <RichText
-              className="reveal-stagger-3 h-full g3:text-[1.125rem]"
+              className="reveal-stagger-3 g3:text-[1.125rem] h-full"
               content={user.bio}
               enableGutter={false}
               enableProse={true}

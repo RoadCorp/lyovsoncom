@@ -4,19 +4,19 @@ Updated the application and its development tools together, preserving the site 
 
 ## Main versions
 
-| Package | Before | After |
-| --- | --- | --- |
-| Next.js / third-party integrations | 16.2.3 / 16.2.6 | 16.3.4 |
-| React / React DOM | April 9 React 19.3 canary | 19.2.8 stable |
-| Payload and its plugins | 3.84.1 | 3.88.0 |
-| Tailwind CSS | 4.2.4 | 4.3.3 |
-| AI SDK / OpenAI provider | 6.0.175 / 3.0.62 | 7.0.92 / 4.0.58 |
-| TypeScript | 6.0.3 | 7.0.2 |
-| Vitest | 4.1.5 | 5.0.0 |
-| Biome / Ultracite | 2.4.11 / 7.5.6 | 2.5.12 / 7.10.8 |
-| Sharp | 0.34.5 | 0.35.4 |
-| Feed | 5.2.1 | 6.0.0 |
-| React DayPicker | 9.14.0 | 10.0.1 |
+| Package                            | Before                    | After           |
+| ---------------------------------- | ------------------------- | --------------- |
+| Next.js / third-party integrations | 16.2.3 / 16.2.6           | 16.3.4          |
+| React / React DOM                  | April 9 React 19.3 canary | 19.2.8 stable   |
+| Payload and its plugins            | 3.84.1                    | 3.88.0          |
+| Tailwind CSS                       | 4.2.4                     | 4.3.3           |
+| AI SDK / OpenAI provider           | 6.0.175 / 3.0.62          | 7.0.92 / 4.0.58 |
+| TypeScript                         | 6.0.3                     | 7.0.2           |
+| Vitest                             | 4.1.5                     | 5.0.0           |
+| Biome / Ultracite                  | 2.4.11 / 7.5.6            | 2.5.12 / 7.10.8 |
+| Sharp                              | 0.34.5                    | 0.35.4          |
+| Feed                               | 5.2.1                     | 6.0.0           |
+| React DayPicker                    | 9.14.0                    | 10.0.1          |
 
 Other compatible dependencies and transitive packages were refreshed in the lockfile. Next, React, and the Payload family have explicit matching versions. Radix uses a version range instead of the moving `latest` tag. Node types now match the project's Node 24 runtime. GraphQL stays on the latest compatible 16.x release, 16.14.2; Payload 3.88 requires GraphQL 16.
 

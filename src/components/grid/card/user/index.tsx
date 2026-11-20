@@ -1,13 +1,14 @@
 import Image from "next/image";
 import { ViewTransition } from "react";
-import { GridCard, GridCardNavItem, GridCardSection } from "@/components/grid";
+import { GridCard } from "@/components/grid/card";
+import { GridCardNavItem } from "@/components/grid/card/nav/grid-card-nav-item";
+import { GridCardSection } from "@/components/grid/card/section";
 import { cn } from "@/lib/utils";
 import type { Media } from "@/payload-types";
+import type { PublicProfile } from "@/utilities/get-lyovson-profile";
 import { SOCIAL_ICON_MAP } from "@/utilities/social-icons";
 
 const MAX_SOCIAL_LINKS = 3;
-
-import type { PublicProfile } from "@/utilities/get-lyovson-profile";
 
 interface Props {
   className?: string;
@@ -85,7 +86,7 @@ export const GridCardUser = ({ user, className }: Props) => {
           <div className="mx-auto w-full max-w-3xl space-y-4">
             <h2
               className={
-                "tone-heading text-center font-bold text-2xl md:text-3xl lg:text-4xl"
+                "tone-heading text-center text-2xl font-bold md:text-3xl lg:text-4xl"
               }
             >
               {userName}

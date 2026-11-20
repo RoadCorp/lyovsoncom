@@ -4,15 +4,16 @@ import {
   publicActivitiesWhere,
   publishedPostsWhere,
 } from "@/utilities/content-queries";
-import { LIVE_METRICS, type LiveMetric } from "@/utilities/live-metric-options";
+import type { LiveMetric } from "@/utilities/live-metric-options";
+import { LIVE_METRICS } from "@/utilities/live-metric-options";
 import { getPayloadClient } from "@/utilities/payload-client";
 
 // Other sites are counted from their public sitemaps, which list every page
 // they want indexed and need no keys or API access.
 
 const FETCH_TIMEOUT_MS = 10_000;
-const URL_ENTRY = /<url>/g;
-const SITEMAP_LOC = /<loc>([^<]+)<\/loc>/g;
+const URL_ENTRY = /<url>/gu;
+const SITEMAP_LOC = /<loc>(?<loc>[^<]+)<\/loc>/gu;
 
 /** Number of <url> entries in a sitemap document. */
 export function countSitemapUrls(xml: string) {

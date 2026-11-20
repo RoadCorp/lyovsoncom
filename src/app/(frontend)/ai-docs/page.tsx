@@ -1,11 +1,11 @@
-export const prefetch = "partial";
-
 import type { Metadata } from "next";
 import { cacheLife } from "next/cache";
 import type { ReactNode } from "react";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { buildSeoMetadata } from "@/utilities/seo-metadata";
 import { getCanonicalSiteOrigin } from "@/utilities/site-config";
+
+export const prefetch = "partial";
 
 const DOCS_CARD_CLASS_NAME =
   "aspect-auto h-auto g2:col-start-2 g2:col-end-3 g3:col-start-2 g3:col-end-4 g3:w-[var(--grid-card-2x1)]";

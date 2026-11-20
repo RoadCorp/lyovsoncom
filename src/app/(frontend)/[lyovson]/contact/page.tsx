@@ -1,17 +1,17 @@
-import { PublicPageBoundary } from "@/components/public-page-boundary";
-export const prefetch = "partial";
-
 import { Mail } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { GridCard, GridCardSection } from "@/components/grid";
+import { PublicPageBoundary } from "@/components/public-page-boundary";
 import { getLyovsonProfile } from "@/utilities/get-lyovson-profile";
 import { SOCIAL_ICON_MAP } from "@/utilities/social-icons";
 import {
   buildLyovsonMetadata,
   buildLyovsonNotFoundMetadata,
 } from "../_utilities/metadata";
+
+export const prefetch = "partial";
 
 interface PageProps {
   params: Promise<{ lyovson: string }>;
@@ -40,7 +40,7 @@ async function PageContent({ params }: PageProps) {
       >
         <GridCardSection className="col-span-3 row-span-1 flex items-center justify-center p-5">
           <div className="text-center">
-            <h2 className="tone-heading font-bold text-xl">
+            <h2 className="tone-heading text-xl font-bold">
               Contact {user.name}
             </h2>
             <p className="tone-muted mt-2 text-sm">

@@ -2,8 +2,8 @@ import type { Block } from "payload";
 import { captionEditor } from "@/fields/default-lexical";
 
 // Regex patterns for X/Twitter post ID extraction
-const NUMERIC_ID_REGEX = /^\d+$/;
-const STATUS_PATH_REGEX = /\/status\/(\d+)/;
+const NUMERIC_ID_REGEX = /^\d+$/u;
+const STATUS_PATH_REGEX = /\/status\/(?<id>\d+)/u;
 
 // Improved X post ID/URL extraction function
 const extractXPostID = (input: string): string => {

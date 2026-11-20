@@ -3,11 +3,8 @@ import type { PaginatedDocs } from "payload";
 import { PROJECT_POSTS_PER_PAGE } from "@/utilities/archive";
 import { projectPostsWhere } from "@/utilities/content-queries";
 import { getProject } from "@/utilities/get-project";
-import {
-  countPosts,
-  findPostSummaries,
-  type PostSummary,
-} from "@/utilities/post-summary";
+import type { PostSummary } from "@/utilities/post-summary";
+import { countPosts, findPostSummaries } from "@/utilities/post-summary";
 
 async function findProjectPosts(
   slug: string,

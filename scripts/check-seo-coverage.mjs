@@ -57,10 +57,11 @@ const noindexExcludedFromSitemap = [
 ];
 
 const brandedTitlePattern =
-  /title:\s*(?:`[^`]*\|\s*Ly(?:ov|óv)son\.com[^`]*`|"[^"]*\|\s*Ly(?:ov|óv)son\.com[^"]*"|'[^']*\|\s*Ly(?:ov|óv)son\.com[^']*')/;
-const brandedTitleVariablePattern = /const title = .*?\|\s*Ly(?:ov|óv)son\.com/;
+  /title:\s*(?:`[^`]*\|\s*Ly(?:ov|óv)son\.com[^`]*`|"[^"]*\|\s*Ly(?:ov|óv)son\.com[^"]*"|'[^']*\|\s*Ly(?:ov|óv)son\.com[^']*')/u;
+const brandedTitleVariablePattern =
+  /const title = .*?\|\s*Ly(?:ov|óv)son\.com/u;
 
-const apexLiteralPattern = /https:\/\/lyovson\.com/;
+const apexLiteralPattern = /https:\/\/lyovson\.com/u;
 
 const apexCheckTargets = ["src", "next.config.ts", "redirects.js"];
 

@@ -19,7 +19,7 @@ function Fixture() {
     </>
   );
 }
-const root = document.getElementById("root");
+const root = document.querySelector("#root");
 if (root) {
   createRoot(root).render(<Fixture />);
 }

@@ -10,7 +10,7 @@ interface TopicPillProps {
   color?: string | null;
 }
 
-const HEX_COLOR = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i;
+const HEX_COLOR = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/iu;
 
 export function TopicPill({ children, className, color }: TopicPillProps) {
   return (

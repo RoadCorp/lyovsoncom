@@ -7,9 +7,9 @@ import {
   getEmbeddingUnauthorizedResponse,
   hasEmbeddingAuthHint,
 } from "@/utilities/embedding-auth";
+import type { EmbeddableDoc } from "@/utilities/embedding-documents";
 import {
   describeEmbeddableDoc,
-  type EmbeddableDoc,
   readStoredEmbedding,
 } from "@/utilities/embedding-documents";
 import { EMBEDDING_VECTOR_DIMENSIONS } from "@/utilities/generate-embedding";

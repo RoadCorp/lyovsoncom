@@ -1,8 +1,8 @@
-import {
-  type MigrateDownArgs,
-  type MigrateUpArgs,
-  sql,
+import type {
+  MigrateDownArgs,
+  MigrateUpArgs,
 } from "@payloadcms/db-vercel-postgres";
+import { sql } from "@payloadcms/db-vercel-postgres";
 
 // The nested-docs plugin's breadcrumbs. Run after the deploy: the previous
 // build still reads them.

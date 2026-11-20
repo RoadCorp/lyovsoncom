@@ -30,7 +30,7 @@ function getConfiguredRuntimeOrigin() {
 }
 
 function escapeRegExp(value: string) {
-  return value.replaceAll(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return value.replaceAll(/[.*+?^${}()|[\]\\]/gu, "\\$&");
 }
 
 export const siteConfig = {
@@ -61,7 +61,7 @@ const knownSiteNames = [siteConfig.name, ...siteConfig.alternateNames].map(
 
 const siteNamePattern = new RegExp(
   `\\s*[|\\-—]\\s*(?:${knownSiteNames.join("|")})$`,
-  "i"
+  "iu"
 );
 
 export function getRuntimeSiteOrigin() {

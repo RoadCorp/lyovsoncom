@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
-import { type NodeTypes, serializeLexical } from "./serialize";
+import type { NodeTypes } from "./serialize";
+import { serializeLexical } from "./serialize";
 
 interface Props {
   className?: string;
@@ -48,7 +49,7 @@ const RichText = ({
         {
           container: enableGutter,
           "max-w-none": !enableGutter,
-          "mx-auto content-measure content-prose": enableProse,
+          "content-measure content-prose mx-auto": enableProse,
         },
         className
       )}

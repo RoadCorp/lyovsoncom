@@ -4,7 +4,8 @@ import { headers } from "next/headers";
 import { isLyovson } from "@/access/is-lyovson";
 import { getPayloadClient } from "@/utilities/payload-client";
 import { importCatalogItem as importItem } from "./import";
-import { type CatalogItem, type ReferenceType, SOURCE_LABELS } from "./shared";
+import type { CatalogItem, ReferenceType } from "./shared";
+import { SOURCE_LABELS } from "./shared";
 import {
   searchIgdb,
   searchItunesPodcasts,

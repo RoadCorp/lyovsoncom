@@ -1,9 +1,9 @@
-export const prefetch = "partial";
-
 import type { Metadata } from "next";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { cn } from "@/lib/utils";
 import { buildSeoMetadata } from "@/utilities/seo-metadata";
+
+export const prefetch = "partial";
 
 export default function PrivacyPolicy() {
   return (

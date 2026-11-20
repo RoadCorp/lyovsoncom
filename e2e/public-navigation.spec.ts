@@ -2,7 +2,7 @@ import { instant } from "@next/playwright";
 import { expect, test } from "@playwright/test";
 
 // The theme button announces its state, e.g. "Theme: Auto. Switch to Dark".
-const THEME_BUTTON_NAME = /^Theme: /;
+const THEME_BUTTON_NAME = /^Theme: /u;
 
 test("initial shell exposes usable navigation before dynamic content", async ({
   page,
@@ -51,7 +51,7 @@ test("article and Back retain correct content and navigation", async ({
     .locator('a[href^="/posts/"]')
     .filter({ has: page.locator("h2") })
     .first();
-  const title = await article.locator("h2").innerText();
+  const title = (await article.locator("h2").textContent())?.trim() ?? "";
   const href = await article.getAttribute("href");
   await article.hover();
   await article.click();
@@ -117,7 +117,9 @@ test("author context survives section changes and a journey beyond route retenti
       .getByRole("link", { name: section, exact: true })
       .first()
       .click();
-    await expect(page).toHaveURL(new RegExp(`/rafa/${section.toLowerCase()}$`));
+    await expect(page).toHaveURL(
+      new RegExp(`/rafa/${section.toLowerCase()}$`, "u")
+    );
     await expect(
       page.getByRole("link", { name: "Jess", exact: true }).first()
     ).toBeVisible();
@@ -132,7 +134,7 @@ test("author context survives section changes and a journey beyond route retenti
     "/",
   ]) {
     await page.goBack();
-    await expect(page).toHaveURL(new RegExp(`${route}$`));
+    await expect(page).toHaveURL(new RegExp(`${route}$`, "u"));
     await expect(
       page.getByRole("navigation", { name: "Main navigation" })
     ).toBeVisible();
@@ -153,7 +155,7 @@ test("the narrow menu stays usable in both themes and restores keyboard focus", 
     if (!(await page.locator("html").getAttribute("class"))?.includes(theme)) {
       await page.getByRole("button", { name: THEME_BUTTON_NAME }).click();
     }
-    await expect(page.locator("html")).toHaveClass(new RegExp(theme));
+    await expect(page.locator("html")).toHaveClass(new RegExp(theme, "u"));
     await expect(
       page.getByRole("link", { name: "Posts", exact: true })
     ).toBeVisible();

@@ -11,7 +11,7 @@ import { LIVE_METRICS } from "@/utilities/live-metric-options";
 import { revalidateDeletedProject, revalidateProject } from "./hooks";
 
 const MAX_HIGHLIGHTS = 4;
-const HTTP_URL = /^https?:\/\/\S+$/;
+const HTTP_URL = /^https?:\/\/\S+$/u;
 
 const validateUrl = (value: unknown) => {
   if (typeof value !== "string" || value.length === 0) {

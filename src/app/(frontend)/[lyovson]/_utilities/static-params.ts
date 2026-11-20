@@ -5,10 +5,8 @@ import {
   LYOVSON_ITEMS_PER_PAGE,
 } from "@/utilities/archive";
 import { ensureStaticParams } from "@/utilities/ensure-static-params";
-import {
-  getLyovsonFeedCounts,
-  type LyovsonFilter,
-} from "@/utilities/get-lyovson-feed";
+import type { LyovsonFilter } from "@/utilities/get-lyovson-feed";
+import { getLyovsonFeedCounts } from "@/utilities/get-lyovson-feed";
 import { getPayloadClient } from "@/utilities/payload-client";
 
 const PLACEHOLDER_LYOVSON = "__placeholder__";

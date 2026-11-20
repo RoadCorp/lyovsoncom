@@ -1,8 +1,10 @@
 import config from "@payload-config";
 import { headers as nextHeaders } from "next/headers";
 import { redirect } from "next/navigation";
-import { getPayload, type User } from "payload";
-import { type ReactNode, Suspense } from "react";
+import type { User } from "payload";
+import { getPayload } from "payload";
+import type { ReactNode } from "react";
+import { Suspense } from "react";
 import { isLyovson } from "@/access/is-lyovson";
 import { SkeletonCard } from "@/components/grid";
 

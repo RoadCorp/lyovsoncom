@@ -1,6 +1,3 @@
-import { PublicPageBoundary } from "@/components/public-page-boundary";
-export const prefetch = "partial";
-
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
@@ -15,6 +12,7 @@ import {
 import { JsonLd } from "@/components/json-ld";
 import { OptionalErrorBoundary } from "@/components/optional-error-boundary";
 import { PostTransitionBoundary } from "@/components/post-transitions/post-transition-boundary";
+import { PublicPageBoundary } from "@/components/public-page-boundary";
 import RichText from "@/components/RichText";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
@@ -40,6 +38,8 @@ import {
   DEFAULT_OPEN_GRAPH_IMAGE_HEIGHT,
   DEFAULT_OPEN_GRAPH_IMAGE_WIDTH,
 } from "@/utilities/seo-metadata";
+
+export const prefetch = "partial";
 
 interface Args {
   params: Promise<{
@@ -83,7 +83,7 @@ function getPostSectionSlug(post: Post) {
 }
 
 const X_PROFILE_PATTERN =
-  /^https?:\/\/(?:www\.)?(?:x|twitter)\.com\/(\w+)\/?$/i;
+  /^https?:\/\/(?:www\.)?(?:x|twitter)\.com\/(?<handle>\w+)\/?$/iu;
 
 /** The first author's X handle; their site username is not an X account. */
 function getPostTwitterCreator(post: Post) {
@@ -93,7 +93,7 @@ function getPostTwitterCreator(post: Post) {
       ? getLyovsonSameAs(author as Lyovson)
       : undefined;
   const handle = sameAs
-    ?.map((url) => url.match(X_PROFILE_PATTERN)?.[1])
+    ?.map((url) => url.match(X_PROFILE_PATTERN)?.groups?.handle)
     .find(Boolean);
   return handle ? `@${handle}` : undefined;
 }
@@ -190,9 +190,9 @@ async function PostPageContent({ params: paramsPromise }: Args) {
           )}
           interactive={false}
         >
-          <GridCardSection className="col-span-3 row-span-3 p-6 [container-type:inline-size]">
+          <GridCardSection className="[container-type:inline-size] col-span-3 row-span-3 p-6">
             <RichText
-              className="h-full g2:text-[1.125rem]"
+              className="g2:text-[1.125rem] h-full"
               content={post.content}
               enableGutter={false}
               enableProse={true}

@@ -22,17 +22,17 @@ The menu button now waits until its route-aware controls are hydrated; the tempo
 
 ## Verification performed
 
-| Check | Result |
-| --- | --- |
-| Unit suite | 84 tests passed across 9 files; baseline was 68 across 6. New coverage includes publication/withdrawal/slug/date invalidation, public read contracts, UTC URL dates and server code rendering. |
-| Browser suite | 150 cases passed across Chromium, WebKit and Firefox in one full run: 138 page/navigation cases and 12 isolated media/clipboard cases. Settled 320px screenshots and keyboard focus checks cover both themes. Firefox requires explicit theme selection in this runtime. |
-| Instant navigation | Deterministic `@next/playwright` checks pass for initial navigation and menu-to-posts navigation while dynamic content is withheld. The test API is enabled only by `NEXT_TEST_MODE=1`; a separate normal production build passed with it disabled. |
-| Page coverage | All 37 frontend page definitions have direct-load or protected-redirect coverage. Published build fixtures exercise dynamic routes; families with placeholder-only pagination exercise page-one redirects. Activities provide populated page-two coverage. |
-| Interaction coverage | Article → Back, author section changes, a journey beyond three retained routes, typing without submission, Escape, no-JavaScript navigation, dark mobile menu, reduced-motion configuration, missing-page metadata and protected utility redirect. |
-| Build and type checks | Normal and test-enabled production builds passed; 173 generated routes. Type checking passed. |
-| Lint and SEO | Lint passed with warnings; SEO coverage passed. The SEO source scan no longer treats an ignored local environment file as application source. No environment values were changed. |
-| Visual review | Desktop light home/article and mobile dark menu inspected. Existing crest/grid/typography remain intact; sampled mobile and desktop pages have no horizontal overflow. |
-| Read-only verification | PostgreSQL reported `default_transaction_read_only = on` for the preview connection. Schema push and paid search were disabled. Publication mutation tests used isolated mocks, not CMS writes. |
+| Check                  | Result                                                                                                                                                                                                                                                                   |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Unit suite             | 84 tests passed across 9 files; baseline was 68 across 6. New coverage includes publication/withdrawal/slug/date invalidation, public read contracts, UTC URL dates and server code rendering.                                                                           |
+| Browser suite          | 150 cases passed across Chromium, WebKit and Firefox in one full run: 138 page/navigation cases and 12 isolated media/clipboard cases. Settled 320px screenshots and keyboard focus checks cover both themes. Firefox requires explicit theme selection in this runtime. |
+| Instant navigation     | Deterministic `@next/playwright` checks pass for initial navigation and menu-to-posts navigation while dynamic content is withheld. The test API is enabled only by `NEXT_TEST_MODE=1`; a separate normal production build passed with it disabled.                      |
+| Page coverage          | All 37 frontend page definitions have direct-load or protected-redirect coverage. Published build fixtures exercise dynamic routes; families with placeholder-only pagination exercise page-one redirects. Activities provide populated page-two coverage.               |
+| Interaction coverage   | Article → Back, author section changes, a journey beyond three retained routes, typing without submission, Escape, no-JavaScript navigation, dark mobile menu, reduced-motion configuration, missing-page metadata and protected utility redirect.                       |
+| Build and type checks  | Normal and test-enabled production builds passed; 173 generated routes. Type checking passed.                                                                                                                                                                            |
+| Lint and SEO           | Lint passed with warnings; SEO coverage passed. The SEO source scan no longer treats an ignored local environment file as application source. No environment values were changed.                                                                                        |
+| Visual review          | Desktop light home/article and mobile dark menu inspected. Existing crest/grid/typography remain intact; sampled mobile and desktop pages have no horizontal overflow.                                                                                                   |
+| Read-only verification | PostgreSQL reported `default_transaction_read_only = on` for the preview connection. Schema push and paid search were disabled. Publication mutation tests used isolated mocks, not CMS writes.                                                                          |
 
 ## Measurements and limits
 

@@ -13,11 +13,11 @@ import { PublicPageBoundary } from "@/components/public-page-boundary";
 import { ACTIVITY_PREVIEW_LIMIT } from "@/utilities/activity-preview";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getLatestLyovsonActivities } from "@/utilities/get-activity";
-import {
-  getLyovsonFeed,
-  type LyovsonFilter,
-  type LyovsonMixedFeedItem,
+import type {
+  LyovsonFilter,
+  LyovsonMixedFeedItem,
 } from "@/utilities/get-lyovson-feed";
+import { getLyovsonFeed } from "@/utilities/get-lyovson-feed";
 import { absoluteUrl } from "@/utilities/routes";
 import { LyovsonFeedItems } from "../_components/lyovson-feed-items";
 import {

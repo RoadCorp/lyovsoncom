@@ -31,7 +31,7 @@ export function YouTubeBlock({
   const caption = captionWithText(block.caption);
 
   return (
-    <figure className="surface-block reveal-stagger-1 flex flex-col overflow-hidden content-block">
+    <figure className="surface-block reveal-stagger-1 content-block flex flex-col overflow-hidden">
       <div className={cn(caption ? "p-3" : "p-0")}>
         <YouTubePlayer
           aspectRatio={aspectRatio || undefined}

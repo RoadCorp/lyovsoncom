@@ -2,9 +2,9 @@ import type {
   CollectionAfterChangeHook,
   CollectionAfterDeleteHook,
 } from "payload";
+import type { PublicCollection } from "@/utilities/revalidate-public-content";
 import {
   isDraftOnlySave,
-  type PublicCollection,
   revalidatePublicContent,
 } from "@/utilities/revalidate-public-content";
 

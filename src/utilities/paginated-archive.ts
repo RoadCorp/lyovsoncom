@@ -1,6 +1,7 @@
 import type { Metadata } from "next/types";
 import { MAX_INDEXED_PAGE, parsePageNumber } from "@/utilities/archive";
-import { buildSeoMetadata, type SeoImageInput } from "@/utilities/seo-metadata";
+import type { SeoImageInput } from "@/utilities/seo-metadata";
+import { buildSeoMetadata } from "@/utilities/seo-metadata";
 
 export type PaginatedArchivePageState =
   | {

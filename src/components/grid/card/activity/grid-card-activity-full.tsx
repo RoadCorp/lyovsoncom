@@ -1,7 +1,8 @@
 import { Calendar, PenTool } from "lucide-react";
 import { ViewTransition } from "react";
 import { AppLink } from "@/components/app-link";
-import { GridCard, GridCardSection } from "@/components/grid";
+import { GridCard } from "@/components/grid/card";
+import { GridCardSection } from "@/components/grid/card/section";
 import { IntentLink } from "@/components/intent-link";
 import { Media } from "@/components/Media";
 import { CARD_COVER_IMAGE_SIZE } from "@/components/Media/image-sizes";
@@ -151,7 +152,7 @@ export const GridCardActivityFull = ({
             }
             {...frontendViewTransitionClasses.sharedTitle}
           >
-            <h2 className="card-title tone-heading ui-group-hover-dim text-center font-bold text-sm">
+            <h2 className="card-title tone-heading ui-group-hover-dim text-center text-sm font-bold">
               {referenceTitle}
             </h2>
           </ViewTransition>
@@ -168,7 +169,7 @@ export const GridCardActivityFull = ({
             prefetch={false}
           >
             <PenTool aria-hidden="true" className="h-5 w-5" />
-            <span className="font-medium text-xs">
+            <span className="text-xs font-medium">
               {participant.name?.replace(" Lyovson", "")}
             </span>
           </AppLink>
