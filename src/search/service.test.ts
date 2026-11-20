@@ -133,10 +133,9 @@ describe("search execution", () => {
       const [[statement]] = execute.mock.calls;
       const query = new PgDialect().sqlToQuery(statement);
       expect(query.params).toContain("books");
-      if (scope) {
-        expect(query.params).toContain("rafa");
-        expect(query.sql).not.toContain("rafa");
-      }
+      // The scope is a bound parameter, never SQL text, and only when given.
+      expect(query.params.includes("rafa")).toBe(scope !== null);
+      expect(query.sql).not.toContain("rafa");
       expect(query.sql).toContain("deleted_at IS NULL");
     }
   );

@@ -1,5 +1,3 @@
-export const prefetch = "partial";
-
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { Suspense } from "react";
@@ -13,6 +11,8 @@ import {
   buildLyovsonNotFoundMetadata,
 } from "../_utilities/metadata";
 import { getLyovsonStaticParams } from "../_utilities/static-params";
+
+export const prefetch = "partial";
 
 interface PageProps {
   params: Promise<{ lyovson: string }>;

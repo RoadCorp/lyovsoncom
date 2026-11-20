@@ -16,7 +16,7 @@ export default function OfflinePage() {
         <span className="surface-chip flex h-16 w-16 items-center justify-center rounded-full">
           <WifiOff aria-hidden="true" className="h-8 w-8" />
         </span>
-        <h1 className="tone-heading font-bold text-2xl">You are offline</h1>
+        <h1 className="tone-heading text-2xl font-bold">You are offline</h1>
         <p className="tone-muted text-sm">
           Previously visited pages may still be available. Reconnect and refresh
           when you are ready.

@@ -1,6 +1,3 @@
-import { PublicPageBoundary } from "@/components/public-page-boundary";
-export const prefetch = "partial";
-
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
@@ -16,6 +13,7 @@ import {
 } from "@/components/grid/card/project/details";
 import { JsonLd } from "@/components/json-ld";
 import { Pagination } from "@/components/Pagination";
+import { PublicPageBoundary } from "@/components/public-page-boundary";
 import { cn } from "@/lib/utils";
 import type { Lyovson, Media, Project } from "@/payload-types";
 import { publishedProjectsWhere } from "@/utilities/content-queries";
@@ -44,6 +42,8 @@ import {
   DEFAULT_OPEN_GRAPH_IMAGE_HEIGHT,
   DEFAULT_OPEN_GRAPH_IMAGE_WIDTH,
 } from "@/utilities/seo-metadata";
+
+export const prefetch = "partial";
 
 interface PageProps {
   params: Promise<{

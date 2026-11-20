@@ -41,7 +41,7 @@ for (const [label, origin] of [
       for (const route of routes) {
         await page.goto(origin + route, { waitUntil: "networkidle" });
         await page.waitForTimeout(500);
-        const name = route.replace(/\W+/g, "_");
+        const name = route.replace(/\W+/gu, "_");
         await page.screenshot({
           path: `${out}/${tag}-${label}-${viewportName}-${theme}-${name}.png`,
         });

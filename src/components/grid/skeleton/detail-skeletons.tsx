@@ -1,4 +1,5 @@
-import { GridCard, GridCardSection } from "@/components/grid";
+import { GridCard } from "@/components/grid/card";
+import { GridCardSection } from "@/components/grid/card/section";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
@@ -46,12 +47,12 @@ function WideHeroSkeleton() {
   return (
     <GridCard className={cn("surface-card-loading", WIDE_HERO_PLACEMENT)}>
       <GridCardSection
-        className="col-start-1 g3:col-start-1 col-end-4 g3:col-end-4 g3:row-start-1 row-start-1 g3:row-end-4 row-end-4"
+        className="g3:col-start-1 g3:col-end-4 g3:row-start-1 g3:row-end-4 col-start-1 col-end-4 row-start-1 row-end-4"
         flush={true}
       >
         <Skeleton className="surface-chip h-full w-full" />
       </GridCardSection>
-      <GridCardSection className="surface-title-stage col-start-1 g3:col-start-4 col-end-4 g3:col-end-7 g3:row-start-1 row-start-4 g3:row-end-4 row-end-7 flex flex-col items-center justify-center gap-3 px-6">
+      <GridCardSection className="surface-title-stage g3:col-start-4 g3:col-end-7 g3:row-start-1 g3:row-end-4 col-start-1 col-end-4 row-start-4 row-end-7 flex flex-col items-center justify-center gap-3 px-6">
         <TitleLines />
         <div className="mt-2 flex w-full flex-col gap-2">
           <ProseLines count={3} />
@@ -128,8 +129,8 @@ export function ReferenceDetailSkeleton() {
   return (
     <>
       <WideHeroSkeleton />
-      <SquareCardSkeleton className="col-start-1 g2:col-start-1 g3:col-start-1 g4:col-start-4 col-end-2 g2:col-end-2 g3:col-end-2 g4:col-end-5 g2:row-start-2 g3:row-start-2 g4:row-start-1 row-start-4 g2:row-end-3 g3:row-end-3 g4:row-end-2 row-end-5" />
-      <BodySkeleton className="col-start-1 g2:col-start-2 g3:col-start-2 col-end-2 g2:col-end-3 g3:col-end-3" />
+      <SquareCardSkeleton className="g2:col-start-1 g3:col-start-1 g4:col-start-4 g2:col-end-2 g3:col-end-2 g4:col-end-5 g2:row-start-2 g3:row-start-2 g4:row-start-1 g2:row-end-3 g3:row-end-3 g4:row-end-2 col-start-1 col-end-2 row-start-4 row-end-5" />
+      <BodySkeleton className="g2:col-start-2 g3:col-start-2 g2:col-end-3 g3:col-end-3 col-start-1 col-end-2" />
     </>
   );
 }

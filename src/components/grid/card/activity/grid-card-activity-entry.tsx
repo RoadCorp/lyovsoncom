@@ -1,6 +1,7 @@
 import { User } from "lucide-react";
 import { AppLink } from "@/components/app-link";
-import { GridCard, GridCardSection } from "@/components/grid";
+import { GridCard } from "@/components/grid/card";
+import { GridCardSection } from "@/components/grid/card/section";
 import RichText from "@/components/RichText";
 import { cn } from "@/lib/utils";
 import type { Activity } from "@/payload-types";
@@ -83,7 +84,7 @@ export function GridCardActivityEntry({
           className="tone-heading h-6 w-6"
           data-activity-type={activity.activityType}
         />
-        <span className="tone-muted font-medium text-xs">{activityLabel}</span>
+        <span className="tone-muted text-xs font-medium">{activityLabel}</span>
         {activity.format ? (
           <span className="tone-muted text-label">
             {FORMAT_LABELS[activity.format]}
@@ -116,7 +117,7 @@ export function GridCardActivityEntry({
             className="flex flex-col items-center"
             dateTime={finishDateParts.iso}
           >
-            <span className="tone-heading font-bold text-2xl leading-none">
+            <span className="tone-heading text-2xl leading-none font-bold">
               {finishDateParts.day}
             </span>
             <span className="tone-muted type-eyebrow">

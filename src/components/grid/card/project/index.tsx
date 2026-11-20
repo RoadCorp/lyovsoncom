@@ -5,7 +5,8 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { ViewTransition } from "react";
-import { GridCard, GridCardSection } from "@/components/grid";
+import { GridCard } from "@/components/grid/card";
+import { GridCardSection } from "@/components/grid/card/section";
 import { IntentLink } from "@/components/intent-link";
 import { Media } from "@/components/Media";
 import {
@@ -167,7 +168,7 @@ export const GridCardProject = ({
               name={getProjectTitleTransitionName(slug)}
               {...frontendViewTransitionClasses.sharedTitle}
             >
-              <h2 className="card-title tone-heading ui-group-hover-dim text-center font-bold text-xl">
+              <h2 className="card-title tone-heading ui-group-hover-dim text-center text-xl font-bold">
                 {name}
               </h2>
             </ViewTransition>
@@ -217,7 +218,7 @@ export const GridCardProjectHero = ({
       >
         {image && typeof image !== "string" ? (
           <GridCardSection
-            className="col-start-1 g3:col-start-1 col-end-4 g3:col-end-4 g3:row-start-1 row-start-1 g3:row-end-4 row-end-4"
+            className="g3:col-start-1 g3:col-end-4 g3:row-start-1 g3:row-end-4 col-start-1 col-end-4 row-start-1 row-end-4"
             flush={true}
           >
             <ViewTransition
@@ -236,21 +237,21 @@ export const GridCardProjectHero = ({
           </GridCardSection>
         ) : (
           <GridCardSection
-            className="col-start-1 g3:col-start-1 col-end-4 g3:col-end-4 g3:row-start-1 row-start-1 g3:row-end-4 row-end-4"
+            className="g3:col-start-1 g3:col-end-4 g3:row-start-1 g3:row-end-4 col-start-1 col-end-4 row-start-1 row-end-4"
             flush={true}
           >
             <MediaFallback icon={BriefcaseBusiness} label="Project" />
           </GridCardSection>
         )}
 
-        <GridCardSection className="surface-title-stage col-start-1 g3:col-start-4 col-end-4 g3:col-end-7 g3:row-start-1 row-start-4 g3:row-end-4 row-end-7">
+        <GridCardSection className="surface-title-stage g3:col-start-4 g3:col-end-7 g3:row-start-1 g3:row-end-4 col-start-1 col-end-4 row-start-4 row-end-7">
           <div className="flex h-full flex-col items-center justify-center px-4 md:px-8">
             <div className="mx-auto w-full max-w-3xl space-y-4">
               <ViewTransition
                 name={getProjectTitleTransitionName(slug)}
                 {...frontendViewTransitionClasses.sharedTitle}
               >
-                <h2 className="tone-heading line-clamp-3 text-center font-bold text-2xl md:text-3xl lg:text-4xl">
+                <h2 className="tone-heading line-clamp-3 text-center text-2xl font-bold md:text-3xl lg:text-4xl">
                   {name}
                 </h2>
               </ViewTransition>

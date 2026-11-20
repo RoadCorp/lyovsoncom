@@ -1,8 +1,8 @@
-export const prefetch = "partial";
-
 import type { Metadata } from "next";
 import { PlaceholderPageCard } from "@/components/placeholder-page-card";
 import { buildSeoMetadata } from "@/utilities/seo-metadata";
+
+export const prefetch = "partial";
 
 export default function ContactPage() {
   return (

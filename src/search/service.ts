@@ -96,7 +96,9 @@ async function getSearchVectorString(query: string): Promise<string | null> {
   }
 
   try {
-    return await getCachedQueryVector(query.toLowerCase().replace(/\s+/g, " "));
+    return await getCachedQueryVector(
+      query.toLowerCase().replace(/\s+/gu, " ")
+    );
   } catch (error) {
     const payload = await getPayloadClient();
     payload.logger.warn({

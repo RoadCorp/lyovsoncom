@@ -5,7 +5,8 @@ import {
   lyovsonPostsWhere,
 } from "@/utilities/content-queries";
 import { getPayloadClient } from "@/utilities/payload-client";
-import { type PostSummary, postSummarySelect } from "@/utilities/post-summary";
+import type { PostSummary } from "@/utilities/post-summary";
+import { postSummarySelect } from "@/utilities/post-summary";
 import { publicContentSelect } from "@/utilities/public-content-select";
 
 /*

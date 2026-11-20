@@ -5,7 +5,7 @@ import {
   showsLogo,
 } from "@/collections/References/fields/type";
 import { AppLink } from "@/components/app-link";
-import { GridCard } from "@/components/grid";
+import { GridCard } from "@/components/grid/card";
 import { IntentLink } from "@/components/intent-link";
 import { Media } from "@/components/Media";
 import { CARD_FULL_IMAGE_SIZE } from "@/components/Media/image-sizes";
@@ -217,7 +217,7 @@ export const GridCardHero = ({
           </GridCardSection>
         )}
 
-        <GridCardSection className="surface-title-stage col-start-1 g3:col-start-4 col-end-4 g3:col-end-7 g3:row-start-1 row-start-4 g3:row-end-4 row-end-7">
+        <GridCardSection className="surface-title-stage g3:col-start-4 g3:col-end-7 g3:row-start-1 g3:row-end-4 col-start-1 col-end-4 row-start-4 row-end-7">
           <div className="flex h-full flex-col gap-4 px-6 py-5 md:px-7 md:py-6">
             <div className="flex items-center justify-between gap-3">
               <PostHeroEyebrow post={post} />
@@ -258,7 +258,7 @@ function linkHost(url: string) {
   }
 }
 
-const WWW_PREFIX = /^www\./;
+const WWW_PREFIX = /^www\./u;
 
 const REFERENCE_LINK_CLASS =
   "ui-focus-ring tone-heading font-medium underline-offset-4 hover:underline";
@@ -391,7 +391,7 @@ export const GridCardHeroReference = ({
         </ViewTransition>
       </GridCardSection>
 
-      <GridCardSection className="surface-title-stage col-start-1 g3:col-start-4 col-end-4 g3:col-end-7 g3:row-start-1 row-start-4 g3:row-end-4 row-end-7">
+      <GridCardSection className="surface-title-stage g3:col-start-4 g3:col-end-7 g3:row-start-1 g3:row-end-4 col-start-1 col-end-4 row-start-4 row-end-7">
         <div className="flex h-full flex-col gap-4 px-6 py-5 md:px-7 md:py-6">
           <p className="type-eyebrow flex items-center gap-2">
             <span className="card-eyebrow">{typeLabel}</span>

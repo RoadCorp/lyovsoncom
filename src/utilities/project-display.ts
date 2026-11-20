@@ -1,7 +1,7 @@
 import type { Project } from "@/payload-types";
 
 const HALF_DAY_MS = 12 * 60 * 60 * 1000;
-const LEADING_WWW = /^www\./;
+const LEADING_WWW = /^www\./u;
 
 /**
  * The admin's month picker stores local midnight, which is the previous day

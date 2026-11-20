@@ -13,7 +13,7 @@ import type { GIFBlock as GIFBlockType } from "./types";
  * A block with nothing to show renders nothing, and a GIF that fails to load
  * hides its card.
  */
-const GIPHY_MEDIA_HOST = /^(?:i|media\d*)\.giphy\.com$/;
+const GIPHY_MEDIA_HOST = /^(?:i|media\d*)\.giphy\.com$/u;
 
 /** Hotlinked files play only from GIPHY's media hosts. */
 function giphyMediaUrl(url: string | null | undefined) {
@@ -59,7 +59,7 @@ export function GIFBlock(props: GIFBlockType) {
   }
 
   return (
-    <figure className="surface-block reveal-stagger-1 flex flex-col overflow-hidden content-block has-[video[data-failed]]:hidden">
+    <figure className="surface-block reveal-stagger-1 content-block flex flex-col overflow-hidden has-[video[data-failed]]:hidden">
       <div className={cn(hasFooter ? "p-3" : "p-0")}>
         <div className="media-frame overflow-hidden rounded-lg">
           {isImage ? (

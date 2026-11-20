@@ -32,7 +32,7 @@ export function BannerBlock({ className, content, style }: Props) {
   const Icon = icons[bannerStyle];
 
   return (
-    <div className={cn("mx-auto w-full content-block", className)}>
+    <div className={cn("content-block mx-auto w-full", className)}>
       <div
         className={cn(
           "surface-panel surface-alert flex items-start gap-3 rounded-xl px-5 py-5 sm:gap-4 sm:px-6",

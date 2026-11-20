@@ -1,5 +1,5 @@
 // Same store-id parsing as the image and CSP settings in next.config.ts.
-const BLOB_TOKEN_PATTERN = /^vercel_blob_rw_([a-z\d]+)_[a-z\d]+$/i;
+const BLOB_TOKEN_PATTERN = /^vercel_blob_rw_(?<storeId>[a-z\d]+)_[a-z\d]+$/iu;
 
 const redirects = () => {
   const newsletterArchiveRedirects = [

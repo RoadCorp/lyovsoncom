@@ -9,6 +9,8 @@
   "files": {
     "includes": [
       "!.claude/worktrees",
+      // Historical records: the Markdown formatter would rewrite their code samples.
+      "!docs/archive",
       "!src/components/ui",
       "!src/app/(payload)",
       "!src/payload-types.ts",
@@ -41,6 +43,17 @@
         }
       },
       "suspicious": {
+        // Keep the "widely available" bar and exempt only the progressive
+        // enhancements in use: older browsers ignore text-wrap, @property and
+        // view transitions, and Safari's partial ::marker covers `color`.
+        "useBaseline": {
+          "level": "error",
+          "options": {
+            "allowAtRules": ["property"],
+            "allowProperties": ["text-wrap"],
+            "allowSelectors": ["marker", "view-transition"]
+          }
+        },
         // Existing nullish guards intentionally match both null and undefined.
         "noEqualsToNull": "off",
         "noBitwiseOperators": "off",
@@ -64,6 +77,30 @@
     }
   },
   "overrides": [
+    {
+      // Route factories run once at module scope per page file; the
+      // components they return are stable, not rebuilt on each render.
+      "includes": [
+        "src/utilities/create-entity-archive-page.tsx",
+        "src/utilities/create-paginated-archive-page.tsx",
+        "src/app/(frontend)/\\[lyovson\\]/_utilities/create-lyovson-feed-page.tsx"
+      ],
+      "linter": {
+        "rules": { "correctness": { "noComponentHookFactories": "off" } }
+      }
+    },
+    {
+      // Rich text renders blocks and blocks render nested rich text; every
+      // use is inside a render, so load order cannot leave a value undefined.
+      "includes": [
+        "src/blocks/*/component.tsx",
+        "src/components/RichText/index.tsx",
+        "src/components/RichText/serialize.tsx"
+      ],
+      "linter": {
+        "rules": { "suspicious": { "noImportCycles": "off" } }
+      }
+    },
     {
       // Payload names generated migrations with timestamps and underscores.
       "includes": ["src/migrations/**"],

@@ -2,8 +2,9 @@ import {
   REFERENCE_TYPE_LABELS,
   showsLogo,
 } from "@/collections/References/fields/type";
-import { GridCard, GridCardSection } from "@/components/grid";
+import { GridCard } from "@/components/grid/card";
 import { getActivityReferenceIcon } from "@/components/grid/card/activity/shared";
+import { GridCardSection } from "@/components/grid/card/section";
 import { IntentLink } from "@/components/intent-link";
 import { Media } from "@/components/Media";
 import { CARD_THUMBNAIL_IMAGE_SIZE } from "@/components/Media/image-sizes";
@@ -92,7 +93,7 @@ export const GridCardReferences = ({
             )}
 
             <div className="col-start-2 col-end-4 row-start-1 row-end-2 flex min-w-0 flex-col justify-center gap-1 pr-4">
-              <h2 className="tone-heading ui-group-hover-dim line-clamp-2 font-medium text-sm">
+              <h2 className="tone-heading ui-group-hover-dim line-clamp-2 text-sm font-medium">
                 {reference.title}
               </h2>
               {byline ? (

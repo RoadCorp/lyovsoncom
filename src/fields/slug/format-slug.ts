@@ -6,7 +6,7 @@ export const formatSlug = (val: string): string =>
     .normalize("NFD")
     .replace(/\p{M}/gu, "")
     .trim()
-    .replace(/ /g, "-")
-    .replace(/[^\w-]+/g, "")
-    .replace(/^-+|-+$/g, "")
+    .replace(/ /gu, "-")
+    .replace(/[^\w-]+/gu, "")
+    .replace(/^-+|-+$/gu, "")
     .toLowerCase();

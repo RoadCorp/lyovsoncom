@@ -1126,7 +1126,7 @@
     font-style: italic;
     color: color-mix(in oklab, var(--text-3) 86%, var(--accent-meta) 14%);
     text-align: center;
-    word-break: break-word;
+    overflow-wrap: anywhere;
   }
 
   .surface-thumb {
@@ -2197,6 +2197,7 @@
 }
 
 /* Shared geometry carries identity; local text changes stay brief and readable. */
+/* biome-ignore lint/suspicious/noDuplicateSelectors: view-transition timings live beside the transitions they drive. */
 :root {
   --vt-move-duration: 280ms;
   --vt-content-duration: 180ms;

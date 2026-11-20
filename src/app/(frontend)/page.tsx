@@ -1,5 +1,3 @@
-export const prefetch = "partial";
-
 import type { Metadata } from "next/types";
 import { CollectionArchive } from "@/components/CollectionArchive";
 import {
@@ -22,6 +20,8 @@ import {
 } from "@/utilities/routes";
 import { buildSeoMetadata } from "@/utilities/seo-metadata";
 import { getSocialTitle } from "@/utilities/site-config";
+
+export const prefetch = "partial";
 
 const HOME_TITLE = "Latest Posts";
 

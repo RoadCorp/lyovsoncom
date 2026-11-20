@@ -22,7 +22,7 @@ export const SiteTitleSection = ({ href }: { href: string }) => {
         transitionTypes={[transitionTypes.section]}
       >
         <Logo className="nav-crest max-h-28 max-w-28 shrink-0 sm:max-h-[150px] sm:max-w-[150px]" />
-        <span className="tone-heading text-center font-bold text-2xl sm:text-3xl">
+        <span className="tone-heading text-center text-2xl font-bold sm:text-3xl">
           Lyóvson.com
         </span>
       </AppLink>

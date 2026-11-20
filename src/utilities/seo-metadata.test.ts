@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { getSocialImage } from "./seo-metadata";
 
 const OPTIMIZED_BLOB_URL =
-  /\/_next\/image\?url=https%3A%2F%2Fabc123\.public\.blob\.vercel-storage\.com%2FFinding%2520the%2520Truth%2520wide\.png&w=1200&q=75$/;
+  /\/_next\/image\?url=https%3A%2F%2Fabc123\.public\.blob\.vercel-storage\.com%2FFinding%2520the%2520Truth%2520wide\.png&w=1200&q=75$/u;
 
 describe("social preview images", () => {
   it("serves Blob uploads through the optimizer at the Open Graph width", () => {

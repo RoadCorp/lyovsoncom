@@ -1,6 +1,7 @@
 import { BriefcaseBusiness, Calendar, FileText, PenTool } from "lucide-react";
 import { AppLink } from "@/components/app-link";
-import { GridCard, GridCardSection } from "@/components/grid";
+import { GridCard } from "@/components/grid/card";
+import { GridCardSection } from "@/components/grid/card/section";
 import { Media } from "@/components/Media";
 import { CARD_COVER_IMAGE_SIZE } from "@/components/Media/image-sizes";
 import { MediaFallback } from "@/components/Media/media-fallback";
@@ -122,7 +123,7 @@ export const GridCardPostFull = ({
               {postType}
             </span>
             <PostTransitionBoundary slug={slug} variant="title">
-              <h2 className="card-title tone-heading ui-group-hover-dim text-center font-bold text-xl">
+              <h2 className="card-title tone-heading ui-group-hover-dim text-center text-xl font-bold">
                 {title}
               </h2>
             </PostTransitionBoundary>
@@ -154,7 +155,7 @@ export const GridCardPostFull = ({
                 prefetch={false}
               >
                 <PenTool aria-hidden="true" className="h-5 w-5" />
-                <span className="font-medium text-xs">
+                <span className="text-xs font-medium">
                   {author.name?.split(" ").at(0)}
                 </span>
               </AppLink>
@@ -176,7 +177,7 @@ export const GridCardPostFull = ({
               prefetch={false}
             >
               <BriefcaseBusiness aria-hidden="true" className="h-5 w-5" />
-              <span className="line-clamp-2 font-medium text-xs">
+              <span className="line-clamp-2 text-xs font-medium">
                 {projectLink.label}
               </span>
             </AppLink>

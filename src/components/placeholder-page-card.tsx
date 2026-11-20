@@ -30,14 +30,14 @@ export function PlaceholderPageCard({
       <GridCardSection className="col-span-3 row-span-3 flex flex-col gap-5 p-6">
         <div className="space-y-3">
           <p className="tone-muted type-eyebrow">{eyebrow}</p>
-          <h1 className="tone-heading font-bold text-3xl">{title}</h1>
+          <h1 className="tone-heading text-3xl font-bold">{title}</h1>
           <p className="tone-muted max-w-2xl text-sm leading-relaxed">
             {description}
           </p>
         </div>
 
         <div className="surface-panel rounded-lg p-4">
-          <p className="tone-heading font-medium text-sm">Placeholder page</p>
+          <p className="tone-heading text-sm font-medium">Placeholder page</p>
           <p className="tone-muted mt-2 text-sm leading-relaxed">{note}</p>
         </div>
 

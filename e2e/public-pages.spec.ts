@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { expect, test } from "@playwright/test";
 
-const NON_WHITESPACE = /\S/;
+const NON_WHITESPACE = /\S/u;
 
 const frontend = path.join(process.cwd(), "src/app/(frontend)");
 const prerenders = JSON.parse(

@@ -1,12 +1,13 @@
 import type { CreditRole } from "../fields/relations";
-import { type CatalogItem, fetchJson, MAX_RESULTS, yearOf } from "./shared";
+import type { CatalogItem } from "./shared";
+import { fetchJson, MAX_RESULTS, yearOf } from "./shared";
 
 // Wikidata is free, keyless and CC0. It is the search for people,
 // organizations, series and anything without its own catalog, and every
 // imported reference gets a Wikidata item when one can be matched.
 
 const API = "https://www.wikidata.org/w/api.php";
-const CREATOR_SEPARATOR = /[,&]/;
+const CREATOR_SEPARATOR = /[,&]/u;
 
 /** Wikidata properties that hold each catalog's id. */
 const CATALOG_PROPERTIES = {
@@ -287,8 +288,9 @@ interface CommonsPage {
   }[];
 }
 
-const TAGS = /<[^>]+>/g;
-const ENTITIES = /&(?:#(\d+)|#x([\da-f]+)|(amp|apos|gt|lt|nbsp|quot));/gi;
+const TAGS = /<[^>]+>/gu;
+const ENTITIES =
+  /&(?:#(?<decimal>\d+)|#x(?<hex>[\da-f]+)|(?<name>amp|apos|gt|lt|nbsp|quot));/giu;
 const NAMED_ENTITIES: Record<string, string> = {
   amp: "&",
   apos: "'",
@@ -297,7 +299,7 @@ const NAMED_ENTITIES: Record<string, string> = {
   nbsp: " ",
   quot: '"',
 };
-const SPACES = /\s+/g;
+const SPACES = /\s+/gu;
 const MAX_ARTIST_LENGTH = 80;
 
 /** An 800px rendering of a Commons file, with the credit its licence asks for. */

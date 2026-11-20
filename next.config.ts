@@ -14,7 +14,7 @@ const IMAGE_SIZES: number[] = [
 
 const NEXT_PUBLIC_SERVER_URL = getRuntimeSiteOrigin();
 const VERCEL_BLOB_STORE_ID = process.env.BLOB_READ_WRITE_TOKEN?.match(
-  /^vercel_blob_rw_([a-z\d]+)_[a-z\d]+$/i
+  /^vercel_blob_rw_(?<storeId>[a-z\d]+)_[a-z\d]+$/iu
 )?.[1]?.toLowerCase();
 const VERCEL_BLOB_HOST = VERCEL_BLOB_STORE_ID
   ? `${VERCEL_BLOB_STORE_ID}.public.blob.vercel-storage.com`

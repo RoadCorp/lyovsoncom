@@ -3,7 +3,8 @@ import type { PaginatedDocs } from "payload";
 import type { Post } from "@/payload-types";
 import { publishedPostsWhere } from "@/utilities/content-queries";
 import { getPayloadClient } from "@/utilities/payload-client";
-import { type PostSummary, postSummarySelect } from "@/utilities/post-summary";
+import type { PostSummary } from "@/utilities/post-summary";
+import { postSummarySelect } from "@/utilities/post-summary";
 import { publicContentSelect } from "@/utilities/public-content-select";
 
 export async function getPost(slug: string): Promise<Post | null> {

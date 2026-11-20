@@ -2,7 +2,7 @@ import type { Block } from "payload";
 import { captionEditor } from "@/fields/default-lexical";
 
 // YouTube ID validation regex (11 characters of alphanumeric and -/_)
-const YOUTUBE_ID_REGEX = /^[A-Za-z0-9_-]{11}$/;
+const YOUTUBE_ID_REGEX = /^[A-Za-z0-9_-]{11}$/u;
 
 // Improved YouTube ID extraction function
 export const extractYouTubeID = (url: string): string => {

@@ -1,4 +1,5 @@
-import { type SQL, sql } from "@payloadcms/db-vercel-postgres/drizzle";
+import type { SQL } from "@payloadcms/db-vercel-postgres/drizzle";
+import { sql } from "@payloadcms/db-vercel-postgres/drizzle";
 
 export const SEARCH_RRF_K = 60;
 

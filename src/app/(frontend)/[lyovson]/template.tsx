@@ -1,4 +1,5 @@
-import { type ReactNode, ViewTransition } from "react";
+import type { ReactNode } from "react";
+import { ViewTransition } from "react";
 import { frontendViewTransitionClasses } from "@/utilities/view-transitions";
 
 // Section content changes below the persistent author profile in layout.tsx.

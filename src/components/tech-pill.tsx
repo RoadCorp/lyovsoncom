@@ -1,7 +1,8 @@
 import { Code2 } from "lucide-react";
 import { TopicPill } from "@/components/topic-pill";
 import { cn } from "@/lib/utils";
-import { getTechInfo, type TechInfo } from "@/utilities/tech-stack";
+import type { TechInfo } from "@/utilities/tech-stack";
+import { getTechInfo } from "@/utilities/tech-stack";
 
 function TechIcon({ size, tech }: { size: "lg" | "sm"; tech: TechInfo }) {
   const iconClassName =

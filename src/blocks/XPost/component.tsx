@@ -77,7 +77,7 @@ async function XPostContent({ postId, ...block }: XPostBlockType) {
   const normalizedTweet = tweet ? normalizeTweetForEmbed(tweet) : null;
 
   return (
-    <figure className="surface-block reveal-stagger-2 flex flex-col overflow-hidden content-block">
+    <figure className="surface-block reveal-stagger-2 content-block flex flex-col overflow-hidden">
       <div className={cn("flex justify-center", contentPaddingClassName)}>
         <div className="xpost-embed w-full max-w-lg">
           {normalizedTweet ? (
@@ -109,12 +109,12 @@ export function XPostBlock(props: XPostBlockType) {
   return (
     <Suspense
       fallback={
-        <div className="surface-block p-6 content-block">
+        <div className="surface-block content-block p-6">
           <p className="tone-muted text-sm" role="status">
             Loading X post…
           </p>
           <a
-            className="ui-focus-ring text-sm content-link"
+            className="ui-focus-ring content-link text-sm"
             href={`https://x.com/i/status/${props.postId}`}
             rel="noopener"
             target="_blank"

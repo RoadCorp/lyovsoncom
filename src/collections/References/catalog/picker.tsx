@@ -13,12 +13,8 @@ import { useEffect, useState } from "react";
 
 import { getCatalogLabel, importCatalogItem, searchCatalog } from "./actions";
 import type { ImportedLinks } from "./import";
-import {
-  type CatalogItem,
-  type CatalogSource,
-  type ReferenceType,
-  SOURCE_LABELS,
-} from "./shared";
+import type { CatalogItem, CatalogSource, ReferenceType } from "./shared";
+import { SOURCE_LABELS } from "./shared";
 
 /**
  * Catalog search at the top of the reference form. It searches the catalog

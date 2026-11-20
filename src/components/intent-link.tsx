@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { AppLink, type AppLinkProps } from "@/components/app-link";
+import type { AppLinkProps } from "@/components/app-link";
+import { AppLink } from "@/components/app-link";
 
 export function IntentLink({
   onFocus,

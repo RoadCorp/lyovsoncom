@@ -21,8 +21,8 @@ import {
   getLatestActivities,
 } from "@/utilities/get-activity";
 import { getPostCount } from "@/utilities/get-post";
+import type { BuildPaginatedArchiveMetadataArgs } from "@/utilities/paginated-archive";
 import {
-  type BuildPaginatedArchiveMetadataArgs,
   buildPaginatedArchiveMetadata,
   getPaginatedArchivePageState,
   isPaginatedArchivePageOutOfRange,

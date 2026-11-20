@@ -4,7 +4,7 @@ import {
   getPostTitleTransitionName,
 } from "./view-transitions";
 
-const VALID_TRANSITION_NAME = /^[a-zA-Z][a-zA-Z0-9_-]*$/;
+const VALID_TRANSITION_NAME = /^[a-zA-Z][a-zA-Z0-9_-]*$/u;
 const SHARED_ID = 12;
 
 describe("shared element identity", () => {

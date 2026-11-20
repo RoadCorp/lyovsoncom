@@ -25,10 +25,10 @@ If `node -v` is not 24, run `export PATH="/usr/local/bin:$PATH"` in that shell. 
 
 Add these names in Cursor Cloud Agents settings. This file lists names only. Never commit values, and never paste values into the repository.
 
-| Name             | When it is required                         |
-| ---------------- | ------------------------------------------- |
-| `PAYLOAD_SECRET` | `pnpm build` and any Payload process       |
-| `POSTGRES_URL`   | `pnpm build` and any read of site content  |
+| Name             | When it is required                       |
+| ---------------- | ----------------------------------------- |
+| `PAYLOAD_SECRET` | `pnpm build` and any Payload process      |
+| `POSTGRES_URL`   | `pnpm build` and any read of site content |
 
 `PAYLOAD_SECRET` is a non-production placeholder. It does not need to match production.
 

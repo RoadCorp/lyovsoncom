@@ -1,6 +1,3 @@
-import { PublicPageBoundary } from "@/components/public-page-boundary";
-export const prefetch = "partial";
-
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import {
@@ -11,6 +8,7 @@ import {
 } from "@/components/grid";
 import { JsonLd } from "@/components/json-ld";
 import { Pagination } from "@/components/Pagination";
+import { PublicPageBoundary } from "@/components/public-page-boundary";
 import { ACTIVITY_PREVIEW_LIMIT } from "@/utilities/activity-preview";
 import {
   generateCollectionPageSchema,
@@ -34,6 +32,8 @@ import {
   buildLyovsonMetadata,
   buildLyovsonNotFoundMetadata,
 } from "./_utilities/metadata";
+
+export const prefetch = "partial";
 
 interface PageProps {
   params: Promise<{ lyovson: string }>;

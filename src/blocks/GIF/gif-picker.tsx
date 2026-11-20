@@ -11,12 +11,8 @@ import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { getGiphyApiKey } from "./actions";
-import {
-  extractVideoUrls,
-  formatAspectRatio,
-  type GiphyResult,
-  searchGiphy,
-} from "./giphy";
+import type { GiphyResult } from "./giphy";
+import { extractVideoUrls, formatAspectRatio, searchGiphy } from "./giphy";
 
 /**
  * GIF Picker Component for Payload Admin

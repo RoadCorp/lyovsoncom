@@ -21,7 +21,7 @@ export function QuoteBlock({ className, quote, attribution }: Props) {
             &ldquo;
           </span>
           <RichText
-            className="quote-block-body text-base italic leading-relaxed [overflow-wrap:anywhere] [&_p+_p]:mt-3 [&_p]:m-0"
+            className="quote-block-body text-base leading-relaxed [overflow-wrap:anywhere] italic [&_p]:m-0 [&_p+_p]:mt-3"
             content={quote}
             enableGutter={false}
             enableProse={false}
@@ -29,7 +29,7 @@ export function QuoteBlock({ className, quote, attribution }: Props) {
         </blockquote>
         {attribution && (
           <figcaption
-            className="quote-block-attribution mt-3 text-start font-medium text-sm opacity-90"
+            className="quote-block-attribution mt-3 text-start text-sm font-medium opacity-90"
             dir="auto"
           >
             — {attribution}

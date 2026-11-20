@@ -1,7 +1,8 @@
 import configPromise from "@payload-config";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { getPayload, type Payload } from "payload";
+import type { Payload } from "payload";
+import { getPayload } from "payload";
 import { logApiTelemetry } from "@/utilities/api-telemetry";
 import {
   authorizeEmbeddingMutation,
@@ -12,9 +13,9 @@ import {
   EMBEDDING_MODEL,
   EMBEDDING_VECTOR_DIMENSIONS,
 } from "@/utilities/generate-embedding";
+import type { EmbeddableCollection } from "@/utilities/generate-embedding-helpers";
 import {
   EMBEDDABLE_COLLECTIONS,
-  type EmbeddableCollection,
   generateEmbeddingFor,
   isEmbeddableCollection,
 } from "@/utilities/generate-embedding-helpers";

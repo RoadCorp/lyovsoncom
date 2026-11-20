@@ -28,7 +28,7 @@ async function snapshot(base, out) {
   const sitemap = await (
     await fetch(`${base}/sitemap.xml`, { headers: { "user-agent": UA } })
   ).text();
-  const paths = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(
+  const paths = [...sitemap.matchAll(/<loc>(?<v>[^<]+)<\/loc>/gu)].map(
     (m) => new URL(m[1]).pathname
   );
   const pages = {};
@@ -40,19 +40,19 @@ async function snapshot(base, out) {
     const all = (re) => [...html.matchAll(re)].map((m) => m[1]);
     pages[path] = {
       status: response.status,
-      title: all(/<title>([^<]*)/g)[0],
-      canonical: all(/<link rel="canonical" href="([^"]+)"/g)[0],
-      desc: all(/<meta name="description" content="([^"]*)"/g)[0],
-      og: all(/<meta property="og:image" content="([^"]*)"/g)[0],
-      headings: all(/<h[1-3][^>]*>([\s\S]*?)<\/h[1-3]>/g).map((x) =>
-        x.replace(/<[^>]+>/g, "").trim()
+      title: all(/<title>(?<v>[^<]*)/gu)[0],
+      canonical: all(/<link rel="canonical" href="(?<v>[^"]+)"/gu)[0],
+      desc: all(/<meta name="description" content="(?<v>[^"]*)"/gu)[0],
+      og: all(/<meta property="og:image" content="(?<v>[^"]*)"/gu)[0],
+      headings: all(/<h[1-3][^>]*>(?<v>[\s\S]*?)<\/h[1-3]>/gu).map((x) =>
+        x.replace(/<[^>]+>/gu, "").trim()
       ),
-      links: [...new Set(all(/href="(\/[^"#?]*)"/g))]
+      links: [...new Set(all(/href="(?<v>\/[^"#?]*)"/gu))]
         .filter((l) => !l.startsWith("/_next"))
         .sort(),
-      imgs: [...new Set(all(/<img [^>]*alt="([^"]*)"/g))].sort(),
+      imgs: [...new Set(all(/<img [^>]*alt="(?<v>[^"]*)"/gu))].sort(),
       ld: all(
-        /<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g
+        /<script type="application\/ld\+json"[^>]*>(?<v>[\s\S]*?)<\/script>/gu
       ).map((j) => JSON.parse(j)),
     };
   }

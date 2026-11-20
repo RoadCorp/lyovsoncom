@@ -1,20 +1,16 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { lyovsonPortfolioWhere } from "@/utilities/content-queries";
-import {
-  getLyovsonProfile,
-  type PublicProfile,
-} from "@/utilities/get-lyovson-profile";
-import {
-  type ProjectCardData,
-  projectCardSelect,
-} from "@/utilities/get-projects";
+import type { PublicProfile } from "@/utilities/get-lyovson-profile";
+import { getLyovsonProfile } from "@/utilities/get-lyovson-profile";
+import type { ProjectCardData } from "@/utilities/get-projects";
+import { projectCardSelect } from "@/utilities/get-projects";
 import {
   countLyovsonContent,
   findLyovsonActivities,
   findLyovsonPosts,
 } from "@/utilities/lyovson-feed-queries";
+import type { MixedFeedItem } from "@/utilities/mixed-feed";
 import {
-  type MixedFeedItem,
   mapActivitiesToMixedFeedItems,
   mapPostsToMixedFeedItems,
   sortMixedFeedItems,

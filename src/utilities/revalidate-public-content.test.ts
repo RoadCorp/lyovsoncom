@@ -1,5 +1,5 @@
 import { revalidatePath, revalidateTag } from "next/cache";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, it as test, vi } from "vitest";
 import { revalidatePost } from "@/collections/Posts/hooks/revalidate-post";
 import { revalidateProject } from "@/collections/Projects/hooks";
 import {
@@ -213,7 +213,7 @@ describe("public change detection", () => {
   });
 });
 
-it("keeps activity URL dates in UTC across server and browser time zones", () => {
+test("keeps activity URL dates in UTC across server and browser time zones", () => {
   expect(getActivityDateSlug({ startedAt: "2026-09-05T23:30:00Z" })).toBe(
     "09-05-26"
   );

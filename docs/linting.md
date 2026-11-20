@@ -1,17 +1,17 @@
 # Linting
 
-Reviewed September 6, 2026 against the installed Biome 2.5.12 and Ultracite 7.10.8 presets.
+Reviewed November 20, 2026 against the installed Biome 2.6.8 and Ultracite 8.3.1 presets.
 
 `pnpm lint` runs Biome through Ultracite and fails on errors **or warnings**. `pnpm lint:fix` applies automatic fixes. CI runs lint separately from the build, as Next.js 16 no longer runs lint during `next build`.
 
 ## Presets and framework guidance
 
-| Source | Project configuration |
-| --- | --- |
-| [Next.js](https://nextjs.org/docs/app/getting-started/installation#choose-a-linter) supports Biome or ESLint. Its [ESLint guide](https://nextjs.org/docs/app/api-reference/config/eslint) recommends Core Web Vitals and TypeScript presets. | Ultracite's `core` and `next` Biome presets. This is the Biome option, not `eslint-config-next`. Type checking runs separately and during the build. |
-| [Ultracite](https://www.ultracite.ai/) provides separate framework and testing presets. | Explicitly include `core`, `next`, `react`, and `vitest`. The Next preset does not include the React preset. |
-| [Payload's website template](https://github.com/payloadcms/payload/blob/main/templates/website/eslint.config.mjs) extends Next Core Web Vitals and TypeScript rules. | Keep the existing Biome stack. Payload does not add a separate lint plugin in that template. Generated CMS files remain excluded. |
-| [React's official Hooks plugin](https://react.dev/reference/eslint-plugin-react-hooks) includes hook rules and React Compiler diagnostics. | Biome checks hook ordering/dependencies, component definitions, JSX keys and other React rules. It does **not** implement all official compiler diagnostics. React Compiler is enabled for the build, but that is not full lint parity with Meta's plugin. |
+| Source                                                                                                                                                                                                                                       | Project configuration                                                                                                                                                                                                                                      |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Next.js](https://nextjs.org/docs/app/getting-started/installation#choose-a-linter) supports Biome or ESLint. Its [ESLint guide](https://nextjs.org/docs/app/api-reference/config/eslint) recommends Core Web Vitals and TypeScript presets. | Ultracite's `core` and `next` Biome presets. This is the Biome option, not `eslint-config-next`. Type checking runs separately and during the build.                                                                                                       |
+| [Ultracite](https://www.ultracite.ai/) provides separate framework and testing presets.                                                                                                                                                      | Explicitly include `core`, `next`, `react`, and `vitest`. The Next preset does not include the React preset.                                                                                                                                               |
+| [Payload's website template](https://github.com/payloadcms/payload/blob/main/templates/website/eslint.config.mjs) extends Next Core Web Vitals and TypeScript rules.                                                                         | Keep the existing Biome stack. Payload does not add a separate lint plugin in that template. Generated CMS files remain excluded.                                                                                                                          |
+| [React's official Hooks plugin](https://react.dev/reference/eslint-plugin-react-hooks) includes hook rules and React Compiler diagnostics.                                                                                                   | Biome checks hook ordering/dependencies, component definitions, JSX keys and other React rules. It does **not** implement all official compiler diagnostics. React Compiler is enabled for the build, but that is not full lint parity with Meta's plugin. |
 
 ## Deliberate exceptions
 
@@ -25,5 +25,13 @@ Two optional Biome rules are disabled after checking their diagnostics against t
 One accessibility rule has a single local suppression: [`noNoninteractiveTabindex`](https://biomejs.dev/linter/rules/no-noninteractive-tabindex/) on the code block's horizontally scrolling `<section>` (`src/blocks/Code/code.tsx`). WCAG 2.1.1 requires keyboard users to be able to scroll it, and axe reports `scrollable-region-focusable` without the `tabIndex`.
 
 Both rules are outside Biome's recommended set, although Ultracite enables them. Reassess these exceptions when upgrading Biome. The `noMagicNumbers` rule uses Ultracite's default of off; named limits remain useful, while HTTP status assertions and image-size lists do not need suppression comments.
+
+Three newer rules are scoped rather than disabled (Biome 2.6 / Ultracite 8.3):
+
+- [`useBaseline`](https://biomejs.dev/linter/rules/use-baseline/) keeps the "widely available" bar and exempts only four progressive enhancements: `text-wrap`, `@property`, `::view-transition` and `::marker`. Older browsers ignore the first three; Safari supports `::marker` only partly, but that covers the `color` the site sets. Any other newer feature still fails lint until it is checked.
+- [`noImportCycles`](https://biomejs.dev/linter/rules/no-import-cycles/) is off only for `src/components/RichText` and the block components. Rich text renders blocks, and blocks render nested rich text (captions, banners, quotes). Every use is inside a render, so load order cannot leave a value undefined. Elsewhere the rule stays on: grid cards import `GridCard` and `GridCardSection` from their own modules, not the `@/components/grid` barrel.
+- [`noComponentHookFactories`](https://biomejs.dev/linter/rules/no-component-hook-factories/) is off only for the three route factories (`create-entity-archive-page`, `create-paginated-archive-page`, `create-lyovson-feed-page`). Each runs once at module scope in a page file, so the components it returns are stable rather than rebuilt on every render.
+
+`globals.css` keeps a second `:root` block, with a suppression comment, so the view-transition timings sit beside the transitions they drive.
 
 The existing exclusions also cover Shadcn primitives, Payload scaffolding, and one-off maintenance scripts. They are not a claim that those files have been linted. Review changes to them directly; never exclude application code simply to make lint pass.
