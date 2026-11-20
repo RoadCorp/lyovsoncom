@@ -28,4 +28,4 @@ Documentation-only edits need formatting and reference checks. Do not clear buil
 
 ## Cursor Cloud
 
-[`.cursor/install.sh`](.cursor/install.sh) installs Node 24.21.0 and pnpm 10.30.0, then `pnpm install --frozen-lockfile`. It does not migrate, seed, or call providers. Secret names and the checks are in [`.cursor/README.md`](.cursor/README.md). Never touch production machines or the production database. Run no migrations. Use no paid APIs.
+[`.cursor/install.sh`](.cursor/install.sh) installs Node 24.22.3 and pnpm 10.30.0, then `pnpm install --frozen-lockfile`. It does not migrate, seed, or call providers. Secret names and the checks are in [`.cursor/README.md`](.cursor/README.md). Never touch production machines or the production database. Run no migrations. Use no paid APIs.

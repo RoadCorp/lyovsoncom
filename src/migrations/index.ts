@@ -74,6 +74,10 @@ import {
   down as migration_20261024_144952_retire_notes_down,
   up as migration_20261024_144952_retire_notes_up,
 } from "./20261024_144952_retire_notes";
+import {
+  down as migration_20261120_060414_payload_4_beta_10_down,
+  up as migration_20261120_060414_payload_4_beta_10_up,
+} from "./20261120_060414_payload_4_beta_10";
 
 export const migrations = [
   {
@@ -170,5 +174,10 @@ export const migrations = [
     up: migration_20261024_144952_retire_notes_up,
     down: migration_20261024_144952_retire_notes_down,
     name: "20261024_144952_retire_notes",
+  },
+  {
+    up: migration_20261120_060414_payload_4_beta_10_up,
+    down: migration_20261120_060414_payload_4_beta_10_down,
+    name: "20261120_060414_payload_4_beta_10",
   },
 ];

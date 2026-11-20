@@ -4,7 +4,7 @@
 # Does not migrate, seed, start Postgres, or call paid providers.
 set -euo pipefail
 
-NODE_VERSION="24.21.0"
+NODE_VERSION="24.22.3"
 PNPM_VERSION="10.30.0"
 NODE_PREFIX="/usr/local/lib/node-v${NODE_VERSION}"
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
