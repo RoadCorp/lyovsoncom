@@ -46,13 +46,15 @@ export const GridCardActivityLedger = ({
         const label = ACTIVITY_FILTER_SHORT_LABELS[type];
         const count = counts[type] ?? 0;
         const isActive = activeType === type;
+        const isEmpty = count === 0 && !isActive;
         const href = isActive ? baseHref : getTypeHref(type);
 
         return (
           <GridCardSection
             className={cn(
               "activity-seal-panel group ui-interactive relative flex items-center justify-center",
-              isActive && "activity-seal-panel--active"
+              isActive && "activity-seal-panel--active",
+              isEmpty && "activity-seal-panel--empty"
             )}
             data-activity-type={type}
             flush={true}

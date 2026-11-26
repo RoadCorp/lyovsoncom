@@ -1,4 +1,5 @@
 import {
+  ArrowRight,
   BookOpen,
   BriefcaseBusiness,
   Compass,
@@ -26,8 +27,11 @@ import { PublicPageBoundary } from "@/components/public-page-boundary";
 import { cn } from "@/lib/utils";
 import type { Media } from "@/payload-types";
 import { generateBreadcrumbSchema } from "@/utilities/generate-json-ld";
+import { getActivityCount } from "@/utilities/get-activity";
 import type { PublicProfile } from "@/utilities/get-lyovson-profile";
 import { getLyovsonProfile } from "@/utilities/get-lyovson-profile";
+import { getPostCount } from "@/utilities/get-post";
+import { getProjects } from "@/utilities/get-projects";
 import { buildDynamicOgImageUrl } from "@/utilities/og-image";
 import {
   aboutRoute,
@@ -132,10 +136,15 @@ function PersonAboutCard({ profile }: { profile: PublicProfile }) {
 }
 
 async function AboutPageContent() {
-  const [rafa, jess] = await Promise.all([
+  const [rafa, jess, postCount, activityCount, projects] = await Promise.all([
     getLyovsonProfile("rafa"),
     getLyovsonProfile("jess"),
+    getPostCount(),
+    getActivityCount(),
+    getProjects(),
   ]);
+
+  const projectCount = projects?.length ?? 0;
 
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Home", url: absoluteUrl(homeRoute()) },
@@ -231,6 +240,54 @@ async function AboutPageContent() {
       {rafa ? <PersonAboutCard profile={rafa} /> : null}
       {jess ? <PersonAboutCard profile={jess} /> : null}
 
+      <GridCard frameLabel="Archive">
+        <GridCardSection className="surface-rail-panel relative col-span-3 row-span-3 flex flex-col justify-between gap-4 p-6 text-center">
+          <div className="ornament-lattice" />
+          <CornerKnots inset="sm" variant="triquetra" />
+
+          <div className="relative z-1 flex flex-1 flex-col items-center justify-center gap-3">
+            <div className="grid w-full grid-cols-3 gap-2">
+              <div className="surface-row flex flex-col items-center gap-1 py-3">
+                <span className="tone-heading font-serif text-2xl leading-none font-semibold">
+                  {postCount.totalDocs}
+                </span>
+                <span className="type-eyebrow tone-muted">Posts</span>
+              </div>
+              <div className="surface-row flex flex-col items-center gap-1 py-3">
+                <span className="tone-heading font-serif text-2xl leading-none font-semibold">
+                  {activityCount.totalDocs}
+                </span>
+                <span className="type-eyebrow tone-muted">Logs</span>
+              </div>
+              <div className="surface-row flex flex-col items-center gap-1 py-3">
+                <span className="tone-heading font-serif text-2xl leading-none font-semibold">
+                  {projectCount}
+                </span>
+                <span className="type-eyebrow tone-muted">Projects</span>
+              </div>
+            </div>
+
+            <FleuronRule variant="lozenge" />
+
+            <p className="tone-muted max-w-[28ch] text-xs leading-relaxed">
+              Every post, reading log, and studio case study is archived on our
+              own domain, backed by open feeds.
+            </p>
+          </div>
+
+          <div className="border-border/60 relative z-1 flex items-center justify-center border-t pt-3">
+            <IntentLink
+              className="ui-meta-link ui-focus-ring type-eyebrow"
+              href={nowRoute()}
+              transitionTypes={[transitionTypes.section]}
+            >
+              <span>Browse Now &amp; Lately</span>
+              <ArrowRight aria-hidden="true" className="h-3.5 w-3.5" />
+            </IntentLink>
+          </div>
+        </GridCardSection>
+      </GridCard>
+
       <GridCard frameLabel="Syndication & Keys">
         <GridCardSection className="surface-rail-panel relative col-span-3 row-span-3 flex flex-col justify-between gap-4 p-6">
           <CornerKnots className="ornament-corner--rest" variant="ticks" />
@@ -322,6 +379,35 @@ async function AboutPageContent() {
         </GridCardSection>
       </GridCard>
 
+      <GridCard frameLabel="Typography & Craft">
+        <GridCardSection className="surface-rail-panel relative col-span-3 row-span-3 flex flex-col justify-between gap-4 p-6">
+          <CornerKnots className="ornament-corner--rest" variant="ticks" />
+
+          <div className="relative z-1 space-y-2.5">
+            <h2 className="type-eyebrow card-eyebrow">Type Specimen</h2>
+            <p className="tone-heading font-serif text-xl leading-snug font-semibold">
+              IBM Plex Serif
+            </p>
+            <p className="tone-body text-sm">
+              IBM Plex Sans for readable essays &amp; notes
+            </p>
+            <p className="type-eyebrow tone-muted">
+              IBM Plex Mono · Labels &amp; Metadata
+            </p>
+          </div>
+
+          <FleuronRule variant="lozenge" />
+
+          <div className="relative z-1 space-y-1.5">
+            <h2 className="type-eyebrow card-eyebrow">Architecture</h2>
+            <p className="tone-muted text-xs leading-relaxed">
+              Built on a 400px archival card grid with Next.js, Payload CMS,
+              Postgres + pgvector semantic search, and self-hosted fonts.
+            </p>
+          </div>
+        </GridCardSection>
+      </GridCard>
+
       <GridCard frameLabel="Credits">
         <GridCardSection className="surface-rail-panel relative col-span-3 row-span-3 flex flex-col justify-between gap-4 p-6">
           <CornerKnots className="ornament-corner--rest" variant="ticks" />
@@ -345,10 +431,10 @@ async function AboutPageContent() {
           <FleuronRule variant="lozenge" />
 
           <div className="relative z-1 space-y-1.5">
-            <h2 className="type-eyebrow card-eyebrow">Craft &amp; Stack</h2>
+            <h2 className="type-eyebrow card-eyebrow">Catalog Sources</h2>
             <p className="tone-muted text-xs leading-relaxed">
-              Typeset in IBM Plex Serif, Sans &amp; Mono. Built with Next.js,
-              Payload CMS, and our 400px card grid.
+              Books, albums, and games pull reference metadata from Open
+              Library, MusicBrainz, and IGDB when logged in the archive.
             </p>
           </div>
         </GridCardSection>

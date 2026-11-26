@@ -1,4 +1,13 @@
-import { Mail, MessageSquareText, Radio, UserRound } from "lucide-react";
+import {
+  BookOpen,
+  FileText,
+  Mail,
+  MessageSquareText,
+  Radio,
+  Rss,
+  ShieldCheck,
+  UserRound,
+} from "lucide-react";
 import type { Metadata } from "next";
 import { AppLink } from "@/components/app-link";
 import { CopyEmailButton } from "@/components/copy-email-button";
@@ -27,6 +36,7 @@ import {
   lyovsonContactRoute,
   lyovsonRoute,
   nowRoute,
+  privacyPolicyRoute,
   transitionTypes,
 } from "@/utilities/routes";
 import {
@@ -191,6 +201,63 @@ async function ContactPageContent() {
 
       {rafa ? <PersonContactCard profile={rafa} /> : null}
       {jess ? <PersonContactCard profile={jess} /> : null}
+
+      <GridCard frameLabel="Follow & Feeds">
+        <GridCardSection className="surface-rail-panel relative col-span-3 row-span-3 flex flex-col justify-between gap-4 p-6">
+          <CornerKnots className="ornament-corner--rest" variant="ticks" />
+
+          <div className="relative z-1 space-y-2 text-center">
+            <h2 className="tone-heading card-title text-xl">Stay in Loop</h2>
+            <FleuronRule variant="lozenge" />
+            <p className="tone-muted text-xs leading-relaxed">
+              Subscribe in any feed reader — no algorithms or newsletters
+              required.
+            </p>
+          </div>
+
+          <div className="relative z-1 grid grid-cols-2 gap-2">
+            <a
+              className="surface-row ui-interactive ui-focus-ring type-eyebrow flex items-center gap-2 px-3 py-2"
+              href="/feed.xml"
+            >
+              <Rss aria-hidden="true" className="h-3.5 w-3.5" />
+              <span>RSS</span>
+            </a>
+            <a
+              className="surface-row ui-interactive ui-focus-ring type-eyebrow flex items-center gap-2 px-3 py-2"
+              href="/atom.xml"
+            >
+              <Rss aria-hidden="true" className="h-3.5 w-3.5" />
+              <span>Atom</span>
+            </a>
+            <a
+              className="surface-row ui-interactive ui-focus-ring type-eyebrow flex items-center gap-2 px-3 py-2"
+              href="/feed.json"
+            >
+              <FileText aria-hidden="true" className="h-3.5 w-3.5" />
+              <span>JSON</span>
+            </a>
+            <a
+              className="surface-row ui-interactive ui-focus-ring type-eyebrow flex items-center gap-2 px-3 py-2"
+              href="/llms.txt"
+            >
+              <BookOpen aria-hidden="true" className="h-3.5 w-3.5" />
+              <span>llms.txt</span>
+            </a>
+          </div>
+
+          <div className="border-border/60 relative z-1 flex items-center justify-center border-t pt-3">
+            <AppLink
+              className="ui-meta-link ui-focus-ring type-eyebrow"
+              href={privacyPolicyRoute()}
+              prefetch={false}
+            >
+              <ShieldCheck aria-hidden="true" className="h-3.5 w-3.5" />
+              <span>Privacy Policy</span>
+            </AppLink>
+          </div>
+        </GridCardSection>
+      </GridCard>
     </>
   );
 }
