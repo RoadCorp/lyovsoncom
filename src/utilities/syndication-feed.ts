@@ -6,7 +6,10 @@ import { publishedPostsWhere } from "@/utilities/content-queries";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";
 import { getPayloadClient } from "@/utilities/payload-client";
 import { getPublishedProject } from "@/utilities/public-project";
-import { getCanonicalSiteOrigin } from "@/utilities/site-config";
+import {
+  getCanonicalSiteOrigin,
+  PUBLIC_CONTACT_EMAIL,
+} from "@/utilities/site-config";
 
 const FEED_POST_LIMIT = 50;
 
@@ -30,7 +33,7 @@ function createFeed(siteUrl: string, updated: Date, generator: string) {
     },
     author: {
       name: "Rafa & Jess Lyóvson",
-      email: "hello@lyovson.com",
+      email: PUBLIC_CONTACT_EMAIL,
       link: siteUrl,
     },
   });
@@ -66,7 +69,7 @@ function getFeedItem(
     author: [
       {
         name: primaryAuthor?.name || "Lyóvson Team",
-        email: "hello@lyovson.com",
+        email: PUBLIC_CONTACT_EMAIL,
         link: primaryAuthor?.username
           ? `${siteUrl}/${primaryAuthor.username}`
           : siteUrl,
@@ -102,7 +105,7 @@ export async function getSyndicationFeeds() {
     limit: FEED_POST_LIMIT,
     pagination: false,
     sort: "-publishedAt",
-    depth: 2,
+    depth: 1,
     select: {
       title: true,
       slug: true,
@@ -140,7 +143,7 @@ export async function getSyndicationFeeds() {
     rss.addItem({
       ...item,
       contributor: [
-        { name: "Lyóvson.com", email: "hello@lyovson.com", link: siteUrl },
+        { name: "Lyóvson.com", email: PUBLIC_CONTACT_EMAIL, link: siteUrl },
       ],
     });
     atom.addItem(item);

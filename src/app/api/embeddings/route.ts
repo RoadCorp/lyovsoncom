@@ -1,7 +1,5 @@
-import configPromise from "@payload-config";
 import type { NextRequest } from "next/server";
 import type { Payload } from "payload";
-import { getPayload } from "payload";
 import { TRUSTED_EMBEDDING_READ } from "@/access/private-field-read";
 import type { Activity, Post } from "@/payload-types";
 import { logApiTelemetry } from "@/utilities/api-telemetry";
@@ -25,6 +23,7 @@ import {
   EMBEDDABLE_COLLECTIONS,
   isEmbeddableCollection,
 } from "@/utilities/generate-embedding-helpers";
+import { getPayloadClient } from "@/utilities/payload-client";
 import { getPublishedProject } from "@/utilities/public-project";
 import { isPopulated } from "@/utilities/relations";
 import { absoluteUrl, projectRoute } from "@/utilities/routes";
@@ -396,7 +395,7 @@ export async function GET(request: NextRequest) {
     if (!hasEmbeddingAuthHint(request)) {
       return getEmbeddingUnauthorizedResponse();
     }
-    const payload = await getPayload({ config: configPromise });
+    const payload = await getPayloadClient();
     const authResult = await authorizeEmbeddingMutation(request, payload);
     if (!authResult.authorized) {
       return getEmbeddingUnauthorizedResponse(authResult.reason);

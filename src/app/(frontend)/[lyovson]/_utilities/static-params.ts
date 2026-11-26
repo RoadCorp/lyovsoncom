@@ -19,8 +19,10 @@ export async function getLyovsonStaticParams() {
   const payload = await getPayloadClient();
   const lyovsons = await payload.find({
     collection: "lyovsons",
+    depth: 0,
     limit: 100,
     overrideAccess: true,
+    pagination: false,
     select: { username: true },
   });
 
