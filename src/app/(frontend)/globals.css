@@ -515,6 +515,7 @@
 
 @layer components {
   .site-backdrop {
+    position: fixed;
     background:
       radial-gradient(
         52rem 36rem at 12% -12%,
@@ -550,6 +551,21 @@
         color-mix(in oklab, var(--background) 99%, var(--surface-1) 1%) 64%,
         var(--background)
       );
+  }
+
+  /* Whisper-subtle vellum grain so cream and aubergine surfaces feel tactile. */
+  .site-backdrop::after {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    content: "";
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
+    opacity: 0.032;
+  }
+
+  .dark .site-backdrop::after {
+    opacity: 0.04;
   }
 
   .dark .site-backdrop {
@@ -826,6 +842,10 @@
     opacity: 0.48;
   }
 
+  .ornament-corner--rest {
+    opacity: 0.28;
+  }
+
   .ornament-corner--hover {
     opacity: 0;
   }
@@ -837,11 +857,15 @@
   }
 
   .group:focus-visible .ornament-corner--hover,
+  .group:focus-visible .ornament-corner--rest,
   .surface-title-stage:has(:focus-visible) .ornament-corner--hover,
+  .surface-title-stage:has(:focus-visible) .ornament-corner--rest,
   .ui-interactive:not(:disabled):focus-visible > .ornament-corner--hover,
-  .ui-interactive:not(:disabled):has(:focus-visible) .ornament-corner--hover {
+  .ui-interactive:not(:disabled):focus-visible > .ornament-corner--rest,
+  .ui-interactive:not(:disabled):has(:focus-visible) .ornament-corner--hover,
+  .ui-interactive:not(:disabled):has(:focus-visible) .ornament-corner--rest {
     color: var(--ornament-accent);
-    opacity: 0.6;
+    opacity: 0.72;
   }
 
   @media (hover: hover) and (pointer: fine) {
@@ -851,11 +875,43 @@
     }
 
     .group:hover .ornament-corner--hover,
+    .group:hover .ornament-corner--rest,
     .surface-title-stage:hover .ornament-corner--hover,
-    .ui-interactive:not(:disabled):hover > .ornament-corner--hover {
+    .surface-title-stage:hover .ornament-corner--rest,
+    .ui-interactive:not(:disabled):hover > .ornament-corner--hover,
+    .ui-interactive:not(:disabled):hover > .ornament-corner--rest,
+    article.surface-card:has(
+        .surface-title-stage a:hover,
+        a[aria-hidden="true"]:hover
+      )
+      .ornament-corner--rest {
       color: var(--ornament-accent);
-      opacity: 0.6;
+      opacity: 0.72;
     }
+  }
+
+  .ornament-braid-frieze {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    z-index: 1;
+    height: 0.5rem;
+    background-color: color-mix(
+      in oklab,
+      var(--ornament-rail-bg) 82%,
+      transparent
+    );
+    border-bottom: 1px solid
+      color-mix(in oklab, var(--ornament-line) 66%, transparent);
+  }
+
+  .ornament-winged-eyebrow {
+    display: flex;
+    gap: 0.375rem;
+    align-items: center;
+    justify-content: center;
+    width: min(86%, 16rem);
+    max-width: 100%;
   }
 
   .ornament-rule {
@@ -923,6 +979,22 @@
       mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cpath fill='none' stroke='%23000' stroke-width='1' d='M13 1.5L24.5 13L13 24.5L1.5 13Z'/%3E%3Ccircle cx='13' cy='13' r='1.35' fill='%23000'/%3E%3C/svg%3E");
       mask-repeat: repeat;
       mask-size: 26px 26px;
+    }
+
+    .ornament-braid-frieze::after {
+      position: absolute;
+      inset-inline: 0.25rem;
+      top: 0;
+      bottom: 0;
+      pointer-events: none;
+      content: "";
+      background-color: var(--ornament-accent);
+      opacity: 0.56;
+      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='8' viewBox='0 0 22 8'%3E%3Cpath fill='none' stroke='%23000' stroke-width='1.35' stroke-linecap='round' d='M0 5.5C5.5 5.5 5.5 2.5 11 2.5C16.5 2.5 16.5 5.5 22 5.5'/%3E%3Cpath fill='none' stroke='%23000' stroke-width='1.2' stroke-linecap='round' stroke-opacity='0.48' d='M0 2.5C5.5 2.5 5.5 5.5 11 5.5C16.5 5.5 16.5 2.5 22 2.5'/%3E%3C/svg%3E");
+      mask-repeat: repeat-x;
+      mask-position: left center;
+      mask-size: 22px 8px;
+      transition: opacity var(--duration-medium) var(--ease-standard);
     }
 
     .ornament-braid-rail::after {
@@ -1262,19 +1334,131 @@
   }
 
   [data-activity-type="read"] {
+    --activity-tint: var(--activity-read);
     color: var(--activity-read);
   }
 
   [data-activity-type="watch"] {
+    --activity-tint: var(--activity-watch);
     color: var(--activity-watch);
   }
 
   [data-activity-type="listen"] {
+    --activity-tint: var(--activity-listen);
     color: var(--activity-listen);
   }
 
   [data-activity-type="play"] {
+    --activity-tint: var(--activity-play);
     color: var(--activity-play);
+  }
+
+  /* Heraldic activity wax-seal plaque and book-spine row accents. */
+  .activity-seal-panel {
+    --ornament-lattice: color-mix(
+      in oklab,
+      var(--activity-tint, var(--ornament-accent)) 22%,
+      transparent
+    );
+    --ornament-ink: color-mix(
+      in oklab,
+      var(--activity-tint, var(--ornament-accent)) 68%,
+      var(--line-1) 32%
+    );
+    background:
+      radial-gradient(
+        circle at 50% 42%,
+        color-mix(
+          in oklab,
+          var(--activity-tint, var(--ornament-accent)) 18%,
+          transparent
+        ),
+        transparent 74%
+      ),
+      var(--surface-well);
+  }
+
+  .activity-seal-ring {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    color: var(--activity-tint, var(--ornament-accent));
+    background: color-mix(
+      in oklab,
+      var(--activity-tint, var(--ornament-accent)) 10%,
+      transparent
+    );
+    border: 1.25px solid
+      color-mix(
+        in oklab,
+        var(--activity-tint, var(--ornament-accent)) 68%,
+        var(--line-1) 32%
+      );
+    border-radius: 999px;
+    box-shadow: 0 0 0 3px
+      color-mix(
+        in oklab,
+        var(--activity-tint, var(--ornament-accent)) 9%,
+        transparent
+      );
+    transition:
+      transform var(--duration-medium) var(--ease-snappy),
+      box-shadow var(--duration-medium) var(--ease-standard);
+  }
+
+  .activity-seal-ring::after {
+    position: absolute;
+    inset: 2.5px;
+    pointer-events: none;
+    content: "";
+    border: 1px dashed
+      color-mix(
+        in oklab,
+        var(--activity-tint, var(--ornament-accent)) 52%,
+        transparent
+      );
+    border-radius: 999px;
+  }
+
+  .activity-seal-label {
+    color: var(--activity-tint, var(--ornament-accent));
+  }
+
+  .activity-spine {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    width: 3px;
+    pointer-events: none;
+    background-color: var(--activity-tint, var(--ornament-accent));
+    opacity: 0.56;
+    transition:
+      opacity var(--duration-medium) var(--ease-standard),
+      width var(--duration-medium) var(--ease-standard);
+  }
+
+  .group:hover .activity-spine,
+  .group:focus-visible .activity-spine {
+    opacity: 0.95;
+  }
+
+  .review-score-panel {
+    --ornament-ink: color-mix(
+      in oklab,
+      var(--accent-score) 66%,
+      var(--line-1) 34%
+    );
+    --ornament-accent: var(--accent-score);
+    background:
+      radial-gradient(
+        circle at 50% 45%,
+        color-mix(in oklab, var(--accent-score) 16%, transparent),
+        transparent 74%
+      ),
+      var(--surface-well);
   }
 
   /* The small caps label above titles and in meta rows. */
@@ -1660,6 +1844,21 @@
     border-radius: calc(var(--radius) - 4px);
     box-shadow: var(--shadow-surface), var(--shadow-emboss);
     transition: border-color var(--duration-medium) var(--ease-standard);
+  }
+
+  /* Archival inner hairline mat on photographic covers and media embeds. */
+  .media-frame:not(.media-fallback)::after {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    content: "";
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ink) 14%, transparent);
+  }
+
+  .dark .media-frame:not(.media-fallback)::after {
+    box-shadow: inset 0 0 0 1px
+      color-mix(in oklab, var(--foam) 11%, transparent);
   }
 
   .media-frame img,
@@ -2374,7 +2573,8 @@
       color: var(--foreground) !important;
     }
 
-    .ornament-lattice {
+    .ornament-lattice,
+    .site-backdrop::after {
       display: none !important;
     }
   }
@@ -2404,13 +2604,26 @@
       border-left-color: CanvasText !important;
     }
 
+    .site-backdrop::after,
     .ornament-lattice,
+    .ornament-braid-frieze::after,
     .ornament-braid-rail::before,
     .ornament-braid-rail::after,
     .content-prose > blockquote::before,
     .content-prose > blockquote::after,
     .content-prose hr::after {
       display: none !important;
+    }
+
+    .activity-seal-ring {
+      color: CanvasText !important;
+      background: Canvas !important;
+      border-color: ButtonText !important;
+      box-shadow: none !important;
+    }
+
+    .activity-spine {
+      background-color: ButtonText !important;
     }
 
     .ornament-braid-rail,
@@ -2429,13 +2642,15 @@
     .review-score-star-empty,
     .ornament-accent,
     .ornament-muted,
-    .ornament-corner {
+    .ornament-corner,
+    .activity-seal-label {
       color: CanvasText !important;
     }
   }
 
   @media print {
     .site-backdrop,
+    .site-backdrop::after,
     .site-spotlight,
     .ornament-lattice {
       display: none !important;
@@ -2502,6 +2717,8 @@
     .nav-crest,
     .ornament-corner,
     .ornament-pending-active,
+    .activity-seal-ring,
+    .activity-spine,
     .media-frame,
     .media-frame img,
     .media-overlay,

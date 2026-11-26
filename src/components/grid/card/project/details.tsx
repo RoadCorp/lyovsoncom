@@ -77,7 +77,7 @@ export function GridCardProjectFacts({ project }: { project: Project }) {
     >
       {facts.map(({ href, icon: Icon, term, value }) => (
         <GridCardSection
-          className="surface-row col-start-1 col-end-4 flex items-center gap-3 px-4"
+          className="surface-row ornament-braid-rail col-start-1 col-end-4 flex items-center gap-3 ps-7 pe-4"
           key={term}
         >
           <Icon aria-hidden="true" className="card-eyebrow h-5 w-5 shrink-0" />
@@ -242,6 +242,7 @@ export function GridCardRelatedProjects({
                   <span className="card-eyebrow type-eyebrow">{years}</span>
                 ) : null}
               </div>
+              <span aria-hidden="true" className="activity-spine" />
             </GridCardSection>
           </IntentLink>
         );

@@ -14,7 +14,13 @@ import {
   CARD_FULL_IMAGE_SIZE,
 } from "@/components/Media/image-sizes";
 import { MediaFallback } from "@/components/Media/media-fallback";
-import { ApexLozenge, CornerKnots, FleuronRule } from "@/components/ornaments";
+import {
+  ApexLozenge,
+  BraidedFrieze,
+  CornerKnots,
+  FleuronRule,
+  WingedEyebrow,
+} from "@/components/ornaments";
 import { TechPill } from "@/components/tech-pill";
 import { TopicPill } from "@/components/topic-pill";
 import type { Project } from "@/payload-types";
@@ -159,13 +165,14 @@ export const GridCardProject = ({
             />
           ) : null}
 
-          <GridCardSection className="surface-title-stage col-start-1 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1.5">
-            <CornerKnots className="ornament-corner--hover" variant="ticks" />
-            {eyebrow ? (
-              <span aria-hidden="true" className="card-eyebrow type-eyebrow">
-                {eyebrow}
-              </span>
-            ) : null}
+          <GridCardSection className="surface-title-stage col-start-1 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1.5 pt-5">
+            <BraidedFrieze />
+            <CornerKnots
+              className="ornament-corner--rest"
+              edges="bottom"
+              variant="ticks"
+            />
+            {eyebrow ? <WingedEyebrow>{eyebrow}</WingedEyebrow> : null}
             <ViewTransition
               name={getProjectTitleTransitionName(slug)}
               {...frontendViewTransitionClasses.sharedTitle}
@@ -245,8 +252,10 @@ export const GridCardProjectHero = ({
         )}
 
         <GridCardSection className="surface-title-stage g3:col-start-4 g3:col-end-7 g3:row-start-1 g3:row-end-4 col-start-1 col-end-4 row-start-4 row-end-7">
+          <BraidedFrieze />
           <CornerKnots
             className="ornament-corner--subtle"
+            edges="bottom"
             inset="sm"
             variant="triquetra"
           />

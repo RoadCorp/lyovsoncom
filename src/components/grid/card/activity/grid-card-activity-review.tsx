@@ -2,7 +2,7 @@ import { Quote, Star, StarHalf, User } from "lucide-react";
 import { AppLink } from "@/components/app-link";
 import { GridCard } from "@/components/grid/card";
 import { GridCardSection } from "@/components/grid/card/section";
-import { EternityKnot } from "@/components/ornaments";
+import { CornerKnots, EternityKnot, FleuronRule } from "@/components/ornaments";
 import { cn } from "@/lib/utils";
 import type { Lyovson } from "@/payload-types";
 import { lyovsonRoute } from "@/utilities/routes";
@@ -42,11 +42,12 @@ function renderRating(rating: number) {
     >
       {/* Numeric rating */}
       <div className="flex items-baseline gap-0.5">
-        <span className="review-score-value text-2xl leading-none font-bold">
+        <span className="review-score-value text-2xl leading-none font-bold tabular-nums">
           {rating}
         </span>
         <span className="tone-muted text-xs">/{RATING_MAX}</span>
       </div>
+      <FleuronRule className="max-w-16" variant="lozenge" />
       <div className="flex items-center justify-center gap-0.5">
         {buildStarKeys("full", fullStars).map((starKey) => (
           <Star
@@ -146,9 +147,10 @@ export function GridCardActivityReview({
           "surface-rail-panel col-start-1 col-end-2 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1"
         }
       >
+        <CornerKnots className="ornament-corner--rest" variant="ticks" />
         {username ? (
           <AppLink
-            className="ui-focus-ring group block flex flex-col items-center gap-1"
+            className="ui-focus-ring group relative z-1 flex flex-col items-center gap-1"
             href={lyovsonRoute(username)}
             prefetch={false}
           >
@@ -161,7 +163,7 @@ export function GridCardActivityReview({
             </span>
           </AppLink>
         ) : (
-          <div className="flex flex-col items-center gap-1">
+          <div className="relative z-1 flex flex-col items-center gap-1">
             <User aria-hidden="true" className="tone-heading h-5 w-5" />
             <span className="tone-muted text-xs capitalize">
               {name.replace(" Lyovson", "")}
@@ -172,10 +174,15 @@ export function GridCardActivityReview({
 
       <GridCardSection
         className={
-          "surface-title-stage col-start-2 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center"
+          "review-score-panel col-start-2 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center"
         }
       >
-        {rating !== null && renderRating(rating)}
+        <CornerKnots className="ornament-corner--subtle" variant="ticks" />
+        {rating === null ? (
+          <EternityKnot className="ornament-muted relative z-1" size={18} />
+        ) : (
+          <div className="relative z-1">{renderRating(rating)}</div>
+        )}
       </GridCardSection>
     </GridCard>
   );

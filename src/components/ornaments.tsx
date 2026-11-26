@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 interface OrnamentIconProps {
@@ -70,6 +71,7 @@ export function ApexLozenge({ className, size = 10 }: OrnamentIconProps) {
 
 interface CornerKnotsProps {
   className?: string;
+  edges?: "all" | "bottom";
   inset?: "sm" | "md";
   variant?: "ticks" | "triquetra";
 }
@@ -146,6 +148,7 @@ const CORNER_LAYOUT = {
  */
 export function CornerKnots({
   className,
+  edges = "all",
   inset = "md",
   variant = "triquetra",
 }: CornerKnotsProps) {
@@ -167,11 +170,91 @@ export function CornerKnots({
 
   return (
     <>
-      <Glyph className={cn(base, layout.tl)} />
-      <Glyph className={cn(base, layout.tr)} />
+      {edges === "all" ? (
+        <>
+          <Glyph className={cn(base, layout.tl)} />
+          <Glyph className={cn(base, layout.tr)} />
+        </>
+      ) : null}
       <Glyph className={cn(base, layout.bl)} />
       <Glyph className={cn(base, layout.br)} />
     </>
+  );
+}
+
+/**
+ * Whisper-thin horizontal guilloche braid band crowning card title stages,
+ * hero headers, and code blocks.
+ */
+export function BraidedFrieze({ className }: { className?: string }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={cn("ornament-braid-frieze pointer-events-none", className)}
+    />
+  );
+}
+
+/**
+ * Engraved eyebrow flanked by hairline wings and miniature lozenge clasps.
+ */
+export function WingedEyebrow({
+  children,
+  className,
+  postType,
+}: {
+  children: ReactNode;
+  className?: string;
+  postType?: string;
+}) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn("ornament-winged-eyebrow", className)}
+    >
+      <span className="ornament-rule-wing" />
+      <ApexLozenge className="ornament-accent opacity-75" size={8} />
+      <span
+        className="card-eyebrow type-eyebrow shrink-0"
+        data-post-type={postType}
+      >
+        {children}
+      </span>
+      <ApexLozenge className="ornament-accent opacity-75" size={8} />
+      <span className="ornament-rule-wing ornament-rule-wing--right" />
+    </span>
+  );
+}
+
+/**
+ * Double-ringed heraldic activity medallion tinted to Read / Watch / Listen / Play.
+ */
+export function ActivitySeal({
+  activityType,
+  icon,
+  label,
+  sublabel,
+}: {
+  activityType?: string | null;
+  icon: ReactNode;
+  label: string;
+  sublabel?: string | null;
+}) {
+  return (
+    <div
+      className="activity-seal-content relative z-1 flex flex-col items-center justify-center gap-1.5 text-center"
+      data-activity-type={activityType ?? undefined}
+    >
+      <span aria-hidden="true" className="activity-seal-ring">
+        {icon}
+      </span>
+      <span className="activity-seal-label type-eyebrow leading-none font-bold">
+        {label}
+      </span>
+      {sublabel ? (
+        <span className="tone-muted text-label leading-none">{sublabel}</span>
+      ) : null}
+    </div>
   );
 }
 

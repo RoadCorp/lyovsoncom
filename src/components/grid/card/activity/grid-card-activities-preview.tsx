@@ -4,6 +4,7 @@ import { GridCardSection } from "@/components/grid/card/section";
 import { IntentLink } from "@/components/intent-link";
 import { Media } from "@/components/Media";
 import { CARD_THUMBNAIL_IMAGE_SIZE } from "@/components/Media/image-sizes";
+import { ApexLozenge } from "@/components/ornaments";
 import { cn } from "@/lib/utils";
 import type { Activity } from "@/payload-types";
 import { ACTIVITY_PREVIEW_LIMIT } from "@/utilities/activity-preview";
@@ -139,7 +140,7 @@ export function GridCardActivitiesPreview({
                     </div>
                   )}
 
-                  <div className="col-start-2 col-end-4 row-start-1 row-end-2 flex h-full flex-col justify-center gap-1">
+                  <div className="col-start-2 col-end-4 row-start-1 row-end-2 flex h-full min-w-0 flex-col justify-center gap-1 pe-3">
                     <ViewTransition
                       name={
                         morphs
@@ -148,26 +149,43 @@ export function GridCardActivitiesPreview({
                       }
                       {...frontendViewTransitionClasses.sharedTitle}
                     >
-                      <h2 className="tone-heading ui-group-hover-dim font-medium">
+                      <h2 className="tone-heading ui-group-hover-dim truncate font-medium">
                         {referenceTitle}
                       </h2>
                     </ViewTransition>
                     <div className="tone-muted flex items-center gap-1.5 text-xs">
                       <ActivityIcon
                         aria-hidden="true"
-                        className="h-4 w-4 shrink-0"
+                        className="h-3.5 w-3.5 shrink-0"
                         data-activity-type={activity.activityType}
                       />
-                      <span className="sr-only">{activityTypeLabel}</span>
+                      <span
+                        className="type-eyebrow shrink-0 font-bold"
+                        data-activity-type={activity.activityType}
+                      >
+                        {activityTypeLabel}
+                      </span>
                       {dateLabel ? (
-                        <time dateTime={dateValue ?? undefined}>
-                          {dateLabel}
-                        </time>
-                      ) : (
-                        <span>{activityTypeLabel}</span>
-                      )}
+                        <>
+                          <ApexLozenge
+                            className="shrink-0 opacity-75"
+                            size={8}
+                          />
+                          <time
+                            className="truncate"
+                            dateTime={dateValue ?? undefined}
+                          >
+                            {dateLabel}
+                          </time>
+                        </>
+                      ) : null}
                     </div>
                   </div>
+                  <span
+                    aria-hidden="true"
+                    className="activity-spine"
+                    data-activity-type={activity.activityType}
+                  />
                 </GridCardSection>
               </IntentLink>
             );

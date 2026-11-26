@@ -5,7 +5,11 @@ import { GridCardSection } from "@/components/grid/card/section";
 import { Media } from "@/components/Media";
 import { CARD_COVER_IMAGE_SIZE } from "@/components/Media/image-sizes";
 import { MediaFallback } from "@/components/Media/media-fallback";
-import { CornerKnots } from "@/components/ornaments";
+import {
+  BraidedFrieze,
+  CornerKnots,
+  WingedEyebrow,
+} from "@/components/ornaments";
 import { PostDrillInLink } from "@/components/post-transitions/post-drill-in-link";
 import { PostTransitionBoundary } from "@/components/post-transitions/post-transition-boundary";
 import { TopicPillList } from "@/components/topic-pill";
@@ -111,19 +115,18 @@ export const GridCardPostFull = ({
           </GridCardSection>
         )}
 
-        <GridCardSection className="surface-title-stage col-start-1 col-end-4 row-start-3 row-end-4 flex h-full flex-col justify-center">
-          <CornerKnots className="ornament-corner--hover" variant="ticks" />
+        <GridCardSection className="surface-title-stage col-start-1 col-end-4 row-start-3 row-end-4 flex h-full flex-col justify-center pt-5">
+          <BraidedFrieze />
+          <CornerKnots
+            className="ornament-corner--rest"
+            edges="bottom"
+            variant="ticks"
+          />
           <PostDrillInLink
-            className="ui-focus-ring group flex h-full flex-col items-center justify-center gap-2"
+            className="ui-focus-ring group flex h-full flex-col items-center justify-center gap-1.5"
             href={postHref}
           >
-            <span
-              aria-hidden="true"
-              className="card-eyebrow type-eyebrow"
-              data-post-type={postType}
-            >
-              {postType}
-            </span>
+            <WingedEyebrow postType={postType}>{postType}</WingedEyebrow>
             <PostTransitionBoundary slug={slug} variant="title">
               <h2 className="card-title tone-heading ui-group-hover-dim text-center text-xl font-bold">
                 {title}

@@ -6,7 +6,7 @@ import { GridCardSection } from "@/components/grid/card/section";
 import { IntentLink } from "@/components/intent-link";
 import { Media } from "@/components/Media";
 import { CARD_COVER_IMAGE_SIZE } from "@/components/Media/image-sizes";
-import { CornerKnots } from "@/components/ornaments";
+import { ActivitySeal, CornerKnots } from "@/components/ornaments";
 import type { Activity } from "@/payload-types";
 import {
   activityRoute,
@@ -141,7 +141,7 @@ export const GridCardActivityFull = ({
       ) : null}
 
       <GridCardSection className="surface-title-stage col-start-3 col-end-4 row-start-1 row-end-2 flex h-full flex-col justify-center">
-        <CornerKnots className="ornament-corner--hover" variant="ticks" />
+        <CornerKnots className="ornament-corner--rest" variant="ticks" />
         <IntentLink
           aria-label={`${activityTypeLabel} ${referenceTitle}`}
           className="ui-focus-ring group block"
@@ -185,22 +185,30 @@ export const GridCardActivityFull = ({
         </div>
       </GridCardSection>
 
-      <GridCardSection className="surface-rail-panel col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
+      <GridCardSection
+        className="activity-seal-panel col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center p-2"
+        data-activity-type={activityType}
+      >
+        <div className="ornament-lattice" />
+        <CornerKnots className="ornament-corner--subtle" variant="ticks" />
         <IntentLink
           aria-hidden="true"
-          className="group block flex flex-col items-center gap-1"
+          className="group flex h-full w-full flex-col items-center justify-center"
           href={activityHref}
           tabIndex={-1}
           transitionTypes={[transitionTypes.drillIn]}
         >
-          <ActivityIcon
-            aria-hidden="true"
-            className={iconClassName}
-            data-activity-type={activityType}
+          <ActivitySeal
+            activityType={activityType}
+            icon={
+              <ActivityIcon
+                aria-hidden="true"
+                className={iconClassName}
+                data-activity-type={activityType}
+              />
+            }
+            label={activityTypeLabel}
           />
-          <span className="tone-muted text-xs capitalize">
-            {activityTypeLabel}
-          </span>
         </IntentLink>
       </GridCardSection>
     </GridCard>

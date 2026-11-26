@@ -1,6 +1,6 @@
 import type { PrismTheme } from "prism-react-renderer";
 import { normalizeTokens, Prism } from "prism-react-renderer";
-import { ApexLozenge } from "@/components/ornaments";
+import { ApexLozenge, BraidedFrieze } from "@/components/ornaments";
 import { CopyButton } from "./copy-button";
 
 const codeTheme: PrismTheme = {
@@ -59,9 +59,10 @@ export function Code({
     return { offset: lineOffset, number: index + 1, spans };
   });
   return (
-    <div className="surface-panel surface-emphasis surface-code relative">
+    <div className="surface-panel surface-emphasis surface-code relative overflow-hidden pt-2">
+      <BraidedFrieze />
       {language && (
-        <div className="surface-chip surface-code-chip absolute top-3 right-15 gap-1.5 rounded px-2.5 py-1 text-xs font-medium">
+        <div className="surface-chip surface-code-chip absolute top-4 right-15 gap-1.5 rounded px-2.5 py-1 text-xs font-medium">
           <ApexLozenge className="ornament-accent opacity-80" size={8} />
           <span>{language.toUpperCase()}</span>
         </div>

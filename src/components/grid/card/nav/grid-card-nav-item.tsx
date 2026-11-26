@@ -48,7 +48,7 @@ export const GridCardNavItem = ({
   if (props.variant === "link") {
     return (
       <GridCardSection className={cn("group ui-interactive", className)}>
-        <CornerKnots className="ornament-corner--hover" variant="ticks" />
+        <CornerKnots className="ornament-corner--rest" variant="ticks" />
         <AppLink
           className="tone-heading ui-focus-ring flex h-full w-full items-center justify-center"
           href={props.href}
@@ -81,7 +81,7 @@ export const GridCardNavItem = ({
         mode="button"
         onClick={props.onClick}
       >
-        <CornerKnots className="ornament-corner--hover" variant="ticks" />
+        <CornerKnots className="ornament-corner--rest" variant="ticks" />
         <span className="nav-tile-content">{children}</span>
       </GridCardSection>
     );
@@ -94,7 +94,7 @@ export const GridCardNavItem = ({
         className
       )}
     >
-      <CornerKnots className="ornament-corner--hover" variant="ticks" />
+      <CornerKnots className="ornament-corner--rest" variant="ticks" />
       {children}
     </GridCardSection>
   );

@@ -117,6 +117,7 @@ export const GridCardReferences = ({
                 <span className="surface-chip surface-tag">{typeLabel}</span>
               </div>
             </div>
+            <span aria-hidden="true" className="activity-spine" />
           </GridCardSection>
         );
 

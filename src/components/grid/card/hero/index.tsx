@@ -10,7 +10,11 @@ import { IntentLink } from "@/components/intent-link";
 import { Media } from "@/components/Media";
 import { CARD_FULL_IMAGE_SIZE } from "@/components/Media/image-sizes";
 import { MediaFallback } from "@/components/Media/media-fallback";
-import { ApexLozenge } from "@/components/ornaments";
+import {
+  ApexLozenge,
+  BraidedFrieze,
+  CornerKnots,
+} from "@/components/ornaments";
 import { PostTransitionBoundary } from "@/components/post-transitions/post-transition-boundary";
 import { TopicPillList } from "@/components/topic-pill";
 import { cn } from "@/lib/utils";
@@ -217,7 +221,13 @@ export const GridCardHero = ({
         )}
 
         <GridCardSection className="surface-title-stage g3:col-start-4 g3:col-end-7 g3:row-start-1 g3:row-end-4 col-start-1 col-end-4 row-start-4 row-end-7">
-          <div className="flex h-full flex-col gap-4 px-6 py-5 md:px-7 md:py-6">
+          <BraidedFrieze />
+          <CornerKnots
+            className="ornament-corner--rest"
+            edges="bottom"
+            variant="ticks"
+          />
+          <div className="relative z-1 flex h-full flex-col gap-4 px-6 pt-6 pb-5 md:px-7 md:pt-7 md:pb-6">
             <div className="flex items-center justify-between gap-3">
               <PostHeroEyebrow post={post} />
               <HeroBackLink href={postsRoute()} label="Posts" />
@@ -391,7 +401,13 @@ export const GridCardHeroReference = ({
       </GridCardSection>
 
       <GridCardSection className="surface-title-stage g3:col-start-4 g3:col-end-7 g3:row-start-1 g3:row-end-4 col-start-1 col-end-4 row-start-4 row-end-7">
-        <div className="flex h-full flex-col gap-4 px-6 py-5 md:px-7 md:py-6">
+        <BraidedFrieze />
+        <CornerKnots
+          className="ornament-corner--rest"
+          edges="bottom"
+          variant="ticks"
+        />
+        <div className="relative z-1 flex h-full flex-col gap-4 px-6 pt-6 pb-5 md:px-7 md:pt-7 md:pb-6">
           <p className="type-eyebrow flex items-center gap-2">
             <span className="card-eyebrow">{typeLabel}</span>
             {reference.year ? (
