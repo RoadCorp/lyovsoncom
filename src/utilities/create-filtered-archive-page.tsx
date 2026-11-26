@@ -1,3 +1,4 @@
+import type { Route } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next/types";
@@ -123,9 +124,9 @@ function FilteredArchiveShell({
   );
 }
 
-function parseValidatedPage(
+function parseValidatedPage<T extends string>(
   rawPageNumber: string | undefined,
-  firstPageRoute: string
+  firstPageRoute: Route<T>
 ): number {
   if (rawPageNumber === undefined) {
     return 1;
