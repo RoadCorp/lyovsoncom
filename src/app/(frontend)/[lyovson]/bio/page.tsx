@@ -58,7 +58,7 @@ async function PageContent({ params }: PageProps) {
 
       {user.bio ? (
         <GridCard
-          className="g2:col-start-2 g2:col-end-3 g3:col-end-4 g2:row-auto g2:row-start-2 g3:w-[var(--grid-card-2x1)] aspect-auto h-auto"
+          className="g2:col-start-1 g2:col-end-3 g2:row-auto g2:row-start-3 g2:w-[var(--grid-card-2x1)] g3:col-start-2 g3:col-end-4 g3:row-start-2 aspect-auto h-auto self-start"
           interactive={false}
         >
           <GridCardSection className="[container-type:inline-size] col-span-3 row-span-3 p-6">

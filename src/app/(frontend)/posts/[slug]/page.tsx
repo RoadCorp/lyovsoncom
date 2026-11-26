@@ -247,7 +247,7 @@ async function PostPageContent({ params: paramsPromise }: Args) {
       >
         {hasContents ? (
           <PostTransitionBoundary variant="rail">
-            <div className="g3:col-auto g2:col-start-1 g2:col-end-2 g3:row-auto g2:row-start-2 g2:self-start">
+            <div className="g3:col-auto g2:col-start-1 g2:col-end-2 g3:row-auto g2:row-start-2 g2:self-start w-full">
               <GridCardTableOfContents headings={headings} />
             </div>
           </PostTransitionBoundary>

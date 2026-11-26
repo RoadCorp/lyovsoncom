@@ -22,7 +22,10 @@ export const GridCardTableOfContents = ({
     <GridCard
       aria-label="Table of contents"
       as="nav"
-      className={cn("aspect-auto h-auto", className)}
+      className={cn(
+        "aspect-auto h-auto w-[var(--grid-card-1x1)] self-start",
+        className
+      )}
       frameLabel="Contents"
       variant="content"
     >
