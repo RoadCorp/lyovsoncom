@@ -2120,6 +2120,34 @@
     opacity: 0.85;
   }
 
+  .toc-link--active {
+    font-weight: 600;
+    color: var(--accent-link);
+  }
+
+  .reading-progress-track {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 50;
+    height: 2px;
+    pointer-events: none;
+    background: color-mix(in oklab, var(--ornament-line) 24%, transparent);
+  }
+
+  .reading-progress-bar {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      var(--ornament-accent),
+      var(--accent-link)
+    );
+    transform-origin: left center;
+    will-change: transform;
+  }
+
   .content-prose--article > p:first-of-type::first-letter {
     float: inline-start;
     padding: 0.32rem 0.55rem 0.24rem;

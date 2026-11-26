@@ -240,3 +240,80 @@ export async function getActivitiesByType(
     docs: result.docs as Activity[],
   };
 }
+
+export async function getLyovsonActivityTypeCounts(
+  username: string
+): Promise<ActivityTypeCounts | null> {
+  "use cache";
+  cacheTag("activities");
+  cacheTag("lyovsons");
+  cacheTag(`lyovson-${username}`);
+  cacheTag(`lyovson-${username}-activities`);
+  cacheLife("activities");
+
+  const user = await getLyovsonProfile(username);
+  if (!user) {
+    return null;
+  }
+
+  const payload = await getPayloadClient();
+  const entries = await Promise.all(
+    ACTIVITY_FILTER_TYPES.map(async (activityType) => {
+      const result = await payload.count({
+        collection: "activities",
+        overrideAccess: true,
+        where: {
+          ...lyovsonActivitiesWhere(user.id),
+          activityType: {
+            equals: activityType,
+          },
+        },
+      });
+      return [activityType, result.totalDocs] as const;
+    })
+  );
+
+  return Object.fromEntries(entries) as ActivityTypeCounts;
+}
+
+export async function getLyovsonActivitiesByType(
+  username: string,
+  activityType: ActivityFilterType,
+  pageNumber = 1,
+  limit = 12
+): Promise<PaginatedDocs<Activity> | null> {
+  "use cache";
+  cacheTag("activities");
+  cacheTag("lyovsons");
+  cacheTag(`lyovson-${username}`);
+  cacheTag(`lyovson-${username}-activities`);
+  cacheTag(`lyovson-${username}-activities-type-${activityType}`);
+  cacheLife("activities");
+
+  const user = await getLyovsonProfile(username);
+  if (!user) {
+    return null;
+  }
+
+  const payload = await getPayloadClient();
+  const result = await payload.find({
+    collection: "activities",
+    select: publicContentSelect,
+    depth: 2,
+    limit,
+    page: pageNumber,
+    overrideAccess: true,
+    sort: "-finishedAt",
+    where: {
+      ...lyovsonActivitiesWhere(user.id),
+      activityType: {
+        equals: activityType,
+      },
+    },
+  });
+
+  return {
+    ...result,
+    docs: result.docs as Activity[],
+  };
+}

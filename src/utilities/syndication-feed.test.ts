@@ -167,6 +167,19 @@ describe("feed responses", () => {
   );
 
   it.each([
+    ["RSS", getRssFeed, "/feed.xsl"],
+    ["Atom", getAtomFeed, "/atom.xsl"],
+  ] as const)(
+    "attaches the browser XSLT stylesheet to %s feeds",
+    async (_format, getFeed, stylesheetPath) => {
+      const response = await getFeed();
+      expect(await response.text()).toContain(
+        `<?xml-stylesheet type="text/xsl" href="${stylesheetPath}"?>`
+      );
+    }
+  );
+
+  it.each([
     ["RSS", getRssFeed],
     ["Atom", getAtomFeed],
     ["JSON", getJsonFeed],

@@ -10,13 +10,18 @@ import {
   getActivityTypeCounts,
   getLatestActivities,
 } from "@/utilities/get-activity";
+import { buildDynamicOgImageUrl } from "@/utilities/og-image";
 import {
   absoluteUrl,
   activitiesPageRoute,
   activitiesRoute,
   activityUrl,
 } from "@/utilities/routes";
-import { buildSeoMetadata } from "@/utilities/seo-metadata";
+import {
+  buildSeoMetadata,
+  DEFAULT_OPEN_GRAPH_IMAGE_HEIGHT,
+  DEFAULT_OPEN_GRAPH_IMAGE_WIDTH,
+} from "@/utilities/seo-metadata";
 
 export const prefetch = "partial";
 
@@ -69,5 +74,15 @@ export const metadata: Metadata = {
     description:
       "Browse reading, watching, listening, and playing activities logged by the Lyóvson family.",
     canonicalPath: activitiesRoute(),
+    image: {
+      url: buildDynamicOgImageUrl({
+        eyebrow: "Ledger",
+        title: "Activities & Consumption",
+        meta: "Read · Watch · Listen · Play",
+      }),
+      width: DEFAULT_OPEN_GRAPH_IMAGE_WIDTH,
+      height: DEFAULT_OPEN_GRAPH_IMAGE_HEIGHT,
+      alt: "All Activities & Consumption",
+    },
   }),
 };

@@ -17,6 +17,7 @@ import { PostColophonActions } from "@/components/post-colophon-actions";
 import { PostTransitionBoundary } from "@/components/post-transitions/post-transition-boundary";
 import { PublicPageBoundary } from "@/components/public-page-boundary";
 import RichText from "@/components/RichText";
+import { ReadingProgress } from "@/components/reading-progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import type { Lyovson, Media, Post } from "@/payload-types";
@@ -206,6 +207,7 @@ async function PostPageContent({ params: paramsPromise }: Args) {
     <>
       <JsonLd data={articleSchema} />
       <JsonLd data={breadcrumbSchema} />
+      <ReadingProgress targetId="post-article-body" />
 
       <GridCardHero post={post} />
       <PostTransitionBoundary variant="body">
@@ -215,6 +217,7 @@ async function PostPageContent({ params: paramsPromise }: Args) {
             "g3:col-start-2 g3:col-end-4 g3:row-start-2",
             "aspect-auto h-auto"
           )}
+          id="post-article-body"
           interactive={false}
         >
           <GridCardSection className="[container-type:inline-size] col-span-3 row-span-3 p-6">

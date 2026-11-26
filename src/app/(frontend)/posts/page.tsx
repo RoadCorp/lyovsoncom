@@ -1,23 +1,32 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { CollectionArchive } from "@/components/CollectionArchive";
+import { GridCardPostLedger } from "@/components/grid";
 import { JsonLd } from "@/components/json-ld";
 import { Pagination } from "@/components/Pagination";
 import { POSTS_PER_PAGE } from "@/utilities/archive";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
-import { getLatestPosts } from "@/utilities/get-post";
+import { getLatestPosts, getPostTypeCounts } from "@/utilities/get-post";
+import { buildDynamicOgImageUrl } from "@/utilities/og-image";
 import {
   absoluteUrl,
   postsPageRoute,
   postsRoute,
   postUrl,
 } from "@/utilities/routes";
-import { buildSeoMetadata } from "@/utilities/seo-metadata";
+import {
+  buildSeoMetadata,
+  DEFAULT_OPEN_GRAPH_IMAGE_HEIGHT,
+  DEFAULT_OPEN_GRAPH_IMAGE_WIDTH,
+} from "@/utilities/seo-metadata";
 
 export const prefetch = "partial";
 
 export default async function Page() {
-  const response = await getLatestPosts(POSTS_PER_PAGE);
+  const [response, counts] = await Promise.all([
+    getLatestPosts(POSTS_PER_PAGE),
+    getPostTypeCounts(),
+  ]);
 
   if (!response) {
     return notFound();
@@ -40,6 +49,7 @@ export default async function Page() {
     <>
       <h1 className="sr-only">All Posts & Articles</h1>
       <JsonLd data={collectionPageSchema} />
+      <GridCardPostLedger counts={counts} />
       <CollectionArchive posts={docs} />
       {totalPages > 1 && page ? (
         <Pagination
@@ -69,9 +79,13 @@ export const metadata: Metadata = {
       "Jess Lyovson",
     ],
     image: {
-      url: "/og-image.png",
-      width: 1200,
-      height: 630,
+      url: buildDynamicOgImageUrl({
+        eyebrow: "Archive",
+        title: "Posts & Articles",
+        meta: "Writing, essays, and reviews by Rafa & Jess Lyóvson",
+      }),
+      width: DEFAULT_OPEN_GRAPH_IMAGE_WIDTH,
+      height: DEFAULT_OPEN_GRAPH_IMAGE_HEIGHT,
       alt: "All Posts & Articles",
     },
     other: {

@@ -26,6 +26,12 @@ export default function manifest(): MetadataRoute.Manifest {
     ],
     icons: [
       {
+        src: "/icon.svg",
+        sizes: "any",
+        type: "image/svg+xml",
+        purpose: "any",
+      },
+      {
         src: "/favicon-16x16.png",
         sizes: "16x16",
         type: "image/png",
@@ -83,6 +89,19 @@ export default function manifest(): MetadataRoute.Manifest {
       },
     ],
     shortcuts: [
+      {
+        name: "Now & Lately",
+        short_name: "Now",
+        description: "Recent reading, watching, listening, playing, and posts",
+        url: "/now",
+        icons: [
+          {
+            src: "/android-chrome-192x192.png",
+            sizes: "192x192",
+            type: "image/png",
+          },
+        ],
+      },
       {
         name: "Latest Posts",
         short_name: "Posts",

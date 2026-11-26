@@ -3,6 +3,7 @@ import {
   BriefcaseBusiness,
   Compass,
   FileText,
+  Mail,
   Radio,
   Rss,
   ShieldCheck,
@@ -27,10 +28,12 @@ import type { Media } from "@/payload-types";
 import { generateBreadcrumbSchema } from "@/utilities/generate-json-ld";
 import type { PublicProfile } from "@/utilities/get-lyovson-profile";
 import { getLyovsonProfile } from "@/utilities/get-lyovson-profile";
+import { buildDynamicOgImageUrl } from "@/utilities/og-image";
 import {
   aboutRoute,
   absoluteUrl,
   activitiesRoute,
+  contactRoute,
   homeRoute,
   lyovsonActivitiesRoute,
   lyovsonBioRoute,
@@ -42,7 +45,11 @@ import {
   projectsRoute,
   transitionTypes,
 } from "@/utilities/routes";
-import { buildSeoMetadata } from "@/utilities/seo-metadata";
+import {
+  buildSeoMetadata,
+  DEFAULT_OPEN_GRAPH_IMAGE_HEIGHT,
+  DEFAULT_OPEN_GRAPH_IMAGE_WIDTH,
+} from "@/utilities/seo-metadata";
 
 export const prefetch = "partial";
 
@@ -294,7 +301,15 @@ async function AboutPageContent() {
             </dl>
           </div>
 
-          <div className="border-border/60 relative z-1 flex items-center justify-between border-t pt-3">
+          <div className="border-border/60 relative z-1 flex flex-wrap items-center justify-between gap-3 border-t pt-3">
+            <AppLink
+              className="ui-meta-link ui-focus-ring type-eyebrow"
+              href={contactRoute()}
+              prefetch={false}
+            >
+              <Mail aria-hidden="true" className="h-3.5 w-3.5" />
+              <span>Contact</span>
+            </AppLink>
             <AppLink
               className="ui-meta-link ui-focus-ring type-eyebrow"
               href={privacyPolicyRoute()}
@@ -356,5 +371,15 @@ export const metadata: Metadata = {
     description:
       "About Lyóvson.com — the shared family notebook, reading ledger, and studio archive of Rafa and Jess Lyóvson.",
     canonicalPath: aboutRoute(),
+    image: {
+      url: buildDynamicOgImageUrl({
+        eyebrow: "Colophon",
+        title: "About Lyóvson.com",
+        meta: "Family Notebook & Studio Archive",
+      }),
+      width: DEFAULT_OPEN_GRAPH_IMAGE_WIDTH,
+      height: DEFAULT_OPEN_GRAPH_IMAGE_HEIGHT,
+      alt: "About Lyóvson.com",
+    },
   }),
 };

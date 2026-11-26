@@ -27,6 +27,7 @@ import {
   getLatestActivities,
 } from "@/utilities/get-activity";
 import { getLatestPosts, getPostCount } from "@/utilities/get-post";
+import { buildDynamicOgImageUrl } from "@/utilities/og-image";
 import {
   absoluteUrl,
   activitiesRoute,
@@ -38,7 +39,11 @@ import {
   postUrl,
   transitionTypes,
 } from "@/utilities/routes";
-import { buildSeoMetadata } from "@/utilities/seo-metadata";
+import {
+  buildSeoMetadata,
+  DEFAULT_OPEN_GRAPH_IMAGE_HEIGHT,
+  DEFAULT_OPEN_GRAPH_IMAGE_WIDTH,
+} from "@/utilities/seo-metadata";
 
 export const prefetch = "partial";
 
@@ -245,5 +250,15 @@ export const metadata: Metadata = {
     description:
       "A living ledger of what Rafa and Jess Lyóvson have been reading, watching, listening to, playing, and writing lately.",
     canonicalPath: nowRoute(),
+    image: {
+      url: buildDynamicOgImageUrl({
+        eyebrow: "Living Ledger",
+        title: "Now & Lately",
+        meta: "Recent reading, watching, listening, playing & writing",
+      }),
+      width: DEFAULT_OPEN_GRAPH_IMAGE_WIDTH,
+      height: DEFAULT_OPEN_GRAPH_IMAGE_HEIGHT,
+      alt: "Now & Lately",
+    },
   }),
 };

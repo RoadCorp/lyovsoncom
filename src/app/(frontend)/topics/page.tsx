@@ -9,13 +9,18 @@ import {
   generateCollectionPageSchema,
 } from "@/utilities/generate-json-ld";
 import { getTopicIndex } from "@/utilities/get-topic";
+import { buildDynamicOgImageUrl } from "@/utilities/og-image";
 import {
   absoluteUrl,
   homeRoute,
   topicRoute,
   topicsRoute,
 } from "@/utilities/routes";
-import { buildSeoMetadata } from "@/utilities/seo-metadata";
+import {
+  buildSeoMetadata,
+  DEFAULT_OPEN_GRAPH_IMAGE_HEIGHT,
+  DEFAULT_OPEN_GRAPH_IMAGE_WIDTH,
+} from "@/utilities/seo-metadata";
 
 export const prefetch = "partial";
 
@@ -84,5 +89,15 @@ export const metadata: Metadata = {
     title: "Topics",
     description: DESCRIPTION,
     canonicalPath: topicsRoute(),
+    image: {
+      url: buildDynamicOgImageUrl({
+        eyebrow: "Index",
+        title: "Topics",
+        meta: "Subjects across essays, notes, and reviews",
+      }),
+      width: DEFAULT_OPEN_GRAPH_IMAGE_WIDTH,
+      height: DEFAULT_OPEN_GRAPH_IMAGE_HEIGHT,
+      alt: "Topics",
+    },
   }),
 };

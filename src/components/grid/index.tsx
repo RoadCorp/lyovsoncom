@@ -54,7 +54,7 @@ export {
 } from "./card/hero";
 export { GridCardNav, GridCardNavItem } from "./card/nav";
 export { GridCardNotFound } from "./card/not-found";
-export { GridCardPostFull } from "./card/post";
+export { GridCardPostFull, GridCardPostLedger } from "./card/post";
 export { GridCardProject, GridCardProjectHero } from "./card/project";
 export { GridCardReferences } from "./card/references";
 export { GridCardRelatedPosts } from "./card/related";
