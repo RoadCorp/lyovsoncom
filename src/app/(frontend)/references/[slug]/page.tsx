@@ -27,6 +27,7 @@ import {
   getShownReviews,
   hubHasOwnWords,
 } from "@/utilities/get-reference";
+import { buildDynamicOgImageUrl } from "@/utilities/og-image";
 import type { LinkedReference } from "@/utilities/reference-links";
 import { getRelatedLists, makerNames } from "@/utilities/reference-links";
 import {
@@ -40,6 +41,8 @@ import {
 import {
   buildNotFoundMetadata,
   buildSeoMetadata,
+  DEFAULT_OPEN_GRAPH_IMAGE_HEIGHT,
+  DEFAULT_OPEN_GRAPH_IMAGE_WIDTH,
 } from "@/utilities/seo-metadata";
 import { frontendViewTransitionClasses } from "@/utilities/view-transitions";
 
@@ -202,15 +205,23 @@ export async function generateMetadata({
     reference.image && typeof reference.image === "object"
       ? reference.image
       : null;
+  const makers = makerNames(reference);
+  const typeLabel = REFERENCE_TYPE_LABELS[reference.type] ?? "Reference";
+  const dynamicOgUrl = buildDynamicOgImageUrl({
+    eyebrow: typeLabel,
+    title: reference.title,
+    meta:
+      [makers, reference.year ? String(reference.year) : null]
+        .filter(Boolean)
+        .join(" · ") || "Lyóvson Archive",
+  });
 
   return buildSeoMetadata({
-    title: makerNames(reference)
-      ? `${reference.title} by ${makerNames(reference)}`
-      : reference.title,
+    title: makers ? `${reference.title} by ${makers}` : reference.title,
     description: getHubDescription(reference),
     canonicalPath: referenceRoute(slug),
     modifiedTime: reference.updatedAt,
-    twitterCard: "summary",
+    twitterCard: image?.url ? "summary" : "summary_large_image",
     image: image?.url
       ? {
           url: absoluteUrl(image.url),
@@ -218,7 +229,12 @@ export async function generateMetadata({
           height: image.height || undefined,
           alt: reference.title,
         }
-      : undefined,
+      : {
+          url: dynamicOgUrl,
+          width: DEFAULT_OPEN_GRAPH_IMAGE_WIDTH,
+          height: DEFAULT_OPEN_GRAPH_IMAGE_HEIGHT,
+          alt: reference.title,
+        },
     // Catalog facts alone are thin pages; links on them still count.
     ...(hubHasOwnWords(hub) ? {} : { robots: { index: false, follow: true } }),
   });

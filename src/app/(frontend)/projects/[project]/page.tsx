@@ -28,6 +28,7 @@ import { getProjectPosts } from "@/utilities/get-project-posts";
 import { getMoreWork } from "@/utilities/get-projects";
 import { resolveHighlights } from "@/utilities/live-metrics";
 import { getLyovsonPersonInput } from "@/utilities/lyovson-person";
+import { buildDynamicOgImageUrl } from "@/utilities/og-image";
 import { getPayloadClient } from "@/utilities/payload-client";
 import {
   absoluteUrl,
@@ -281,6 +282,18 @@ export async function generateMetadata({
       : `Posts and content from the ${project.name} project`);
   const title = projectWithSeo.seo?.title || project.name;
   const seoImage = getProjectSeoImage(projectWithSeo);
+  const peopleNames = getCasePeople(project)
+    .map((person) => person.name)
+    .filter(Boolean)
+    .join(" & ");
+  const dynamicOgUrl = buildDynamicOgImageUrl({
+    eyebrow: isCaseStudy ? "Case Study" : "Project",
+    title,
+    meta:
+      [peopleNames || "Lyóvson Studio", project.role]
+        .filter(Boolean)
+        .join(" · ") || "Lyóvson Studio",
+  });
 
   return buildSeoMetadata({
     title,
@@ -297,7 +310,7 @@ export async function generateMetadata({
           alt: title,
         }
       : {
-          url: "/og-image.png",
+          url: dynamicOgUrl,
           width: DEFAULT_OPEN_GRAPH_IMAGE_WIDTH,
           height: DEFAULT_OPEN_GRAPH_IMAGE_HEIGHT,
           alt: title,

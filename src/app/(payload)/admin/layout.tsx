@@ -5,6 +5,7 @@ import { getServerSideURL } from "@/utilities/get-url";
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
   icons: [
+    { rel: "icon", type: "image/svg+xml", url: "/icon.svg" },
     { rel: "icon", type: "image/x-icon", url: "/favicon.ico" },
     {
       rel: "icon",

@@ -46,6 +46,8 @@ describe("unknown profile paths", () => {
     "/rafa",
     "/jess/posts/page/2",
     "/posts/some-post",
+    "/now",
+    "/og",
     "/admin/login",
     "/api/search",
     "/sitemap.xml",

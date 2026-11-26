@@ -1176,6 +1176,38 @@
     transition: transform var(--duration-medium) var(--ease-snappy);
   }
 
+  .nav-kbd {
+    position: absolute;
+    top: 0.45rem;
+    right: 0.45rem;
+    z-index: 2;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.15rem;
+    height: 1.15rem;
+    padding-inline: 0.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 500;
+    line-height: 1;
+    color: var(--text-3);
+    background: color-mix(in oklab, var(--surface-1) 72%, transparent);
+    border: 1px solid color-mix(in oklab, var(--ornament-line) 85%, transparent);
+    border-radius: 0.25rem;
+    opacity: 0.72;
+    transition:
+      opacity var(--duration-medium) var(--ease-standard),
+      border-color var(--duration-medium) var(--ease-standard),
+      color var(--duration-medium) var(--ease-standard);
+  }
+
+  .surface-nav-tile.ui-interactive:hover .nav-kbd,
+  .surface-nav-tile.ui-interactive:focus-visible .nav-kbd {
+    color: var(--ornament-accent);
+    border-color: color-mix(in oklab, var(--ornament-accent) 55%, transparent);
+    opacity: 1;
+  }
+
   .nav-crest {
     transition: transform var(--duration-slow) var(--ease-snappy);
   }
@@ -1376,6 +1408,22 @@
         transparent 74%
       ),
       var(--surface-well);
+  }
+
+  .activity-seal-panel--active {
+    border-color: color-mix(
+      in oklab,
+      var(--activity-tint, var(--ornament-accent)) 68%,
+      var(--line-1) 32%
+    );
+    box-shadow:
+      inset 0 0 0 1px
+      color-mix(
+        in oklab,
+        var(--activity-tint, var(--ornament-accent)) 36%,
+        transparent
+      ),
+      var(--shadow-surface);
   }
 
   .activity-seal-ring {
@@ -2046,6 +2094,48 @@
     font-size: 1.1em;
   }
 
+  .prose-heading {
+    position: relative;
+  }
+
+  .prose-heading-anchor {
+    display: inline-block;
+    margin-inline-start: 0.45rem;
+    font-family: var(--font-mono);
+    font-size: 0.72em;
+    font-weight: 500;
+    vertical-align: middle;
+    color: var(--ornament-accent);
+    text-decoration: none;
+    border-radius: 0.25rem;
+    opacity: 0;
+    transition:
+      opacity var(--duration-medium) var(--ease-standard),
+      color var(--duration-medium) var(--ease-standard);
+  }
+
+  .prose-heading:hover .prose-heading-anchor,
+  .prose-heading:focus-within .prose-heading-anchor,
+  .prose-heading-anchor:focus-visible {
+    opacity: 0.85;
+  }
+
+  .content-prose--article > p:first-of-type::first-letter {
+    float: inline-start;
+    padding: 0.32rem 0.55rem 0.24rem;
+    margin-inline-end: 0.65rem;
+    margin-top: 0.18rem;
+    font-family: var(--font-display), var(--font-serif), Georgia, serif;
+    font-size: 3.15rem;
+    font-weight: 600;
+    line-height: 0.86;
+    color: color-mix(in oklab, var(--text-1) 92%, var(--ornament-accent) 8%);
+    background: var(--surface-well);
+    border: 1px solid var(--ornament-line);
+    border-radius: calc(var(--radius) - 6px);
+    box-shadow: var(--shadow-emboss);
+  }
+
   .content-prose p,
   .content-prose li {
     color: color-mix(in oklab, var(--text-2) 92%, var(--text-1) 8%);
@@ -2631,6 +2721,13 @@
       border-inline-start: 3px solid ButtonText !important;
     }
 
+    .content-prose--article > p:first-of-type::first-letter {
+      color: CanvasText !important;
+      background: Canvas !important;
+      border-color: ButtonText !important;
+      box-shadow: none !important;
+    }
+
     .docs-link,
     .quote-block-mark,
     .quote-block-body,
@@ -2652,8 +2749,17 @@
     .site-backdrop,
     .site-backdrop::after,
     .site-spotlight,
-    .ornament-lattice {
+    .ornament-lattice,
+    .prose-heading-anchor,
+    .nav-kbd {
       display: none !important;
+    }
+
+    .content-prose--article > p:first-of-type::first-letter {
+      color: black !important;
+      background: white !important;
+      border: 1px solid black !important;
+      box-shadow: none !important;
     }
 
     .surface-card,

@@ -2,6 +2,8 @@ import { cacheLife, cacheTag } from "next/cache";
 import type { PaginatedDocs } from "payload";
 import type { Activity } from "@/payload-types";
 import { ACTIVITY_PREVIEW_LIMIT } from "@/utilities/activity-preview";
+import type { ActivityFilterType } from "@/utilities/activity-type";
+import { ACTIVITY_FILTER_TYPES } from "@/utilities/activity-type";
 import {
   lyovsonActivitiesWhere,
   publicActivitiesWhere,
@@ -175,4 +177,66 @@ export async function getActivityCount() {
     overrideAccess: false,
     where: publicActivitiesWhere(),
   });
+}
+
+export type ActivityTypeCounts = Record<ActivityFilterType, number>;
+
+export async function getActivityTypeCounts(): Promise<ActivityTypeCounts> {
+  "use cache";
+  cacheTag("activities");
+  cacheTag("activity-count");
+  cacheLife("activities");
+
+  const payload = await getPayloadClient();
+  const entries = await Promise.all(
+    ACTIVITY_FILTER_TYPES.map(async (activityType) => {
+      const result = await payload.count({
+        collection: "activities",
+        overrideAccess: false,
+        where: {
+          ...publicActivitiesWhere(),
+          activityType: {
+            equals: activityType,
+          },
+        },
+      });
+      return [activityType, result.totalDocs] as const;
+    })
+  );
+
+  return Object.fromEntries(entries) as ActivityTypeCounts;
+}
+
+export async function getActivitiesByType(
+  activityType: ActivityFilterType,
+  pageNumber = 1,
+  limit = 12
+): Promise<PaginatedDocs<Activity>> {
+  "use cache";
+  cacheTag("activities");
+  cacheTag(`activities-type-${activityType}`);
+  cacheTag(`activities-type-${activityType}-page-${pageNumber}`);
+  cacheLife("activities");
+
+  const payload = await getPayloadClient();
+  const result = await payload.find({
+    collection: "activities",
+    select: publicContentSelect,
+    depth: 2,
+    limit,
+    page: pageNumber,
+    overrideAccess: true,
+    sort: "-finishedAt",
+    where: {
+      ...publicActivitiesWhere(),
+      activityType: {
+        equals: activityType,
+      },
+    },
+  });
+
+  return {
+    ...result,
+    docs: result.docs as Activity[],
+  };
 }

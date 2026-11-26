@@ -5,4 +5,5 @@ export {
   LYOVSON_ACTIVITIES_PREVIEW_RAIL_CLASS_NAME,
 } from "./grid-card-activities-preview";
 export { GridCardActivityFull } from "./grid-card-activity-full";
+export { GridCardActivityLedger } from "./grid-card-activity-ledger";
 export { GridCardActivityReview } from "./grid-card-activity-review";

@@ -6,46 +6,11 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { revealTheme } from "@/utilities/theme-reveal";
 import { GridCardNavItem } from "./grid-card-nav-item";
+import type { ResolvedTheme } from "./theme-utils";
+import { getNextTheme, THEME_LABELS, toThemeChoice } from "./theme-utils";
 
 interface ThemeSwitcherProps {
   className?: string;
-}
-
-const THEME_ORDER = ["system", "light", "dark"] as const;
-type ThemeChoice = (typeof THEME_ORDER)[number];
-
-const THEME_LABELS: Record<ThemeChoice, string> = {
-  system: "Auto",
-  light: "Light",
-  dark: "Dark",
-};
-
-function toThemeChoice(theme: string | undefined): ThemeChoice {
-  return THEME_ORDER.includes(theme as ThemeChoice)
-    ? (theme as ThemeChoice)
-    : "system";
-}
-
-type ResolvedTheme = "dark" | "light";
-
-const opposite = (value: ResolvedTheme): ResolvedTheme =>
-  value === "dark" ? "light" : "dark";
-
-/**
- * From Auto the first press always flips what's on screen, the second flips
- * it back explicitly, and the third returns to following the device.
- */
-function getNextTheme(
-  current: ThemeChoice,
-  systemTheme: ResolvedTheme
-): ThemeChoice {
-  if (current === "system") {
-    return opposite(systemTheme);
-  }
-  if (current === opposite(systemTheme)) {
-    return systemTheme;
-  }
-  return "system";
 }
 
 // Says which mode is active, and keeps "follow the device" one press away.
@@ -76,6 +41,7 @@ export const ThemeSwitcher = ({ className }: ThemeSwitcherProps) => {
           resolvedNext: next === "system" ? resolvedSystem : next,
         })
       }
+      shortcut="T"
       variant="button"
     >
       <SunMoon aria-hidden="true" className="h-7 w-7" />

@@ -1,11 +1,12 @@
 import type { LucideIcon } from "lucide-react";
 import {
+  BookOpenText,
   BriefcaseBusiness,
+  Compass,
   FileText,
   Mail,
   Radio,
   Search,
-  ShieldCheck,
   Tags,
   UserRound,
   X,
@@ -13,14 +14,15 @@ import {
 import { ViewTransition } from "react";
 import { EternityKnot } from "@/components/ornaments";
 import {
+  aboutRoute,
   activitiesRoute,
   lyovsonActivitiesRoute,
   lyovsonBioRoute,
   lyovsonContactRoute,
   lyovsonPortfolioRoute,
   lyovsonPostsRoute,
+  nowRoute,
   postsRoute,
-  privacyPolicyRoute,
   projectsRoute,
   topicsRoute,
 } from "@/utilities/routes";
@@ -56,8 +58,6 @@ function getMenuLinks(routeContext: NavRouteContext): MenuLink[] {
     ];
   }
 
-  // About, AM and Contact stay reachable by URL but are hidden until they
-  // have real content (noindexed and left out of the sitemap too).
   return [
     {
       href: projectsRoute(),
@@ -70,9 +70,9 @@ function getMenuLinks(routeContext: NavRouteContext): MenuLink[] {
       label: "Topics",
     },
     {
-      href: privacyPolicyRoute(),
-      icon: ShieldCheck,
-      label: "Privacy",
+      href: aboutRoute(),
+      icon: BookOpenText,
+      label: "About",
     },
   ];
 }
@@ -124,13 +124,24 @@ export const MenuMode = ({
           <span>{link.label}</span>
         </GridCardNavItem>
       ))}
-      <GridCardSection
-        aria-hidden="true"
-        className="surface-nav-tile relative col-start-3 col-end-4 row-start-1 row-end-2 flex items-center justify-center"
-      >
-        <div className="ornament-lattice" />
-        <EternityKnot className="ornament-muted relative z-1" size={22} />
-      </GridCardSection>
+      {routeContext.mode === "global" ? (
+        <GridCardNavItem
+          className="surface-nav-tile col-start-3 col-end-4 row-start-1 row-end-2"
+          href={nowRoute()}
+          variant="link"
+        >
+          <Compass aria-hidden="true" className="h-7 w-7" />
+          <span>Now</span>
+        </GridCardNavItem>
+      ) : (
+        <GridCardSection
+          aria-hidden="true"
+          className="surface-nav-tile relative col-start-3 col-end-4 row-start-1 row-end-2 flex items-center justify-center"
+        >
+          <div className="ornament-lattice" />
+          <EternityKnot className="ornament-muted relative z-1" size={22} />
+        </GridCardSection>
+      )}
       {menuLinks.map((link, index) => (
         <GridCardNavItem
           className={menuClasses[index]}
@@ -146,6 +157,7 @@ export const MenuMode = ({
         className="surface-nav-tile col-start-1 col-end-2 row-start-3 row-end-4"
         id="nav-search-trigger"
         onClick={openSearch}
+        shortcut="/"
         variant="button"
       >
         <ViewTransition
@@ -167,6 +179,7 @@ export const MenuMode = ({
         <GridCardNavItem
           className="surface-nav-tile col-start-2 col-end-3 row-start-3 row-end-4"
           onClick={() => setMenuMode("hero")}
+          shortcut="M"
           variant="button"
         >
           <X aria-hidden="true" className="h-7 w-7" />

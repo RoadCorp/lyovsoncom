@@ -1,0 +1,45 @@
+<svg
+  height="64"
+  viewBox="0 0 64 64"
+  width="64"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <title>Lyóvson.com</title>
+  <rect
+    fill="#160d1c"
+    height="60"
+    rx="14"
+    stroke="#cdaa80"
+    stroke-opacity="0.32"
+    stroke-width="1.5"
+    width="60"
+    x="2"
+    y="2"
+  />
+  <path
+    d="M32 9L50 15.5V31.5C50 43.2 42.3 50.9 32 55C21.7 50.9 14 43.2 14 31.5V15.5L32 9Z"
+    fill="none"
+    stroke="#ebe3cf"
+    stroke-linejoin="round"
+    stroke-width="2.5"
+  />
+  <path
+    d="M32 13.5L46 18.6V31.3C46 40.5 40 46.8 32 50.3C24 46.8 18 40.5 18 31.3V18.6L32 13.5Z"
+    fill="none"
+    stroke="#cdaa80"
+    stroke-linejoin="round"
+    stroke-opacity="0.55"
+    stroke-width="1.15"
+  />
+  <path
+    d="M32 6.2L35.2 9.4L32 12.6L28.8 9.4Z"
+    fill="#160d1c"
+    stroke="#cdaa80"
+    stroke-width="1.4"
+  />
+  <path
+    d="M24 22H31.5V24.2H29.4V39.6H37.8C39.2 39.6 39.9 38.8 40.3 36.4H42.6L42.1 42.2H24V40H26.1V24.2H24V22Z"
+    fill="#ebe3cf"
+  />
+  <path d="M32 51.8L34.5 54.3L32 56.8L29.5 54.3Z" fill="#cdaa80" />
+</svg>

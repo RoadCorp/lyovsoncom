@@ -88,4 +88,31 @@ describe("stored rich text", () => {
     expect(html).toContain('href="https://example.com"');
     expect(html).toContain("example.com</a>");
   });
+
+  it("assigns deduplicated anchor IDs and section links to h2 and h3 headings", () => {
+    const html = renderToStaticMarkup(
+      createElement(RichText, {
+        content: {
+          root: {
+            children: [
+              {
+                type: "heading",
+                tag: "h2",
+                children: [{ type: "text", text: "Notes" }],
+              },
+              {
+                type: "heading",
+                tag: "h3",
+                children: [{ type: "text", text: "Notes" }],
+              },
+            ],
+          },
+        },
+      })
+    );
+    expect(html).toContain('id="notes"');
+    expect(html).toContain('href="#notes"');
+    expect(html).toContain('id="notes-2"');
+    expect(html).toContain('href="#notes-2"');
+  });
 });

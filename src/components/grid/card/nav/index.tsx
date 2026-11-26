@@ -2,6 +2,7 @@
 
 import type { Route } from "next";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useTheme } from "next-themes";
 import {
   addTransitionType,
   Suspense,
@@ -21,9 +22,12 @@ import {
   searchHref,
   transitionTypes,
 } from "@/utilities/routes";
+import { revealTheme } from "@/utilities/theme-reveal";
 import { HeroMode } from "./hero-mode";
 import { MenuMode } from "./menu-mode";
 import { SearchMode } from "./search-mode";
+import type { ResolvedTheme } from "./theme-utils";
+import { getNextTheme, toThemeChoice } from "./theme-utils";
 import type { ManualMenuMode, MenuModeType, NavRouteContext } from "./types";
 
 const PRIMARY_LYOVSON_SET = new Set<string>(PRIMARY_LYOVSONS);
@@ -53,6 +57,88 @@ function getBaseRoute(routeContext: NavRouteContext) {
 }
 
 const NAV_SHELL_SCROLL = false;
+
+function isEditableElement(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) {
+    return false;
+  }
+  const tagName = target.tagName.toLowerCase();
+  if (tagName === "input" || tagName === "textarea" || tagName === "select") {
+    return true;
+  }
+  if (target.isContentEditable) {
+    return true;
+  }
+  return Boolean(target.closest('[contenteditable="true"], [role="textbox"]'));
+}
+
+interface ShortcutHandlers {
+  changeMenuMode: (mode: ManualMenuMode) => void;
+  openSearch: () => void;
+  renderMode: MenuModeType;
+  setTheme: (theme: string) => void;
+  systemTheme: string | undefined;
+  theme: string | undefined;
+}
+
+function cycleThemeFromShortcut(state: ShortcutHandlers) {
+  const current = toThemeChoice(state.theme);
+  const resolvedSystem: ResolvedTheme =
+    state.systemTheme === "dark" ? "dark" : "light";
+  const next = getNextTheme(current, resolvedSystem);
+  const origin =
+    document.querySelector<HTMLElement>('nav[aria-label="Main navigation"]') ??
+    document.documentElement;
+  revealTheme({
+    apply: () => state.setTheme(next),
+    origin,
+    resolvedNext: next === "system" ? resolvedSystem : next,
+  });
+}
+
+function dispatchGlobalNavShortcut(
+  event: KeyboardEvent,
+  state: ShortcutHandlers
+) {
+  if (event.defaultPrevented || event.isComposing) {
+    return;
+  }
+
+  const key = event.key.toLowerCase();
+  const hasCommandModifier = event.metaKey || event.ctrlKey;
+
+  if (hasCommandModifier && !event.altKey && key === "k") {
+    event.preventDefault();
+    state.openSearch();
+    return;
+  }
+
+  if (
+    hasCommandModifier ||
+    event.altKey ||
+    event.shiftKey ||
+    isEditableElement(event.target)
+  ) {
+    return;
+  }
+
+  if (key === "/") {
+    event.preventDefault();
+    state.openSearch();
+    return;
+  }
+
+  if (key === "m" && state.renderMode !== "search") {
+    event.preventDefault();
+    state.changeMenuMode(state.renderMode === "menu" ? "hero" : "menu");
+    return;
+  }
+
+  if (key === "t") {
+    event.preventDefault();
+    cycleThemeFromShortcut(state);
+  }
+}
 
 export const GridCardNav = ({ className }: { className?: string }) => (
   <Suspense
@@ -97,6 +183,7 @@ function Navigation({
     setReady(true);
   }, []);
   const router = useRouter();
+  const { theme, setTheme, systemTheme } = useTheme();
   const routeContext = getNavRouteContext(pathname);
   const baseRoute = getBaseRoute(routeContext);
   const isSearchRoute =
@@ -183,6 +270,38 @@ function Navigation({
       setNavigationMode({ pathname, mode: "search" });
     });
   };
+
+  const shortcutStateRef = useRef({
+    changeMenuMode,
+    openSearch,
+    renderMode,
+    setTheme,
+    systemTheme,
+    theme,
+  });
+  shortcutStateRef.current = {
+    changeMenuMode,
+    openSearch,
+    renderMode,
+    setTheme,
+    systemTheme,
+    theme,
+  };
+
+  useEffect(() => {
+    if (!(interactive && ready)) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      dispatchGlobalNavShortcut(event, shortcutStateRef.current);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [interactive, ready]);
 
   const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

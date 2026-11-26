@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Suspense } from "react";
 import { FirstLoadEntrance } from "@/components/first-load-entrance";
 import { HistoryFade } from "@/components/history-fade";
 
@@ -24,7 +25,9 @@ export const Grid = ({
       <div className="g2:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)] g3:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)] g4:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)] g5:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)] g6:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)] g2:[grid-auto-rows:max-content] [container-type:inline-size] relative mx-auto grid min-h-screen grid-cols-[minmax(0,min(100%,var(--grid-card-1x1)))] place-items-center justify-center gap-[var(--grid-gap)] p-[var(--grid-gap)]">
         {nav}
         <main className="contents">
-          <HistoryFade />
+          <Suspense fallback={null}>
+            <HistoryFade />
+          </Suspense>
           <FirstLoadEntrance />
           <span className="sr-only" id="main-content" tabIndex={-1} />
           {children}
@@ -39,6 +42,7 @@ export {
   ACTIVITIES_PREVIEW_PAGINATION_CLASS_NAME,
   GridCardActivitiesPreview,
   GridCardActivityFull,
+  GridCardActivityLedger,
   GridCardActivityReview,
   HOME_ACTIVITIES_PREVIEW_RAIL_CLASS_NAME,
   LYOVSON_ACTIVITIES_PREVIEW_RAIL_CLASS_NAME,
@@ -55,6 +59,7 @@ export { GridCardProject, GridCardProjectHero } from "./card/project";
 export { GridCardReferences } from "./card/references";
 export { GridCardRelatedPosts } from "./card/related";
 export { GridCardSection } from "./card/section";
+export { GridCardTableOfContents } from "./card/table-of-contents";
 export { GridCardUser } from "./card/user";
 export { GridCardUserSocial } from "./card/user-social";
 export { SkeletonCard, SkeletonGrid } from "./skeleton";

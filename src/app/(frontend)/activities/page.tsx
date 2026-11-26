@@ -1,11 +1,15 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { ActivitiesArchive } from "@/components/ActivitiesArchive";
+import { GridCardActivityLedger } from "@/components/grid";
 import { JsonLd } from "@/components/json-ld";
 import { Pagination } from "@/components/Pagination";
 import { ACTIVITIES_PER_PAGE } from "@/utilities/archive";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
-import { getLatestActivities } from "@/utilities/get-activity";
+import {
+  getActivityTypeCounts,
+  getLatestActivities,
+} from "@/utilities/get-activity";
 import {
   absoluteUrl,
   activitiesPageRoute,
@@ -17,7 +21,10 @@ import { buildSeoMetadata } from "@/utilities/seo-metadata";
 export const prefetch = "partial";
 
 export default async function Page() {
-  const response = await getLatestActivities(ACTIVITIES_PER_PAGE);
+  const [response, counts] = await Promise.all([
+    getLatestActivities(ACTIVITIES_PER_PAGE),
+    getActivityTypeCounts(),
+  ]);
 
   if (!response) {
     return notFound();
@@ -43,6 +50,7 @@ export default async function Page() {
     <>
       <h1 className="sr-only">All Activities & Consumption</h1>
       <JsonLd data={collectionPageSchema} />
+      <GridCardActivityLedger counts={counts} />
       <ActivitiesArchive activities={docs} />
       {totalPages > 1 && page ? (
         <Pagination
