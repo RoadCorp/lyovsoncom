@@ -13,6 +13,7 @@ import {
   GRID_SLOTS,
   getPostRailItemClass,
 } from "./layout";
+import { ProfileSkeleton } from "./skeleton/profile-skeleton";
 
 const BREAKPOINTS: CheckedBreakpoint[] = ["g1", "g2", "g3", "g4"];
 const G2_COL_START_RE = /g2:col-start-(?<colStart>\d+)/u;
@@ -311,5 +312,13 @@ describe("GridCard rendering optimization", () => {
     );
     expect(html).toContain("--grid-internal-cols:2");
     expect(html).toContain("--grid-internal-rows:2");
+  });
+
+  it("renders ProfileSkeleton with full hero media and stage panels", () => {
+    const html = renderToStaticMarkup(<ProfileSkeleton />);
+    expect(html).toContain(GRID_SLOTS.hero);
+    expect(html).toContain(GRID_HERO_PANELS.media);
+    expect(html).toContain(GRID_HERO_PANELS.stage);
+    expect(html).not.toContain("style=");
   });
 });

@@ -1,6 +1,5 @@
-import { GRID_SLOTS } from "@/components/grid/layout";
-import { SkeletonCard } from "./skeleton-card";
+import { WideHeroSkeleton } from "./detail-skeletons";
 
 export function ProfileSkeleton() {
-  return <SkeletonCard className={GRID_SLOTS.hero} />;
+  return <WideHeroSkeleton />;
 }
