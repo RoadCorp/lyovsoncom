@@ -182,13 +182,11 @@ async function CaseStudyContent({
 async function PageContent({ params: paramsPromise }: PageProps) {
   const { project: projectSlug } = await paramsPromise;
 
-  const project = await getProject(projectSlug);
-  if (!project) {
-    return notFound();
-  }
-
-  const response = await getProjectPosts(projectSlug);
-  if (!response) {
+  const [project, response] = await Promise.all([
+    getProject(projectSlug),
+    getProjectPosts(projectSlug),
+  ]);
+  if (!(project && response)) {
     return notFound();
   }
 

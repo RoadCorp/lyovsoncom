@@ -1,17 +1,19 @@
-import {
-  SiApplemusic,
-  SiGithub,
-  SiInstagram,
-  SiSoundcloud,
-  SiSpotify,
-  SiTiktok,
-  SiX,
-  SiYoutube,
-} from "@icons-pack/react-simple-icons";
+import type { ComponentType } from "react";
 import { GridCard } from "@/components/grid/card";
 import { GridCardNavItem } from "@/components/grid/card/nav/grid-card-nav-item";
 import { LinkedInIcon } from "@/components/linked-in-icon";
 import { cn } from "@/lib/utils";
+import type { SocialIconProps } from "@/utilities/social-icons";
+import {
+  AppleMusicIcon,
+  GitHubIcon,
+  InstagramIcon,
+  SoundCloudIcon,
+  SpotifyIcon,
+  TikTokIcon,
+  XIcon,
+  YouTubeIcon,
+} from "@/utilities/social-icons";
 
 const MAX_STAGGER_INDEX = 6;
 
@@ -28,15 +30,9 @@ const GRID_POSITIONS = [
 ] as const;
 
 interface SocialLink {
-  icon: React.ComponentType<{
-    size?: number;
-    color?: string;
-    className?: string;
-  }>;
-  iconType: "simple" | "lucide";
+  icon: ComponentType<SocialIconProps>;
   name: string;
   url: string;
-  useDefaultColor?: boolean;
 }
 
 function getStaggerClass(index: number): string {
@@ -47,65 +43,47 @@ const socialLinks: SocialLink[] = [
   {
     name: "X (Twitter)",
     url: "https://x.com/rafalyovson",
-    icon: SiX,
-    useDefaultColor: false,
-    iconType: "simple",
+    icon: XIcon,
   },
   {
     name: "Instagram",
     url: "https://instagram.com/rafalyovson",
-    icon: SiInstagram,
-    useDefaultColor: false,
-    iconType: "simple",
+    icon: InstagramIcon,
   },
   {
     name: "GitHub",
     url: "https://github.com/rafalyovson",
-    icon: SiGithub,
-    useDefaultColor: false,
-    iconType: "simple",
+    icon: GitHubIcon,
   },
   {
     name: "LinkedIn",
     url: "https://linkedin.com/in/lyovson",
     icon: LinkedInIcon,
-    useDefaultColor: false,
-    iconType: "lucide",
   },
   {
     name: "YouTube",
     url: "https://youtube.com/@lyovson",
-    icon: SiYoutube,
-    useDefaultColor: false,
-    iconType: "simple",
+    icon: YouTubeIcon,
   },
   {
     name: "TikTok",
     url: "https://tiktok.com/@lyovson",
-    icon: SiTiktok,
-    useDefaultColor: false,
-    iconType: "simple",
+    icon: TikTokIcon,
   },
   {
     name: "Spotify",
     url: "https://open.spotify.com/user/lyovson",
-    icon: SiSpotify,
-    useDefaultColor: false,
-    iconType: "simple",
+    icon: SpotifyIcon,
   },
   {
     name: "Apple Music",
     url: "https://music.apple.com/profile/lyovson",
-    icon: SiApplemusic,
-    useDefaultColor: false,
-    iconType: "simple",
+    icon: AppleMusicIcon,
   },
   {
     name: "SoundCloud",
     url: "https://soundcloud.com/lyovson",
-    icon: SiSoundcloud,
-    useDefaultColor: false,
-    iconType: "simple",
+    icon: SoundCloudIcon,
   },
 ];
 
@@ -128,15 +106,7 @@ export function GridCardUserSocial({ className }: { className?: string }) {
               rel="noopener noreferrer"
               target="_blank"
             >
-              {link.iconType === "simple" ? (
-                <IconComponent
-                  className="block"
-                  color={link.useDefaultColor ? "default" : "currentColor"}
-                  size={32}
-                />
-              ) : (
-                <IconComponent className="block" size={32} />
-              )}
+              <IconComponent className="block" size={32} />
             </a>
           </GridCardNavItem>
         );

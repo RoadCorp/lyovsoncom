@@ -4,7 +4,10 @@ import type { ReactNode } from "react";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { CornerKnots, FleuronRule } from "@/components/ornaments";
 import { buildSeoMetadata } from "@/utilities/seo-metadata";
-import { getCanonicalSiteOrigin } from "@/utilities/site-config";
+import {
+  getCanonicalSiteOrigin,
+  PUBLIC_CONTACT_EMAIL,
+} from "@/utilities/site-config";
 
 export const prefetch = "partial";
 
@@ -165,12 +168,12 @@ export default async function AIDocsPage() {
         <GridCardSection className={DOCS_SECTION_CLASS_NAME}>
           <h2>Contact</h2>
           <p className="mb-4">
-            Contact hello@lyovson.com before high-volume access, licensing
+            Contact {PUBLIC_CONTACT_EMAIL} before high-volume access, licensing
             requests, or custom data access.
           </p>
           <p>
-            <ExternalLink href="mailto:hello@lyovson.com">
-              hello@lyovson.com
+            <ExternalLink href={`mailto:${PUBLIC_CONTACT_EMAIL}`}>
+              {PUBLIC_CONTACT_EMAIL}
             </ExternalLink>
           </p>
           <p className="tone-muted mt-4 text-sm">Last updated: {lastUpdated}</p>

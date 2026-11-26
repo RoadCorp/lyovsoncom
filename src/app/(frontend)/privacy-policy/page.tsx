@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { FleuronRule } from "@/components/ornaments";
 import { buildSeoMetadata } from "@/utilities/seo-metadata";
+import { PUBLIC_CONTACT_EMAIL } from "@/utilities/site-config";
 
 export const prefetch = "partial";
 
@@ -123,7 +124,9 @@ export default function PrivacyPolicy() {
             <h2>6. Contact Us</h2>
             <p>
               <strong>Email:</strong>{" "}
-              <a href="mailto:hello@lyovson.com">hello@lyovson.com</a>
+              <a href={`mailto:${PUBLIC_CONTACT_EMAIL}`}>
+                {PUBLIC_CONTACT_EMAIL}
+              </a>
             </p>
           </section>
           <FleuronRule variant="finis" />

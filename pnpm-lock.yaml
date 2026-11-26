@@ -17,9 +17,6 @@ importers:
       '@ai-sdk/openai':
         specifier: ^4.0.121
         version: 4.0.121(zod@4.6.7)
-      '@icons-pack/react-simple-icons':
-        specifier: ^13.15.1
-        version: 13.15.1(react@19.3.1)
       '@payloadcms/db-vercel-postgres':
         specifier: 4.0.0-beta.10
         version: 4.0.0-beta.10(@opentelemetry/api@1.9.0)(@types/pg@8.16.0)(payload@4.0.0-beta.10(bufferutil@4.1.0)(graphql@16.15.0)(typescript@7.0.2)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
@@ -781,11 +778,6 @@ packages:
 
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
-
-  '@icons-pack/react-simple-icons@13.15.1':
-    resolution: {integrity: sha512-S35E7vJlJzMeoqjwwI7ZmQUJ2W+2KspnB6bc49KdoDGwp5mCgAy9L3sscfWMewQSMgBdPU8KWWwpSGq5DJyAFw==}
-    peerDependencies:
-      react: ^16.13 || ^17 || ^18 || ^19
 
   '@img/colour@1.1.0':
     resolution: {integrity: sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==}
@@ -5051,10 +5043,6 @@ snapshots:
       tabbable: 6.5.0
 
   '@floating-ui/utils@0.2.12': {}
-
-  '@icons-pack/react-simple-icons@13.15.1(react@19.3.1)':
-    dependencies:
-      react: 19.3.1
 
   '@img/colour@1.1.0': {}
 

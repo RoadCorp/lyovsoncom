@@ -24,7 +24,6 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^4.0.121",
-    "@icons-pack/react-simple-icons": "^13.15.1",
     "@payloadcms/db-vercel-postgres": "4.0.0-beta.10",
     "@payloadcms/email-resend": "4.0.0-beta.10",
     "@payloadcms/next": "4.0.0-beta.10",

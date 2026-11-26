@@ -87,6 +87,8 @@ function readRelativeFile(file) {
 const pageFactories = {
   "create-paginated-archive-page":
     "src/utilities/create-paginated-archive-page.tsx",
+  "create-filtered-archive-page":
+    "src/utilities/create-filtered-archive-page.tsx",
   "create-lyovson-feed-page":
     "src/app/(frontend)/[lyovson]/_utilities/create-lyovson-feed-page.tsx",
   "create-entity-archive-page": "src/utilities/create-entity-archive-page.tsx",
@@ -139,7 +141,8 @@ async function checkMetadataWiring() {
         continue;
       }
 
-      const source = await readFile(file, "utf8");
+      const relativeFile = path.relative(ROOT, file);
+      const source = await readPageSource(relativeFile);
 
       if (!hasMetadataExport(source)) {
         continue;
@@ -147,7 +150,7 @@ async function checkMetadataWiring() {
 
       if (!metadataHelperMarkers.some((marker) => source.includes(marker))) {
         issues.push(
-          `Missing shared metadata helper or metadataBase in: ${path.relative(ROOT, file)}`
+          `Missing shared metadata helper or metadataBase in: ${relativeFile}`
         );
       }
     }

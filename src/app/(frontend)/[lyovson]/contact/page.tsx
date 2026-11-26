@@ -6,6 +6,7 @@ import { GridCard, GridCardSection } from "@/components/grid";
 import { CornerKnots, FleuronRule } from "@/components/ornaments";
 import { PublicPageBoundary } from "@/components/public-page-boundary";
 import { getLyovsonProfile } from "@/utilities/get-lyovson-profile";
+import { PUBLIC_CONTACT_EMAIL } from "@/utilities/site-config";
 import { SOCIAL_ICON_MAP } from "@/utilities/social-icons";
 import {
   buildLyovsonMetadata,
@@ -18,7 +19,6 @@ interface PageProps {
   params: Promise<{ lyovson: string }>;
 }
 
-const PUBLIC_EMAIL = "hello@lyovson.com";
 const MAX_CONTACT_LINKS = 3;
 
 async function PageContent({ params }: PageProps) {
@@ -54,10 +54,10 @@ async function PageContent({ params }: PageProps) {
             <li>
               <Link
                 className="ui-inline-action ui-focus-ring ui-interactive text-sm"
-                href={`mailto:${PUBLIC_EMAIL}`}
+                href={`mailto:${PUBLIC_CONTACT_EMAIL}`}
               >
                 <Mail aria-hidden="true" className="h-5 w-5" />
-                <span>{PUBLIC_EMAIL}</span>
+                <span>{PUBLIC_CONTACT_EMAIL}</span>
               </Link>
             </li>
 

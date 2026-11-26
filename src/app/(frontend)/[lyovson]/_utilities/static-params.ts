@@ -47,31 +47,28 @@ export async function getLyovsonPaginatedStaticParams(filter: LyovsonFilter) {
   cacheLife("static");
 
   const lyovsons = await getLyovsonStaticParams();
-  const params: { lyovson: string; pageNumber: string }[] = [];
-
-  for (const { lyovson } of lyovsons) {
-    if (lyovson === PLACEHOLDER_LYOVSON) {
-      continue;
-    }
-
-    const counts = await getLyovsonFeedCounts(lyovson);
+  const activeLyovsons = lyovsons.filter(
+    ({ lyovson }) => lyovson !== PLACEHOLDER_LYOVSON
+  );
+  const countResults = await Promise.all(
+    activeLyovsons.map(async ({ lyovson }) => ({
+      counts: await getLyovsonFeedCounts(lyovson),
+      lyovson,
+    }))
+  );
+  const params = countResults.flatMap(({ counts, lyovson }) => {
     const totalItems =
       filter === "all" ? (counts?.all ?? 0) : (counts?.[filter] ?? 0);
 
-    for (const pageNumber of getPaginatedStaticParams(
-      totalItems,
-      LYOVSON_ITEMS_PER_PAGE
-    )) {
-      params.push({
+    return getPaginatedStaticParams(totalItems, LYOVSON_ITEMS_PER_PAGE).map(
+      (pageNumber) => ({
         lyovson,
         pageNumber,
-      });
-    }
-  }
+      })
+    );
+  });
 
-  const fallbackLyovson = lyovsons.find(
-    ({ lyovson }) => lyovson !== PLACEHOLDER_LYOVSON
-  );
+  const fallbackLyovson = activeLyovsons[0];
 
   return ensureStaticParams(params, {
     lyovson: fallbackLyovson?.lyovson || PLACEHOLDER_LYOVSON,
