@@ -48,11 +48,8 @@ export default async function TopicsPage() {
     <>
       <JsonLd data={collectionPageSchema} />
       <JsonLd data={breadcrumbSchema} />
-      <GridCard
-        className="g2:col-start-2 g3:col-start-2 g2:col-end-3 g3:col-end-4 g2:row-start-1 g3:w-[var(--grid-card-2x1)] aspect-auto h-auto self-start"
-        interactive={false}
-      >
-        <GridCardSection className="col-span-3 row-span-3 flex flex-col gap-5 p-6">
+      <GridCard interactive={false} slot="wideTop" variant="content">
+        <GridCardSection className="flex flex-col gap-5 p-6">
           <CornerKnots inset="sm" variant="triquetra" />
           <div className="relative z-1 space-y-2">
             <h1 className="tone-heading text-3xl font-bold">Topics</h1>

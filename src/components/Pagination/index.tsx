@@ -141,94 +141,94 @@ export function Pagination({
       share="vt-anchor"
       update="vt-anchor"
     >
-      <div className={cn("mx-auto flex justify-center", className)}>
-        <GridCard aria-label="Pagination" as="nav" interactive={false}>
-          {gridCells.map((cell, index) => {
-            const isNumeric = typeof cell.label === "number";
-            const positionClass = cellPositions[index];
+      <GridCard
+        aria-label="Pagination"
+        as="nav"
+        className={cn("w-[var(--grid-card-1x1)]", className)}
+        interactive={false}
+      >
+        {gridCells.map((cell, index) => {
+          const isNumeric = typeof cell.label === "number";
+          const positionClass = cellPositions[index];
 
-            if (!cell.label) {
-              return (
-                <GridCardSection
-                  aria-hidden="true"
-                  className={cn(
-                    positionClass,
-                    "relative flex items-center justify-center"
-                  )}
-                  key={cell.key}
-                >
-                  <div className="ornament-lattice" />
-                  <ApexLozenge
-                    className="ornament-muted relative z-1"
-                    size={10}
-                  />
-                </GridCardSection>
-              );
-            }
-
+          if (!cell.label) {
             return (
               <GridCardSection
+                aria-hidden="true"
                 className={cn(
                   positionClass,
-                  "group relative flex h-full w-full items-center justify-center text-lg",
-                  isNumeric && "font-semibold",
-                  cell.disabled && !cell.isCurrent && "opacity-45"
+                  "relative flex items-center justify-center"
                 )}
                 key={cell.key}
               >
-                {cell.isCurrent ? (
-                  <ViewTransition
-                    default="none"
-                    name={getArchiveCardTransitionName(
-                      "pagination-active",
-                      getPageHref(1)
-                    )}
-                    share="vt-control"
-                    update="vt-control"
-                  >
-                    <span
-                      aria-current="page"
-                      className="surface-emphasis pointer-events-none absolute inset-0 flex items-center justify-center rounded-[inherit]"
-                    >
-                      <CornerKnots
-                        className="ornament-accent"
-                        variant="ticks"
-                      />
-                      {cell.label}
-                    </span>
-                  </ViewTransition>
-                ) : null}
-                {!cell.isCurrent &&
-                  (cell.disabled ? (
-                    renderDisabledCell(cell)
-                  ) : (
-                    <>
-                      <CornerKnots
-                        className="ornament-corner--hover"
-                        variant="ticks"
-                      />
-                      <AppLink
-                        aria-label={cell.ariaLabel}
-                        className="relative flex h-full w-full items-center justify-center"
-                        href={getPageHref(cell.target)}
-                        pendingHintClassName="absolute top-2 left-1/2 -translate-x-1/2"
-                        prefetch={null}
-                        showPendingHint
-                        transitionTypes={[
-                          cell.target < page
-                            ? transitionTypes.paginationPrev
-                            : transitionTypes.paginationNext,
-                        ]}
-                      >
-                        {cell.label}
-                      </AppLink>
-                    </>
-                  ))}
+                <div className="ornament-lattice" />
+                <ApexLozenge
+                  className="ornament-muted relative z-1"
+                  size={10}
+                />
               </GridCardSection>
             );
-          })}
-        </GridCard>
-      </div>
+          }
+
+          return (
+            <GridCardSection
+              className={cn(
+                positionClass,
+                "group relative flex h-full w-full items-center justify-center text-lg",
+                isNumeric && "font-semibold",
+                cell.disabled && !cell.isCurrent && "opacity-45"
+              )}
+              key={cell.key}
+            >
+              {cell.isCurrent ? (
+                <ViewTransition
+                  default="none"
+                  name={getArchiveCardTransitionName(
+                    "pagination-active",
+                    getPageHref(1)
+                  )}
+                  share="vt-control"
+                  update="vt-control"
+                >
+                  <span
+                    aria-current="page"
+                    className="surface-emphasis pointer-events-none absolute inset-0 flex items-center justify-center rounded-[inherit]"
+                  >
+                    <CornerKnots className="ornament-accent" variant="ticks" />
+                    {cell.label}
+                  </span>
+                </ViewTransition>
+              ) : null}
+              {!cell.isCurrent &&
+                (cell.disabled ? (
+                  renderDisabledCell(cell)
+                ) : (
+                  <>
+                    <CornerKnots
+                      className="ornament-corner--hover"
+                      variant="ticks"
+                    />
+                    <AppLink
+                      aria-label={cell.ariaLabel}
+                      className="relative flex h-full w-full items-center justify-center"
+                      href={getPageHref(cell.target)}
+                      pendingHintClassName="absolute top-2 left-1/2 -translate-x-1/2"
+                      prefetch={null}
+                      showPendingHint
+                      transitionTypes={[
+                        cell.target < page
+                          ? transitionTypes.paginationPrev
+                          : transitionTypes.paginationNext,
+                      ]}
+                    >
+                      {cell.label}
+                    </AppLink>
+                  </>
+                ))}
+            </GridCardSection>
+          );
+        })}
+      </GridCard>
     </ViewTransition>
   );
 }

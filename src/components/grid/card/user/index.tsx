@@ -3,6 +3,7 @@ import { ViewTransition } from "react";
 import { GridCard } from "@/components/grid/card";
 import { GridCardNavItem } from "@/components/grid/card/nav/grid-card-nav-item";
 import { GridCardSection } from "@/components/grid/card/section";
+import { GRID_HERO_PANELS } from "@/components/grid/layout";
 import { CornerKnots, FleuronRule } from "@/components/ornaments";
 import { cn } from "@/lib/utils";
 import type { Media } from "@/payload-types";
@@ -53,21 +54,8 @@ export const GridCardUser = ({ user, className }: Props) => {
       share="vt-anchor"
       update="vt-anchor"
     >
-      <GridCard
-        className={cn(
-          "col-start-1 col-end-2 row-start-2 row-end-4 h-[var(--grid-card-1x2)] w-[var(--grid-card-1x1)] [--grid-internal-rows:6]",
-          "g2:col-start-2 g2:col-end-3 g2:row-start-1 g2:row-end-3",
-          "g3:col-start-2 g3:col-end-4 g3:row-start-1 g3:row-end-2 g3:h-[var(--grid-card-1x1)] g3:w-[var(--grid-card-2x1)] g3:[--grid-internal-cols:6] g3:[--grid-internal-rows:3]",
-          "self-start",
-          className
-        )}
-      >
-        <GridCardSection
-          className={cn(
-            "col-start-1 col-end-4 row-start-1 row-end-4",
-            "g3:col-start-1 g3:col-end-4 g3:row-start-1 g3:row-end-4"
-          )}
-        >
+      <GridCard className={className} slot="hero">
+        <GridCardSection className={GRID_HERO_PANELS.media}>
           <Image
             alt={avatarData.alt}
             className="h-full w-full rounded-md object-cover"

@@ -7,6 +7,7 @@ import {
 import { ViewTransition } from "react";
 import { GridCard } from "@/components/grid/card";
 import { GridCardSection } from "@/components/grid/card/section";
+import { GRID_HERO_PANELS } from "@/components/grid/layout";
 import { IntentLink } from "@/components/intent-link";
 import { Media } from "@/components/Media";
 import {
@@ -212,22 +213,9 @@ export const GridCardProjectHero = ({
       {...frontendViewTransitionClasses.anchor}
       enter="vt-enter"
     >
-      <GridCard
-        className={[
-          "col-start-1 col-end-2 row-start-2 row-end-4 h-[var(--grid-card-1x2)] w-[var(--grid-card-1x1)] [--grid-internal-rows:6]",
-          "g2:col-start-2 g2:col-end-3 g2:row-start-1 g2:row-end-3",
-          "g3:col-start-2 g3:col-end-4 g3:row-start-1 g3:row-end-2 g3:h-[var(--grid-card-1x1)] g3:w-[var(--grid-card-2x1)] g3:[--grid-internal-cols:6] g3:[--grid-internal-rows:3]",
-          "self-start",
-          className,
-        ]
-          .filter(Boolean)
-          .join(" ")}
-      >
+      <GridCard className={className} slot="hero">
         {image && typeof image !== "string" ? (
-          <GridCardSection
-            className="g3:col-start-1 g3:col-end-4 g3:row-start-1 g3:row-end-4 col-start-1 col-end-4 row-start-1 row-end-4"
-            flush={true}
-          >
+          <GridCardSection className={GRID_HERO_PANELS.media} flush={true}>
             <ViewTransition
               name={getProjectMediaTransitionName(slug)}
               {...frontendViewTransitionClasses.sharedMedia}
@@ -243,15 +231,14 @@ export const GridCardProjectHero = ({
             </ViewTransition>
           </GridCardSection>
         ) : (
-          <GridCardSection
-            className="g3:col-start-1 g3:col-end-4 g3:row-start-1 g3:row-end-4 col-start-1 col-end-4 row-start-1 row-end-4"
-            flush={true}
-          >
+          <GridCardSection className={GRID_HERO_PANELS.media} flush={true}>
             <MediaFallback icon={BriefcaseBusiness} label="Project" />
           </GridCardSection>
         )}
 
-        <GridCardSection className="surface-title-stage g3:col-start-4 g3:col-end-7 g3:row-start-1 g3:row-end-4 col-start-1 col-end-4 row-start-4 row-end-7">
+        <GridCardSection
+          className={`surface-title-stage ${GRID_HERO_PANELS.stage}`}
+        >
           <BraidedFrieze />
           <CornerKnots
             className="ornament-corner--subtle"

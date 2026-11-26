@@ -1,22 +1,14 @@
 import type { Metadata } from "next";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { FleuronRule } from "@/components/ornaments";
-import { cn } from "@/lib/utils";
 import { buildSeoMetadata } from "@/utilities/seo-metadata";
 
 export const prefetch = "partial";
 
 export default function PrivacyPolicy() {
   return (
-    <GridCard
-      className={cn(
-        "g2:col-start-2 g2:col-end-3 g2:row-start-1 self-start",
-        "g3:col-start-2 g3:col-end-4 g3:w-[var(--grid-card-2x1)]",
-        "aspect-auto h-auto"
-      )}
-      interactive={false}
-    >
-      <GridCardSection className="col-span-3 row-span-3 p-6">
+    <GridCard interactive={false} slot="wideTop" variant="content">
+      <GridCardSection className="p-6">
         <article className="docs-shell content-prose">
           <h1>Privacy Policy for Lyóvson.com</h1>
 

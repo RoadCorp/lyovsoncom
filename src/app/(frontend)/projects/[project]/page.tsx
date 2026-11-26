@@ -2,7 +2,7 @@ import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { CollectionArchive } from "@/components/CollectionArchive";
-import { GridCardProjectHero } from "@/components/grid";
+import { GRID_SLOTS, GridCardProjectHero } from "@/components/grid";
 import {
   GridCardProjectFacts,
   GridCardProjectHighlights,
@@ -14,7 +14,6 @@ import {
 import { JsonLd } from "@/components/json-ld";
 import { Pagination } from "@/components/Pagination";
 import { PublicPageBoundary } from "@/components/public-page-boundary";
-import { cn } from "@/lib/utils";
 import type { Lyovson, Media, Project } from "@/payload-types";
 import { publishedProjectsWhere } from "@/utilities/content-queries";
 import { ensureStaticParams } from "@/utilities/ensure-static-params";
@@ -141,31 +140,24 @@ async function CaseStudyContent({
       <GridCardProjectHero project={project} />
 
       <ProjectCaseStudy
-        className={cn(
-          "g2:col-start-2 g2:col-end-3 g2:row-auto g2:row-start-3",
-          "g3:col-end-4 g3:row-start-2 g3:w-[var(--grid-card-2x1)]"
-        )}
+        className={GRID_SLOTS.caseStudyBody}
         sections={sections}
       />
 
       {hasGallery ? (
         <ProjectGallery
-          className={cn(
-            "col-start-1 col-end-2 row-start-5",
-            "g2:col-start-2 g2:col-end-3 g2:row-start-4",
-            "g3:col-end-4 g3:row-start-3 g3:w-[var(--grid-card-2x1)]"
-          )}
+          className={GRID_SLOTS.caseStudyGallery}
           items={gallery}
         />
       ) : null}
 
       <aside
         aria-label={`About ${project.name}`}
-        className={cn(
-          "col-start-1 col-end-2 grid auto-rows-max gap-4 self-start",
-          hasGallery ? "row-start-6 row-end-7" : "row-start-5 row-end-6",
-          "g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-5"
-        )}
+        className={
+          hasGallery
+            ? GRID_SLOTS.caseStudyRail
+            : GRID_SLOTS.caseStudyRailNoGallery
+        }
       >
         <GridCardProjectFacts project={project} />
         <GridCardProjectStack stack={project.stack ?? []} />

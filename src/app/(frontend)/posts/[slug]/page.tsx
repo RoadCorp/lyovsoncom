@@ -3,12 +3,14 @@ import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import {
+  GRID_SLOTS,
   GridCard,
   GridCardHero,
   GridCardReferences,
   GridCardRelatedPosts,
   GridCardSection,
   GridCardTableOfContents,
+  getPostRailItemClass,
 } from "@/components/grid";
 import { JsonLd } from "@/components/json-ld";
 import { OptionalErrorBoundary } from "@/components/optional-error-boundary";
@@ -137,19 +139,6 @@ function getPostOtherMetadata(post: Post, keywords: string[] | undefined) {
   };
 }
 
-function getRelatedPostsGridClass(
-  hasContents: boolean,
-  hasReferences: boolean
-) {
-  if (hasContents && hasReferences) {
-    return "g2:col-start-2 g2:col-end-3 g2:row-start-4";
-  }
-  if (hasContents || hasReferences) {
-    return "g2:col-start-1 g2:col-end-2 g2:row-start-4";
-  }
-  return "g2:col-start-1 g2:col-end-2 g2:row-start-2";
-}
-
 async function PostPageContent({ params: paramsPromise }: Args) {
   const { slug } = await paramsPromise;
 
@@ -172,10 +161,7 @@ async function PostPageContent({ params: paramsPromise }: Args) {
   const hasContents = headings.length >= 3;
   const isArticle = (post.type || "article") === "article";
   const canonicalUrl = absoluteUrl(postRoute(slug));
-  const relatedPostsGridClass = getRelatedPostsGridClass(
-    hasContents,
-    hasReferences
-  );
+  const railFlags = { hasContents, hasReferences };
 
   const articleSchema = generateArticleSchema({
     title: post.seo?.title || post.title,
@@ -212,15 +198,12 @@ async function PostPageContent({ params: paramsPromise }: Args) {
       <GridCardHero post={post} />
       <PostTransitionBoundary variant="body">
         <GridCard
-          className={cn(
-            "g2:col-start-1 g2:col-end-3 g2:row-auto g2:row-start-3 g2:w-[var(--grid-card-2x1)]",
-            "g3:col-start-2 g3:col-end-4 g3:row-start-2",
-            "aspect-auto h-auto"
-          )}
           id="post-article-body"
           interactive={false}
+          slot="bodyBelowHero"
+          variant="content"
         >
-          <GridCardSection className="[container-type:inline-size] col-span-3 row-span-3 p-6">
+          <GridCardSection className="[container-type:inline-size] p-6">
             <RichText
               className={cn(
                 "g2:text-[1.125rem] h-full",
@@ -238,16 +221,10 @@ async function PostPageContent({ params: paramsPromise }: Args) {
 
       {/* With two columns the body spans both, so the rail splits: the first
           rail card fills the slot under the menu and the rest follow the body. */}
-      <aside
-        className={cn(
-          "col-start-1 col-end-2 row-start-6 row-end-7 grid auto-rows-max gap-4 self-start",
-          "g2:contents",
-          "g3:col-start-1 g3:col-end-2 g3:row-start-2 g3:row-end-5 g3:grid"
-        )}
-      >
+      <aside className={GRID_SLOTS.postRail}>
         {hasContents ? (
           <PostTransitionBoundary variant="rail">
-            <div className="g3:col-auto g2:col-start-1 g2:col-end-2 g3:row-auto g2:row-start-2 g2:self-start w-full">
+            <div className={getPostRailItemClass("contents", railFlags)}>
               <GridCardTableOfContents headings={headings} />
             </div>
           </PostTransitionBoundary>
@@ -255,24 +232,14 @@ async function PostPageContent({ params: paramsPromise }: Args) {
 
         {hasReferences ? (
           <PostTransitionBoundary variant="rail">
-            <div
-              className={cn(
-                "g3:col-auto g2:col-start-1 g2:col-end-2 g3:row-auto g2:self-start",
-                hasContents ? "g2:row-start-4" : "g2:row-start-2"
-              )}
-            >
+            <div className={getPostRailItemClass("references", railFlags)}>
               <GridCardReferences references={post.references ?? []} />
             </div>
           </PostTransitionBoundary>
         ) : null}
 
         <PostTransitionBoundary variant="rail">
-          <div
-            className={cn(
-              "g3:col-auto g3:row-auto g2:self-start",
-              relatedPostsGridClass
-            )}
-          >
+          <div className={getPostRailItemClass("related", railFlags)}>
             <OptionalErrorBoundary title="Unable to load recommended posts.">
               <Suspense
                 fallback={

@@ -1,22 +1,16 @@
 import { GridCard } from "@/components/grid/card";
 import { GridCardSection } from "@/components/grid/card/section";
+import type { GridSlot } from "@/components/grid/layout";
+import { GRID_HERO_PANELS } from "@/components/grid/layout";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 /*
  * Destination-shaped fallbacks for detail routes. Each one mirrors the
- * placement of the page it stands in for, and the route's loading.tsx and
- * its PublicPageBoundary render the same one, so nothing jumps when the
- * route fallback hands over to the page's own fallback.
+ * placement of the page it stands in for via shared `GRID_SLOTS`, and the
+ * route's loading.tsx and its PublicPageBoundary render the same one, so
+ * nothing jumps when the route fallback hands over to the page's own fallback.
  */
-
-// GridCardHero and GridCardHeroReference share this 2×1 placement.
-const WIDE_HERO_PLACEMENT = cn(
-  "col-start-1 col-end-2 row-start-2 row-end-4 h-[var(--grid-card-1x2)] w-[var(--grid-card-1x1)] [--grid-internal-rows:6]",
-  "g2:col-start-2 g2:col-end-3 g2:row-start-1 g2:row-end-3",
-  "g3:col-start-2 g3:col-end-4 g3:row-start-1 g3:row-end-2 g3:h-[var(--grid-card-1x1)] g3:w-[var(--grid-card-2x1)] g3:[--grid-internal-cols:6] g3:[--grid-internal-rows:3]",
-  "g4:self-start"
-);
 
 const PROSE_LINE_WIDTHS = [
   "w-full",
@@ -45,14 +39,16 @@ function TitleLines() {
 
 function WideHeroSkeleton() {
   return (
-    <GridCard className={cn("surface-card-loading", WIDE_HERO_PLACEMENT)}>
-      <GridCardSection
-        className="g3:col-start-1 g3:col-end-4 g3:row-start-1 g3:row-end-4 col-start-1 col-end-4 row-start-1 row-end-4"
-        flush={true}
-      >
+    <GridCard className="surface-card-loading" slot="hero">
+      <GridCardSection className={GRID_HERO_PANELS.media} flush={true}>
         <Skeleton className="surface-chip h-full w-full" />
       </GridCardSection>
-      <GridCardSection className="surface-title-stage g3:col-start-4 g3:col-end-7 g3:row-start-1 g3:row-end-4 col-start-1 col-end-4 row-start-4 row-end-7 flex flex-col items-center justify-center gap-3 px-6">
+      <GridCardSection
+        className={cn(
+          "surface-title-stage flex flex-col items-center justify-center gap-3 px-6",
+          GRID_HERO_PANELS.stage
+        )}
+      >
         <TitleLines />
         <div className="mt-2 flex w-full flex-col gap-2">
           <ProseLines count={3} />
@@ -62,16 +58,21 @@ function WideHeroSkeleton() {
   );
 }
 
-function BodySkeleton({ className }: { className: string }) {
+function BodySkeleton({
+  className,
+  slot,
+}: {
+  className?: string;
+  slot?: GridSlot;
+}) {
   return (
     <GridCard
-      className={cn(
-        "surface-card-loading aspect-auto h-[var(--grid-card-1x1)]",
-        className
-      )}
+      className={cn("surface-card-loading h-[var(--grid-card-1x1)]", className)}
       interactive={false}
+      slot={slot}
+      variant="content"
     >
-      <GridCardSection className="col-span-3 row-span-3 flex flex-col gap-3 p-6">
+      <GridCardSection className="flex flex-col gap-3 p-6">
         <ProseLines />
         <div className="h-2" />
         <ProseLines count={4} />
@@ -105,9 +106,9 @@ function RailCells() {
 }
 
 /** A 1×1 card with a title well and a three-cell rail. */
-function SquareCardSkeleton({ className }: { className: string }) {
+function SquareCardSkeleton({ slot }: { slot: GridSlot }) {
   return (
-    <GridCard className={cn("surface-card-loading", className)}>
+    <GridCard className="surface-card-loading" slot={slot}>
       <GridCardSection className="surface-title-stage col-start-1 col-end-4 row-start-1 row-end-3 flex flex-col items-center justify-center gap-3 px-6">
         <TitleLines />
       </GridCardSection>
@@ -120,7 +121,7 @@ export function PostDetailSkeleton() {
   return (
     <>
       <WideHeroSkeleton />
-      <BodySkeleton className="g2:col-start-1 g3:col-start-2 g2:col-end-3 g3:col-end-4 g2:row-auto g2:row-start-3 g3:row-start-2 g2:w-[var(--grid-card-2x1)]" />
+      <BodySkeleton slot="bodyBelowHero" />
     </>
   );
 }
@@ -129,7 +130,7 @@ export function ReferenceDetailSkeleton() {
   return (
     <>
       <WideHeroSkeleton />
-      <SquareCardSkeleton className="g2:col-start-1 g3:col-start-1 g4:col-start-4 g2:col-end-2 g3:col-end-2 g4:col-end-5 g2:row-start-2 g3:row-start-2 g4:row-start-1 g2:row-end-3 g3:row-end-3 g4:row-end-2 col-start-1 col-end-2 row-start-4 row-end-5" />
+      <SquareCardSkeleton slot="referenceFirstEntry" />
       <BodySkeleton className="g2:col-start-2 g3:col-start-2 g2:col-end-3 g3:col-end-3 col-start-1 col-end-2" />
     </>
   );

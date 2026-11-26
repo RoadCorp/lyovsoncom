@@ -35,10 +35,7 @@ async function PageContent({ params }: PageProps) {
     <>
       <h1 className="sr-only">{user.name} contact</h1>
 
-      <GridCard
-        className="g2:col-start-2 g3:col-start-2 g2:col-end-3 g3:col-end-3 g2:row-start-3 g3:row-start-2 g2:row-end-4 g3:row-end-3"
-        interactive={false}
-      >
+      <GridCard interactive={false} slot="cardBelowHero">
         <GridCardSection className="col-span-3 row-span-1 flex items-center justify-center p-5">
           <CornerKnots inset="sm" variant="triquetra" />
           <div className="relative z-1 flex flex-col items-center gap-1.5 text-center">

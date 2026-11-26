@@ -4,6 +4,7 @@ import { ViewTransition } from "react";
 import { REFERENCE_TYPE_LABELS } from "@/collections/References/fields/type";
 import { ArchiveItems, toArchiveItems } from "@/components/archive-items";
 import {
+  GRID_SLOTS,
   GridCardActivityReview,
   GridCardHeroReference,
   GridCardReferences,
@@ -53,11 +54,6 @@ interface Args {
     slug: string;
   }>;
 }
-
-// The first entry sits where the old activity page's info card did: beside
-// the hero on tablet and desktop, under it on phones.
-const FIRST_ENTRY_PLACEMENT =
-  "col-start-1 col-end-2 row-start-4 row-end-5 g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-3 g3:col-start-1 g3:col-end-2 g3:row-start-2 g3:row-end-3 g4:col-start-4 g4:col-end-5 g4:row-start-1 g4:row-end-2";
 
 /** "Book by Jim Butcher, 2000." */
 function describeReference(reference: Reference) {
@@ -116,7 +112,7 @@ async function ReferencePageContent({ params: paramsPromise }: Args) {
       {activities.map((activity, index) => (
         <ActivityWithReviews
           activity={activity}
-          className={index === 0 ? FIRST_ENTRY_PLACEMENT : undefined}
+          className={index === 0 ? GRID_SLOTS.referenceFirstEntry : undefined}
           key={activity.id}
         />
       ))}
