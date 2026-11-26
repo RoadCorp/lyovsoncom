@@ -1,7 +1,6 @@
-import configPromise from "@payload-config";
 import { cacheLife, cacheTag } from "next/cache";
-import { getPayload } from "payload";
 import type { Activity, Lyovson, Post, Project, Topic } from "@/payload-types";
+import { getPayloadClient } from "@/utilities/payload-client";
 
 export async function getSitemapData() {
   "use cache";
@@ -13,7 +12,7 @@ export async function getSitemapData() {
   cacheTag("lyovsons");
   cacheLife("sitemap");
 
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
 
   const [posts, projects, topics, activities, lyovsons] = await Promise.all([
     payload.find({
@@ -44,6 +43,7 @@ export async function getSitemapData() {
     }),
     payload.find({
       collection: "topics",
+      depth: 0,
       overrideAccess: false,
       pagination: false,
       select: {
@@ -54,6 +54,7 @@ export async function getSitemapData() {
     }),
     payload.find({
       collection: "activities",
+      depth: 0,
       overrideAccess: false,
       pagination: false,
       where: {
@@ -70,6 +71,7 @@ export async function getSitemapData() {
     }),
     payload.find({
       collection: "lyovsons",
+      depth: 0,
       overrideAccess: true,
       pagination: false,
       select: {

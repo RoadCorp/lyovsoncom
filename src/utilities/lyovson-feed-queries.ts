@@ -1,5 +1,6 @@
 import type { PaginatedDocs } from "payload";
 import type { Activity } from "@/payload-types";
+import { activitySummarySelect } from "@/utilities/activity-summary";
 import {
   lyovsonActivitiesWhere,
   lyovsonPostsWhere,
@@ -7,7 +8,6 @@ import {
 import { getPayloadClient } from "@/utilities/payload-client";
 import type { PostSummary } from "@/utilities/post-summary";
 import { postSummarySelect } from "@/utilities/post-summary";
-import { publicContentSelect } from "@/utilities/public-content-select";
 
 /*
  * Profile content queries. Without a page they read the newest `limit`
@@ -42,7 +42,7 @@ export async function findLyovsonActivities(
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "activities",
-    select: publicContentSelect,
+    select: activitySummarySelect,
     depth: 2,
     limit,
     page,

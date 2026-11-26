@@ -3,8 +3,6 @@ import type { NextConfig } from "next";
 import redirects from "./redirects.js";
 import { getRuntimeSiteOrigin } from "./src/utilities/site-config";
 
-// Webpack optimization regexes
-
 // Image quality presets for Next.js Image Optimization
 // 75 is the next/image default; cards request 80.
 const IMAGE_QUALITIES: number[] = [75, 80];
@@ -32,6 +30,7 @@ const nextConfig: NextConfig = {
   // AGENTS.md is maintained by hand; stop `next dev` from rewriting it.
   agentRules: false,
   cacheComponents: true,
+  partialPrefetching: true,
   typedRoutes: true,
   images: {
     remotePatterns: [
@@ -238,6 +237,8 @@ const nextConfig: NextConfig = {
     // Needed when using multiple root layouts so unmatched routes don't fall back
     // to the default framework 404 metadata pipeline.
     globalNotFound: true,
+    // Avoid scanning the entire 3,000+ icon barrel during dev/build.
+    optimizePackageImports: ["simple-icons"],
 
     // Enable Turbopack file system caching for faster builds (stores compiler artifacts between runs)
     turbopackFileSystemCacheForDev: true,
