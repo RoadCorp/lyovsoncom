@@ -133,9 +133,8 @@ export const GridCardHeroReference = ({
               className="media-frame flex h-full items-center justify-center"
               credit={true}
               imgClassName={
-                // The important flag beats ImageMedia's inline object-fit.
                 showsLogo(reference.type)
-                  ? "h-full bg-white object-contain! p-8"
+                  ? "h-full bg-white object-contain p-8"
                   : "h-full object-cover"
               }
               pictureClassName="h-full"

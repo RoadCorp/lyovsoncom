@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, it as test, vi } from "vitest";
+import { activitySummarySelect } from "./activity-summary";
 import { getActivityByDateAndSlug } from "./get-activity";
 import { getLyovsonProfile } from "./get-lyovson-profile";
 import { getRelatedPosts } from "./get-related-content";
@@ -59,12 +60,18 @@ test.each([
           visibility: { equals: "public" },
           slug: { equals: "same-slug" },
         },
-        select: expect.objectContaining({
-          embedding_vector: false,
-          embedding_text_hash: false,
-        }),
+        select: activitySummarySelect,
       })
     );
+    const selectArg = find.mock.calls[0]?.[0]?.select as Record<
+      string,
+      unknown
+    >;
+    expect(selectArg).not.toHaveProperty("embedding_vector");
+    expect(selectArg).not.toHaveProperty("embedding_text_hash");
+    expect(selectArg).not.toHaveProperty("content_text");
+    expect(selectArg).not.toHaveProperty("notes");
+    expect(selectArg).not.toHaveProperty("reviews");
   }
 );
 

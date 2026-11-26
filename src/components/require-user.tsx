@@ -1,12 +1,11 @@
-import config from "@payload-config";
 import { headers as nextHeaders } from "next/headers";
 import { redirect } from "next/navigation";
 import type { User } from "payload";
-import { getPayload } from "payload";
 import type { ReactNode } from "react";
 import { Suspense } from "react";
 import { isLyovson } from "@/access/is-lyovson";
 import { SkeletonCard } from "@/components/grid";
+import { getPayloadClient } from "@/utilities/payload-client";
 
 /**
  * Renders its children only for a signed-in Lyovson and sends everyone
@@ -26,7 +25,7 @@ export function RequireUser({
 }
 
 async function UserGate({ children }: { children: (user: User) => ReactNode }) {
-  const payload = await getPayload({ config });
+  const payload = await getPayloadClient();
   const { user } = await payload.auth({ headers: await nextHeaders() });
 
   if (!isLyovson(user)) {

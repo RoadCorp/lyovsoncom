@@ -2,6 +2,7 @@ import { cacheLife, cacheTag } from "next/cache";
 import type { PaginatedDocs } from "payload";
 import type { Activity } from "@/payload-types";
 import { ACTIVITY_PREVIEW_LIMIT } from "@/utilities/activity-preview";
+import { activitySummarySelect } from "@/utilities/activity-summary";
 import type { ActivityFilterType } from "@/utilities/activity-type";
 import { ACTIVITY_FILTER_TYPES } from "@/utilities/activity-type";
 import {
@@ -10,34 +11,7 @@ import {
 } from "@/utilities/content-queries";
 import { getLyovsonProfile } from "@/utilities/get-lyovson-profile";
 import { getPayloadClient } from "@/utilities/payload-client";
-import { publicContentSelect } from "@/utilities/public-content-select";
 import { getActivityDateSlug } from "@/utilities/routes";
-
-export async function getActivity(slug: string): Promise<Activity | null> {
-  "use cache";
-  cacheTag("activities");
-  cacheTag(`activity-${slug}`);
-  cacheLife("activities");
-
-  const payload = await getPayloadClient();
-  const response = await payload.find({
-    collection: "activities",
-    select: publicContentSelect,
-    // Keep participant relation data available for public activity cards.
-    // Lyovson read access is private, so relation population needs overrideAccess.
-    overrideAccess: true,
-    where: {
-      ...publicActivitiesWhere(),
-      slug: {
-        equals: slug,
-      },
-    },
-    limit: 1,
-    depth: 2,
-  });
-
-  return (response.docs[0] as Activity) || null;
-}
 
 export async function getActivityByDateAndSlug(
   date: string,
@@ -58,9 +32,7 @@ export async function getActivityByDateAndSlug(
   const payload = await getPayloadClient();
   const response = await payload.find({
     collection: "activities",
-    select: publicContentSelect,
-    // Keep participant relation data available for public activity cards.
-    // Lyovson read access is private, so relation population needs overrideAccess.
+    select: activitySummarySelect,
     overrideAccess: true,
     where: {
       ...publicActivitiesWhere(),
@@ -69,7 +41,7 @@ export async function getActivityByDateAndSlug(
       },
     },
     limit: 50,
-    depth: 2,
+    depth: 1,
   });
 
   const matchingActivity = response.docs.find(
@@ -90,7 +62,7 @@ export async function getLatestActivities(
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "activities",
-    select: publicContentSelect,
+    select: activitySummarySelect,
     depth: 2,
     limit,
     // Keep participant relation data available for public activity cards.
@@ -125,7 +97,7 @@ export async function getLatestLyovsonActivities(
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "activities",
-    select: publicContentSelect,
+    select: activitySummarySelect,
     depth: 2,
     limit,
     overrideAccess: true,
@@ -148,7 +120,7 @@ export async function getPaginatedActivities(
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "activities",
-    select: publicContentSelect,
+    select: activitySummarySelect,
     depth: 2,
     limit,
     page: pageNumber,
@@ -221,7 +193,7 @@ export async function getActivitiesByType(
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "activities",
-    select: publicContentSelect,
+    select: activitySummarySelect,
     depth: 2,
     limit,
     page: pageNumber,
@@ -298,7 +270,7 @@ export async function getLyovsonActivitiesByType(
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "activities",
-    select: publicContentSelect,
+    select: activitySummarySelect,
     depth: 2,
     limit,
     page: pageNumber,

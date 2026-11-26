@@ -1,4 +1,3 @@
-import configPromise from "@payload-config";
 import {
   and,
   asc,
@@ -8,10 +7,10 @@ import {
   ne,
   sql,
 } from "@payloadcms/db-vercel-postgres/drizzle";
-import { getPayload } from "payload";
 import { TRUSTED_EMBEDDING_READ } from "@/access/private-field-read";
 import type { Post } from "@/payload-types";
 import { EMBEDDING_VECTOR_DIMENSIONS } from "@/utilities/generate-embedding";
+import { getPayloadClient } from "@/utilities/payload-client";
 
 interface SimilarContentDocs {
   posts: Post;
@@ -26,7 +25,7 @@ export async function getSimilarContent<
   id: number,
   limit = 3
 ): Promise<SimilarContentDocs[TCollection][]> {
-  const payload = await getPayload({ config: configPromise });
+  const payload = await getPayloadClient();
 
   const current = await payload.findByID({
     collection: collection as SimilarContentCollection,

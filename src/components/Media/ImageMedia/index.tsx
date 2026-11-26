@@ -54,7 +54,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
     >
       <NextImage
         alt={alt || ""}
-        className={cn(imgClassName, "h-full w-full")}
+        className={cn("h-full w-full object-cover", imgClassName)}
         fetchPriority={priority ? "high" : "auto"}
         fill={fill}
         height={fill ? undefined : height}
@@ -62,7 +62,6 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
         quality={80}
         sizes={sizes}
         src={src}
-        style={{ objectFit: "cover" }}
         width={fill ? undefined : width}
       />
     </picture>

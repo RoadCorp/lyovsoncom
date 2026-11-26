@@ -75,9 +75,8 @@ export const GridCardReferences = ({
               <Media
                 className="media-frame flex h-full items-center justify-center"
                 imgClassName={
-                  // The important flag beats ImageMedia's inline object-fit.
                   showsLogo(reference.type)
-                    ? "h-full bg-white object-contain! p-3"
+                    ? "h-full bg-white object-contain p-3"
                     : "h-full object-cover"
                 }
                 pictureClassName="row-start-1 row-end-2 col-start-1 col-end-2 h-full"
