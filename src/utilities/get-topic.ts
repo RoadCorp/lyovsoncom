@@ -14,6 +14,8 @@ export async function getTopic(slug: string): Promise<Topic | null> {
   const payload = await getPayloadClient();
   const response = await payload.find({
     collection: "topics",
+    depth: 0,
+    pagination: false,
     where: {
       slug: {
         equals: slug,
@@ -33,7 +35,9 @@ export async function getAllTopics(): Promise<PaginatedDocs<Topic>> {
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "topics",
+    depth: 0,
     limit: 1000,
+    pagination: false,
     sort: "name:asc",
   });
 

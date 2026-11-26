@@ -1,6 +1,4 @@
-import configPromise from "@payload-config";
 import type { NextRequest } from "next/server";
-import { getPayload } from "payload";
 import { TRUSTED_EMBEDDING_READ } from "@/access/private-field-read";
 import {
   authorizeEmbeddingMutation,
@@ -18,6 +16,7 @@ import {
   generateEmbeddingFor,
   isEmbeddableCollection,
 } from "@/utilities/generate-embedding-helpers";
+import { getPayloadClient } from "@/utilities/payload-client";
 
 interface Args {
   params: Promise<{ collection: string; id: string }>;
@@ -57,7 +56,7 @@ export async function GET(request: NextRequest, { params }: Args) {
     if (!hasEmbeddingAuthHint(request)) {
       return getEmbeddingUnauthorizedResponse();
     }
-    const payload = await getPayload({ config: configPromise });
+    const payload = await getPayloadClient();
     const authResult = await authorizeEmbeddingMutation(request, payload);
     if (!authResult.authorized) {
       return getEmbeddingUnauthorizedResponse(authResult.reason);
@@ -160,7 +159,7 @@ export async function POST(request: NextRequest, { params }: Args) {
       );
     }
 
-    const payload = await getPayload({ config: configPromise });
+    const payload = await getPayloadClient();
     const authResult = await authorizeEmbeddingMutation(request, payload);
     if (!authResult.authorized) {
       return getEmbeddingUnauthorizedResponse(authResult.reason);

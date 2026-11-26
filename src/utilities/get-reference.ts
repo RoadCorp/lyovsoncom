@@ -40,6 +40,7 @@ export async function getReferenceHub(
     // Linked references and their covers; parts also carry their place.
     depth: 2,
     limit: 1,
+    pagination: false,
     populate: { references: { ...References.defaultPopulate, partOf: true } },
     where: { slug: { equals: slug } },
   });
@@ -56,6 +57,7 @@ export async function getReferenceHub(
       // Participants and reviewers are Lyovsons, which anonymous reads
       // can't populate; publicActivitiesWhere keeps private rows out.
       overrideAccess: true,
+      pagination: false,
       select: publicContentSelect,
       sort: "-finishedAt",
       where: {

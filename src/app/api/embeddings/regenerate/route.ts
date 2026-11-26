@@ -1,7 +1,5 @@
-import configPromise from "@payload-config";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { getPayload } from "payload";
 import { logApiTelemetry } from "@/utilities/api-telemetry";
 import {
   authorizeEmbeddingMutation,
@@ -13,6 +11,7 @@ import {
   generateEmbeddingFor,
   isEmbeddableCollection,
 } from "@/utilities/generate-embedding-helpers";
+import { getPayloadClient } from "@/utilities/payload-client";
 
 interface RegenerateEmbeddingBody {
   collection?: EmbeddableCollection;
@@ -27,7 +26,7 @@ export async function POST(request: NextRequest) {
       return getEmbeddingUnauthorizedResponse();
     }
 
-    const payload = await getPayload({ config: configPromise });
+    const payload = await getPayloadClient();
     const authResult = await authorizeEmbeddingMutation(request, payload);
 
     if (!authResult.authorized) {

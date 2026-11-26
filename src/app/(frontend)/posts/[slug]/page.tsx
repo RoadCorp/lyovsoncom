@@ -311,7 +311,9 @@ export async function generateStaticParams() {
   const payload = await getPayloadClient();
   const posts = await payload.find({
     collection: "posts",
+    depth: 0,
     limit: 1000,
+    pagination: false,
     select: {
       slug: true,
     },

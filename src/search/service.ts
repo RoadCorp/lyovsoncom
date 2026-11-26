@@ -1,6 +1,7 @@
 import { cacheLife } from "next/cache";
 import { cache } from "react";
 import type { Activity, Post } from "@/payload-types";
+import { activitySummarySelect } from "@/utilities/activity-summary";
 import { getActivityTypeLabel } from "@/utilities/activity-type";
 import {
   publicActivitiesWhere,
@@ -11,7 +12,8 @@ import {
   generateEmbedding,
 } from "@/utilities/generate-embedding";
 import { getPayloadClient } from "@/utilities/payload-client";
-import { publicContentSelect } from "@/utilities/public-content-select";
+import type { PostSummary } from "@/utilities/post-summary";
+import { postSummarySelect } from "@/utilities/post-summary";
 import { activitiesRoute, activityRoute, postRoute } from "@/utilities/routes";
 import { parseHybridSearchRows } from "./rows";
 import { hybridSearchSql } from "./sql";
@@ -28,9 +30,16 @@ export const MAX_SEARCH_QUERY_LENGTH = 200;
 export const MIN_SEARCH_LIMIT = 1;
 export const MAX_SEARCH_LIMIT = 50;
 
+const searchPostSelect = {
+  ...postSummarySelect,
+  description: true,
+} as const;
+
+export type SearchPostSummary = PostSummary & Pick<Post, "description">;
+
 export type HydratedSearchItem =
   | { type: "activity"; data: Activity }
-  | { type: "post"; data: Post };
+  | { type: "post"; data: SearchPostSummary };
 
 export class SearchInputError extends Error {
   status: number;
@@ -183,10 +192,11 @@ export async function hydrateSearchResults(results: SearchResult[]) {
           },
           // Post cards and previews never use second-level relations.
           depth: 1,
-          select: publicContentSelect,
+          pagination: false,
+          select: searchPostSelect,
           limit: postsResults.length,
         })
-      : Promise.resolve({ docs: [] as Post[] }),
+      : Promise.resolve({ docs: [] as SearchPostSummary[] }),
     activitiesResults.length > 0
       ? payload.find({
           collection: "activities",
@@ -201,7 +211,8 @@ export async function hydrateSearchResults(results: SearchResult[]) {
             ],
           },
           depth: 2,
-          select: publicContentSelect,
+          pagination: false,
+          select: activitySummarySelect,
           limit: activitiesResults.length,
           // Participants are Lyovsons (an auth collection); the where above
           // keeps this to published, public activities.
@@ -210,9 +221,14 @@ export async function hydrateSearchResults(results: SearchResult[]) {
       : Promise.resolve({ docs: [] as Activity[] }),
   ]);
 
-  const postsMap = new Map(postsResponse.docs.map((post) => [post.id, post]));
+  const postsMap = new Map(
+    (postsResponse.docs as SearchPostSummary[]).map((post) => [post.id, post])
+  );
   const activitiesMap = new Map(
-    activitiesResponse.docs.map((activity) => [activity.id, activity])
+    (activitiesResponse.docs as Activity[]).map((activity) => [
+      activity.id,
+      activity,
+    ])
   );
 
   return results.flatMap<HydratedSearchItem>((result) => {

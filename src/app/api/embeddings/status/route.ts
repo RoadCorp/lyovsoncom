@@ -1,6 +1,5 @@
-import configPromise from "@payload-config";
 import type { NextRequest } from "next/server";
-import { getPayload } from "payload";
+import type { Payload } from "payload";
 import { TRUSTED_EMBEDDING_READ } from "@/access/private-field-read";
 import { logApiTelemetry } from "@/utilities/api-telemetry";
 import {
@@ -16,6 +15,7 @@ import {
   EMBEDDABLE,
   EMBEDDABLE_COLLECTIONS,
 } from "@/utilities/generate-embedding-helpers";
+import { getPayloadClient } from "@/utilities/payload-client";
 
 interface EmbeddingDoc {
   embedding_dimensions?: number | null;
@@ -68,9 +68,7 @@ function createCollectionEmbeddingStats(
   };
 }
 
-async function getEmbeddingCoverage(
-  payload: Awaited<ReturnType<typeof getPayload>>
-) {
+async function getEmbeddingCoverage(payload: Payload) {
   const counts = await Promise.all(
     EMBEDDABLE_COLLECTIONS.map(async (collection) => {
       const where = EMBEDDABLE[collection].publicWhere;
@@ -105,9 +103,7 @@ async function getEmbeddingCoverage(
   return coverage;
 }
 
-async function getEmbeddingModelStats(
-  payload: Awaited<ReturnType<typeof getPayload>>
-) {
+async function getEmbeddingModelStats(payload: Payload) {
   const sampledPostEmbeddings = await payload.find({
     collection: "posts",
     overrideAccess: false,
@@ -288,7 +284,7 @@ export async function GET(request: NextRequest) {
       return getEmbeddingUnauthorizedResponse();
     }
 
-    const payload = await getPayload({ config: configPromise });
+    const payload = await getPayloadClient();
     const authResult = await authorizeEmbeddingMutation(request, payload);
 
     if (!authResult.authorized) {

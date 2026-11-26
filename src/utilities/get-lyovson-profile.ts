@@ -29,6 +29,7 @@ export async function getLyovsonProfile(
 
   const result = await payload.find({
     collection: "lyovsons",
+    depth: 1,
     select: publicProfileSelect,
     pagination: false,
     where: {
