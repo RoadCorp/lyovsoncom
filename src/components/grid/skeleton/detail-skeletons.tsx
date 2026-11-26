@@ -37,7 +37,7 @@ function TitleLines() {
   );
 }
 
-function WideHeroSkeleton() {
+export function WideHeroSkeleton() {
   return (
     <GridCard className="surface-card-loading" slot="hero">
       <GridCardSection className={GRID_HERO_PANELS.media} flush={true}>

@@ -6,6 +6,7 @@ import { GridCardSection } from "@/components/grid/card/section";
 import { IntentLink } from "@/components/intent-link";
 import { Media } from "@/components/Media";
 import { CARD_COVER_IMAGE_SIZE } from "@/components/Media/image-sizes";
+import { MediaFallback } from "@/components/Media/media-fallback";
 import { ActivitySeal, CornerKnots } from "@/components/ornaments";
 import type { Activity } from "@/payload-types";
 import {
@@ -21,6 +22,7 @@ import {
 import {
   getActivityDateMeta,
   getActivityReference,
+  getActivityReferenceIcon,
   getActivityReferenceImage,
   getActivityTypeIcon,
   getActivityTypeLabel,
@@ -138,7 +140,17 @@ export const GridCardActivityFull = ({
             </ViewTransition>
           </IntentLink>
         </GridCardSection>
-      ) : null}
+      ) : (
+        <GridCardSection
+          className="col-start-1 col-end-3 row-start-1 row-end-4"
+          flush={true}
+        >
+          <MediaFallback
+            icon={getActivityReferenceIcon(referenceObj?.type ?? "other")}
+            label={activityTypeLabel}
+          />
+        </GridCardSection>
+      )}
 
       <GridCardSection className="surface-title-stage col-start-3 col-end-4 row-start-1 row-end-2 flex h-full flex-col justify-center">
         <CornerKnots className="ornament-corner--rest" variant="ticks" />

@@ -22,7 +22,10 @@ export const GridCardTableOfContents = ({
     <GridCard
       aria-label="Table of contents"
       as="nav"
-      className={cn("w-[var(--grid-card-1x1)]", className)}
+      className={cn(
+        "g2:min-h-[var(--grid-card-1x1)] g3:min-h-0 w-[var(--grid-card-1x1)]",
+        className
+      )}
       frameLabel="Contents"
       variant="content"
     >

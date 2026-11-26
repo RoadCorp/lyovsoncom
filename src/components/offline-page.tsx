@@ -7,12 +7,7 @@ import { CornerKnots } from "@/components/ornaments";
 
 export default function OfflinePage() {
   return (
-    <GridCard
-      className={
-        "g2:col-start-2 g2:col-end-3 g2:row-start-2 g2:row-end-3 g3:self-start"
-      }
-      interactive={false}
-    >
+    <GridCard interactive={false}>
       <GridCardSection className="col-start-1 col-end-4 row-start-1 row-end-3 flex flex-col items-center justify-center gap-4 px-6 text-center">
         <CornerKnots inset="sm" variant="triquetra" />
         <span className="surface-chip relative z-1 flex h-16 w-16 items-center justify-center rounded-full">
