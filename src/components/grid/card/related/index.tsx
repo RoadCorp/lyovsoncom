@@ -64,13 +64,14 @@ export const GridCardRelatedPosts = ({
                     />
                   </PostTransitionBoundary>
                 ) : null}
-                <div className="col-start-2 col-end-4 row-start-1 row-end-2 grid items-center">
+                <div className="col-start-2 col-end-4 row-start-1 row-end-2 grid items-center pe-3">
                   <PostTransitionBoundary slug={post.slug} variant="title">
                     <h2 className="tone-heading ui-group-hover-dim font-medium">
                       {post.title}
                     </h2>
                   </PostTransitionBoundary>
                 </div>
+                <span aria-hidden="true" className="activity-spine" />
               </GridCardSection>
             </PostTransitionBoundary>
           </PostDrillInLink>

@@ -44,7 +44,7 @@ export function CopyButton({ code }: { code: string }) {
     );
   }
   return (
-    <div className="absolute top-3 right-3">
+    <div className="absolute top-4 right-3">
       <Button
         aria-label={text}
         className="surface-chip surface-code-chip ui-copy-button ui-focus-ring ui-hover-dim ui-interactive flex gap-2 px-2 py-1 text-xs font-medium"

@@ -2,7 +2,12 @@ import { User } from "lucide-react";
 import { AppLink } from "@/components/app-link";
 import { GridCard } from "@/components/grid/card";
 import { GridCardSection } from "@/components/grid/card/section";
-import { EternityKnot, FleuronRule } from "@/components/ornaments";
+import {
+  ActivitySeal,
+  CornerKnots,
+  EternityKnot,
+  FleuronRule,
+} from "@/components/ornaments";
 import RichText from "@/components/RichText";
 import { cn } from "@/lib/utils";
 import type { Activity } from "@/payload-types";
@@ -85,26 +90,33 @@ export function GridCardActivityEntry({
         )}
       </GridCardSection>
 
-      <GridCardSection className="col-start-1 col-end-2 row-start-3 row-end-4 flex flex-col items-center justify-center gap-1">
-        <ActivityIcon
-          aria-hidden="true"
-          className="tone-heading h-6 w-6"
-          data-activity-type={activity.activityType}
+      <GridCardSection
+        className="activity-seal-panel col-start-1 col-end-2 row-start-3 row-end-4 flex flex-col items-center justify-center p-2"
+        data-activity-type={activity.activityType}
+      >
+        <div className="ornament-lattice" />
+        <CornerKnots className="ornament-corner--subtle" variant="ticks" />
+        <ActivitySeal
+          activityType={activity.activityType}
+          icon={
+            <ActivityIcon
+              aria-hidden="true"
+              className="h-5 w-5"
+              data-activity-type={activity.activityType}
+            />
+          }
+          label={activityLabel}
+          sublabel={activity.format ? FORMAT_LABELS[activity.format] : null}
         />
-        <span className="tone-muted text-xs font-medium">{activityLabel}</span>
-        {activity.format ? (
-          <span className="tone-muted text-label">
-            {FORMAT_LABELS[activity.format]}
-          </span>
-        ) : null}
       </GridCardSection>
 
       <GridCardSection className="col-start-2 col-end-3 row-start-3 row-end-4 flex items-center justify-center gap-2">
+        <CornerKnots className="ornament-corner--rest" variant="ticks" />
         {participants.map((participant) =>
           participant.username ? (
             <AppLink
               aria-label={`View ${participant.name}'s profile`}
-              className="ui-meta-link ui-focus-ring flex flex-col items-center gap-0.5"
+              className="ui-meta-link ui-focus-ring relative z-1 flex flex-col items-center gap-0.5"
               href={lyovsonRoute(participant.username)}
               key={participant.id}
               prefetch={false}
@@ -119,9 +131,10 @@ export function GridCardActivityEntry({
       </GridCardSection>
 
       <GridCardSection className="col-start-3 col-end-4 row-start-3 row-end-4 flex flex-col items-center justify-center">
+        <CornerKnots className="ornament-corner--rest" variant="ticks" />
         {finishDateParts ? (
           <time
-            className="flex flex-col items-center gap-1"
+            className="relative z-1 flex flex-col items-center gap-1"
             dateTime={finishDateParts.iso}
           >
             <span className="tone-heading text-2xl leading-none font-bold tabular-nums">
