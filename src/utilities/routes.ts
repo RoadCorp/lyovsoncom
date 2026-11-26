@@ -110,6 +110,16 @@ export function postsPageRoute(pageNumber: number) {
     : typedRoute(`/posts/page/${pageNumber}`);
 }
 
+export function postsTypeRoute(postType: string) {
+  return typedRoute(`/posts/type/${postType}`);
+}
+
+export function postsTypePageRoute(postType: string, pageNumber: number) {
+  return pageNumber <= 1
+    ? postsTypeRoute(postType)
+    : typedRoute(`/posts/type/${postType}/page/${pageNumber}`);
+}
+
 export function activitiesRoute() {
   return typedRoute("/activities");
 }
@@ -241,6 +251,25 @@ export function lyovsonActivitiesPageRoute(
   return pageNumber <= 1
     ? lyovsonActivitiesRoute(username)
     : typedRoute(`/${username}/activities/page/${pageNumber}`);
+}
+
+export function lyovsonActivitiesTypeRoute(
+  username: string,
+  activityType: string
+) {
+  return typedRoute(`/${username}/activities/type/${activityType}`);
+}
+
+export function lyovsonActivitiesTypePageRoute(
+  username: string,
+  activityType: string,
+  pageNumber: number
+) {
+  return pageNumber <= 1
+    ? lyovsonActivitiesTypeRoute(username, activityType)
+    : typedRoute(
+        `/${username}/activities/type/${activityType}/page/${pageNumber}`
+      );
 }
 
 export function lyovsonPageRoute(username: string, pageNumber: number) {

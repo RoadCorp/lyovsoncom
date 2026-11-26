@@ -18,14 +18,18 @@ import {
 
 export interface GridCardActivityLedgerProps {
   activeType?: ActivityFilterType | null;
+  baseHref?: string;
   className?: string;
   counts: ActivityTypeCounts;
+  getTypeHref?: (type: ActivityFilterType) => string;
 }
 
 export const GridCardActivityLedger = ({
   activeType = null,
+  baseHref = activitiesRoute(),
   className,
   counts,
+  getTypeHref = activitiesTypeRoute,
 }: GridCardActivityLedgerProps) => {
   return (
     <GridCard
@@ -42,7 +46,7 @@ export const GridCardActivityLedger = ({
         const label = ACTIVITY_FILTER_SHORT_LABELS[type];
         const count = counts[type] ?? 0;
         const isActive = activeType === type;
-        const href = isActive ? activitiesRoute() : activitiesTypeRoute(type);
+        const href = isActive ? baseHref : getTypeHref(type);
 
         return (
           <GridCardSection

@@ -1,5 +1,6 @@
 import { getCanonicalSiteOrigin } from "@/utilities/site-config";
 import { getSyndicationFeeds } from "@/utilities/syndication-feed";
+import { attachXmlStylesheet } from "@/utilities/xml-stylesheet";
 
 export async function GET() {
   const SITE_URL = getCanonicalSiteOrigin();
@@ -7,7 +8,7 @@ export async function GET() {
   try {
     const feeds = await getSyndicationFeeds();
 
-    return new Response(feeds.atom, {
+    return new Response(attachXmlStylesheet(feeds.atom, "/atom.xsl"), {
       status: 200,
       headers: {
         "Content-Type": "application/atom+xml; charset=utf-8",

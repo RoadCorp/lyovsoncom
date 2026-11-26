@@ -4,8 +4,13 @@ import { GridCardProject } from "@/components/grid/card/project";
 import { JsonLd } from "@/components/json-ld";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getProjects } from "@/utilities/get-projects";
+import { buildDynamicOgImageUrl } from "@/utilities/og-image";
 import { absoluteUrl, projectsRoute, projectUrl } from "@/utilities/routes";
-import { buildSeoMetadata } from "@/utilities/seo-metadata";
+import {
+  buildSeoMetadata,
+  DEFAULT_OPEN_GRAPH_IMAGE_HEIGHT,
+  DEFAULT_OPEN_GRAPH_IMAGE_WIDTH,
+} from "@/utilities/seo-metadata";
 
 export const prefetch = "partial";
 
@@ -55,9 +60,13 @@ export const metadata: Metadata = {
       "Jess Lyóvson",
     ],
     image: {
-      url: "/og-image.png",
-      width: 1200,
-      height: 630,
+      url: buildDynamicOgImageUrl({
+        eyebrow: "Studio",
+        title: "Projects & Research",
+        meta: "Websites, case studies, and ongoing series",
+      }),
+      width: DEFAULT_OPEN_GRAPH_IMAGE_WIDTH,
+      height: DEFAULT_OPEN_GRAPH_IMAGE_HEIGHT,
       alt: "Projects & Research",
     },
     other: {

@@ -1,16 +1,18 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
-import { GridCardEmptyState } from "@/components/grid";
+import { GridCardActivityLedger, GridCardEmptyState } from "@/components/grid";
 import { JsonLd } from "@/components/json-ld";
 import { Pagination } from "@/components/Pagination";
 import { PublicPageBoundary } from "@/components/public-page-boundary";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
+import { getLyovsonActivityTypeCounts } from "@/utilities/get-activity";
 import { getLyovsonFeed } from "@/utilities/get-lyovson-feed";
 import {
   absoluteUrl,
   activityUrl,
   lyovsonActivitiesPageRoute,
   lyovsonActivitiesRoute,
+  lyovsonActivitiesTypeRoute,
 } from "@/utilities/routes";
 import { LyovsonFeedItems } from "../_components/lyovson-feed-items";
 import { LYOVSON_ITEMS_PER_PAGE } from "../_utilities/constants";
@@ -28,12 +30,15 @@ interface PageProps {
 async function PageContent({ params }: PageProps) {
   const { lyovson: username } = await params;
 
-  const response = await getLyovsonFeed({
-    username,
-    filter: "activities",
-    page: 1,
-    limit: LYOVSON_ITEMS_PER_PAGE,
-  });
+  const [response, counts] = await Promise.all([
+    getLyovsonFeed({
+      username,
+      filter: "activities",
+      page: 1,
+      limit: LYOVSON_ITEMS_PER_PAGE,
+    }),
+    getLyovsonActivityTypeCounts(username),
+  ]);
 
   if (!response) {
     return notFound();
@@ -62,6 +67,13 @@ async function PageContent({ params }: PageProps) {
     <>
       <h1 className="sr-only">{user.name} activities</h1>
       <JsonLd data={collectionPageSchema} />
+      {counts ? (
+        <GridCardActivityLedger
+          baseHref={lyovsonActivitiesRoute(username)}
+          counts={counts}
+          getTypeHref={(type) => lyovsonActivitiesTypeRoute(username, type)}
+        />
+      ) : null}
       {items.length > 0 ? (
         <LyovsonFeedItems items={items} />
       ) : (

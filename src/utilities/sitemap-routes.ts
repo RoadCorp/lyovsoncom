@@ -23,6 +23,7 @@ import {
   activitiesPageRoute,
   activitiesRoute,
   activitiesTypeRoute,
+  contactRoute,
   lyovsonActivitiesPageRoute,
   lyovsonActivitiesRoute,
   lyovsonBioRoute,
@@ -100,7 +101,8 @@ export function getStaticRoutes(now: Date): Sitemap {
     sitemapEntry(absoluteUrl(topicsRoute()), now, "weekly", 0.8),
     sitemapEntry(absoluteUrl(nowRoute()), now, "daily", 0.8),
     sitemapEntry(absoluteUrl(aboutRoute()), now, "monthly", 0.7),
-    // Utility pages - AM and Contact stay noindexed placeholders until written
+    sitemapEntry(absoluteUrl(contactRoute()), now, "monthly", 0.6),
+    // Utility pages - AM stays a noindexed placeholder until written
     sitemapEntry(absoluteUrl(privacyPolicyRoute()), now, "yearly", 0.3),
     // The AI docs page stays out: it is noindex and disallowed in robots.txt.
     // API endpoints stay out of the sitemap to prevent crawler-induced
