@@ -3,6 +3,7 @@
 import { Home, RefreshCcw, WifiOff } from "lucide-react";
 import Link from "next/link";
 import { GridCard, GridCardSection } from "@/components/grid";
+import { CornerKnots } from "@/components/ornaments";
 
 export default function OfflinePage() {
   return (
@@ -13,11 +14,14 @@ export default function OfflinePage() {
       interactive={false}
     >
       <GridCardSection className="col-start-1 col-end-4 row-start-1 row-end-3 flex flex-col items-center justify-center gap-4 px-6 text-center">
-        <span className="surface-chip flex h-16 w-16 items-center justify-center rounded-full">
+        <CornerKnots inset="sm" variant="triquetra" />
+        <span className="surface-chip relative z-1 flex h-16 w-16 items-center justify-center rounded-full">
           <WifiOff aria-hidden="true" className="h-8 w-8" />
         </span>
-        <h1 className="tone-heading text-2xl font-bold">You are offline</h1>
-        <p className="tone-muted text-sm">
+        <h1 className="tone-heading relative z-1 text-2xl font-bold">
+          You are offline
+        </h1>
+        <p className="tone-muted relative z-1 text-sm">
           Previously visited pages may still be available. Reconnect and refresh
           when you are ready.
         </p>

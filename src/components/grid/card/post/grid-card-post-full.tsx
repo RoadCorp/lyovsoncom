@@ -5,6 +5,7 @@ import { GridCardSection } from "@/components/grid/card/section";
 import { Media } from "@/components/Media";
 import { CARD_COVER_IMAGE_SIZE } from "@/components/Media/image-sizes";
 import { MediaFallback } from "@/components/Media/media-fallback";
+import { CornerKnots } from "@/components/ornaments";
 import { PostDrillInLink } from "@/components/post-transitions/post-drill-in-link";
 import { PostTransitionBoundary } from "@/components/post-transitions/post-transition-boundary";
 import { TopicPillList } from "@/components/topic-pill";
@@ -111,6 +112,7 @@ export const GridCardPostFull = ({
         )}
 
         <GridCardSection className="surface-title-stage col-start-1 col-end-4 row-start-3 row-end-4 flex h-full flex-col justify-center">
+          <CornerKnots className="ornament-corner--hover" variant="ticks" />
           <PostDrillInLink
             className="ui-focus-ring group flex h-full flex-col items-center justify-center gap-2"
             href={postHref}

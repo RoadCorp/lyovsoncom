@@ -1,6 +1,7 @@
 "use client";
 
 import { useLinkStatus } from "next/link";
+import { ApexLozenge } from "@/components/ornaments";
 import { cn } from "@/lib/utils";
 
 interface AppLinkPendingIndicatorProps {
@@ -18,11 +19,13 @@ export function AppLinkPendingIndicator({
       <span
         aria-hidden="true"
         className={cn(
-          "inline-flex h-1.5 w-1.5 shrink-0 rounded-full bg-current opacity-0 transition-opacity duration-200",
-          pending && "opacity-100",
+          "ornament-pending inline-flex shrink-0 items-center justify-center opacity-0 transition-opacity duration-200",
+          pending && "ornament-pending-active opacity-100",
           className
         )}
-      />
+      >
+        <ApexLozenge size={10} />
+      </span>
     </>
   );
 }

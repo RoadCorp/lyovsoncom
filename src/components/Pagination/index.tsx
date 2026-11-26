@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { ViewTransition } from "react";
 import { AppLink } from "@/components/app-link";
 import { GridCard, GridCardSection } from "@/components/grid";
+import { ApexLozenge, CornerKnots } from "@/components/ornaments";
 import { cn } from "@/lib/utils";
 import { transitionTypes } from "@/utilities/routes";
 import { getArchiveCardTransitionName } from "@/utilities/view-transitions";
@@ -150,10 +151,17 @@ export function Pagination({
               return (
                 <GridCardSection
                   aria-hidden="true"
-                  className={positionClass}
+                  className={cn(
+                    positionClass,
+                    "relative flex items-center justify-center"
+                  )}
                   key={cell.key}
                 >
-                  <div />
+                  <div className="ornament-lattice" />
+                  <ApexLozenge
+                    className="ornament-muted relative z-1"
+                    size={10}
+                  />
                 </GridCardSection>
               );
             }
@@ -162,7 +170,7 @@ export function Pagination({
               <GridCardSection
                 className={cn(
                   positionClass,
-                  "relative flex h-full w-full items-center justify-center text-lg",
+                  "group relative flex h-full w-full items-center justify-center text-lg",
                   isNumeric && "font-semibold",
                   cell.disabled && !cell.isCurrent && "opacity-45"
                 )}
@@ -182,6 +190,10 @@ export function Pagination({
                       aria-current="page"
                       className="surface-emphasis pointer-events-none absolute inset-0 flex items-center justify-center rounded-[inherit]"
                     >
+                      <CornerKnots
+                        className="ornament-accent"
+                        variant="ticks"
+                      />
                       {cell.label}
                     </span>
                   </ViewTransition>
@@ -190,21 +202,27 @@ export function Pagination({
                   (cell.disabled ? (
                     renderDisabledCell(cell)
                   ) : (
-                    <AppLink
-                      aria-label={cell.ariaLabel}
-                      className="relative flex h-full w-full items-center justify-center"
-                      href={getPageHref(cell.target)}
-                      pendingHintClassName="absolute right-2 top-2"
-                      prefetch={null}
-                      showPendingHint
-                      transitionTypes={[
-                        cell.target < page
-                          ? transitionTypes.paginationPrev
-                          : transitionTypes.paginationNext,
-                      ]}
-                    >
-                      {cell.label}
-                    </AppLink>
+                    <>
+                      <CornerKnots
+                        className="ornament-corner--hover"
+                        variant="ticks"
+                      />
+                      <AppLink
+                        aria-label={cell.ariaLabel}
+                        className="relative flex h-full w-full items-center justify-center"
+                        href={getPageHref(cell.target)}
+                        pendingHintClassName="absolute right-2 top-2"
+                        prefetch={null}
+                        showPendingHint
+                        transitionTypes={[
+                          cell.target < page
+                            ? transitionTypes.paginationPrev
+                            : transitionTypes.paginationNext,
+                        ]}
+                      >
+                        {cell.label}
+                      </AppLink>
+                    </>
                   ))}
               </GridCardSection>
             );

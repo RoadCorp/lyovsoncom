@@ -35,7 +35,7 @@ export function BannerBlock({ className, content, style }: Props) {
     <div className={cn("content-block mx-auto w-full", className)}>
       <div
         className={cn(
-          "surface-panel surface-alert flex items-start gap-3 rounded-xl px-5 py-5 sm:gap-4 sm:px-6",
+          "surface-panel surface-alert ornament-braid-rail flex items-start gap-3 rounded-xl py-5 ps-7 pe-5 sm:gap-4 sm:ps-8 sm:pe-6",
           styleClasses[bannerStyle]
         )}
       >

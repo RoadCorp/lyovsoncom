@@ -3,6 +3,7 @@ import { ViewTransition } from "react";
 import { GridCard } from "@/components/grid/card";
 import { GridCardNavItem } from "@/components/grid/card/nav/grid-card-nav-item";
 import { GridCardSection } from "@/components/grid/card/section";
+import { CornerKnots, FleuronRule } from "@/components/ornaments";
 import { cn } from "@/lib/utils";
 import type { Media } from "@/payload-types";
 import type { PublicProfile } from "@/utilities/get-lyovson-profile";
@@ -79,11 +80,12 @@ export const GridCardUser = ({ user, className }: Props) => {
 
         <GridCardSection
           className={cn(
-            "col-start-1 col-end-4 row-start-4 row-end-6 flex h-full flex-col items-center justify-center px-4 md:px-8",
+            "col-start-1 col-end-4 row-start-4 row-end-6 flex h-full flex-col items-center justify-center px-6 md:px-8",
             "g3:col-start-4 g3:col-end-7 g3:row-start-1 g3:row-end-3"
           )}
         >
-          <div className="mx-auto w-full max-w-3xl space-y-4">
+          <CornerKnots inset="sm" variant="triquetra" />
+          <div className="relative z-1 mx-auto w-full max-w-3xl space-y-3">
             <h2
               className={
                 "tone-heading text-center text-2xl font-bold md:text-3xl lg:text-4xl"
@@ -91,11 +93,16 @@ export const GridCardUser = ({ user, className }: Props) => {
             >
               {userName}
             </h2>
-            {userQuote && (
-              <p className={"tone-muted text-center text-base leading-relaxed"}>
-                {userQuote}
-              </p>
-            )}
+            {userQuote ? (
+              <>
+                <FleuronRule className="max-w-36" variant="knot" />
+                <p
+                  className={"tone-muted text-center text-base leading-relaxed"}
+                >
+                  {userQuote}
+                </p>
+              </>
+            ) : null}
           </div>
         </GridCardSection>
 

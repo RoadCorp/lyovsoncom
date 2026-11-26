@@ -4,6 +4,7 @@ import type {
   ReactNode,
 } from "react";
 import { AppLink } from "@/components/app-link";
+import { CornerKnots } from "@/components/ornaments";
 import { cn } from "@/lib/utils";
 import { transitionTypes } from "@/utilities/routes";
 
@@ -47,6 +48,7 @@ export const GridCardNavItem = ({
   if (props.variant === "link") {
     return (
       <GridCardSection className={cn("group ui-interactive", className)}>
+        <CornerKnots className="ornament-corner--hover" variant="ticks" />
         <AppLink
           className="tone-heading ui-focus-ring flex h-full w-full items-center justify-center"
           href={props.href}
@@ -79,6 +81,7 @@ export const GridCardNavItem = ({
         mode="button"
         onClick={props.onClick}
       >
+        <CornerKnots className="ornament-corner--hover" variant="ticks" />
         <span className="nav-tile-content">{children}</span>
       </GridCardSection>
     );

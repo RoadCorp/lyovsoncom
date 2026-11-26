@@ -7,6 +7,7 @@ import {
   PenTool,
 } from "lucide-react";
 import type { CSSProperties } from "react";
+import { Fragment } from "react";
 import { GridCard } from "@/components/grid/card";
 import { GridCardSection } from "@/components/grid/card/section";
 import { IntentLink } from "@/components/intent-link";
@@ -16,6 +17,7 @@ import {
   CARD_THUMBNAIL_IMAGE_SIZE,
   CARD_WIDE_IMAGE_SIZE,
 } from "@/components/Media/image-sizes";
+import { FleuronRule } from "@/components/ornaments";
 import RichText from "@/components/RichText";
 import { TechPill } from "@/components/tech-pill";
 import { cn } from "@/lib/utils";
@@ -174,6 +176,7 @@ export function GridCardProjectHighlights({
           >
             {highlight.value}
           </span>
+          <FleuronRule variant="lozenge" />
           <span className="card-eyebrow type-eyebrow">{highlight.label}</span>
         </GridCardSection>
       ))}
@@ -261,20 +264,21 @@ export function ProjectCaseStudy({
       variant="content"
     >
       <div className="flex flex-col gap-10 p-6">
-        {sections.map((section) => (
-          <section
-            className="g3:text-[1.125rem] content-measure content-prose [container-type:inline-size] mx-auto w-full"
-            key={section.id ?? section.heading}
-          >
-            <h2 className="mt-0">{section.heading}</h2>
-            <RichText
-              className="g3:text-[1.125rem]"
-              content={section.content}
-              enableGutter={false}
-              enableProse={true}
-            />
-          </section>
+        {sections.map((section, index) => (
+          <Fragment key={section.id ?? section.heading}>
+            {index > 0 ? <FleuronRule variant="knot" /> : null}
+            <section className="g3:text-[1.125rem] content-measure content-prose [container-type:inline-size] mx-auto w-full">
+              <h2 className="mt-0">{section.heading}</h2>
+              <RichText
+                className="g3:text-[1.125rem]"
+                content={section.content}
+                enableGutter={false}
+                enableProse={true}
+              />
+            </section>
+          </Fragment>
         ))}
+        <FleuronRule variant="finis" />
       </div>
     </GridCard>
   );

@@ -1,5 +1,6 @@
 import { AppLink } from "@/components/app-link";
 import { Logo } from "@/components/Logo/logo";
+import { CornerKnots } from "@/components/ornaments";
 import { transitionTypes } from "@/utilities/routes";
 import { GridCardSection } from "../section";
 
@@ -21,6 +22,7 @@ export const SiteTitleSection = ({ href }: { href: string }) => {
         showPendingHint={true}
         transitionTypes={[transitionTypes.section]}
       >
+        <CornerKnots inset="sm" variant="triquetra" />
         <Logo className="nav-crest max-h-28 max-w-28 shrink-0 sm:max-h-[150px] sm:max-w-[150px]" />
         <span className="tone-heading text-center text-2xl font-bold sm:text-3xl">
           Lyóvson.com

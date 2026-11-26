@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { GridCard, GridCardSection } from "@/components/grid";
+import { CornerKnots } from "@/components/ornaments";
 import { cn } from "@/lib/utils";
 
 export function PlaceholderPageCard({
@@ -28,7 +29,8 @@ export function PlaceholderPageCard({
       interactive={false}
     >
       <GridCardSection className="col-span-3 row-span-3 flex flex-col gap-5 p-6">
-        <div className="space-y-3">
+        <CornerKnots inset="sm" variant="triquetra" />
+        <div className="relative z-1 space-y-3">
           <p className="tone-muted type-eyebrow">{eyebrow}</p>
           <h1 className="tone-heading text-3xl font-bold">{title}</h1>
           <p className="tone-muted max-w-2xl text-sm leading-relaxed">
@@ -36,7 +38,7 @@ export function PlaceholderPageCard({
           </p>
         </div>
 
-        <div className="surface-panel rounded-lg p-4">
+        <div className="surface-panel ornament-braid-rail relative z-1 rounded-lg py-4 pr-4 pl-7">
           <p className="tone-heading text-sm font-medium">Placeholder page</p>
           <p className="tone-muted mt-2 text-sm leading-relaxed">{note}</p>
         </div>

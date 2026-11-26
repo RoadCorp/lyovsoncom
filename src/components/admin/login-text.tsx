@@ -8,7 +8,7 @@ export default function LoginText() {
       href="https://www.lyovson.com"
       target="_blank"
     >
-      Return to Lyovson.com
+      Return to Lyóvson.com
     </PayloadLink>
   );
 }

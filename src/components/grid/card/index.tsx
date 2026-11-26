@@ -6,6 +6,7 @@ import type {
   ReactNode,
 } from "react";
 
+import { ApexLozenge } from "@/components/ornaments";
 import { cn } from "@/lib/utils";
 
 interface GridCardBaseProps<T extends ElementType> {
@@ -62,7 +63,11 @@ export const GridCard = <T extends ElementType = "div">({
       {...(rest as ComponentPropsWithoutRef<T>)}
     >
       {frameLabel ? (
-        <div className="surface-card-legend">{frameLabel}</div>
+        <div className="surface-card-legend">
+          <ApexLozenge className="ornament-accent" size={9} />
+          <span>{frameLabel}</span>
+          <ApexLozenge className="ornament-accent" size={9} />
+        </div>
       ) : null}
       {children}
     </Component>

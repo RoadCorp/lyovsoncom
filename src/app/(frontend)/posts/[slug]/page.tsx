@@ -11,6 +11,7 @@ import {
 } from "@/components/grid";
 import { JsonLd } from "@/components/json-ld";
 import { OptionalErrorBoundary } from "@/components/optional-error-boundary";
+import { FleuronRule } from "@/components/ornaments";
 import { PostTransitionBoundary } from "@/components/post-transitions/post-transition-boundary";
 import { PublicPageBoundary } from "@/components/public-page-boundary";
 import RichText from "@/components/RichText";
@@ -197,6 +198,7 @@ async function PostPageContent({ params: paramsPromise }: Args) {
               enableGutter={false}
               enableProse={true}
             />
+            <FleuronRule variant="finis" />
           </GridCardSection>
         </GridCard>
       </PostTransitionBoundary>
