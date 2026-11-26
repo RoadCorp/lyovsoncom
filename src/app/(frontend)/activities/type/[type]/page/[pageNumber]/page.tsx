@@ -1,3 +1,4 @@
+import { cacheLife, cacheTag } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next/types";
 import { ActivitiesArchive } from "@/components/ActivitiesArchive";
@@ -7,13 +8,16 @@ import { Pagination } from "@/components/Pagination";
 import { PublicPageBoundary } from "@/components/public-page-boundary";
 import {
   ACTIVITY_FILTER_ARCHIVE_LABELS,
+  ACTIVITY_FILTER_TYPES,
   isActivityFilterType,
 } from "@/utilities/activity-type";
 import {
   ACTIVITIES_PER_PAGE,
+  getPaginatedStaticParams,
   MAX_INDEXED_PAGE,
   parsePageNumber,
 } from "@/utilities/archive";
+import { ensureStaticParams } from "@/utilities/ensure-static-params";
 import {
   generateBreadcrumbSchema,
   generateCollectionPageSchema,
@@ -109,6 +113,24 @@ async function ActivityTypePaginatedContent({ params: paramsPromise }: Args) {
       ) : null}
     </>
   );
+}
+
+export async function generateStaticParams() {
+  "use cache";
+  cacheTag("activities");
+  cacheLife("static");
+
+  const counts = await getActivityTypeCounts();
+  const params = ACTIVITY_FILTER_TYPES.flatMap((type) =>
+    getPaginatedStaticParams(counts[type] ?? 0, ACTIVITIES_PER_PAGE).map(
+      (pageNumber) => ({ pageNumber, type })
+    )
+  );
+
+  return ensureStaticParams(params, {
+    pageNumber: "__placeholder__",
+    type: "read",
+  });
 }
 
 export async function generateMetadata({

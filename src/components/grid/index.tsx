@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Suspense } from "react";
 import { FirstLoadEntrance } from "@/components/first-load-entrance";
 import { HistoryFade } from "@/components/history-fade";
 
@@ -24,7 +25,9 @@ export const Grid = ({
       <div className="g2:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)] g3:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)] g4:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)] g5:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)] g6:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)] g2:[grid-auto-rows:max-content] [container-type:inline-size] relative mx-auto grid min-h-screen grid-cols-[minmax(0,min(100%,var(--grid-card-1x1)))] place-items-center justify-center gap-[var(--grid-gap)] p-[var(--grid-gap)]">
         {nav}
         <main className="contents">
-          <HistoryFade />
+          <Suspense fallback={null}>
+            <HistoryFade />
+          </Suspense>
           <FirstLoadEntrance />
           <span className="sr-only" id="main-content" tabIndex={-1} />
           {children}
