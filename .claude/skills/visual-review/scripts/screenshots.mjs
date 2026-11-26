@@ -2,7 +2,7 @@
 // dark, for side-by-side review.
 //
 //   OUT=/tmp/shots TAG=change ROUTES=/,/activities node screenshots.mjs \
-//     https://www.lyovson.com http://127.0.0.1:3100
+//     https://www.lyovson.com http://127.0.0.1:7300
 import { mkdirSync } from "node:fs";
 import { createRequire } from "node:module";
 

@@ -32,7 +32,7 @@ STRESS_SEED_ALLOWED_HOSTS=ep-<branch> mise exec -- pnpm payload run scripts/seed
 
 ```sh
 mise exec -- pnpm preview:experience:build
-mise exec -- pnpm preview:experience   # http://127.0.0.1:3100, read-only database session
+mise exec -- pnpm preview:experience   # http://127.0.0.1:7300, read-only database session
 ```
 
 The bot guard returns 403 to curl-like user agents; the scripts send a browser user agent.
@@ -41,7 +41,7 @@ The bot guard returns 403 to curl-like user agents; the scripts send a browser u
 
 ```sh
 node .claude/skills/visual-review/scripts/crawl-snapshot.mjs https://www.lyovson.com /tmp/before.json
-node .claude/skills/visual-review/scripts/crawl-snapshot.mjs http://127.0.0.1:3100 /tmp/after.json
+node .claude/skills/visual-review/scripts/crawl-snapshot.mjs http://127.0.0.1:7300 /tmp/after.json
 node .claude/skills/visual-review/scripts/crawl-snapshot.mjs --diff /tmp/before.json /tmp/after.json
 ```
 
@@ -51,7 +51,7 @@ Expect differences only where the change intends them. Stress pages exist only o
 
 ```sh
 OUT=/tmp/shots TAG=my-change ROUTES=/,/posts,/activities \
-  node .claude/skills/visual-review/scripts/screenshots.mjs https://www.lyovson.com http://127.0.0.1:3100
+  node .claude/skills/visual-review/scripts/screenshots.mjs https://www.lyovson.com http://127.0.0.1:7300
 ```
 
-Review desktop and phone, light and dark. Then run the standard gate from AGENTS.md (`pnpm lint` last) and `PLAYWRIGHT_BASE_URL=http://127.0.0.1:3100 pnpm test:browser`.
+Review desktop and phone, light and dark. Then run the standard gate from AGENTS.md (`pnpm lint` last) and `PLAYWRIGHT_BASE_URL=http://127.0.0.1:7300 pnpm test:browser`.

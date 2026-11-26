@@ -8,7 +8,7 @@ export default defineConfig({
   reporter: "list",
   outputDir: "/private/tmp/lyovson-playwright-results",
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3100",
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:7300",
     trace: "retain-on-failure",
   },
   projects: [
