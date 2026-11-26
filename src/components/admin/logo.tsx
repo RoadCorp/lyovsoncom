@@ -1,3 +1,4 @@
+import { EternityKnot } from "@/components/ornaments";
 import { Crest } from "./crest";
 
 export default function AdminLogo() {
@@ -8,6 +9,7 @@ export default function AdminLogo() {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
+        gap: "8px",
         width: "100%",
         height: "100%",
       }}
@@ -23,8 +25,36 @@ export default function AdminLogo() {
           textAlign: "center",
         }}
       >
-        Lyovson.com
+        Lyóvson.com
       </span>
+      <div
+        aria-hidden="true"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          width: "140px",
+          color: "var(--color-text-tertiary)",
+        }}
+      >
+        <span
+          style={{
+            flex: 1,
+            height: "1px",
+            background:
+              "linear-gradient(90deg, transparent, var(--color-border))",
+          }}
+        />
+        <EternityKnot size={14} />
+        <span
+          style={{
+            flex: 1,
+            height: "1px",
+            background:
+              "linear-gradient(90deg, var(--color-border), transparent)",
+          }}
+        />
+      </div>
     </div>
   );
 }

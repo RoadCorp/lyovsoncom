@@ -1,11 +1,14 @@
 "use client";
 
 import type { ErrorInfo } from "next/error";
+import { CornerKnots, EternityKnot } from "@/components/ornaments";
 
 export default function FrontendError({ error, retry }: ErrorInfo) {
   return (
     <div className="surface-card g2:col-start-2 g2:col-end-3 g2:row-start-1 g2:row-end-3 col-start-1 col-end-2 row-start-2 row-end-4 flex min-h-[var(--grid-card-1x2)] w-[var(--grid-card-1x1)] flex-col items-center justify-center gap-5 p-8 text-center">
-      <div className="space-y-2">
+      <CornerKnots inset="sm" variant="triquetra" />
+      <EternityKnot className="ornament-accent relative z-1" size={24} />
+      <div className="relative z-1 space-y-2">
         <h1 className="tone-heading text-2xl font-bold">
           Something went wrong
         </h1>
@@ -16,7 +19,7 @@ export default function FrontendError({ error, retry }: ErrorInfo) {
         </p>
       </div>
       <button
-        className="ui-action-button ui-focus-ring ui-interactive"
+        className="ui-action-button ui-focus-ring ui-interactive relative z-1"
         onClick={retry}
         type="button"
       >

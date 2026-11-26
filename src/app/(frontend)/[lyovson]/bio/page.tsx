@@ -6,6 +6,7 @@ import {
   GridCardSection,
 } from "@/components/grid";
 import { JsonLd } from "@/components/json-ld";
+import { FleuronRule } from "@/components/ornaments";
 import { PublicPageBoundary } from "@/components/public-page-boundary";
 import RichText from "@/components/RichText";
 import {
@@ -67,6 +68,7 @@ async function PageContent({ params }: PageProps) {
               enableGutter={false}
               enableProse={true}
             />
+            <FleuronRule variant="finis" />
           </GridCardSection>
         </GridCard>
       ) : (

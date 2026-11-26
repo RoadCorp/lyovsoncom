@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { GridCard, GridCardSection } from "@/components/grid";
+import { CornerKnots, FleuronRule } from "@/components/ornaments";
 import { PublicPageBoundary } from "@/components/public-page-boundary";
 import { getLyovsonProfile } from "@/utilities/get-lyovson-profile";
 import { SOCIAL_ICON_MAP } from "@/utilities/social-icons";
@@ -39,11 +40,13 @@ async function PageContent({ params }: PageProps) {
         interactive={false}
       >
         <GridCardSection className="col-span-3 row-span-1 flex items-center justify-center p-5">
-          <div className="text-center">
+          <CornerKnots inset="sm" variant="triquetra" />
+          <div className="relative z-1 flex flex-col items-center gap-1.5 text-center">
             <h2 className="tone-heading text-xl font-bold">
               Contact {user.name}
             </h2>
-            <p className="tone-muted mt-2 text-sm">
+            <FleuronRule variant="lozenge" />
+            <p className="tone-muted text-sm">
               Reach out via public channels below.
             </p>
           </div>

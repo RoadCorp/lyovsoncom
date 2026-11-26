@@ -1,3 +1,4 @@
+import { ApexLozenge } from "@/components/ornaments";
 import RichText from "@/components/RichText";
 import { cn } from "@/lib/utils";
 import type { QuoteBlock as QuoteBlockType } from "@/payload-types";
@@ -10,7 +11,7 @@ export function QuoteBlock({ className, quote, attribution }: Props) {
   return (
     <div className={cn("content-block", className)}>
       <figure
-        className="surface-panel surface-quote mt-0 mb-0 rounded-lg px-4 py-3 sm:px-5 sm:py-4"
+        className="surface-panel surface-quote ornament-braid-rail mt-0 mb-0 rounded-lg py-3 ps-7 pe-4 sm:py-4 sm:ps-8 sm:pe-5"
         dir="auto"
       >
         <blockquote className="m-0">
@@ -29,10 +30,11 @@ export function QuoteBlock({ className, quote, attribution }: Props) {
         </blockquote>
         {attribution && (
           <figcaption
-            className="quote-block-attribution mt-3 text-start text-sm font-medium opacity-90"
+            className="quote-block-attribution mt-3 flex items-center gap-2 text-start text-sm font-medium opacity-90"
             dir="auto"
           >
-            — {attribution}
+            <ApexLozenge className="ornament-accent" size={9} />
+            <span>{attribution}</span>
           </figcaption>
         )}
       </figure>

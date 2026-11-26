@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { GridCard, GridCardSection } from "@/components/grid";
+import { FleuronRule } from "@/components/ornaments";
 import { cn } from "@/lib/utils";
 import { buildSeoMetadata } from "@/utilities/seo-metadata";
 
@@ -17,15 +18,15 @@ export default function PrivacyPolicy() {
     >
       <GridCardSection className="col-span-3 row-span-3 p-6">
         <article className="docs-shell content-prose">
-          <h1>Privacy Policy for Lyovson.com</h1>
+          <h1>Privacy Policy for Lyóvson.com</h1>
 
-          <section className="surface-panel surface-docs-panel">
+          <section className="surface-panel surface-docs-panel ornament-braid-rail py-4 ps-7 pe-5">
             <p className="tone-muted text-sm">
               <strong>Last Updated:</strong> October 2, 2026
             </p>
 
             <p>
-              <strong>Lyovson.com</strong> is the personal website of Rafa and
+              <strong>Lyóvson.com</strong> is the personal website of Rafa and
               Jess Lyóvson. We collect as little as we can: there are no
               accounts for readers, no sign-up forms, no advertising and no
               tracking cookies.
@@ -133,6 +134,7 @@ export default function PrivacyPolicy() {
               <a href="mailto:hello@lyovson.com">hello@lyovson.com</a>
             </p>
           </section>
+          <FleuronRule variant="finis" />
         </article>
       </GridCardSection>
     </GridCard>

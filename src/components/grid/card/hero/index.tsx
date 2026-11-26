@@ -10,6 +10,7 @@ import { IntentLink } from "@/components/intent-link";
 import { Media } from "@/components/Media";
 import { CARD_FULL_IMAGE_SIZE } from "@/components/Media/image-sizes";
 import { MediaFallback } from "@/components/Media/media-fallback";
+import { ApexLozenge } from "@/components/ornaments";
 import { PostTransitionBoundary } from "@/components/post-transitions/post-transition-boundary";
 import { TopicPillList } from "@/components/topic-pill";
 import { cn } from "@/lib/utils";
@@ -99,9 +100,7 @@ function PostHeroEyebrow({ post }: { post: Post }) {
       </span>
       {post.publishedAt ? (
         <>
-          <span aria-hidden="true" className="tone-muted">
-            ·
-          </span>
+          <ApexLozenge className="ornament-accent" size={9} />
           <time className="tone-muted" dateTime={post.publishedAt}>
             {formatShortDate(post.publishedAt)}
           </time>
@@ -397,9 +396,7 @@ export const GridCardHeroReference = ({
             <span className="card-eyebrow">{typeLabel}</span>
             {reference.year ? (
               <>
-                <span aria-hidden="true" className="tone-muted">
-                  ·
-                </span>
+                <ApexLozenge className="ornament-accent" size={9} />
                 <span className="tone-muted">{reference.year}</span>
               </>
             ) : null}

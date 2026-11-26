@@ -2,6 +2,7 @@ import { User } from "lucide-react";
 import { AppLink } from "@/components/app-link";
 import { GridCard } from "@/components/grid/card";
 import { GridCardSection } from "@/components/grid/card/section";
+import { EternityKnot, FleuronRule } from "@/components/ornaments";
 import RichText from "@/components/RichText";
 import { cn } from "@/lib/utils";
 import type { Activity } from "@/payload-types";
@@ -74,7 +75,13 @@ export function GridCardActivityEntry({
             />
           </div>
         ) : (
-          <p className="tone-muted text-center text-sm">No notes</p>
+          <div className="relative flex h-full w-full flex-col items-center justify-center gap-2.5">
+            <div className="ornament-lattice" />
+            <EternityKnot className="ornament-muted relative z-1" size={18} />
+            <p className="tone-muted relative z-1 text-center text-sm italic">
+              No notes
+            </p>
+          </div>
         )}
       </GridCardSection>
 
@@ -114,12 +121,13 @@ export function GridCardActivityEntry({
       <GridCardSection className="col-start-3 col-end-4 row-start-3 row-end-4 flex flex-col items-center justify-center">
         {finishDateParts ? (
           <time
-            className="flex flex-col items-center"
+            className="flex flex-col items-center gap-1"
             dateTime={finishDateParts.iso}
           >
-            <span className="tone-heading text-2xl leading-none font-bold">
+            <span className="tone-heading text-2xl leading-none font-bold tabular-nums">
               {finishDateParts.day}
             </span>
+            <FleuronRule className="max-w-12" variant="lozenge" />
             <span className="tone-muted type-eyebrow">
               {finishDateParts.monthYear}
             </span>

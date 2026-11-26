@@ -14,6 +14,7 @@ import {
   CARD_FULL_IMAGE_SIZE,
 } from "@/components/Media/image-sizes";
 import { MediaFallback } from "@/components/Media/media-fallback";
+import { ApexLozenge, CornerKnots, FleuronRule } from "@/components/ornaments";
 import { TechPill } from "@/components/tech-pill";
 import { TopicPill } from "@/components/topic-pill";
 import type { Project } from "@/payload-types";
@@ -159,6 +160,7 @@ export const GridCardProject = ({
           ) : null}
 
           <GridCardSection className="surface-title-stage col-start-1 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1.5">
+            <CornerKnots className="ornament-corner--hover" variant="ticks" />
             {eyebrow ? (
               <span aria-hidden="true" className="card-eyebrow type-eyebrow">
                 {eyebrow}
@@ -194,9 +196,7 @@ export const GridCardProjectHero = ({
     return null;
   }
 
-  const meta = [project.role, formatProjectYears(project)]
-    .filter(Boolean)
-    .join(" · ");
+  const years = formatProjectYears(project);
   const host = getProjectHost(project.url);
 
   return (
@@ -245,7 +245,12 @@ export const GridCardProjectHero = ({
         )}
 
         <GridCardSection className="surface-title-stage g3:col-start-4 g3:col-end-7 g3:row-start-1 g3:row-end-4 col-start-1 col-end-4 row-start-4 row-end-7">
-          <div className="flex h-full flex-col items-center justify-center px-4 md:px-8">
+          <CornerKnots
+            className="ornament-corner--subtle"
+            inset="sm"
+            variant="triquetra"
+          />
+          <div className="relative z-1 flex h-full flex-col items-center justify-center px-6 py-5 md:px-8 md:py-6">
             <div className="mx-auto w-full max-w-3xl space-y-4">
               <ViewTransition
                 name={getProjectTitleTransitionName(slug)}
@@ -255,8 +260,17 @@ export const GridCardProjectHero = ({
                   {name}
                 </h2>
               </ViewTransition>
-              {meta ? (
-                <p className="card-eyebrow type-eyebrow text-center">{meta}</p>
+              {project.role || years ? (
+                <p className="card-eyebrow type-eyebrow flex flex-wrap items-center justify-center gap-2 text-center">
+                  {project.role ? <span>{project.role}</span> : null}
+                  {project.role && years ? (
+                    <ApexLozenge className="ornament-accent" size={9} />
+                  ) : null}
+                  {years ? <span>{years}</span> : null}
+                </p>
+              ) : null}
+              {description ? (
+                <FleuronRule className="max-w-36" variant="knot" />
               ) : null}
               {description ? (
                 <p className="tone-muted text-left text-base leading-relaxed">

@@ -6,6 +6,7 @@ import { GridCardSection } from "@/components/grid/card/section";
 import { IntentLink } from "@/components/intent-link";
 import { Media } from "@/components/Media";
 import { CARD_COVER_IMAGE_SIZE } from "@/components/Media/image-sizes";
+import { CornerKnots } from "@/components/ornaments";
 import type { Activity } from "@/payload-types";
 import {
   activityRoute,
@@ -140,6 +141,7 @@ export const GridCardActivityFull = ({
       ) : null}
 
       <GridCardSection className="surface-title-stage col-start-3 col-end-4 row-start-1 row-end-2 flex h-full flex-col justify-center">
+        <CornerKnots className="ornament-corner--hover" variant="ticks" />
         <IntentLink
           aria-label={`${activityTypeLabel} ${referenceTitle}`}
           className="ui-focus-ring group block"
