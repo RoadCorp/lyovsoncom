@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { cacheLife } from "next/cache";
 import type { ReactNode } from "react";
 import { GridCard, GridCardSection } from "@/components/grid";
+import { CornerKnots, FleuronRule } from "@/components/ornaments";
 import { buildSeoMetadata } from "@/utilities/seo-metadata";
 import { getCanonicalSiteOrigin } from "@/utilities/site-config";
 
@@ -72,7 +73,8 @@ export default async function AIDocsPage() {
     <>
       <GridCard className={DOCS_CARD_CLASS_NAME}>
         <GridCardSection className={DOCS_SECTION_CLASS_NAME}>
-          <div className="content-prose">
+          <CornerKnots inset="sm" variant="triquetra" />
+          <div className="content-prose relative z-1">
             <h1>Crawler Access Policy</h1>
             <p>
               Automated clients should use cached public pages, feeds, sitemap,
@@ -135,7 +137,9 @@ export default async function AIDocsPage() {
         <GridCardSection className={DOCS_SECTION_CLASS_NAME}>
           <h2>Usage Policy</h2>
           <div className="space-y-4">
-            <div className={PANEL_CLASS_NAME}>
+            <div
+              className={`${PANEL_CLASS_NAME} ornament-braid-rail py-4 ps-7 pe-5`}
+            >
               <h3 className="mb-2 font-medium">Do</h3>
               <ul className="list-inside list-disc space-y-1 text-sm">
                 <li>Respect Cache-Control and robots.txt directives.</li>
@@ -143,7 +147,9 @@ export default async function AIDocsPage() {
                 <li>Include a descriptive User-Agent for automated access.</li>
               </ul>
             </div>
-            <div className={PANEL_CLASS_NAME}>
+            <div
+              className={`${PANEL_CLASS_NAME} ornament-braid-rail py-4 ps-7 pe-5`}
+            >
               <h3 className="mb-2 font-medium">Do Not</h3>
               <ul className="list-inside list-disc space-y-1 text-sm">
                 <li>Probe private, admin, or environment-file paths.</li>
@@ -170,6 +176,7 @@ export default async function AIDocsPage() {
             </ExternalLink>
           </p>
           <p className="tone-muted mt-4 text-sm">Last updated: {lastUpdated}</p>
+          <FleuronRule variant="finis" />
         </GridCardSection>
       </GridCard>
     </>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { AppLink } from "@/components/app-link";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { JsonLd } from "@/components/json-ld";
+import { CornerKnots, FleuronRule } from "@/components/ornaments";
 import { TopicPill } from "@/components/topic-pill";
 import {
   generateBreadcrumbSchema,
@@ -47,11 +48,13 @@ export default async function TopicsPage() {
         interactive={false}
       >
         <GridCardSection className="col-span-3 row-span-3 flex flex-col gap-5 p-6">
-          <div className="space-y-2">
+          <CornerKnots inset="sm" variant="triquetra" />
+          <div className="relative z-1 space-y-2">
             <h1 className="tone-heading text-3xl font-bold">Topics</h1>
             <p className="tone-muted text-sm leading-relaxed">{DESCRIPTION}</p>
           </div>
-          <ul className="flex flex-wrap gap-2">
+          <FleuronRule className="relative z-1" variant="knot" />
+          <ul className="relative z-1 flex flex-wrap gap-2">
             {topics.map((topic) => (
               <li key={topic.id}>
                 <AppLink

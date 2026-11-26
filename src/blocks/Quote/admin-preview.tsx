@@ -1,5 +1,6 @@
 import { RichText } from "@payloadcms/richtext-lexical/react";
 import { BlockPreview } from "@/components/admin/block-preview";
+import { ApexLozenge } from "@/components/ornaments";
 import type { QuoteBlock } from "@/payload-types";
 
 export function QuotePreview({
@@ -15,7 +16,10 @@ export function QuotePreview({
             <RichText data={siblingData.quote} disableContainer />
           </div>
           {siblingData.attribution && (
-            <footer>— {siblingData.attribution}</footer>
+            <footer>
+              <ApexLozenge size={9} />
+              <span>{siblingData.attribution}</span>
+            </footer>
           )}
         </blockquote>
       ) : (

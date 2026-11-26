@@ -1834,8 +1834,7 @@
     padding-bottom: 0.4rem;
     margin-top: 1.8rem;
     font-size: clamp(1.4rem, 3.9cqi, 1.8rem);
-    border-bottom: 1px solid
-      color-mix(in oklab, var(--line-1) 84%, var(--accent-rail) 16%);
+    border-bottom: 1px solid var(--ornament-line);
   }
 
   .content-prose h3 {
@@ -1854,7 +1853,7 @@
   }
 
   .content-prose li::marker {
-    color: color-mix(in oklab, var(--accent-meta) 68%, var(--text-3) 32%);
+    color: var(--ornament-accent);
   }
 
   .content-prose strong {
@@ -2187,7 +2186,7 @@
   }
 
   .docs-shell li::marker {
-    color: color-mix(in oklab, var(--accent-meta) 68%, var(--text-3) 32%);
+    color: var(--ornament-accent);
   }
 
   .docs-link {
@@ -2368,8 +2367,15 @@
     .review-score-star-empty,
     .content-prose,
     .content-prose p,
-    .content-prose li {
+    .content-prose li,
+    .ornament-accent,
+    .ornament-muted,
+    .ornament-corner {
       color: var(--foreground) !important;
+    }
+
+    .ornament-lattice {
+      display: none !important;
     }
   }
 
@@ -2398,6 +2404,20 @@
       border-left-color: CanvasText !important;
     }
 
+    .ornament-lattice,
+    .ornament-braid-rail::before,
+    .ornament-braid-rail::after,
+    .content-prose > blockquote::before,
+    .content-prose > blockquote::after,
+    .content-prose hr::after {
+      display: none !important;
+    }
+
+    .ornament-braid-rail,
+    .content-prose > blockquote {
+      border-inline-start: 3px solid ButtonText !important;
+    }
+
     .docs-link,
     .quote-block-mark,
     .quote-block-body,
@@ -2406,14 +2426,18 @@
     .review-note-empty,
     .review-score-value,
     .review-score-star,
-    .review-score-star-empty {
+    .review-score-star-empty,
+    .ornament-accent,
+    .ornament-muted,
+    .ornament-corner {
       color: CanvasText !important;
     }
   }
 
   @media print {
     .site-backdrop,
-    .site-spotlight {
+    .site-spotlight,
+    .ornament-lattice {
       display: none !important;
     }
 
@@ -2451,7 +2475,10 @@
     .review-score-star-empty,
     .content-prose,
     .content-prose p,
-    .content-prose li {
+    .content-prose li,
+    .ornament-accent,
+    .ornament-muted,
+    .ornament-corner {
       color: black !important;
     }
   }
@@ -2473,6 +2500,8 @@
     .ui-meta-link,
     .nav-tile-content,
     .nav-crest,
+    .ornament-corner,
+    .ornament-pending-active,
     .media-frame,
     .media-frame img,
     .media-overlay,

@@ -226,10 +226,11 @@ export function GridCardRelatedProjects({
                   size={CARD_THUMBNAIL_IMAGE_SIZE}
                 />
               ) : (
-                <div className="col-start-1 col-end-2 row-start-1 row-end-2 flex h-full items-center justify-center">
+                <div className="relative col-start-1 col-end-2 row-start-1 row-end-2 flex h-full items-center justify-center overflow-hidden">
+                  <div className="ornament-lattice" />
                   <BriefcaseBusiness
                     aria-hidden="true"
-                    className="tone-muted h-8 w-8"
+                    className="tone-muted relative z-1 h-8 w-8"
                   />
                 </div>
               )}

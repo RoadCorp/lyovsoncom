@@ -61,11 +61,44 @@
 }
 
 .block-preview__quote {
-  padding: 14px 18px;
+  position: relative;
+  padding: 14px 18px 14px 30px;
   margin: 0;
+  overflow: hidden;
   background: var(--color-bg-secondary);
-  border-inline-start: 3px solid var(--color-bg-brand);
+  border: 1px solid var(--color-border);
   border-radius: 10px;
+}
+
+.block-preview__quote::before {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 15px;
+  pointer-events: none;
+  content: "";
+  background: color-mix(in oklab, var(--color-bg-brand) 12%, transparent);
+  border-inline-end: 1px solid var(--color-border);
+}
+
+@supports (mask-image: linear-gradient(#000, #000)) and
+  (mask-repeat: repeat-y) and
+  (mask-size: 1px 1px) and
+  (mask-position: center) {
+  .block-preview__quote::after {
+    position: absolute;
+    inset-block: 4px;
+    inset-inline-start: 1.5px;
+    width: 12px;
+    pointer-events: none;
+    content: "";
+    background-color: var(--color-text-brand);
+    opacity: 0.72;
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='22' viewBox='0 0 12 22'%3E%3Cpath fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' d='M8.5 0C8.5 5.5 3.5 5.5 3.5 11C3.5 16.5 8.5 16.5 8.5 22'/%3E%3Cpath fill='none' stroke='%23000' stroke-width='1.35' stroke-linecap='round' stroke-opacity='0.48' d='M3.5 0C3.5 5.5 8.5 5.5 8.5 11C8.5 16.5 3.5 16.5 3.5 22'/%3E%3C/svg%3E");
+    mask-repeat: repeat-y;
+    mask-position: center top;
+    mask-size: 12px 22px;
+  }
 }
 
 .block-preview__quote-body {
@@ -84,6 +117,9 @@
 }
 
 .block-preview__quote footer {
+  display: flex;
+  gap: 8px;
+  align-items: center;
   margin-top: 10px;
   font-size: 13px;
   font-weight: 500;

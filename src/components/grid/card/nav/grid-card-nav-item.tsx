@@ -90,10 +90,11 @@ export const GridCardNavItem = ({
   return (
     <GridCardSection
       className={cn(
-        "tone-heading flex h-full flex-col items-center justify-center gap-2",
+        "group tone-heading flex h-full flex-col items-center justify-center gap-2",
         className
       )}
     >
+      <CornerKnots className="ornament-corner--hover" variant="ticks" />
       {children}
     </GridCardSection>
   );

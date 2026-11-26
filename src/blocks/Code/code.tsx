@@ -1,5 +1,6 @@
 import type { PrismTheme } from "prism-react-renderer";
 import { normalizeTokens, Prism } from "prism-react-renderer";
+import { ApexLozenge } from "@/components/ornaments";
 import { CopyButton } from "./copy-button";
 
 const codeTheme: PrismTheme = {
@@ -60,8 +61,9 @@ export function Code({
   return (
     <div className="surface-panel surface-emphasis surface-code relative">
       {language && (
-        <div className="surface-chip surface-code-chip absolute top-3 right-15 rounded px-2 py-1 text-xs font-medium">
-          {language.toUpperCase()}
+        <div className="surface-chip surface-code-chip absolute top-3 right-15 gap-1.5 rounded px-2.5 py-1 text-xs font-medium">
+          <ApexLozenge className="ornament-accent opacity-80" size={8} />
+          <span>{language.toUpperCase()}</span>
         </div>
       )}
       {/* Long lines scroll sideways, so the scroller must be keyboard-focusable
