@@ -14,7 +14,6 @@ import {
   ViewTransition,
 } from "react";
 import { GridCard } from "@/components/grid/card";
-import { cn } from "@/lib/utils";
 import {
   homeRoute,
   lyovsonRoute,
@@ -345,10 +344,7 @@ function Navigation({
       <GridCard
         aria-label="Main navigation"
         as="nav"
-        className={cn(
-          "col-start-1 col-end-2 row-start-1 row-end-2 self-start",
-          className
-        )}
+        className={className}
         onKeyDownCapture={(event) => {
           if (event.key === "Escape" && renderMode === "search") {
             event.preventDefault();
@@ -358,6 +354,7 @@ function Navigation({
             changeMenuMode("hero");
           }
         }}
+        slot="nav"
       >
         {
           {

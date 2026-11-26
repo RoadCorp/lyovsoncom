@@ -1,6 +1,7 @@
 import { ViewTransition } from "react";
 import { GridCard } from "@/components/grid/card";
 import { GridCardSection } from "@/components/grid/card/section";
+import { GRID_SLOTS } from "@/components/grid/layout";
 import { IntentLink } from "@/components/intent-link";
 import { Media } from "@/components/Media";
 import { CARD_THUMBNAIL_IMAGE_SIZE } from "@/components/Media/image-sizes";
@@ -24,14 +25,12 @@ import {
   UNKNOWN_ACTIVITY_REFERENCE_TITLE,
 } from "./shared";
 
-const DEFAULT_CARD_CLASS_NAME =
-  "aspect-auto h-[var(--grid-card-1x3)] [--grid-internal-rows:9] g2:w-[var(--grid-card-1x1)] self-start";
 export const HOME_ACTIVITIES_PREVIEW_RAIL_CLASS_NAME =
-  "g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-5";
+  GRID_SLOTS.activitiesPreviewRail;
 export const LYOVSON_ACTIVITIES_PREVIEW_RAIL_CLASS_NAME =
-  "g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-5";
+  GRID_SLOTS.activitiesPreviewRail;
 export const ACTIVITIES_PREVIEW_PAGINATION_CLASS_NAME =
-  "g2:col-start-1 g2:col-end-2 g2:row-start-5 g2:row-end-6 g2:self-start";
+  GRID_SLOTS.activitiesPreviewPagination;
 
 function getRenderableActivities(activities: Activity[]) {
   // Transition names must be unique on a page, so only a reference's first
@@ -54,14 +53,6 @@ function getRenderableActivities(activities: Activity[]) {
     .slice(0, ACTIVITY_PREVIEW_LIMIT);
 }
 
-function getRowStyle(index: number) {
-  const start = index + 1;
-
-  return {
-    gridRow: `${start} / ${start + 1}`,
-  } as const;
-}
-
 export function GridCardActivitiesPreview({
   activities,
   className,
@@ -81,11 +72,11 @@ export function GridCardActivitiesPreview({
       {...frontendViewTransitionClasses.anchor}
     >
       <GridCard
-        className={cn(DEFAULT_CARD_CLASS_NAME, className)}
+        className={cn("grid-card--activities-rail", className)}
         frameLabel="Activities"
       >
         {renderableActivities.map(
-          ({ activity, href, morphs, referenceSlug }, index) => {
+          ({ activity, href, morphs, referenceSlug }) => {
             const reference = getActivityReference(activity);
             const referenceImage = getActivityReferenceImage(reference);
             const referenceTitle =
@@ -101,12 +92,9 @@ export function GridCardActivitiesPreview({
             return (
               <IntentLink
                 aria-label={`View activity: ${referenceTitle}`}
-                className={cn(
-                  "ui-focus-ring group ui-interactive col-start-1 col-end-4"
-                )}
+                className="ui-focus-ring group ui-interactive col-start-1 col-end-4"
                 href={href}
                 key={activity.id}
-                style={getRowStyle(index)}
                 transitionTypes={[transitionTypes.drillIn]}
               >
                 <GridCardSection

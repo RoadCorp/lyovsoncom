@@ -8,9 +8,7 @@ import { getCanonicalSiteOrigin } from "@/utilities/site-config";
 
 export const prefetch = "partial";
 
-const DOCS_CARD_CLASS_NAME =
-  "aspect-auto h-auto g2:col-start-2 g2:col-end-3 g3:col-start-2 g3:col-end-4 g3:w-[var(--grid-card-2x1)]";
-const DOCS_SECTION_CLASS_NAME = "docs-shell col-span-3 row-span-3 p-6 md:p-8";
+const DOCS_SECTION_CLASS_NAME = "docs-shell p-6 md:p-8";
 const PANEL_CLASS_NAME = "surface-panel surface-docs-panel min-w-0";
 
 const LAST_UPDATED_FORMATTER = new Intl.DateTimeFormat("en-US", {
@@ -71,7 +69,7 @@ export default async function AIDocsPage() {
 
   return (
     <>
-      <GridCard className={DOCS_CARD_CLASS_NAME}>
+      <GridCard slot="wideStack" variant="content">
         <GridCardSection className={DOCS_SECTION_CLASS_NAME}>
           <CornerKnots inset="sm" variant="triquetra" />
           <div className="content-prose relative z-1">
@@ -85,7 +83,7 @@ export default async function AIDocsPage() {
         </GridCardSection>
       </GridCard>
 
-      <GridCard className={DOCS_CARD_CLASS_NAME}>
+      <GridCard slot="wideStack" variant="content">
         <GridCardSection className={DOCS_SECTION_CLASS_NAME}>
           <h2>Recommended Access</h2>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -133,7 +131,7 @@ export default async function AIDocsPage() {
         </GridCardSection>
       </GridCard>
 
-      <GridCard className={DOCS_CARD_CLASS_NAME}>
+      <GridCard slot="wideStack" variant="content">
         <GridCardSection className={DOCS_SECTION_CLASS_NAME}>
           <h2>Usage Policy</h2>
           <div className="space-y-4">
@@ -163,7 +161,7 @@ export default async function AIDocsPage() {
         </GridCardSection>
       </GridCard>
 
-      <GridCard className={DOCS_CARD_CLASS_NAME}>
+      <GridCard slot="wideStack" variant="content">
         <GridCardSection className={DOCS_SECTION_CLASS_NAME}>
           <h2>Contact</h2>
           <p className="mb-4">

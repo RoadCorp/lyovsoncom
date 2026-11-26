@@ -12,7 +12,7 @@ import {
 import type { Metadata } from "next";
 import Image from "next/image";
 import { AppLink } from "@/components/app-link";
-import { GridCard, GridCardSection } from "@/components/grid";
+import { GRID_HERO_PANELS, GridCard, GridCardSection } from "@/components/grid";
 import { IntentLink } from "@/components/intent-link";
 import { JsonLd } from "@/components/json-ld";
 import { Logo } from "@/components/Logo/logo";
@@ -155,15 +155,13 @@ async function AboutPageContent() {
     <>
       <JsonLd data={breadcrumbSchema} />
 
-      <GridCard
-        className={cn(
-          "col-start-1 col-end-2 row-start-2 row-end-4 h-[var(--grid-card-1x2)] w-[var(--grid-card-1x1)] [--grid-internal-rows:6]",
-          "g2:col-start-2 g2:col-end-3 g2:row-start-1 g2:row-end-3",
-          "g3:col-start-2 g3:col-end-4 g3:row-start-1 g3:row-end-2 g3:h-[var(--grid-card-1x1)] g3:w-[var(--grid-card-2x1)] g3:[--grid-internal-cols:6] g3:[--grid-internal-rows:3]",
-          "self-start"
-        )}
-      >
-        <GridCardSection className="surface-nav-stage g3:col-start-1 g3:col-end-4 g3:row-start-1 g3:row-end-4 relative col-start-1 col-end-4 row-start-1 row-end-4 flex flex-col items-center justify-center gap-3 px-6 py-6 text-center">
+      <GridCard slot="hero">
+        <GridCardSection
+          className={cn(
+            "surface-nav-stage relative flex flex-col items-center justify-center gap-3 px-6 py-6 text-center",
+            GRID_HERO_PANELS.media
+          )}
+        >
           <div className="ornament-lattice" />
           <CornerKnots inset="md" variant="triquetra" />
           <div className="relative z-1 flex flex-col items-center gap-3">
@@ -175,7 +173,9 @@ async function AboutPageContent() {
           </div>
         </GridCardSection>
 
-        <GridCardSection className="surface-title-stage g3:col-start-4 g3:col-end-7 g3:row-start-1 g3:row-end-4 col-start-1 col-end-4 row-start-4 row-end-7">
+        <GridCardSection
+          className={cn("surface-title-stage", GRID_HERO_PANELS.stage)}
+        >
           <BraidedFrieze />
           <CornerKnots
             className="ornament-corner--rest"

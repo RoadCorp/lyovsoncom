@@ -1,5 +1,6 @@
 import { GridCard } from "@/components/grid/card";
 import { GridCardSection } from "@/components/grid/card/section";
+import { GRID_CARD_ROWS } from "@/components/grid/layout";
 import { Media } from "@/components/Media";
 import { CARD_THUMBNAIL_IMAGE_SIZE } from "@/components/Media/image-sizes";
 import { PostDrillInLink } from "@/components/post-transitions/post-drill-in-link";
@@ -35,7 +36,7 @@ export const GridCardRelatedPosts = ({
   return (
     <GridCard className={cn(className)} frameLabel="Related">
       {uniquePosts.map((post, index) => {
-        const rowClass = `row-start-${index + 1} row-end-${index + 2}`;
+        const rowClass = GRID_CARD_ROWS[index];
         return (
           <PostDrillInLink
             aria-label={`Read related post: ${post.title}`}

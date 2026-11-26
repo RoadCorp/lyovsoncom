@@ -6,6 +6,7 @@ import {
 } from "@/collections/References/fields/type";
 import { AppLink } from "@/components/app-link";
 import { GridCard } from "@/components/grid/card";
+import { GRID_HERO_PANELS } from "@/components/grid/layout";
 import { IntentLink } from "@/components/intent-link";
 import { Media } from "@/components/Media";
 import { CARD_FULL_IMAGE_SIZE } from "@/components/Media/image-sizes";
@@ -196,23 +197,9 @@ export const GridCardHero = ({
 
   return (
     <PostTransitionBoundary variant="heroShell">
-      <GridCard
-        className={cn(
-          "col-start-1 col-end-2 row-start-2 row-end-4 h-[var(--grid-card-1x2)] w-[var(--grid-card-1x1)] [--grid-internal-rows:6]",
-          "g2:col-start-2 g2:col-end-3 g2:row-start-1 g2:row-end-3",
-          "g3:col-start-2 g3:col-end-4 g3:row-start-1 g3:row-end-2 g3:h-[var(--grid-card-1x1)] g3:w-[var(--grid-card-2x1)] g3:[--grid-internal-cols:6] g3:[--grid-internal-rows:3]",
-          "self-start",
-          className
-        )}
-      >
+      <GridCard className={className} slot="hero">
         {post.featuredImage && typeof post.featuredImage !== "string" ? (
-          <GridCardSection
-            className={cn(
-              "col-start-1 col-end-4 row-start-1 row-end-4",
-              "g3:col-start-1 g3:col-end-4 g3:row-start-1 g3:row-end-4"
-            )}
-            flush={true}
-          >
+          <GridCardSection className={GRID_HERO_PANELS.media} flush={true}>
             <PostTransitionBoundary slug={post.slug} variant="media">
               <Media
                 className="media-frame flex h-full items-center justify-center"
@@ -225,18 +212,14 @@ export const GridCardHero = ({
             </PostTransitionBoundary>
           </GridCardSection>
         ) : (
-          <GridCardSection
-            className={cn(
-              "col-start-1 col-end-4 row-start-1 row-end-4",
-              "g3:col-start-1 g3:col-end-4 g3:row-start-1 g3:row-end-4"
-            )}
-            flush={true}
-          >
+          <GridCardSection className={GRID_HERO_PANELS.media} flush={true}>
             <MediaFallback icon={FileText} label={post.type || "article"} />
           </GridCardSection>
         )}
 
-        <GridCardSection className="surface-title-stage g3:col-start-4 g3:col-end-7 g3:row-start-1 g3:row-end-4 col-start-1 col-end-4 row-start-4 row-end-7">
+        <GridCardSection
+          className={cn("surface-title-stage", GRID_HERO_PANELS.stage)}
+        >
           <BraidedFrieze />
           <CornerKnots
             className="ornament-corner--rest"
@@ -372,22 +355,8 @@ export const GridCardHeroReference = ({
   const host = reference.url ? linkHost(reference.url) : null;
 
   return (
-    <GridCard
-      className={cn(
-        "col-start-1 col-end-2 row-start-2 row-end-4 h-[var(--grid-card-1x2)] w-[var(--grid-card-1x1)] [--grid-internal-rows:6]",
-        "g2:col-start-2 g2:col-end-3 g2:row-start-1 g2:row-end-3",
-        "g3:col-start-2 g3:col-end-4 g3:row-start-1 g3:row-end-2 g3:h-[var(--grid-card-1x1)] g3:w-[var(--grid-card-2x1)] g3:[--grid-internal-cols:6] g3:[--grid-internal-rows:3]",
-        "self-start",
-        className
-      )}
-    >
-      <GridCardSection
-        className={cn(
-          "col-start-1 col-end-4 row-start-1 row-end-4",
-          "g3:col-start-1 g3:col-end-4 g3:row-start-1 g3:row-end-4"
-        )}
-        flush={true}
-      >
+    <GridCard className={className} slot="hero">
+      <GridCardSection className={GRID_HERO_PANELS.media} flush={true}>
         <ViewTransition
           name={getReferenceMediaTransitionName(reference.slug)}
           {...frontendViewTransitionClasses.sharedMedia}
@@ -416,7 +385,9 @@ export const GridCardHeroReference = ({
         </ViewTransition>
       </GridCardSection>
 
-      <GridCardSection className="surface-title-stage g3:col-start-4 g3:col-end-7 g3:row-start-1 g3:row-end-4 col-start-1 col-end-4 row-start-4 row-end-7">
+      <GridCardSection
+        className={cn("surface-title-stage", GRID_HERO_PANELS.stage)}
+      >
         <BraidedFrieze />
         <CornerKnots
           className="ornament-corner--rest"

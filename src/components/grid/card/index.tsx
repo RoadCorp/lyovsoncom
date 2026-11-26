@@ -5,7 +5,8 @@ import type {
   ElementType,
   ReactNode,
 } from "react";
-
+import type { GridSlot } from "@/components/grid/layout";
+import { GRID_SLOTS } from "@/components/grid/layout";
 import { ApexLozenge } from "@/components/ornaments";
 import { cn } from "@/lib/utils";
 
@@ -13,9 +14,15 @@ interface GridCardBaseProps<T extends ElementType> {
   as?: T;
   children: ReactNode;
   className?: string;
+  /** Override internal grid column count (`--grid-internal-cols`). */
+  cols?: number;
   frameLabel?: ReactNode;
   interactive?: boolean;
   role?: AriaRole;
+  /** Override internal grid row count (`--grid-internal-rows`). */
+  rows?: number;
+  /** Canonical responsive grid placement slot from `GRID_SLOTS`. */
+  slot?: GridSlot;
   style?: CSSProperties;
   variant?: "default" | "content";
 }
@@ -23,35 +30,49 @@ interface GridCardBaseProps<T extends ElementType> {
 type GridCardProps<T extends ElementType> = GridCardBaseProps<T> &
   Omit<ComponentPropsWithoutRef<T>, keyof GridCardBaseProps<T>>;
 
+function resolveCardStyle(
+  cols: number | undefined,
+  rows: number | undefined,
+  style: CSSProperties | undefined
+): CSSProperties | undefined {
+  if (cols === undefined && rows === undefined && style === undefined) {
+    return undefined;
+  }
+
+  return {
+    ...(cols === undefined
+      ? undefined
+      : ({ "--grid-internal-cols": cols } as CSSProperties)),
+    ...(rows === undefined
+      ? undefined
+      : ({ "--grid-internal-rows": rows } as CSSProperties)),
+    ...style,
+  };
+}
+
 export const GridCard = <T extends ElementType = "div">({
   as,
   children,
   className,
+  cols,
   frameLabel,
   interactive = false,
   role,
+  rows,
+  slot,
   style,
   variant = "default",
   ...rest
 }: GridCardProps<T>) => {
   const Component = (as ?? "div") as ElementType;
-
-  const baseStyle: CSSProperties =
-    variant === "default"
-      ? {
-          minHeight: "var(--grid-card-size)",
-          gridTemplateColumns:
-            "repeat(var(--grid-internal-cols), minmax(0, 1fr))",
-          gridTemplateRows: "repeat(var(--grid-internal-rows), minmax(0, 1fr))",
-        }
-      : {};
+  const resolvedStyle = resolveCardStyle(cols, rows, style);
 
   const cardClassName = cn(
-    "surface-card w-full min-w-0 rounded-xl",
-    "grid gap-[var(--grid-section-gap)] p-[var(--grid-frame-padding)]",
+    "surface-card grid-card rounded-xl",
+    variant === "default" ? "grid-card--default" : "grid-card--content",
     frameLabel && "surface-card-framed",
-    variant === "default" ? "aspect-square" : "auto-rows-auto grid-cols-1",
     interactive && "ui-interactive",
+    slot && GRID_SLOTS[slot],
     className
   );
 
@@ -59,7 +80,7 @@ export const GridCard = <T extends ElementType = "div">({
     <Component
       className={cardClassName}
       role={role}
-      style={{ ...baseStyle, ...style }}
+      style={resolvedStyle}
       {...(rest as ComponentPropsWithoutRef<T>)}
     >
       {frameLabel ? (

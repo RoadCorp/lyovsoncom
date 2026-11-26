@@ -6,10 +6,10 @@ import {
   Code2,
   PenTool,
 } from "lucide-react";
-import type { CSSProperties } from "react";
 import { Fragment } from "react";
 import { GridCard } from "@/components/grid/card";
 import { GridCardSection } from "@/components/grid/card/section";
+import { GRID_CARD_ROWS } from "@/components/grid/layout";
 import { IntentLink } from "@/components/intent-link";
 import { Media } from "@/components/Media";
 import {
@@ -71,10 +71,7 @@ export function GridCardProjectFacts({ project }: { project: Project }) {
   }
 
   return (
-    <GridCard
-      frameLabel="Project"
-      style={{ "--grid-internal-rows": facts.length } as CSSProperties}
-    >
+    <GridCard frameLabel="Project" rows={facts.length}>
       {facts.map(({ href, icon: Icon, term, value }) => (
         <GridCardSection
           className="surface-row ornament-braid-rail col-start-1 col-end-4 flex items-center gap-3 ps-7 pe-4"
@@ -144,15 +141,7 @@ export function GridCardProjectHighlights({
   const rows = highlights.length > 2 ? 2 : 1;
 
   return (
-    <GridCard
-      frameLabel="Highlights"
-      style={
-        {
-          "--grid-internal-cols": columns,
-          "--grid-internal-rows": rows,
-        } as CSSProperties
-      }
-    >
+    <GridCard cols={columns} frameLabel="Highlights" rows={rows}>
       {highlights.map((highlight, index) => (
         <GridCardSection
           className={cn(
@@ -207,7 +196,7 @@ export function GridCardRelatedProjects({
             aria-label={`View ${project.name} project`}
             className={cn(
               "ui-focus-ring group ui-interactive col-start-1 col-end-4",
-              `row-start-${index + 1} row-end-${index + 2}`
+              GRID_CARD_ROWS[index]
             )}
             href={projectRoute(project.slug)}
             key={project.id}
@@ -260,11 +249,7 @@ export function ProjectCaseStudy({
   sections: CaseStudySection[];
 }) {
   return (
-    <GridCard
-      as="article"
-      className={cn("aspect-auto h-auto", className)}
-      variant="content"
-    >
+    <GridCard as="article" className={className} variant="content">
       <div className="flex flex-col gap-10 p-6">
         {sections.map((section, index) => (
           <Fragment key={section.id ?? section.heading}>
@@ -318,7 +303,7 @@ export function ProjectGallery({
         return (
           <GridCard
             as="figure"
-            className={cn("aspect-auto h-auto", !portrait && "col-span-2")}
+            className={cn(!portrait && "col-span-2")}
             key={item.id ?? item.image.id}
             variant="content"
           >

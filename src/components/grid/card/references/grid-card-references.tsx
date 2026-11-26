@@ -5,6 +5,7 @@ import {
 import { GridCard } from "@/components/grid/card";
 import { getActivityReferenceIcon } from "@/components/grid/card/activity/shared";
 import { GridCardSection } from "@/components/grid/card/section";
+import { GRID_CARD_ROWS } from "@/components/grid/layout";
 import { IntentLink } from "@/components/intent-link";
 import { Media } from "@/components/Media";
 import { CARD_THUMBNAIL_IMAGE_SIZE } from "@/components/Media/image-sizes";
@@ -56,7 +57,7 @@ export const GridCardReferences = ({
         const byline = [reference.creator, reference.year]
           .filter(Boolean)
           .join(", ");
-        const rowClass = `row-start-${index + 1} row-end-${index + 2}`;
+        const rowClass = GRID_CARD_ROWS[index];
         const staggerClass = getStaggerClass(index);
 
         const imageObj =

@@ -57,11 +57,8 @@ async function PageContent({ params }: PageProps) {
       ) : null}
 
       {user.bio ? (
-        <GridCard
-          className="g2:col-start-1 g2:col-end-3 g2:row-auto g2:row-start-3 g2:w-[var(--grid-card-2x1)] g3:col-start-2 g3:col-end-4 g3:row-start-2 aspect-auto h-auto self-start"
-          interactive={false}
-        >
-          <GridCardSection className="[container-type:inline-size] col-span-3 row-span-3 p-6">
+        <GridCard interactive={false} slot="bodyBelowHero" variant="content">
+          <GridCardSection className="[container-type:inline-size] p-6">
             <RichText
               className="reveal-stagger-3 g3:text-[1.125rem] h-full"
               content={user.bio}
