@@ -491,7 +491,7 @@
 
 @keyframes reveal-up {
   from {
-    opacity: 0;
+    opacity: 0.01;
     transform: translateY(12px);
   }
 
@@ -1424,6 +1424,16 @@
         transparent
       ),
       var(--shadow-surface);
+  }
+
+  .activity-seal-panel--empty {
+    opacity: 0.62;
+    transition: opacity var(--duration-medium) var(--ease-standard);
+  }
+
+  .activity-seal-panel--empty:hover,
+  .activity-seal-panel--empty:focus-within {
+    opacity: 0.92;
   }
 
   .activity-seal-ring {

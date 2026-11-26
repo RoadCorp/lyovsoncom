@@ -16,13 +16,13 @@ import {
 } from "@/components/ornaments";
 import { PublicPageBoundary } from "@/components/public-page-boundary";
 import { cn } from "@/lib/utils";
-import { ACTIVITY_FILTER_TYPES } from "@/utilities/activity-type";
 import { formatShortDate } from "@/utilities/date";
 import {
   generateBreadcrumbSchema,
   generateCollectionPageSchema,
 } from "@/utilities/generate-json-ld";
 import {
+  getActivityCount,
   getActivityTypeCounts,
   getLatestActivities,
 } from "@/utilities/get-activity";
@@ -51,17 +51,16 @@ const RECENT_ACTIVITY_COUNT = 6;
 const RECENT_POST_COUNT = 3;
 
 async function NowPageContent() {
-  const [latestActivities, counts, latestPosts, postCount] = await Promise.all([
-    getLatestActivities(RECENT_ACTIVITY_COUNT),
-    getActivityTypeCounts(),
-    getLatestPosts(RECENT_POST_COUNT),
-    getPostCount(),
-  ]);
+  const [latestActivities, activityCount, counts, latestPosts, postCount] =
+    await Promise.all([
+      getLatestActivities(RECENT_ACTIVITY_COUNT),
+      getActivityCount(),
+      getActivityTypeCounts(),
+      getLatestPosts(RECENT_POST_COUNT),
+      getPostCount(),
+    ]);
 
-  const totalActivities = ACTIVITY_FILTER_TYPES.reduce(
-    (sum, type) => sum + (counts[type] ?? 0),
-    0
-  );
+  const totalActivities = activityCount.totalDocs;
 
   const schemaItems = [
     ...latestPosts.docs

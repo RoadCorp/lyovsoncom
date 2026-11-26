@@ -103,25 +103,28 @@ function PostHeroEyebrow({ post }: { post: Post }) {
   const postType = post.type || "article";
   const readingMinutes = estimateReadingTimeMinutes(post.content);
   return (
-    <p className="type-eyebrow flex flex-wrap items-center gap-x-2 gap-y-1">
-      <span className="card-eyebrow" data-post-type={postType}>
+    <p className="type-eyebrow flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1">
+      <span
+        className="card-eyebrow whitespace-nowrap"
+        data-post-type={postType}
+      >
         {postType}
       </span>
       {post.publishedAt ? (
-        <>
-          <ApexLozenge className="ornament-accent" size={9} />
+        <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+          <ApexLozenge className="ornament-accent" size={8} />
           <time className="tone-muted" dateTime={post.publishedAt}>
             {formatShortDate(post.publishedAt)}
           </time>
-        </>
+        </span>
       ) : null}
       {readingMinutes ? (
-        <>
-          <ApexLozenge className="ornament-accent" size={9} />
+        <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+          <ApexLozenge className="ornament-accent" size={8} />
           <span className="tone-muted">
             {formatReadingTime(readingMinutes)}
           </span>
-        </>
+        </span>
       ) : null}
     </p>
   );
