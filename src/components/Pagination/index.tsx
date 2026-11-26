@@ -211,7 +211,7 @@ export function Pagination({
                         aria-label={cell.ariaLabel}
                         className="relative flex h-full w-full items-center justify-center"
                         href={getPageHref(cell.target)}
-                        pendingHintClassName="absolute right-2 top-2"
+                        pendingHintClassName="absolute top-2 left-1/2 -translate-x-1/2"
                         prefetch={null}
                         showPendingHint
                         transitionTypes={[

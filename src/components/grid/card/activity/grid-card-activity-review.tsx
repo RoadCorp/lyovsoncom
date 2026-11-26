@@ -2,6 +2,7 @@ import { Quote, Star, StarHalf, User } from "lucide-react";
 import { AppLink } from "@/components/app-link";
 import { GridCard } from "@/components/grid/card";
 import { GridCardSection } from "@/components/grid/card/section";
+import { EternityKnot } from "@/components/ornaments";
 import { cn } from "@/lib/utils";
 import type { Lyovson } from "@/payload-types";
 import { lyovsonRoute } from "@/utilities/routes";
@@ -98,19 +99,21 @@ export function GridCardActivityReview({
       {/* Top section - Note (styled as quote) */}
       <GridCardSection
         className={cn(
-          "review-note-panel col-start-1 col-end-4 row-start-1 row-end-3 flex h-full flex-col overflow-hidden"
+          "review-note-panel col-start-1 col-end-4 row-start-1 row-end-3 flex h-full flex-col overflow-hidden",
+          hasNote && "ornament-braid-rail"
         )}
+        flush={true}
       >
         {hasNote ? (
-          <div className="relative flex h-full flex-col justify-start px-6 py-5">
+          <div className="relative flex h-full flex-col justify-start py-5 ps-7 pe-5">
             {/* Opening quote mark */}
             <Quote
               aria-hidden="true"
-              className="review-quote-mark absolute top-3 left-4 h-5 w-5 rotate-180 opacity-60"
+              className="review-quote-mark absolute top-4 left-6 h-4 w-4 rotate-180 opacity-60"
             />
             <p
               className={cn(
-                "review-note-copy text-note overflow-hidden pr-6 pl-4 text-left font-serif leading-relaxed text-pretty break-words not-italic",
+                "review-note-copy text-note overflow-hidden ps-6 pe-2 text-left font-serif leading-relaxed text-pretty break-words not-italic",
                 "tracking-[-0.01em] whitespace-pre-line"
               )}
             >
@@ -127,8 +130,12 @@ export function GridCardActivityReview({
             )}
           </div>
         ) : (
-          <div className="flex h-full items-center justify-center px-6 py-6">
-            <p className="review-note-empty text-sm italic">No note</p>
+          <div className="relative flex h-full flex-col items-center justify-center gap-2.5 px-6 py-6">
+            <div className="ornament-lattice" />
+            <EternityKnot className="ornament-muted relative z-1" size={18} />
+            <p className="review-note-empty relative z-1 text-sm italic">
+              No note
+            </p>
           </div>
         )}
       </GridCardSection>

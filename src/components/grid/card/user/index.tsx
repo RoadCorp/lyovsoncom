@@ -80,7 +80,7 @@ export const GridCardUser = ({ user, className }: Props) => {
 
         <GridCardSection
           className={cn(
-            "col-start-1 col-end-4 row-start-4 row-end-6 flex h-full flex-col items-center justify-center px-6 md:px-8",
+            "col-start-1 col-end-4 row-start-4 row-end-6 flex h-full flex-col items-center justify-center px-6 py-5 md:px-8 md:py-6",
             "g3:col-start-4 g3:col-end-7 g3:row-start-1 g3:row-end-3"
           )}
         >

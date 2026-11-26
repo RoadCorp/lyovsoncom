@@ -16,7 +16,7 @@ export const SiteTitleSection = ({ href }: { href: string }) => {
           "ui-focus-ring ui-crest-link relative flex h-full flex-col items-center justify-center"
         }
         href={href}
-        pendingHintClassName="absolute top-4 right-4"
+        pendingHintClassName="absolute top-3 left-1/2 -translate-x-1/2"
         prefetch={null}
         scroll={false}
         showPendingHint={true}

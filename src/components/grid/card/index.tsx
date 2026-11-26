@@ -64,9 +64,9 @@ export const GridCard = <T extends ElementType = "div">({
     >
       {frameLabel ? (
         <div className="surface-card-legend">
-          <ApexLozenge className="ornament-accent" size={9} />
-          <span>{frameLabel}</span>
-          <ApexLozenge className="ornament-accent" size={9} />
+          <ApexLozenge className="ornament-accent opacity-75" size={9} />
+          <span className="min-w-0 truncate">{frameLabel}</span>
+          <ApexLozenge className="ornament-accent opacity-75" size={9} />
         </div>
       ) : null}
       {children}

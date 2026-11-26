@@ -11,6 +11,7 @@ import {
   X,
 } from "lucide-react";
 import { ViewTransition } from "react";
+import { EternityKnot } from "@/components/ornaments";
 import {
   activitiesRoute,
   lyovsonActivitiesRoute,
@@ -23,6 +24,7 @@ import {
   projectsRoute,
   topicsRoute,
 } from "@/utilities/routes";
+import { GridCardSection } from "../section";
 import { GridCardNavItem } from "./grid-card-nav-item";
 import { ThemeSwitcher } from "./theme-switcher";
 import type { ManualMenuMode, NavRouteContext } from "./types";
@@ -122,6 +124,13 @@ export const MenuMode = ({
           <span>{link.label}</span>
         </GridCardNavItem>
       ))}
+      <GridCardSection
+        aria-hidden="true"
+        className="surface-nav-tile relative col-start-3 col-end-4 row-start-1 row-end-2 flex items-center justify-center"
+      >
+        <div className="ornament-lattice" />
+        <EternityKnot className="ornament-muted relative z-1" size={22} />
+      </GridCardSection>
       {menuLinks.map((link, index) => (
         <GridCardNavItem
           className={menuClasses[index]}

@@ -1,6 +1,7 @@
 import { Search, X } from "lucide-react";
 import type React from "react";
 import { ViewTransition } from "react";
+import { CornerKnots } from "@/components/ornaments";
 import { GridCardSection } from "../section";
 import { GridCardNavItem } from "./grid-card-nav-item";
 import { SearchInput } from "./search-input";
@@ -21,6 +22,7 @@ export const SearchMode = ({
   return (
     <>
       <GridCardSection className="surface-nav-stage col-start-1 col-end-4 row-start-1 row-end-3 flex flex-col items-center justify-center gap-3 px-6 text-center">
+        <CornerKnots inset="sm" variant="triquetra" />
         <ViewTransition
           default="none"
           name="nav-search-icon"

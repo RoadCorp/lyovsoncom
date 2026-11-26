@@ -830,22 +830,32 @@
     opacity: 0;
   }
 
-  .ui-crest-link:hover .ornament-corner,
   .ui-crest-link:focus-visible .ornament-corner,
   .surface-nav-stage:has(:focus-visible) .ornament-corner {
     color: var(--ornament-accent);
     opacity: 0.9;
   }
 
-  .group:hover .ornament-corner--hover,
   .group:focus-visible .ornament-corner--hover,
-  .ui-interactive:hover > .ornament-corner--hover,
-  .ui-interactive:focus-visible > .ornament-corner--hover,
-  .ui-interactive:has(:focus-visible) .ornament-corner--hover,
-  .surface-title-stage:hover .ornament-corner--hover,
-  .surface-title-stage:has(:focus-visible) .ornament-corner--hover {
+  .surface-title-stage:has(:focus-visible) .ornament-corner--hover,
+  .ui-interactive:not(:disabled):focus-visible > .ornament-corner--hover,
+  .ui-interactive:not(:disabled):has(:focus-visible) .ornament-corner--hover {
     color: var(--ornament-accent);
     opacity: 0.6;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ui-crest-link:hover .ornament-corner {
+      color: var(--ornament-accent);
+      opacity: 0.9;
+    }
+
+    .group:hover .ornament-corner--hover,
+    .surface-title-stage:hover .ornament-corner--hover,
+    .ui-interactive:not(:disabled):hover > .ornament-corner--hover {
+      color: var(--ornament-accent);
+      opacity: 0.6;
+    }
   }
 
   .ornament-rule {
@@ -889,6 +899,7 @@
   .ornament-braid-rail {
     position: relative;
     padding-inline-start: 1.75rem;
+    overflow: hidden;
   }
 
   .ornament-braid-rail::before {
