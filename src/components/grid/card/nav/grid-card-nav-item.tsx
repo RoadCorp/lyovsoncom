@@ -14,6 +14,7 @@ interface GridCardNavItemBaseProps {
   children: ReactNode;
   className?: string;
   id?: string;
+  shortcut?: string;
 }
 
 type GridCardNavItemLinkProps = GridCardNavItemBaseProps & {
@@ -82,6 +83,11 @@ export const GridCardNavItem = ({
         onClick={props.onClick}
       >
         <CornerKnots className="ornament-corner--rest" variant="ticks" />
+        {props.shortcut ? (
+          <span aria-hidden="true" className="nav-kbd hidden sm:inline-flex">
+            {props.shortcut}
+          </span>
+        ) : null}
         <span className="nav-tile-content">{children}</span>
       </GridCardSection>
     );

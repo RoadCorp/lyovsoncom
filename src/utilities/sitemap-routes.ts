@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import type { Activity, Lyovson, Post, Project, Topic } from "@/payload-types";
+import { ACTIVITY_FILTER_TYPES } from "@/utilities/activity-type";
 import {
   ACTIVITIES_PER_PAGE,
   getIndexedPaginationPages,
@@ -17,9 +18,11 @@ import {
 } from "@/utilities/get-reference";
 import { getRelationId } from "@/utilities/relations";
 import {
+  aboutRoute,
   absoluteUrl,
   activitiesPageRoute,
   activitiesRoute,
+  activitiesTypeRoute,
   lyovsonActivitiesPageRoute,
   lyovsonActivitiesRoute,
   lyovsonBioRoute,
@@ -29,6 +32,7 @@ import {
   lyovsonPostsPageRoute,
   lyovsonPostsRoute,
   lyovsonRoute,
+  nowRoute,
   postsPageRoute,
   postsRoute,
   postUrl,
@@ -89,10 +93,14 @@ export function getStaticRoutes(now: Date): Sitemap {
     // Main section pages - high priority
     sitemapEntry(absoluteUrl(postsRoute()), now, "daily", 0.9),
     sitemapEntry(absoluteUrl(activitiesRoute()), now, "daily", 0.9),
+    ...ACTIVITY_FILTER_TYPES.map((type) =>
+      sitemapEntry(absoluteUrl(activitiesTypeRoute(type)), now, "daily", 0.75)
+    ),
     sitemapEntry(absoluteUrl(projectsRoute()), now, "weekly", 0.9),
     sitemapEntry(absoluteUrl(topicsRoute()), now, "weekly", 0.8),
-    // Utility pages - medium priority (About, AM and Contact are noindexed
-    // placeholders and stay out until they have content)
+    sitemapEntry(absoluteUrl(nowRoute()), now, "daily", 0.8),
+    sitemapEntry(absoluteUrl(aboutRoute()), now, "monthly", 0.7),
+    // Utility pages - AM and Contact stay noindexed placeholders until written
     sitemapEntry(absoluteUrl(privacyPolicyRoute()), now, "yearly", 0.3),
     // The AI docs page stays out: it is noindex and disallowed in robots.txt.
     // API endpoints stay out of the sitemap to prevent crawler-induced

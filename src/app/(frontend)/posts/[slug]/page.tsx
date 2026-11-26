@@ -8,10 +8,12 @@ import {
   GridCardReferences,
   GridCardRelatedPosts,
   GridCardSection,
+  GridCardTableOfContents,
 } from "@/components/grid";
 import { JsonLd } from "@/components/json-ld";
 import { OptionalErrorBoundary } from "@/components/optional-error-boundary";
 import { FleuronRule } from "@/components/ornaments";
+import { PostColophonActions } from "@/components/post-colophon-actions";
 import { PostTransitionBoundary } from "@/components/post-transitions/post-transition-boundary";
 import { PublicPageBoundary } from "@/components/public-page-boundary";
 import RichText from "@/components/RichText";
@@ -19,7 +21,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import type { Lyovson, Media, Post } from "@/payload-types";
 import { publishedPostsWhere } from "@/utilities/content-queries";
+import { formatShortDate } from "@/utilities/date";
 import { ensureStaticParams } from "@/utilities/ensure-static-params";
+import { extractLexicalHeadings } from "@/utilities/extract-lexical-headings";
 import {
   generateArticleSchema,
   generateBreadcrumbSchema,
@@ -30,6 +34,7 @@ import {
   getLyovsonPersonInput,
   getLyovsonSameAs,
 } from "@/utilities/lyovson-person";
+import { buildDynamicOgImageUrl } from "@/utilities/og-image";
 import { getPayloadClient } from "@/utilities/payload-client";
 import { getPublishedProject } from "@/utilities/public-project";
 import { absoluteUrl, postRoute, postsRoute } from "@/utilities/routes";
@@ -131,6 +136,19 @@ function getPostOtherMetadata(post: Post, keywords: string[] | undefined) {
   };
 }
 
+function getRelatedPostsGridClass(
+  hasContents: boolean,
+  hasReferences: boolean
+) {
+  if (hasContents && hasReferences) {
+    return "g2:col-start-2 g2:col-end-3 g2:row-start-4";
+  }
+  if (hasContents || hasReferences) {
+    return "g2:col-start-1 g2:col-end-2 g2:row-start-4";
+  }
+  return "g2:col-start-1 g2:col-end-2 g2:row-start-2";
+}
+
 async function PostPageContent({ params: paramsPromise }: Args) {
   const { slug } = await paramsPromise;
 
@@ -148,6 +166,14 @@ async function PostPageContent({ params: paramsPromise }: Args) {
   // Only populated references render a card; without one, related posts take its slot.
   const hasReferences = Boolean(
     post.references?.some((ref) => typeof ref === "object" && ref !== null)
+  );
+  const headings = extractLexicalHeadings(post.content);
+  const hasContents = headings.length >= 3;
+  const isArticle = (post.type || "article") === "article";
+  const canonicalUrl = absoluteUrl(postRoute(slug));
+  const relatedPostsGridClass = getRelatedPostsGridClass(
+    hasContents,
+    hasReferences
   );
 
   const articleSchema = generateArticleSchema({
@@ -193,18 +219,22 @@ async function PostPageContent({ params: paramsPromise }: Args) {
         >
           <GridCardSection className="[container-type:inline-size] col-span-3 row-span-3 p-6">
             <RichText
-              className="g2:text-[1.125rem] h-full"
+              className={cn(
+                "g2:text-[1.125rem] h-full",
+                isArticle && "content-prose--article"
+              )}
               content={post.content}
               enableGutter={false}
               enableProse={true}
             />
             <FleuronRule variant="finis" />
+            <PostColophonActions url={canonicalUrl} />
           </GridCardSection>
         </GridCard>
       </PostTransitionBoundary>
 
-      {/* With two columns the body spans both, so the rail splits: references
-          fill the slot under the menu and related posts follow the body. */}
+      {/* With two columns the body spans both, so the rail splits: the first
+          rail card fills the slot under the menu and the rest follow the body. */}
       <aside
         className={cn(
           "col-start-1 col-end-2 row-start-6 row-end-7 grid auto-rows-max gap-4 self-start",
@@ -212,9 +242,22 @@ async function PostPageContent({ params: paramsPromise }: Args) {
           "g3:col-start-1 g3:col-end-2 g3:row-start-2 g3:row-end-5 g3:grid"
         )}
       >
-        {hasReferences ? (
+        {hasContents ? (
           <PostTransitionBoundary variant="rail">
             <div className="g3:col-auto g2:col-start-1 g2:col-end-2 g3:row-auto g2:row-start-2 g2:self-start">
+              <GridCardTableOfContents headings={headings} />
+            </div>
+          </PostTransitionBoundary>
+        ) : null}
+
+        {hasReferences ? (
+          <PostTransitionBoundary variant="rail">
+            <div
+              className={cn(
+                "g3:col-auto g2:col-start-1 g2:col-end-2 g3:row-auto g2:self-start",
+                hasContents ? "g2:row-start-4" : "g2:row-start-2"
+              )}
+            >
               <GridCardReferences references={post.references ?? []} />
             </div>
           </PostTransitionBoundary>
@@ -223,8 +266,8 @@ async function PostPageContent({ params: paramsPromise }: Args) {
         <PostTransitionBoundary variant="rail">
           <div
             className={cn(
-              "g3:col-auto g2:col-start-1 g2:col-end-2 g3:row-auto g2:self-start",
-              hasReferences ? "g2:row-start-4" : "g2:row-start-2"
+              "g3:col-auto g3:row-auto g2:self-start",
+              relatedPostsGridClass
             )}
           >
             <OptionalErrorBoundary title="Unable to load recommended posts.">
@@ -339,6 +382,17 @@ export async function generateMetadata({
   const ogImageAlt = metaImage?.alt || title;
   const keywords = getPostKeywords(post);
   const canonicalRoute = postRoute(slug);
+  const authorNames =
+    post.populatedAuthors
+      ?.map((author) => author.name)
+      .filter((name): name is string => Boolean(name))
+      .join(" & ") || "Rafa & Jess Lyóvson";
+  const publishedLabel = formatShortDate(post.publishedAt);
+  const dynamicOgUrl = buildDynamicOgImageUrl({
+    eyebrow: post.type || "article",
+    title,
+    meta: publishedLabel ? `${authorNames} · ${publishedLabel}` : authorNames,
+  });
 
   return buildSeoMetadata({
     title,
@@ -361,7 +415,12 @@ export async function generateMetadata({
           height: metaImage?.height || DEFAULT_OPEN_GRAPH_IMAGE_HEIGHT,
           alt: ogImageAlt,
         }
-      : undefined,
+      : {
+          url: dynamicOgUrl,
+          width: DEFAULT_OPEN_GRAPH_IMAGE_WIDTH,
+          height: DEFAULT_OPEN_GRAPH_IMAGE_HEIGHT,
+          alt: title,
+        },
     other: getPostOtherMetadata(post, keywords),
   });
 }

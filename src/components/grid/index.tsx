@@ -39,6 +39,7 @@ export {
   ACTIVITIES_PREVIEW_PAGINATION_CLASS_NAME,
   GridCardActivitiesPreview,
   GridCardActivityFull,
+  GridCardActivityLedger,
   GridCardActivityReview,
   HOME_ACTIVITIES_PREVIEW_RAIL_CLASS_NAME,
   LYOVSON_ACTIVITIES_PREVIEW_RAIL_CLASS_NAME,
@@ -55,6 +56,7 @@ export { GridCardProject, GridCardProjectHero } from "./card/project";
 export { GridCardReferences } from "./card/references";
 export { GridCardRelatedPosts } from "./card/related";
 export { GridCardSection } from "./card/section";
+export { GridCardTableOfContents } from "./card/table-of-contents";
 export { GridCardUser } from "./card/user";
 export { GridCardUserSocial } from "./card/user-social";
 export { SkeletonCard, SkeletonGrid } from "./skeleton";

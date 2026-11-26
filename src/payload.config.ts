@@ -52,6 +52,7 @@ export default buildConfig({
     meta: {
       titleSuffix: " — Lyóvson.com",
       icons: [
+        { rel: "icon", type: "image/svg+xml", url: "/icon.svg" },
         { rel: "icon", type: "image/x-icon", url: "/favicon.ico" },
         {
           rel: "icon",

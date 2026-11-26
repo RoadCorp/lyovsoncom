@@ -22,6 +22,10 @@ import type { Post, Reference, Topic } from "@/payload-types";
 import { formatShortDate } from "@/utilities/date";
 import { dedupeRelationItemsById } from "@/utilities/dedupe-relation-items-by-id";
 import { getPublishedProject } from "@/utilities/public-project";
+import {
+  estimateReadingTimeMinutes,
+  formatReadingTime,
+} from "@/utilities/reading-time";
 import { getWholes, groupCredits } from "@/utilities/reference-links";
 import {
   lyovsonRoute,
@@ -94,11 +98,12 @@ function HeroBackLink({ href, label }: { href: string; label: string }) {
   );
 }
 
-/** Type and date above the title. */
+/** Type, date, and reading time above the title. */
 function PostHeroEyebrow({ post }: { post: Post }) {
   const postType = post.type || "article";
+  const readingMinutes = estimateReadingTimeMinutes(post.content);
   return (
-    <p className="type-eyebrow flex items-center gap-2">
+    <p className="type-eyebrow flex flex-wrap items-center gap-x-2 gap-y-1">
       <span className="card-eyebrow" data-post-type={postType}>
         {postType}
       </span>
@@ -108,6 +113,14 @@ function PostHeroEyebrow({ post }: { post: Post }) {
           <time className="tone-muted" dateTime={post.publishedAt}>
             {formatShortDate(post.publishedAt)}
           </time>
+        </>
+      ) : null}
+      {readingMinutes ? (
+        <>
+          <ApexLozenge className="ornament-accent" size={9} />
+          <span className="tone-muted">
+            {formatReadingTime(readingMinutes)}
+          </span>
         </>
       ) : null}
     </p>

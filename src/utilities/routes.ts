@@ -72,6 +72,10 @@ export function aboutRoute() {
   return typedRoute("/about");
 }
 
+export function nowRoute() {
+  return typedRoute("/now");
+}
+
 export function amRoute() {
   return typedRoute("/am");
 }
@@ -145,6 +149,19 @@ export function activitiesPageRoute(pageNumber: number) {
   return pageNumber <= 1
     ? activitiesRoute()
     : typedRoute(`/activities/page/${pageNumber}`);
+}
+
+export function activitiesTypeRoute(activityType: string) {
+  return typedRoute(`/activities/type/${activityType}`);
+}
+
+export function activitiesTypePageRoute(
+  activityType: string,
+  pageNumber: number
+) {
+  return pageNumber <= 1
+    ? activitiesTypeRoute(activityType)
+    : typedRoute(`/activities/type/${activityType}/page/${pageNumber}`);
 }
 
 export function referenceRoute(slug: string) {

@@ -22,6 +22,10 @@ import type {
   YouTubeBlock as YouTubeBlockProps,
 } from "@/payload-types";
 import {
+  createHeadingSlugger,
+  extractLexicalHeadingText,
+} from "@/utilities/extract-lexical-headings";
+import {
   IS_BOLD,
   IS_CODE,
   IS_ITALIC,
@@ -46,6 +50,7 @@ export type NodeTypes =
 interface Props {
   nodes: Array<NodeTypes | null | undefined>;
   path?: string;
+  slugger?: (text: string) => string;
 }
 
 type RichTextBlock =
@@ -203,7 +208,11 @@ function normalizeChildren(node: NodeTypes): NodeTypes[] | null {
   });
 }
 
-function serializeChildren(node: NodeTypes, path: string): JSX.Element | null {
+function serializeChildren(
+  node: NodeTypes,
+  path: string,
+  slugger: (text: string) => string
+): JSX.Element | null {
   const children = normalizeChildren(node);
   if (children == null) {
     return null;
@@ -212,6 +221,7 @@ function serializeChildren(node: NodeTypes, path: string): JSX.Element | null {
   return serializeLexical({
     nodes: children,
     path: `${path}-children`,
+    slugger,
   });
 }
 
@@ -266,20 +276,52 @@ function renderUnsupportedBlock(block: unknown, key: string): JSX.Element {
   );
 }
 
+function renderHeadingNode(
+  node: Extract<NodeTypes, { type: "heading" }>,
+  key: string,
+  serializedChildren: JSX.Element | null,
+  slugger: (text: string) => string
+): JSX.Element {
+  const Tag = node.tag;
+  if (node.tag !== "h2" && node.tag !== "h3") {
+    return <Tag key={key}>{serializedChildren}</Tag>;
+  }
+
+  const headingText = hasChildren(node)
+    ? extractLexicalHeadingText(node.children)
+    : "";
+  if (!headingText) {
+    return <Tag key={key}>{serializedChildren}</Tag>;
+  }
+
+  const id = slugger(headingText);
+  return (
+    <Tag className="prose-heading group/heading scroll-mt-24" id={id} key={key}>
+      {serializedChildren}
+      <a
+        aria-label={`Link to section: ${headingText}`}
+        className="prose-heading-anchor ui-focus-ring"
+        href={`#${id}`}
+      >
+        #
+      </a>
+    </Tag>
+  );
+}
+
 function renderElementNode(
   node: Exclude<NodeTypes, { type: "block" } | { type: "text" }>,
   key: string,
-  serializedChildren: JSX.Element | null
+  serializedChildren: JSX.Element | null,
+  slugger: (text: string) => string
 ): JSX.Element | null {
   switch (node.type) {
     case "linebreak":
       return <br key={key} />;
     case "paragraph":
       return <p key={key}>{serializedChildren}</p>;
-    case "heading": {
-      const Tag = node.tag;
-      return <Tag key={key}>{serializedChildren}</Tag>;
-    }
+    case "heading":
+      return renderHeadingNode(node, key, serializedChildren, slugger);
     case "list": {
       const Tag = node.tag;
       return <Tag key={key}>{serializedChildren}</Tag>;
@@ -333,12 +375,16 @@ function renderElementNode(
   }
 }
 
-function serializeNode(node: NodeTypes, key: string): JSX.Element | null {
+function serializeNode(
+  node: NodeTypes,
+  key: string,
+  slugger: (text: string) => string
+): JSX.Element | null {
   if (node.type === "text") {
     return <React.Fragment key={key}>{serializeTextNode(node)}</React.Fragment>;
   }
 
-  const serializedChildren = serializeChildren(node, key);
+  const serializedChildren = serializeChildren(node, key, slugger);
 
   if (node.type === "block") {
     if (!isRichTextBlock(node.fields)) {
@@ -348,10 +394,14 @@ function serializeNode(node: NodeTypes, key: string): JSX.Element | null {
     return renderRichTextBlock(node.fields, key);
   }
 
-  return renderElementNode(node, key, serializedChildren);
+  return renderElementNode(node, key, serializedChildren, slugger);
 }
 
-export function serializeLexical({ nodes, path = "root" }: Props): JSX.Element {
+export function serializeLexical({
+  nodes,
+  path = "root",
+  slugger = createHeadingSlugger(),
+}: Props): JSX.Element {
   const keyCounts = new Map<string, number>();
   const serializedNodes = nodes.map((node) => {
     if (!node) {
@@ -363,7 +413,7 @@ export function serializeLexical({ nodes, path = "root" }: Props): JSX.Element {
     keyCounts.set(baseKey, keyCount);
 
     const key = `${path}-${baseKey}-${keyCount}`;
-    return serializeNode(node, key);
+    return serializeNode(node, key, slugger);
   });
 
   return <>{serializedNodes}</>;
