@@ -263,19 +263,26 @@ describe("grid layout geometry", () => {
     expect(violations).toEqual([]);
   });
 
-  it("defines every GRID_SLOTS and GRID_HERO_PANELS class in globals.css", () => {
+  it("defines every GRID_SLOTS and GRID_HERO_PANELS class in _styles/grid.css imported by globals.css", () => {
     const globalsCss = readFileSync(
       resolve(process.cwd(), "src/app/(frontend)/globals.css"),
       "utf8"
     );
+    const gridCss = readFileSync(
+      resolve(process.cwd(), "src/app/(frontend)/_styles/grid.css"),
+      "utf8"
+    );
+
+    expect(globalsCss).toContain('@import "./_styles/grid.css";');
 
     for (const className of [
       ...Object.values(GRID_SLOTS),
       ...Object.values(GRID_HERO_PANELS),
     ]) {
-      expect(globalsCss, `Missing .${className} rule in globals.css`).toContain(
-        `.${className}`
-      );
+      expect(
+        gridCss,
+        `Missing .${className} rule in _styles/grid.css`
+      ).toContain(`.${className}`);
     }
 
     expect(GRID_CARD_ROWS).toEqual([

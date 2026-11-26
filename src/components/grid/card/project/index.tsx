@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { ViewTransition } from "react";
 import { GridCard } from "@/components/grid/card";
+import { HeroStage } from "@/components/grid/card/hero/hero-stage";
 import { GridCardSection } from "@/components/grid/card/section";
 import { GRID_HERO_PANELS } from "@/components/grid/layout";
 import { IntentLink } from "@/components/intent-link";
@@ -236,16 +237,11 @@ export const GridCardProjectHero = ({
           </GridCardSection>
         )}
 
-        <GridCardSection
-          className={`surface-title-stage ${GRID_HERO_PANELS.stage}`}
+        <HeroStage
+          cornerClassName="ornament-corner--subtle"
+          cornerInset="sm"
+          cornerVariant="triquetra"
         >
-          <BraidedFrieze />
-          <CornerKnots
-            className="ornament-corner--subtle"
-            edges="bottom"
-            inset="sm"
-            variant="triquetra"
-          />
           <div className="relative z-1 flex h-full flex-col items-center justify-center px-6 py-5 md:px-8 md:py-6">
             <div className="mx-auto w-full max-w-3xl space-y-4">
               <ViewTransition
@@ -289,7 +285,7 @@ export const GridCardProjectHero = ({
               ) : null}
             </div>
           </div>
-        </GridCardSection>
+        </HeroStage>
       </GridCard>
     </ViewTransition>
   );

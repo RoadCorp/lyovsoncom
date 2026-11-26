@@ -1,0 +1,431 @@
+/* Shared geometry carries identity; local text changes stay brief and readable. */
+:root {
+  --vt-move-duration: 280ms;
+  --vt-content-duration: 180ms;
+  --vt-exit-duration: 90ms;
+  --vt-enter-duration: 240ms;
+  --vt-title-out-duration: 80ms;
+  --vt-title-in-duration: 220ms;
+  --vt-media-duration: 340ms;
+  --vt-nav-out-duration: 80ms;
+  --vt-nav-in-duration: 200ms;
+  --vt-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --vt-page-offset: 18px;
+}
+
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-group(*) {
+  animation-duration: var(--vt-move-duration);
+  animation-timing-function: var(--vt-ease);
+}
+
+::view-transition-old(*),
+::view-transition-new(*) {
+  animation-duration: var(--vt-content-duration);
+  animation-timing-function: var(--vt-ease);
+}
+
+::view-transition-new(.vt-content),
+::view-transition-new(.vt-share-content) {
+  animation: vt-fade-in var(--vt-content-duration) ease-out both;
+}
+
+/* Sequence pages instead of cross-fading them: the old page leaves first,
+   then the new one rises in, so the two never show through each other and
+   the shared image is the only thing moving during the first beat. */
+::view-transition-old(.vt-exit) {
+  animation: vt-fade-out var(--vt-exit-duration) cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+::view-transition-new(.vt-enter) {
+  animation: vt-rise-in var(--vt-enter-duration) var(--vt-exit-duration)
+    var(--vt-ease) both;
+}
+
+/* Card and hero titles differ in size and wrapping, so morphing their
+   bitmaps shows blurred double text. Swap them instead. */
+::view-transition-old(.vt-share-title) {
+  mix-blend-mode: normal;
+  animation: vt-fade-out var(--vt-title-out-duration) ease-in both;
+}
+
+::view-transition-new(.vt-share-title) {
+  mix-blend-mode: normal;
+  animation: vt-rise-in var(--vt-title-in-duration) 110ms var(--vt-ease) both;
+}
+
+/* The nav card swaps crest, menu and search in place. Sequence it like a
+   page so the crest never shows through the menu tiles. */
+::view-transition-old(.vt-nav) {
+  mix-blend-mode: normal;
+  animation: vt-fade-out var(--vt-nav-out-duration) cubic-bezier(0.4, 0, 1, 1)
+    both;
+}
+
+::view-transition-new(.vt-nav) {
+  mix-blend-mode: normal;
+  animation: vt-nav-in var(--vt-nav-in-duration) var(--vt-nav-out-duration)
+    var(--vt-ease) both;
+}
+
+/* Paired fades must stay complementary so unchanged surfaces do not dim. */
+::view-transition-old(.vt-content),
+::view-transition-old(.vt-share-content) {
+  animation: vt-fade-out var(--vt-content-duration) ease-out both;
+}
+
+::view-transition-image-pair(.vt-content),
+::view-transition-image-pair(.vt-nav),
+::view-transition-image-pair(.vt-share-title),
+::view-transition-image-pair(.vt-share-content) {
+  isolation: isolate;
+}
+
+::view-transition-old(.vt-content),
+::view-transition-new(.vt-content),
+::view-transition-old(.vt-share-content),
+::view-transition-new(.vt-share-content) {
+  mix-blend-mode: plus-lighter;
+}
+
+/* Keep full-page/text snapshots at their natural geometry. Only named cards,
+   media, titles, and small controls interpolate position and size. */
+::view-transition-group(.vt-content),
+::view-transition-group(.vt-nav),
+::view-transition-group(.vt-share-content),
+::view-transition-group(.vt-anchor) {
+  animation: none;
+}
+
+::view-transition-old(.vt-anchor) {
+  display: none;
+}
+
+::view-transition-new(.vt-anchor) {
+  animation: none;
+}
+
+::view-transition-group(.vt-share-title),
+::view-transition-group(.vt-card) {
+  animation-duration: var(--vt-move-duration);
+}
+
+::view-transition-group(.vt-share-media) {
+  animation-duration: var(--vt-media-duration);
+}
+
+/* Snapshot groups are siblings, even for nested React boundaries. Keep retained
+   cards above page reveals and their shared details above incoming card shells. */
+::view-transition-group(.vt-card) {
+  z-index: 1;
+}
+
+::view-transition-group(.vt-share-media),
+::view-transition-group(.vt-share-title),
+::view-transition-group(.vt-share-content),
+::view-transition-group(.vt-control) {
+  z-index: 2;
+}
+
+/* Both snapshots must fill the moving frame as its aspect ratio changes.
+   Restore additive blending lost when overriding the browser's animation list. */
+::view-transition-image-pair(.vt-share-media) {
+  overflow: clip;
+  border-radius: calc(var(--radius) - 4px);
+  isolation: isolate;
+}
+
+::view-transition-old(.vt-share-media),
+::view-transition-new(.vt-share-media) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  mix-blend-mode: plus-lighter;
+}
+
+::view-transition-old(.vt-share-media) {
+  animation: vt-fade-out var(--vt-media-duration) var(--vt-ease) both;
+}
+
+::view-transition-new(.vt-share-media) {
+  animation: vt-fade-in var(--vt-media-duration) var(--vt-ease) both;
+}
+
+::view-transition-group(.vt-control) {
+  animation-duration: var(--vt-content-duration);
+}
+
+::view-transition-old(.vt-pagination-next) {
+  --vt-direction: -1;
+  animation: vt-page-out var(--vt-content-duration) var(--vt-ease) both;
+}
+
+::view-transition-new(.vt-pagination-next) {
+  --vt-direction: 1;
+  animation: vt-page-in var(--vt-content-duration) var(--vt-ease) both;
+}
+
+::view-transition-old(.vt-pagination-prev) {
+  --vt-direction: 1;
+  animation: vt-page-out var(--vt-content-duration) var(--vt-ease) both;
+}
+
+::view-transition-new(.vt-pagination-prev) {
+  --vt-direction: -1;
+  animation: vt-page-in var(--vt-content-duration) var(--vt-ease) both;
+}
+
+/* First full page load: the first six page cards rise in 30ms apart
+   (src/components/first-load-entrance.tsx ends this after the first load).
+   They start nearly, not fully, transparent: Chrome doesn't count
+   opacity 0 as painted, which would delay Largest Contentful Paint. */
+@media (prefers-reduced-motion: no-preference) {
+  /* Count only rendered cards: skip the skip-link target and JSON-LD. */
+  :root:not([data-entered])
+    main
+    > :nth-child(-n + 6 of :not(script, #main-content)) {
+    animation: entrance-rise 340ms var(--ease-snappy) backwards;
+  }
+
+  :root:not([data-entered])
+    main
+    > :nth-child(2 of :not(script, #main-content)) {
+    animation-delay: 30ms;
+  }
+
+  :root:not([data-entered])
+    main
+    > :nth-child(3 of :not(script, #main-content)) {
+    animation-delay: 60ms;
+  }
+
+  :root:not([data-entered])
+    main
+    > :nth-child(4 of :not(script, #main-content)) {
+    animation-delay: 90ms;
+  }
+
+  :root:not([data-entered])
+    main
+    > :nth-child(5 of :not(script, #main-content)) {
+    animation-delay: 120ms;
+  }
+
+  :root:not([data-entered])
+    main
+    > :nth-child(6 of :not(script, #main-content)) {
+    animation-delay: 150ms;
+  }
+}
+
+@keyframes entrance-rise {
+  from {
+    opacity: 0.01;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Back and Forward have no view transition; fade the restored page in
+   (src/components/HistoryFade.tsx). */
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-history-fade] main > * {
+    animation: vt-fade-in 120ms ease-out both;
+  }
+}
+
+/* Theme switch: the new theme grows as a circle from the Theme button
+   (src/utilities/theme-reveal.ts sets the origin and radius). */
+:root[data-theme-reveal]::view-transition-old(root),
+:root[data-theme-reveal]::view-transition-new(root) {
+  mix-blend-mode: normal;
+  animation: none;
+}
+
+:root[data-theme-reveal]::view-transition-new(root) {
+  animation: theme-reveal 420ms var(--vt-ease) both;
+}
+
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0 at var(--theme-reveal-x) var(--theme-reveal-y));
+  }
+  to {
+    clip-path: circle(
+      var(--theme-reveal-r) at var(--theme-reveal-x) var(--theme-reveal-y)
+    );
+  }
+}
+
+@keyframes vt-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes vt-nav-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes vt-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes vt-page-in {
+  from {
+    opacity: 0;
+    transform: translateX(calc(var(--vt-direction) * var(--vt-page-offset)));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes vt-page-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(calc(var(--vt-direction) * var(--vt-page-offset)));
+  }
+}
+
+@media (max-width: 639px) {
+  :root {
+    --vt-move-duration: 220ms;
+    --vt-page-offset: 10px;
+  }
+}
+
+/* Include unnamed browser/root snapshots and future transition classes. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse,
+  .animate-spin {
+    animation: none;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-image-pair(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    background: var(--background);
+  }
+
+  body {
+    min-height: 100vh;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    @apply bg-background text-foreground;
+  }
+}
+
+/* react-tweet ships unlayered CSS, which beats anything in @layer components,
+   so the embed's theme lives outside the layers. */
+/* react-tweet's action row never wraps, so "Copy link" is cut off on phones.
+   Its class is a hashed CSS module name, hence the substring match. */
+.xpost-embed [class*="actions"] {
+  flex-wrap: wrap;
+}
+
+.xpost-embed .react-tweet-theme {
+  --tweet-container-margin: 0 !important;
+  --tweet-border: 1px solid
+    color-mix(in oklab, var(--line-1) 52%, var(--accent-meta) 48%);
+  --tweet-font-family: var(--font-sans);
+  --tweet-body-font-size: 1rem;
+  --tweet-font-color: var(--text-1);
+  --tweet-font-color-secondary: var(--text-3);
+  --tweet-bg-color: color-mix(
+    in oklab,
+    var(--surface-2) 96%,
+    var(--accent-rail) 4%
+  );
+  --tweet-bg-color-hover: color-mix(
+    in oklab,
+    var(--surface-2) 92%,
+    var(--accent-meta) 8%
+  );
+  --tweet-quoted-bg-color-hover: color-mix(
+    in oklab,
+    var(--surface-3) 94%,
+    var(--accent-quote) 6%
+  );
+  --tweet-color-blue-primary: var(--accent-link);
+  --tweet-color-blue-primary-hover: color-mix(
+    in oklab,
+    var(--accent-link) 76%,
+    var(--accent-code) 24%
+  );
+  --tweet-color-blue-secondary: var(--accent-code);
+  --tweet-color-blue-secondary-hover: color-mix(
+    in oklab,
+    var(--accent-code) 12%,
+    transparent
+  );
+  --tweet-color-red-primary: var(--accent-error);
+  --tweet-color-red-primary-hover: color-mix(
+    in oklab,
+    var(--accent-error) 12%,
+    transparent
+  );
+  --tweet-color-green-primary: var(--accent-success);
+  --tweet-color-green-primary-hover: color-mix(
+    in oklab,
+    var(--accent-success) 12%,
+    transparent
+  );
+  --tweet-twitter-icon-color: color-mix(
+    in oklab,
+    var(--accent-link) 56%,
+    var(--text-1) 44%
+  );
+  margin: 0 !important;
+}

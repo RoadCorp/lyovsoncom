@@ -1,23 +1,25 @@
 import {
-  BookOpen,
-  FileText,
   Mail,
   MessageSquareText,
   Radio,
-  Rss,
   ShieldCheck,
   UserRound,
 } from "lucide-react";
 import type { Metadata } from "next";
 import { AppLink } from "@/components/app-link";
 import { CopyEmailButton } from "@/components/copy-email-button";
-import { GRID_HERO_PANELS, GridCard, GridCardSection } from "@/components/grid";
+import { FeedLinksGrid } from "@/components/feed-links-grid";
+import {
+  GRID_HERO_PANELS,
+  GridCard,
+  GridCardSection,
+  HeroStage,
+} from "@/components/grid";
 import { IntentLink } from "@/components/intent-link";
 import { JsonLd } from "@/components/json-ld";
 import { Logo } from "@/components/Logo/logo";
 import {
   ApexLozenge,
-  BraidedFrieze,
   CornerKnots,
   FleuronRule,
   WingedEyebrow,
@@ -44,11 +46,11 @@ import {
   DEFAULT_OPEN_GRAPH_IMAGE_HEIGHT,
   DEFAULT_OPEN_GRAPH_IMAGE_WIDTH,
 } from "@/utilities/seo-metadata";
+import { PUBLIC_CONTACT_EMAIL } from "@/utilities/site-config";
 import { SOCIAL_ICON_MAP } from "@/utilities/social-icons";
 
 export const prefetch = "partial";
 
-const PUBLIC_EMAIL = "hello@lyovson.com";
 const MAX_SOCIAL_LINKS = 3;
 
 function PersonContactCard({ profile }: { profile: PublicProfile }) {
@@ -142,15 +144,7 @@ async function ContactPageContent() {
           </div>
         </GridCardSection>
 
-        <GridCardSection
-          className={cn("surface-title-stage", GRID_HERO_PANELS.stage)}
-        >
-          <BraidedFrieze />
-          <CornerKnots
-            className="ornament-corner--rest"
-            edges="bottom"
-            variant="ticks"
-          />
+        <HeroStage>
           <div className="relative z-1 flex h-full flex-col justify-between gap-4 px-6 pt-6 pb-5 md:px-7 md:pt-7 md:pb-6">
             <p className="type-eyebrow flex items-center gap-2">
               <MessageSquareText
@@ -169,12 +163,12 @@ async function ContactPageContent() {
               <div className="flex flex-wrap items-center gap-2.5 pt-1">
                 <a
                   className="ui-inline-action ui-focus-ring ui-interactive text-sm font-medium"
-                  href={`mailto:${PUBLIC_EMAIL}`}
+                  href={`mailto:${PUBLIC_CONTACT_EMAIL}`}
                 >
                   <Mail aria-hidden="true" className="h-4 w-4" />
-                  <span>{PUBLIC_EMAIL}</span>
+                  <span>{PUBLIC_CONTACT_EMAIL}</span>
                 </a>
-                <CopyEmailButton email={PUBLIC_EMAIL} />
+                <CopyEmailButton email={PUBLIC_CONTACT_EMAIL} />
               </div>
             </div>
 
@@ -196,7 +190,7 @@ async function ContactPageContent() {
               </AppLink>
             </div>
           </div>
-        </GridCardSection>
+        </HeroStage>
       </GridCard>
 
       {rafa ? <PersonContactCard profile={rafa} /> : null}
@@ -215,36 +209,7 @@ async function ContactPageContent() {
             </p>
           </div>
 
-          <div className="relative z-1 grid grid-cols-2 gap-2">
-            <a
-              className="surface-row ui-interactive ui-focus-ring type-eyebrow flex items-center gap-2 px-3 py-2"
-              href="/feed.xml"
-            >
-              <Rss aria-hidden="true" className="h-3.5 w-3.5" />
-              <span>RSS</span>
-            </a>
-            <a
-              className="surface-row ui-interactive ui-focus-ring type-eyebrow flex items-center gap-2 px-3 py-2"
-              href="/atom.xml"
-            >
-              <Rss aria-hidden="true" className="h-3.5 w-3.5" />
-              <span>Atom</span>
-            </a>
-            <a
-              className="surface-row ui-interactive ui-focus-ring type-eyebrow flex items-center gap-2 px-3 py-2"
-              href="/feed.json"
-            >
-              <FileText aria-hidden="true" className="h-3.5 w-3.5" />
-              <span>JSON</span>
-            </a>
-            <a
-              className="surface-row ui-interactive ui-focus-ring type-eyebrow flex items-center gap-2 px-3 py-2"
-              href="/llms.txt"
-            >
-              <BookOpen aria-hidden="true" className="h-3.5 w-3.5" />
-              <span>llms.txt</span>
-            </a>
-          </div>
+          <FeedLinksGrid className="relative z-1" jsonLabel="JSON" />
 
           <div className="border-border/60 relative z-1 flex items-center justify-center border-t pt-3">
             <AppLink
@@ -280,7 +245,7 @@ export const metadata: Metadata = {
       url: buildDynamicOgImageUrl({
         eyebrow: "Correspondence",
         title: "Contact Lyóvson.com",
-        meta: PUBLIC_EMAIL,
+        meta: PUBLIC_CONTACT_EMAIL,
       }),
       width: DEFAULT_OPEN_GRAPH_IMAGE_WIDTH,
       height: DEFAULT_OPEN_GRAPH_IMAGE_HEIGHT,

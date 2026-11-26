@@ -51,6 +51,7 @@ export { GridCardEmptyState } from "./card/empty-state";
 export {
   GridCardHero,
   GridCardHeroReference,
+  HeroStage,
 } from "./card/hero";
 export { GridCardNav, GridCardNavItem } from "./card/nav";
 export { GridCardNotFound } from "./card/not-found";

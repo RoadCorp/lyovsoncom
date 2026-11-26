@@ -1,0 +1,301 @@
+@layer components {
+  .site-backdrop {
+    position: fixed;
+    background:
+      radial-gradient(
+        52rem 36rem at 12% -12%,
+        var(--page-ambient-2),
+        transparent 60%
+      ),
+      radial-gradient(
+        38rem 30rem at 88% 2%,
+        var(--page-ambient-4),
+        transparent 68%
+      ),
+      radial-gradient(
+        26rem 22rem at 80% 100%,
+        var(--page-ambient-1),
+        transparent 76%
+      ),
+      radial-gradient(
+        24rem 20rem at 18% 100%,
+        var(--page-ambient-3),
+        transparent 72%
+      ),
+      linear-gradient(
+        115deg,
+        color-mix(in oklab, var(--paper-warm) 10%, transparent),
+        transparent 24%,
+        color-mix(in oklab, var(--paper-warm) 8%, transparent) 52%,
+        transparent 100%
+      ),
+      linear-gradient(
+        180deg,
+        color-mix(in oklab, var(--foam) 68%, var(--paper) 32%),
+        color-mix(in oklab, var(--background) 96%, var(--paper-warm) 4%) 30%,
+        color-mix(in oklab, var(--background) 99%, var(--surface-1) 1%) 64%,
+        var(--background)
+      );
+  }
+
+  /* Whisper-subtle vellum grain so cream and aubergine surfaces feel tactile. */
+  .site-backdrop::after {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    content: "";
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
+    opacity: 0.032;
+  }
+
+  .dark .site-backdrop::after {
+    opacity: 0.04;
+  }
+
+  .dark .site-backdrop {
+    background:
+      radial-gradient(
+        50rem 38rem at 10% -12%,
+        var(--page-ambient-1),
+        transparent 60%
+      ),
+      radial-gradient(
+        36rem 28rem at 90% 4%,
+        var(--page-ambient-2),
+        transparent 68%
+      ),
+      radial-gradient(
+        28rem 22rem at 84% 100%,
+        var(--page-ambient-4),
+        transparent 78%
+      ),
+      radial-gradient(
+        26rem 22rem at 18% 100%,
+        var(--page-ambient-3),
+        transparent 76%
+      ),
+      linear-gradient(
+        135deg,
+        color-mix(in oklab, var(--paper) 10%, transparent),
+        transparent 28%,
+        color-mix(in oklab, var(--paper-warm) 8%, transparent) 70%,
+        transparent 100%
+      ),
+      linear-gradient(
+        180deg,
+        color-mix(in oklab, var(--background) 84%, black 16%),
+        color-mix(in oklab, var(--background) 92%, var(--surface-1) 8%) 26%,
+        color-mix(in oklab, var(--background) 96%, var(--paper) 4%) 60%,
+        var(--background)
+      );
+  }
+
+  .site-spotlight {
+    background:
+      radial-gradient(
+        56rem 28rem at 50% -12%,
+        color-mix(in oklab, var(--page-ambient-4) 78%, transparent),
+        transparent 78%
+      ),
+      radial-gradient(
+        28rem 22rem at 50% 100%,
+        color-mix(in oklab, var(--page-ambient-1) 46%, transparent),
+        transparent 82%
+      );
+  }
+
+  .tone-heading {
+    color: var(--text-1);
+  }
+
+  .tone-body {
+    color: var(--text-2);
+  }
+
+  .tone-muted {
+    color: var(--tone-muted-color, var(--text-3));
+  }
+
+  .state-info {
+    color: var(--info);
+  }
+
+  .state-success {
+    color: var(--success);
+  }
+
+  .state-warning {
+    color: var(--warning);
+  }
+
+  .state-error {
+    color: var(--destructive);
+  }
+
+  .surface-card,
+  .surface-block,
+  .surface-chip,
+  .surface-row,
+  .surface-caption,
+  .surface-thumb,
+  .surface-alert,
+  .surface-emphasis {
+    border-color: var(--line-1);
+    border-style: solid;
+    border-width: 1px;
+    box-shadow: var(--shadow-surface), var(--shadow-emboss);
+  }
+
+  .surface-card {
+    position: relative;
+    contain: layout paint style;
+    overflow: clip;
+    background: var(--surface-1);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    isolation: isolate;
+  }
+
+  .surface-card-framed {
+    contain: layout style;
+    overflow: visible;
+  }
+
+  .surface-card-legend {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: 3;
+    display: inline-flex;
+    gap: 0.45rem;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--frame-label-min-width);
+    max-width: calc(100% - 2rem);
+    padding: 0.2rem var(--frame-label-padding-inline);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    line-height: 1;
+    color: color-mix(
+      in oklab,
+      var(--frame-label-accent) 56%,
+      var(--text-2) 44%
+    );
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    white-space: nowrap;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--surface-1) 97%, white 3%),
+      color-mix(in oklab, var(--surface-1) 96%, var(--background) 4%)
+    );
+    border-color: color-mix(
+      in oklab,
+      var(--line-1) 84%,
+      var(--frame-label-accent) 16%
+    );
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 999px;
+    box-shadow:
+      0 0 0 0.22rem
+      color-mix(in oklab, var(--background) 98%, var(--frame-label-accent) 2%),
+      0 0.5rem 0.95rem -0.9rem color-mix(in oklab, black 8%, transparent);
+    transform: translate(-50%, -56%);
+  }
+
+  .dark .surface-card-legend {
+    color: color-mix(
+      in oklab,
+      var(--frame-label-accent) 58%,
+      var(--text-2) 42%
+    );
+    background: linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--surface-1) 92%, white 8%),
+      color-mix(in oklab, var(--surface-1) 95%, var(--background) 5%)
+    );
+    border-color: color-mix(
+      in oklab,
+      var(--line-1) 82%,
+      var(--frame-label-accent) 18%
+    );
+    box-shadow:
+      0 0 0 0.22rem
+      color-mix(in oklab, var(--background) 97%, var(--frame-label-accent) 3%),
+      0 0.55rem 1rem -0.9rem color-mix(in oklab, black 18%, transparent);
+  }
+
+  .surface-block {
+    position: relative;
+    overflow: clip;
+    background: linear-gradient(
+      160deg,
+      color-mix(in oklab, var(--surface-1) 94%, var(--surface-3) 6%),
+      color-mix(in oklab, var(--surface-1) 98%, var(--accent-meta) 2%) 62%,
+      var(--surface-1)
+    );
+    border-radius: var(--radius);
+    isolation: isolate;
+  }
+
+  .surface-panel {
+    position: relative;
+    padding: var(--grid-section-padding);
+    overflow: clip;
+    background: var(--surface-well);
+    border-radius: calc(var(--radius) - 2px);
+    isolation: isolate;
+  }
+
+  /* Visually hidden until focused with the keyboard. */
+  .skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 100;
+    padding: 0.5rem 0.875rem;
+    font-size: 0.875rem;
+    color: var(--text-1);
+    background: var(--surface-1);
+    border: 1px solid var(--line-1);
+    border-radius: calc(var(--radius) - 2px);
+    transform: translateY(-200%);
+  }
+
+  .skip-link:focus-visible {
+    transform: none;
+  }
+
+  .media-fallback {
+    position: relative;
+    overflow: hidden;
+    color: color-mix(in oklab, var(--accent-meta) 70%, var(--text-3) 30%);
+    background:
+      radial-gradient(
+        circle at 50% 45%,
+        color-mix(in oklab, var(--accent-meta) 9%, transparent),
+        transparent 68%
+      ),
+      linear-gradient(
+        160deg,
+        color-mix(in oklab, var(--surface-2) 88%, var(--accent-meta) 12%),
+        color-mix(in oklab, var(--surface-2) 94%, var(--accent-rail) 6%)
+      );
+    border-radius: calc(var(--radius) - 4px);
+  }
+
+  .media-fallback-frame {
+    position: absolute;
+    inset: 0.45rem;
+    pointer-events: none;
+    border: 1px solid color-mix(in oklab, var(--ornament-line) 72%, transparent);
+    border-radius: calc(var(--radius) - 7px);
+  }
+}

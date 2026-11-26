@@ -2,8 +2,9 @@
  * Single source of truth for the Lyóvson 400px archival card grid.
  *
  * Placement classes map directly to `.grid-slot-*` rules in
- * `src/app/(frontend)/globals.css`. Every page composition and skeleton shares
- * these slot names so layouts cannot drift or collide across breakpoints.
+ * `src/app/(frontend)/_styles/grid.css` (imported by `globals.css`). Every page
+ * composition and skeleton shares these slot names so layouts cannot drift or
+ * collide across breakpoints.
  */
 
 export const GRID_UNIT_PX = 400;

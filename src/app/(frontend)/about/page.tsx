@@ -6,13 +6,18 @@ import {
   FileText,
   Mail,
   Radio,
-  Rss,
   ShieldCheck,
 } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { AppLink } from "@/components/app-link";
-import { GRID_HERO_PANELS, GridCard, GridCardSection } from "@/components/grid";
+import { FeedLinksGrid } from "@/components/feed-links-grid";
+import {
+  GRID_HERO_PANELS,
+  GridCard,
+  GridCardSection,
+  HeroStage,
+} from "@/components/grid";
 import { IntentLink } from "@/components/intent-link";
 import { JsonLd } from "@/components/json-ld";
 import { Logo } from "@/components/Logo/logo";
@@ -173,15 +178,7 @@ async function AboutPageContent() {
           </div>
         </GridCardSection>
 
-        <GridCardSection
-          className={cn("surface-title-stage", GRID_HERO_PANELS.stage)}
-        >
-          <BraidedFrieze />
-          <CornerKnots
-            className="ornament-corner--rest"
-            edges="bottom"
-            variant="ticks"
-          />
+        <HeroStage>
           <div className="relative z-1 flex h-full flex-col justify-between gap-4 px-6 pt-6 pb-5 md:px-7 md:pt-7 md:pb-6">
             <p className="type-eyebrow flex items-center gap-2">
               <span className="card-eyebrow">About</span>
@@ -234,7 +231,7 @@ async function AboutPageContent() {
               </AppLink>
             </div>
           </div>
-        </GridCardSection>
+        </HeroStage>
       </GridCard>
 
       {rafa ? <PersonAboutCard profile={rafa} /> : null}
@@ -294,36 +291,7 @@ async function AboutPageContent() {
 
           <div className="relative z-1 space-y-2.5">
             <h2 className="type-eyebrow card-eyebrow">Feeds &amp; Formats</h2>
-            <div className="grid grid-cols-2 gap-2">
-              <a
-                className="surface-row ui-interactive ui-focus-ring type-eyebrow flex items-center gap-2 px-3 py-2"
-                href="/feed.xml"
-              >
-                <Rss aria-hidden="true" className="h-3.5 w-3.5" />
-                <span>RSS</span>
-              </a>
-              <a
-                className="surface-row ui-interactive ui-focus-ring type-eyebrow flex items-center gap-2 px-3 py-2"
-                href="/atom.xml"
-              >
-                <Rss aria-hidden="true" className="h-3.5 w-3.5" />
-                <span>Atom</span>
-              </a>
-              <a
-                className="surface-row ui-interactive ui-focus-ring type-eyebrow flex items-center gap-2 px-3 py-2"
-                href="/feed.json"
-              >
-                <FileText aria-hidden="true" className="h-3.5 w-3.5" />
-                <span>JSON Feed</span>
-              </a>
-              <a
-                className="surface-row ui-interactive ui-focus-ring type-eyebrow flex items-center gap-2 px-3 py-2"
-                href="/llms.txt"
-              >
-                <BookOpen aria-hidden="true" className="h-3.5 w-3.5" />
-                <span>llms.txt</span>
-              </a>
-            </div>
+            <FeedLinksGrid />
           </div>
 
           <FleuronRule variant="lozenge" />

@@ -33,8 +33,11 @@ function escapeRegExp(value: string) {
   return value.replaceAll(/[.*+?^${}()|[\]\\]/gu, "\\$&");
 }
 
+export const PUBLIC_CONTACT_EMAIL = "hello@lyovson.com";
+
 export const siteConfig = {
   canonicalOrigin: DEFAULT_CANONICAL_ORIGIN,
+  contactEmail: PUBLIC_CONTACT_EMAIL,
   defaultDescription: "Official website of Rafa and Jess Lyóvson",
   defaultOgImagePath: DEFAULT_OG_IMAGE_PATH,
   logoPath: DEFAULT_LOGO_PATH,

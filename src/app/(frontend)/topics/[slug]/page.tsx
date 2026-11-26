@@ -60,13 +60,11 @@ export async function generateStaticParams() {
 async function PageContent({ params: paramsPromise }: PageProps) {
   const { slug } = await paramsPromise;
 
-  const topic = await getTopic(slug);
-  if (!topic) {
-    return notFound();
-  }
-
-  const response = await getTopicPosts(slug);
-  if (!response) {
+  const [topic, response] = await Promise.all([
+    getTopic(slug),
+    getTopicPosts(slug),
+  ]);
+  if (!(topic && response)) {
     return notFound();
   }
 
